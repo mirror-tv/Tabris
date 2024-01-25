@@ -1,11 +1,12 @@
-import { getClient } from '~/apollo-client'
 import errors from '@twreporter/errors'
-import { getPostsByTagName, PostByTagName } from '~/graphql/query/posts'
-import { FILTERED_SLUG } from '~/constants/constant'
-import styles from '~/styles/pages/tag-page.module.scss'
+import { getClient } from '~/apollo-client'
 import UiPostCard from '~/components/shared/ui-post-card'
-import { formatePostImage } from '~/utils'
+import UiMoreTagList from '~/components/tag/more-tag-list'
+import { FILTERED_SLUG } from '~/constants/constant'
 import { GLOBAL_CACHE_SETTING } from '~/constants/environment-variables'
+import { getPostsByTagName, PostByTagName } from '~/graphql/query/posts'
+import styles from '~/styles/pages/tag-page.module.scss'
+import { formatePostImage } from '~/utils'
 
 export const revalidate = GLOBAL_CACHE_SETTING
 
@@ -93,6 +94,7 @@ export default async function TagPage({
             })}
           </ol>
         )}
+        <UiMoreTagList tagName={tagName} pageSize={PAGE_SIZE} />
       </div>
     </section>
   )

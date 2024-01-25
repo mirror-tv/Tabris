@@ -79,7 +79,7 @@
   position: absolute;
   bottom: 0;
   right: 0;
-  ::before {
+  &::before {
     content: '';
     display: block;
     border-color: transparent transparent transparent white;

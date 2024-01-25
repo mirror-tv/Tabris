@@ -32,7 +32,7 @@ const socialLinks = [
   },
   {
     href: HEADER_BOTTOM_LINKS.line,
-    src: 'icons/icon-line-dark.svg',
+    src: '/icons/icon-line-dark.svg',
     alt: 'line icon',
   },
   {
@@ -42,7 +42,7 @@ const socialLinks = [
   },
   {
     href: HEADER_BOTTOM_LINKS.x,
-    src: 'icons/icon-x.svg',
+    src: '/icons/icon-x.svg',
     alt: 'x(former twitter) icon',
   },
 ]
