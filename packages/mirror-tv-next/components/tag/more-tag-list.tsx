@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import UiLoadMoreButton from '../shared/ui-load-more-button'
 import { fetchMoreItems } from './action'
 
@@ -15,6 +15,17 @@ export default function UiMoreTagList({
 }: UiMoreTagListProps) {
   const [page, setPage] = useState(1)
 
+  const [posts, setPosts] = useState([])
+
+  useEffect(() => {
+    const updatePosts = async () => {
+      const updatePosts = await fetchMoreItems()
+      setPosts(updatePosts)
+    }
+
+    updatePosts()
+  }, [])
+
   return (
     <section>
       <UiLoadMoreButton
@@ -24,6 +35,7 @@ export default function UiMoreTagList({
           await fetchMoreItems(page)
         }}
       />
+      <p>{posts}</p>
     </section>
   )
 }
