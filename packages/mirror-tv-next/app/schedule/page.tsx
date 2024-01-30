@@ -42,6 +42,7 @@ export default async function SchedulePage() {
   let schedule: Schedule[] = []
 
   schedule = await getData()
+  console.log(schedule)
 
   //   console.log(schedule)
   return <main className={styles.main}>SchedulePage</main>
