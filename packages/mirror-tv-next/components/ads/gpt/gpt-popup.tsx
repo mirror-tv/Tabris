@@ -20,7 +20,6 @@ export default function GptPopup({ adKey = '' }: { adKey: string }) {
   }, [isVisible])
 
   const handleSlotRenderEnded = useCallback((event: SlotRenderEndedEvent) => {
-    console.log('popup:', isVisible, event)
     const size = event?.size
     if (size && size?.[0] !== 1 && size?.[1] !== 1) {
       setIsVisible(true)
