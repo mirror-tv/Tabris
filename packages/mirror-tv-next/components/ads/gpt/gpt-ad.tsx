@@ -168,9 +168,13 @@ export default function GptAd({
     if (!width || !isValidAd) {
       return
     }
+    const isMobileWidth = width < 768
     const isDesktopWidth = width >= 1200
     if (isBuildInAdUnit) {
       switch (true) {
+        case pageKey === 'fs':
+          setShouldAd(isMobileWidth)
+          return
         case adKey?.includes('MB'):
           setShouldAd(!isDesktopWidth)
           return

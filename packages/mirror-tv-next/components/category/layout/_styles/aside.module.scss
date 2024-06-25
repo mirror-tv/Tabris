@@ -31,3 +31,12 @@
     margin-top: 24px;
   }
 }
+
+.asideItem {
+  @include media-breakpoint-up(md) {
+    width: calc(50% - 8px);
+  }
+  @include media-breakpoint-up(xl) {
+    width: inherit;
+  }
+}

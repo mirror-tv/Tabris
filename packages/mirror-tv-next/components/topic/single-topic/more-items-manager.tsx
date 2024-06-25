@@ -37,7 +37,7 @@ export default function MoreItemsManager({
   }
 
   return (
-    <div className="topic-listing__content">
+    <div className="topic__content">
       <ul className={styles.postItemWrapper}>
         {postsList.map((item, index) => (
           <li key={index}>

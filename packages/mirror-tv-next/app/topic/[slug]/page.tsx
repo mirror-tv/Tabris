@@ -192,7 +192,12 @@ export default async function SingleTopicPage({
             {socialMediaLinks.map(
               ({ platform, icon, alt, url }) =>
                 url && (
-                  <Link key={platform} href={url}>
+                  <Link
+                    key={platform}
+                    href={url}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  >
                     <Image
                       src={icon}
                       alt={alt}

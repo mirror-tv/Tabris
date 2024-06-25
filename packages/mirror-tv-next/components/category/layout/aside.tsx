@@ -93,7 +93,7 @@ export default async function CategoryPageLayoutAside() {
         listTitle="熱門新聞"
         page="category"
         listData={popularPosts}
-        className="aside__list-popular"
+        className={`aside__list-popular ${styles.asideItem}`}
       />
       <div className={styles.microId}>
         <MicroAd
@@ -108,7 +108,7 @@ export default async function CategoryPageLayoutAside() {
         listTitle="即時新聞"
         page="category"
         listData={latestPosts}
-        className={`aside__list-latest`}
+        className={`aside__list-latest ${styles.asideItem}`}
       />
     </aside>
   )
