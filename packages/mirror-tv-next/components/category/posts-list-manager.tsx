@@ -27,7 +27,7 @@ export default function PostsListManager({
     ...initPostsList,
   ])
   const salesLength = salePostsList?.length || 0
-  const salesPostsInsertIndex = [3, 5, 9, 11].slice(0, salesLength)
+  const salesPostsInsertIndex = [2, 4, 8, 10].slice(0, salesLength)
   const renderedPostsList: FormattedPostCard[] = useMemo(() => {
     if (!salesLength) {
       return postsList
