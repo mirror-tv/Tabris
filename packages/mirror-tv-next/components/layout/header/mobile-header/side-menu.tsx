@@ -108,6 +108,7 @@ export default function SideMenu({
                         ? sponsor.url
                         : `/topic/${sponsor.topic?.slug}`
                     }
+                    className={styles.sponsorItem}
                   >
                     <CallbackImage
                       alt="Sponsor Logo"
