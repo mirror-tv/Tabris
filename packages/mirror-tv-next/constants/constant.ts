@@ -21,4 +21,13 @@ const FILTERED_SLUG = [
   'aboutus',
 ]
 
-export { HEADER_BOTTOM_LINKS, META_DESCRIPTION, SITE_TITLE, FILTERED_SLUG }
+//Custom Search JSON API
+const URL_PROGRAMABLE_SEARCH = 'https://www.googleapis.com/customsearch/v1'
+
+export {
+  HEADER_BOTTOM_LINKS,
+  META_DESCRIPTION,
+  SITE_TITLE,
+  FILTERED_SLUG,
+  URL_PROGRAMABLE_SEARCH,
+}

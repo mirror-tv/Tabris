@@ -1,4 +1,5 @@
 @import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
 
 .error {
   display: flex;
@@ -33,7 +34,7 @@
 
     &_link {
       display: inline-block;
-      color: #ffcc01;
+      color: $color-yellow;
       font-size: 20px;
       letter-spacing: 3.3px;
       line-height: 23px;
@@ -82,7 +83,7 @@
           height: 80px;
           object-fit: cover;
           object-position: center;
-          background-color: #e7e7e7;
+          background-color: $color-grey;
           margin-right: 16px;
           @include media-breakpoint-up(md) {
             margin: 0 0 12px 0;
@@ -133,7 +134,7 @@
     .error__wire_1 {
       width: 0%;
       height: 100%;
-      border-bottom: 4px solid #979797;
+      border-bottom: 4px solid $color-grey-deep;
       // desktop range
       @include media-breakpoint-up(xl) {
         width: auto;
@@ -143,8 +144,8 @@
     .error__wire_2 {
       width: 100%;
       height: 100%;
-      border-top: 4px solid #979797;
-      border-left: 4px solid #979797;
+      border-top: 4px solid $color-grey-deep;
+      border-left: 4px solid $color-grey-deep;
       // desktop range
       @include media-breakpoint-up(xl) {
         width: 197px;

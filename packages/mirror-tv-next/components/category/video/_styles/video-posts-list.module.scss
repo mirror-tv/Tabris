@@ -1,4 +1,5 @@
 @import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
 
 .list {
   & + & {
@@ -24,8 +25,8 @@
     display: inline-block;
     width: 13px;
     height: 13px;
-    border: 2px solid #014db8;
-    border-color: #014db8 #014db8 transparent transparent;
+    border: 2px solid $color-blue;
+    border-color: $color-blue $color-blue transparent transparent;
     transform: rotate(45deg);
   }
 }

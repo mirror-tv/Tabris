@@ -1,4 +1,5 @@
 @import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
 
 .flashNews {
   background-color: #e3e3e3;
@@ -8,7 +9,7 @@
   font-size: 16px;
   line-height: 44px;
   @include media-breakpoint-up(md) {
-    padding-left: 16px;
+    padding-left: $header-padding-md;
     height: 36px;
     font-size: 14px;
     line-height: 36px;
@@ -17,10 +18,16 @@
     width: 100%;
   }
   @include media-breakpoint-up(xl) {
-    $paddingLeft: calc((100vw - 1232px) / 2);
+    $paddingLeft: calc((100vw - $header-max-width-xl) / 2);
     font-size: 16px;
     padding-left: $paddingLeft;
-    width: calc(100vw - 424px - #{$paddingLeft});
+    // width: calc(100vw - 424px - #{$paddingLeft});
+  }
+  @include media-breakpoint-up(xxl) {
+    $paddingLeft: calc((100vw - $header-max-width-xxl) / 2);
+    font-size: 16px;
+    padding-left: $paddingLeft;
+    // width: calc(100vw - 424px - #{$paddingLeft});
   }
 }
 
@@ -45,6 +52,5 @@
   @include media-breakpoint-up(xl) {
     height: 28px;
     font-size: 16px;
-    margin-left: 20px;
   }
 }

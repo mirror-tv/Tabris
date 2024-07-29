@@ -1,4 +1,5 @@
 @import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
 
 .card {
   display: block;
@@ -27,7 +28,7 @@
     width: 100%;
     padding-top: 66%;
     margin: 0 0 11px;
-    background-color: #e7e7e7;
+    background-color: $color-grey;
     overflow: hidden;
     border-radius: 4px;
   }

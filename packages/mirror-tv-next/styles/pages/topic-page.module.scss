@@ -1,4 +1,5 @@
 @import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
 
 .topic {
   min-height: calc(100dvh - 50px);
@@ -23,7 +24,7 @@
     font-size: 18px;
     font-weight: 500;
     line-height: 25px;
-    color: #014db8;
+    color: $color-blue;
     margin: 0 0 20px;
     @include media-breakpoint-up(md) {
       font-size: 20px;

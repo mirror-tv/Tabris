@@ -1238,6 +1238,13 @@
   resolved "https://registry.yarnpkg.com/@readr-media/react-image/-/react-image-2.2.3.tgz#859e04d7c91d1d8a71aafbbd52e58b032cafbe52"
   integrity sha512-cB0o4wtbngppLDnMRYyX7ZRGsNwneVbqFHJ9q4nw9p8ZFEhUuInaZpJLfdvZq4L74YvNk9iWCnY+nwwP406saA==
 
+"@readr-media/react-infinite-scroll-list@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@readr-media/react-infinite-scroll-list/-/react-infinite-scroll-list-1.2.0.tgz#d2a82ac1695bce5146c0f0dd7dbbca25d9d4622f"
+  integrity sha512-PSTjUQFinUOYdlKYAc88Bl2ELpD/sPaWjqTVdaT1YmBfsrhA5tzlXRqr+WJm6IayhvnLbg2rLyEHwjXBaMyOhA==
+  dependencies:
+    ts-xor "^1.3.0"
+
 "@rushstack/eslint-patch@^1.3.3":
   version "1.5.1"
   resolved "https://registry.npmjs.org/@rushstack/eslint-patch/-/eslint-patch-1.5.1.tgz"
@@ -4284,6 +4291,11 @@ ts-invariant@^0.10.3:
   integrity sha512-uivwYcQaxAucv1CzRp2n/QdYPo4ILf9VXgH19zEIjFx2EJufV16P0JtJVpYHy89DItG6Kwj2oIUjrcK5au+4tQ==
   dependencies:
     tslib "^2.1.0"
+
+ts-xor@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/ts-xor/-/ts-xor-1.3.0.tgz#3e59f24f0321f9f10f350e0cee3b534b89a2c70b"
+  integrity sha512-RLXVjliCzc1gfKQFLRpfeD0rrWmjnSTgj7+RFhoq3KRkUYa8LE/TIidYOzM5h+IdFBDSjjSgk9Lto9sdMfDFEA==
 
 tsconfig-paths@^3.14.2:
   version "3.14.2"

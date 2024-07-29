@@ -1,0 +1,65 @@
+@import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
+
+.list {
+  width: 100%;
+  margin: 12px 0;
+  display: none;
+  @include media-breakpoint-up(md) {
+    margin: 0 0 24px;
+  }
+  @include media-breakpoint-up(xl) {
+    margin: 0 0 48px;
+  }
+}
+
+.active {
+  display: block;
+}
+
+.sectionName {
+  display: block;
+  color: $color-blue;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 28px;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+.listContainer {
+  @include media-breakpoint-up(md) {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    flex-wrap: wrap;
+    gap: 40px 20px;
+  }
+  @include media-breakpoint-up(xl) {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    flex-wrap: wrap;
+    gap: 48px 24px;
+  }
+}
+
+.item {
+  margin-bottom: 24px;
+  & > span {
+    word-wrap: break-word;
+    -webkit-line-clamp: 3;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    @include media-breakpoint-up(md) {
+      -webkit-line-clamp: 2;
+    }
+  }
+}
+
+.itemName {
+  display: block;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 23px;
+  margin-top: 12px;
+}

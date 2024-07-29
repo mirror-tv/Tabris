@@ -1,4 +1,5 @@
 @import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
 
 .customDropdownContainer {
   display: block;
@@ -21,7 +22,7 @@
 
 .dropdownButton {
   position: relative;
-  background: #014db8;
+  background: $color-blue;
   display: flex;
   align-items: center;
   height: 52px;

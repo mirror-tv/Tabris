@@ -1,4 +1,5 @@
 @import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
 
 .card {
   padding: 11px;
@@ -58,7 +59,7 @@
     top: 0;
     left: 0;
     background-color: #f4f5f6;
-    color: #036;
+    color: $color-blue-deep;
     font-size: 14px;
     font-style: normal;
     font-weight: 400;

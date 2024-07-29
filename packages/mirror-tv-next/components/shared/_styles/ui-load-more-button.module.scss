@@ -1,32 +1,34 @@
 @import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
 
 .customButton {
-  width: 100%;
-  box-shadow: inset 0 0 0 1px #9b9b9b;
-  color: #9b9b9b;
-  font-family: var(--font-noto-sans);
+  padding: 8px 0;
   font-size: 20px;
   font-weight: 500;
-  line-height: normal;
-  letter-spacing: 0.5px;
+  letter-spacing: 3px;
   text-align: center;
-  padding: 4px 0;
-  border-radius: 4px;
-  max-width: 160px;
+  line-height: 28px;
+  color: $color-blue;
+  border: 1px solid $color-blue;
+  outline: none;
+  display: block;
+  width: 100%;
+  margin: 14px auto 0;
   @include media-breakpoint-up(md) {
-    padding: 8px 0;
-    letter-spacing: 3px;
+    margin: 0 auto;
+    max-width: 300px;
   }
   &:focus {
     outline: none;
   }
 
-  // 為了防止 layout shifting
   &:hover {
-    box-shadow: inset 0 0 0 2px #9b9b9b;
+    padding: 7px 0;
+    border: 2px solid $color-blue;
   }
   &:active {
-    box-shadow: inset 0 0 0 2px #9b9b9b;
+    padding: 7px 0;
+    border: 2px solid $color-blue;
     background-color: rgba(0, 77, 188, 0.05);
   }
 }

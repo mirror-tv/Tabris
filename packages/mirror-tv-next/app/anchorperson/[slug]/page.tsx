@@ -170,7 +170,7 @@ export default async function singleAnchor({
               </div>
             </div>
             <div className={styles.bio}>
-              {bio.map((item: { id: string; content: string }) => (
+              {bio.map((item) => (
                 <div key={item.id}>{item.content && <p>{item.content}</p>}</div>
               ))}
             </div>

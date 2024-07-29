@@ -5,7 +5,7 @@ import type { PostImage } from '~/utils/image-handler'
 export type FormattedPostCard = {
   href: string
   slug: string
-  style: string
+  style?: string
   name: string
   images: PostImage
   publishTime: Date

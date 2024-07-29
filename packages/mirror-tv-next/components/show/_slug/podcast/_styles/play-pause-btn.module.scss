@@ -1,0 +1,62 @@
+@import '/styles/theme/_variable';
+
+.togglePlayBtn {
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+  margin-top: -1px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  background-color: transparent;
+  border: none;
+  &:focus {
+    outline: 0;
+  }
+}
+
+.pause {
+  position: absolute;
+  width: 12px;
+  height: 16px;
+  border-right: 4px solid #fff;
+  border-left: 4px solid #fff;
+  &:hover {
+    border-right: 4px solid $color-yellow;
+    border-left: 4px solid $color-yellow;
+  }
+}
+
+.pauseErr {
+  --error-color: #767676;
+  border-right: 4px solid var(--error-color);
+  border-left: 4px solid var(--error-color);
+  &:hover {
+    border-right: 4px solid var(--error-color);
+    border-left: 4px solid var(--error-color);
+  }
+}
+
+.play {
+  position: absolute;
+  width: 12px;
+  height: 16px;
+  border-top: 8px solid transparent;
+  border-left: 12px solid #fff;
+  border-bottom: 8px solid transparent;
+  &:hover {
+    cursor: default;
+    border-left: 12px solid $color-yellow;
+  }
+}
+
+.playError {
+  --error-color: #767676;
+  border-left: 12px solid var(--error-color);
+  &:hover {
+    cursor: default;
+    border-left: 12px solid var(--error-color);
+  }
+}

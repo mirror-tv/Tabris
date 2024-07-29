@@ -1,0 +1,106 @@
+@import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
+
+.item {
+  padding: 8px 0;
+  margin: 0 4px 0 4px;
+  &:hover {
+    cursor: pointer;
+    h4 {
+      color: $color-blue;
+      font-weight: 500;
+      line-height: normal;
+    }
+  }
+  & + & {
+    border-top: 1px solid #000;
+  }
+  @include media-breakpoint-up(md) {
+    margin: 0;
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+.info {
+  @include media-breakpoint-up(md) {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    flex: 1;
+    justify-content: space-between;
+  }
+}
+
+.date {
+  color: #4a4a4a;
+  font-size: 14px;
+  line-height: normal;
+  @include media-breakpoint-up(md) {
+    margin-left: 27px;
+  }
+}
+
+.title {
+  margin-top: 4px;
+  color: #0d1821;
+  font-size: 16px;
+  line-height: normal;
+  overflow: hidden;
+  display: -webkit-box;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  @include media-breakpoint-up(md) {
+    margin: 0;
+    -webkit-line-clamp: 1;
+    max-height: 24px;
+  }
+}
+
+.play {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 6px;
+  @include media-breakpoint-up(md) {
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    margin-top: 0;
+  }
+}
+
+.controlBtn {
+  &:focus {
+    outline: none;
+  }
+  @include media-breakpoint-up(md) {
+    margin-left: 12px;
+  }
+  @include media-breakpoint-up(xl) {
+    margin-left: 36px;
+  }
+}
+
+.duration {
+  color: #004ebc;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: normal;
+  margin-left: 15px;
+  width: 70px;
+  @include media-breakpoint-up(md) {
+    margin-left: 12px;
+  }
+  @include media-breakpoint-up(xl) {
+    margin-left: 320px;
+  }
+}
+
+.isPlaying {
+  h4 {
+    color: $color-blue;
+    font-weight: 500;
+    line-height: normal;
+  }
+}

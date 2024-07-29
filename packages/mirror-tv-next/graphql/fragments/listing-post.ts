@@ -3,7 +3,7 @@ import type { HeroImage } from '~/types/common'
 
 export type ListingPost = {
   slug: string
-  style: string
+  style?: string
   name: string
   heroImage: HeroImage | null
 }
