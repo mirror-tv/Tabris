@@ -28,3 +28,20 @@ export type Schedule = {
   Month: string
   Day: string
 }
+
+export type Podcast = {
+  published: string
+  author: string | null
+  description: string | null
+  heroImage: string | null
+  enclosures: {
+    url: string
+    file_size: number
+    mime_type: string
+  }[]
+  link: string | null
+  guid: string | null
+  title: string | null
+  duration: string | null
+  category: string | null
+}

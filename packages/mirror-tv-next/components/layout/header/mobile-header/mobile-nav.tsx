@@ -6,6 +6,7 @@ import type { Sponsor } from '~/graphql/query/sponsors'
 
 import styles from './_styles/mobile-nav.module.scss'
 import SideMenu from './side-menu'
+import MobileSearchBar from './mobile-search-bar'
 
 type MobileNavProps = {
   categories: Category[]
@@ -31,7 +32,10 @@ export default function MobileNav({
           />
         </Link>
       </div>
-      <SideMenu categories={categories} shows={shows} sponsors={sponsors} />
+      <section className={styles.sideBtnWrapper}>
+        <SideMenu categories={categories} shows={shows} sponsors={sponsors} />
+        <MobileSearchBar />
+      </section>
     </div>
   )
 }

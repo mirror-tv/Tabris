@@ -1,7 +1,9 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import type { Sponsor } from '~/graphql/query/sponsors'
 import styles from './_styles/header-top.module.scss'
+import type { Sponsor } from '~/graphql/query/sponsors'
+import { formateHeroImage } from '~/utils'
+import ResponsiveImage from '~/components/shared/responsive-image'
 
 type HeaderTopProps = {
   sponsors: Sponsor[]
@@ -21,28 +23,22 @@ export default function HeaderTop({ sponsors }: HeaderTopProps) {
           />
         </Link>
       </div>
-
       <div className={styles.sponsorsWrapper}>
         {sponsors.slice(0, 3).map((sponsor) => {
+          const formattedLogo = formateHeroImage(sponsor.logo ?? {})
           return (
             <div key={sponsor.id}>
               <Link
                 href={
                   sponsor.url ? sponsor.url : `/topic/${sponsor.topic?.slug}`
                 }
+                className={styles.sponsorItem}
               >
-                <Image
-                  src={
-                    sponsor.logo?.urlMobileSized ?? '/images/image-default.jpg'
-                  }
+                <ResponsiveImage
                   alt="Sponsor Logo"
-                  width={100}
-                  height={52}
-                  priority
-                  style={{
-                    width: 100,
-                    height: 52,
-                  }}
+                  images={formattedLogo}
+                  rwd={{ default: '100px' }}
+                  priority={true}
                 />
               </Link>
             </div>

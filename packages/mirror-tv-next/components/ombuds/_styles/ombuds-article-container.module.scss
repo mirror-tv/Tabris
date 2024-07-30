@@ -1,9 +1,10 @@
 @import 'styles/theme/breakpoints';
+@import '/styles/theme/variable';
 
 .articleList {
   margin: 0 16px;
   h3 {
-    color: #014db8;
+    color: $color-blue;
     font-size: 20px;
     font-weight: 500;
     line-height: 32px;

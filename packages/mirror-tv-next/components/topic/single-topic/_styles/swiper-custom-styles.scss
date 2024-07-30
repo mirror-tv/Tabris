@@ -3,6 +3,7 @@
 // use SCSS directly for styling in this case.
 
 @import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
 
 .swiper-button-prev:after,
 .swiper-button-next:after {
@@ -44,12 +45,12 @@
 }
 
 .swiper-pagination-bullet {
-  background: #ffcc01 !important;
+  background: $color-yellow !important;
   width: 12px;
   height: 12px;
 }
 .swiper-pagination-bullet-active {
-  background: #e7e7e7;
+  background: $color-grey;
   width: 12px;
   height: 12px;
 }

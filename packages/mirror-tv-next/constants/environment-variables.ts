@@ -8,10 +8,12 @@ let FLASH_NEWS_JSON_URL: string
 let SCHEDULE_JSON_URL: string
 let POPULAR_POSTS_URL: string
 let POPULAR_VIDEOS_JSON_URL: string
+let YOUTUBE_API_URL: string
 
 switch (ENV) {
   case 'prod':
     SITE_URL = 'https://mnews.tw'
+    YOUTUBE_API_URL = 'https://mnews.tw'
     GTM_ID = 'GTM-PK7VRFX'
     GLOBAL_CACHE_SETTING = 300
     HEADER_JSON_URL = 'https://mnews.tw/json/header_v2.json'
@@ -25,6 +27,7 @@ switch (ENV) {
 
   case 'staging':
     SITE_URL = 'https://staging.mnews.tw'
+    YOUTUBE_API_URL = 'https://staging.mnews.tw'
     GTM_ID = 'GTM-NFH6FDH'
     GLOBAL_CACHE_SETTING = 300
     HEADER_JSON_URL = 'https://staging.mnews.tw/json/header_v2.json'
@@ -38,6 +41,7 @@ switch (ENV) {
 
   case 'dev':
     SITE_URL = 'https://dev.mnews.tw'
+    YOUTUBE_API_URL = 'https://dev.mnews.tw'
     GTM_ID = 'GTM-TVZ26W8'
     GLOBAL_CACHE_SETTING = 0
     HEADER_JSON_URL = 'https://dev.mnews.tw/json/header_v2.json'
@@ -50,7 +54,8 @@ switch (ENV) {
     break
 
   default:
-    SITE_URL = 'http://localhost:3000/'
+    SITE_URL = 'https://dev.mnews.tw'
+    YOUTUBE_API_URL = 'https://dev.mnews.tw'
     GTM_ID = 'GTM-TVZ26W8'
     GLOBAL_CACHE_SETTING = 0
     HEADER_JSON_URL = 'https://dev.mnews.tw/json/header_v2.json'
@@ -73,4 +78,5 @@ export {
   SITE_URL,
   POPULAR_POSTS_URL,
   POPULAR_VIDEOS_JSON_URL,
+  YOUTUBE_API_URL,
 }

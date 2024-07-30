@@ -13,6 +13,7 @@
     "@apollo/client": "^3.8.0-rc.2",
     "@next/third-parties": "^14.1.4",
     "@readr-media/react-image": "2.2.3",
+    "@readr-media/react-infinite-scroll-list": "^1.2.0",
     "@svgr/webpack": "^8.1.0",
     "@twreporter/errors": "^1.1.2",
     "axios": "^1.6.2",

@@ -1,7 +1,8 @@
 @import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
 
 .main {
-  background: #036;
+  background: $color-blue-deep;
   min-height: 100dvh;
   padding-top: 50px; /* the height of mobile nav*/
   display: flex;

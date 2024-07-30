@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import type { Category } from '~/graphql/query/category'
 import type { Show } from '~/graphql/query/shows'
 import styles from './_styles/nav-items.module.scss'
+import DesktopSearchBar from './desktop-search-bar'
 
 type NavItemProps = {
   categories: Category[]
@@ -129,6 +130,7 @@ export default function NavItems({ categories, shows }: NavItemProps) {
             </li>
           )}
         </div>
+        <DesktopSearchBar />
       </div>
       <div
         className={`${styles.restOfCategories} ${

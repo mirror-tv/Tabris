@@ -1,4 +1,10 @@
 @import '/styles/theme/z-index';
+@import '/styles/theme/variable';
+
+.wrapper {
+  display: flex;
+  align-items: center;
+}
 
 .sidebarWrapper {
   position: absolute;
@@ -34,6 +40,24 @@
   height: 52px;
   align-items: center;
   overflow: hidden;
+}
+
+.sponsorItem {
+  display: block;
+  position: relative;
+  width: 100px;
+  height: 52px;
+  overflow: hidden;
+  object-fit: contain;
+
+  img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 100px;
+    max-height: 52px;
+  }
 }
 
 .categoriesBlock {
@@ -78,7 +102,7 @@
     bottom: -3px;
     height: 2px;
     width: 100%;
-    background-color: #ffcc01;
+    background-color: $color-yellow;
   }
 }
 
@@ -104,7 +128,7 @@
 }
 
 .activeShow {
-  color: #ffcc01;
+  color: $color-yellow;
 }
 
 .otherLi {

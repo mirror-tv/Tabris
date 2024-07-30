@@ -1,5 +1,6 @@
 @import '/styles/theme/breakpoints';
 @import '/styles/theme/z-index';
+@import '/styles/theme/variable';
 
 .itemWrapper {
   display: flex;
@@ -26,7 +27,7 @@
 
 .li:hover::after {
   width: 100%;
-  background-color: #ffcc01;
+  background-color: $color-yellow;
 }
 
 .li::before {
@@ -36,7 +37,7 @@
   left: 0;
   height: 16px;
   width: 1px;
-  background-color: #979797;
+  background-color: $color-grey-deep;
 }
 
 .active::after {
@@ -47,7 +48,7 @@
   width: 0%;
   height: 2px;
   width: 100%;
-  background-color: #ffcc01;
+  background-color: $color-yellow;
 }
 
 .navWrapper {
@@ -61,15 +62,24 @@
   height: 44px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
 
   @include media-breakpoint-up(md) {
-    padding: 0 16px;
+    padding: 0 $header-padding-md;
   }
 
   @include media-breakpoint-up(xl) {
     font-size: 16px;
-    width: 1232px;
-    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: $header-max-width-xl;
+    padding: 0;
+    margin: 0 auto;
+  }
+
+  @include media-breakpoint-up(xxl) {
+    width: $header-max-width-xxl;
   }
 }
 
@@ -134,7 +144,7 @@
 
 .liRest:hover::after {
   width: 100%;
-  background-color: #ffcc01;
+  background-color: $color-yellow;
 }
 
 .activeRe::after {
@@ -145,7 +155,7 @@
   width: 0%;
   height: 2px;
   width: 100%;
-  background-color: #ffcc01;
+  background-color: $color-yellow;
 }
 
 .showRest {
@@ -153,7 +163,7 @@
 }
 
 .grey {
-  color: #979797;
+  color: $color-grey-deep;
   cursor: pointer;
   padding-right: 5px;
   -webkit-user-select: none;
@@ -185,7 +195,7 @@
   font-weight: 400;
   line-height: normal;
   color: #e3e3e3;
-  border-top: 2px solid #ffcc01;
+  border-top: 2px solid $color-yellow;
 
   display: flex;
   flex-wrap: wrap;
@@ -203,5 +213,5 @@
 }
 
 .showItem:hover {
-  color: #ffcc01;
+  color: $color-yellow;
 }

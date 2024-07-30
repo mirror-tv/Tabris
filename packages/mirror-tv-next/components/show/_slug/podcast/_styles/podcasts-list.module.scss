@@ -1,0 +1,31 @@
+@import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
+.podcast {
+  font-feature-settings: 'clig' off, 'liga' off;
+  letter-spacing: 0.5px;
+}
+
+.title {
+  color: $color-blue;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 160%; /* 32px */
+  margin-left: 4px;
+  @include media-breakpoint-up(md) {
+    margin-left: 0;
+  }
+}
+
+.list {
+  margin-top: 16px;
+  @include media-breakpoint-up(md) {
+    margin-top: 29px;
+  }
+}
+
+.btnWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 32px;
+}

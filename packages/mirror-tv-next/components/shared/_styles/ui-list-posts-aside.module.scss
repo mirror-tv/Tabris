@@ -1,4 +1,5 @@
 @import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
 
 .wrapper {
   display: flex;
@@ -17,7 +18,7 @@
 
 .bordered {
   @include media-breakpoint-up(md) {
-    border: 1px solid #979797;
+    border: 1px solid $color-grey-deep;
     padding: 24px;
   }
 }

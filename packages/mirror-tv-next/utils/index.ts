@@ -6,10 +6,12 @@ import {
   handleApiData,
   handleMetaDesc,
   handleResponse,
+  FetchError,
 } from './common'
 import { formateDateAtTaipei } from './date-handler'
 import type { FormattedPostCard } from './post-handler'
 import { formatArticleCard } from './post-handler'
+import { formateYoutubeListRes, fetchYoutubeData } from './youtube'
 
 export {
   extractYoutubeId,
@@ -20,5 +22,8 @@ export {
   handleResponse,
   handleApiData,
   handleMetaDesc,
+  formateYoutubeListRes,
+  fetchYoutubeData,
+  FetchError,
 }
 export type { FormattedPostCard, PostImage }

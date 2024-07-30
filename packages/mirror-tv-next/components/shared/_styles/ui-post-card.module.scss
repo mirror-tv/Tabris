@@ -1,4 +1,5 @@
 @import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
 
 .card {
   display: flex;
@@ -75,7 +76,7 @@
 }
 
 .videoIcon {
-  background: #ffcc01;
+  background: $color-yellow;
   width: 32px;
   height: 32px;
   position: absolute;

@@ -1,0 +1,43 @@
+@import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  @include media-breakpoint-up(xl) {
+    gap: 21px;
+  }
+}
+
+.input {
+  color: $color-grey-deep;
+  border-radius: 7px;
+  padding-left: 14px;
+  height: 20px;
+  width: 120px;
+  max-width: 120px;
+  padding: 0 0 0 8px;
+  box-shadow: inset 0 1px 5px rgba(0, 0, 0, 0.05);
+  @include media-breakpoint-up(xl) {
+    width: 146px;
+    max-width: 146px;
+    height: 28px;
+  }
+
+  &:focus {
+    color: #000;
+    outline: none;
+  }
+}
+
+.searchButton {
+  display: block;
+  position: relative;
+  width: 18px;
+  height: 20px;
+  @include media-breakpoint-up(xl) {
+    width: 26px;
+    height: 28px;
+  }
+}
