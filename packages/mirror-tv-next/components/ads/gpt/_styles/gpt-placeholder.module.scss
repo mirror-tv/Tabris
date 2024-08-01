@@ -3,33 +3,34 @@
 .gptAdContainerPc {
   display: none;
   @include media-breakpoint-up(xl) {
-    min-height: 280px;
+    min-height: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     margin: 28px 0;
-    background-color: #f4f5f6;
+    // background-color: #f4f5f6;
     width: 100%;
   }
 
-  p {
+  & > p {
     color: #d2d2d2;
     font-weight: 500;
     font-size: 16px;
+    display: none;
   }
 }
 
 .gptAdContainerMb {
-  min-height: 300px;
+  // min-height: 300px;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   margin: 12px 0;
-  background-color: #f4f5f6;
+  // background-color: #f4f5f6;
 
-  p {
+  & > p {
     color: #d2d2d2;
     font-weight: 500;
     font-size: 16px;
