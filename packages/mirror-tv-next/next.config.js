@@ -46,6 +46,51 @@ const nextConfig = {
           },
         ],
       },
+      {
+        source: '/topic',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=300, must-revalidate',
+          },
+        ],
+      },
+      {
+        source: '/topic/[slug]',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=300, must-revalidate',
+          },
+        ],
+      },
+      {
+        source: '/',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=300, must-revalidate',
+          },
+        ],
+      },
+      {
+        source: '/anchorperson',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=300, must-revalidate',
+          },
+        ],
+      },
+      {
+        source: '/anchorperson/[slug]',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=300, must-revalidate',
+          },
+        ],
+      },
     ]
   },
   webpack: (config) => {
