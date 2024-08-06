@@ -56,16 +56,7 @@ const nextConfig = {
         ],
       },
       {
-        source: '/topic/[slug]',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=300, must-revalidate',
-          },
-        ],
-      },
-      {
-        source: '/:path*',
+        source: '/topic/:slug',
         headers: [
           {
             key: 'Cache-Control',
@@ -83,7 +74,7 @@ const nextConfig = {
         ],
       },
       {
-        source: '/anchorperson/[slug]',
+        source: '/anchorperson/:slug',
         headers: [
           {
             key: 'Cache-Control',
