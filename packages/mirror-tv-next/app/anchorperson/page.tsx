@@ -15,7 +15,6 @@ import styles from '~/styles/pages/anchorperson-page.module.scss'
 import dynamic from 'next/dynamic'
 import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
-import { API_ENDPOINT } from '~/constants/config'
 
 export const revalidate = GLOBAL_CACHE_SETTING
 
@@ -98,12 +97,8 @@ export default async function Anchorperson() {
         <span className={styles.line} />
       </div>
       <ol className={[styles.cardsList, 'anchor__list'].join(' ')}>
-        {data.map((item, index) => (
-          <UiContactCard
-            item={item}
-            key={item.name}
-            endPoint={index ? undefined : API_ENDPOINT}
-          />
+        {data.map((item) => (
+          <UiContactCard item={item} key={item.name} />
         ))}
       </ol>
     </section>
