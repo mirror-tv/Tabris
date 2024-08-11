@@ -1,4 +1,3 @@
-import errors from '@twreporter/errors'
 import type { Metadata } from 'next'
 import { getClient } from '~/apollo-client'
 import UiContactCard from '~/components/anchorperson/ui-contact-card'
@@ -14,6 +13,7 @@ import {
 import styles from '~/styles/pages/anchorperson-page.module.scss'
 import dynamic from 'next/dynamic'
 import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
+import { handleResponse } from '~/utils'
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 
 export const revalidate = GLOBAL_CACHE_SETTING
@@ -34,56 +34,26 @@ export default async function Anchorperson() {
   let anchorData: Contact[] = []
   let hostData: Contact[] = []
 
-  try {
-    const [anchorResponse, hostResponse] = await Promise.allSettled([
-      client.query({ query: fetchContactsByAnchorPerson }),
-      client.query({ query: fetchContactsByHost }),
-    ])
+  const fetchAnchorPerson = () =>
+    client.query({ query: fetchContactsByAnchorPerson })
+  const fetchHost = () => client.query({ query: fetchContactsByHost })
+  const responses = await Promise.allSettled([fetchAnchorPerson(), fetchHost()])
 
-    if (anchorResponse.status === 'fulfilled') {
-      anchorData = anchorResponse.value.data.allContacts
-    } else {
-      const annotatingError = errors.helpers.wrap(
-        anchorResponse.reason,
-        'UnhandledError',
-        'Error occurs while fetching anchorData'
-      )
+  anchorData = handleResponse(
+    responses[0],
+    (response: Awaited<ReturnType<typeof fetchAnchorPerson>> | undefined) => {
+      return response?.data?.allContacts ?? []
+    },
+    'Error occurs while fetching anchorData'
+  )
 
-      console.error(
-        JSON.stringify({
-          severity: 'ERROR',
-          message: errors.helpers.printAll(annotatingError, {
-            withStack: false,
-            withPayload: true,
-          }),
-        })
-      )
-      throw annotatingError
-    }
-
-    if (hostResponse.status === 'fulfilled') {
-      hostData = hostResponse.value.data.allContacts
-    } else {
-      const annotatingError = errors.helpers.wrap(
-        hostResponse.reason,
-        'UnhandledError',
-        'Error occurs while fetching hostData'
-      )
-
-      console.error(
-        JSON.stringify({
-          severity: 'ERROR',
-          message: errors.helpers.printAll(annotatingError, {
-            withStack: false,
-            withPayload: true,
-          }),
-        })
-      )
-      throw annotatingError
-    }
-  } catch (err) {
-    console.error(err)
-  }
+  hostData = handleResponse(
+    responses[1],
+    (response: Awaited<ReturnType<typeof fetchHost>> | undefined) => {
+      return response?.data?.allContacts ?? []
+    },
+    'Error occurs while fetching hostData'
+  )
 
   type SectionProps = {
     title: string
