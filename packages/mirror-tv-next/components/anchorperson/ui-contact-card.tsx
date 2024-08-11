@@ -4,13 +4,14 @@ import Link from 'next/link'
 import type { Contact } from '~/graphql/query/contact'
 import styles from './_styles/ui-contact-card.module.scss'
 import { formateHeroImage } from '~/utils'
-
 type Props = {
   item: Contact
+  endPoint?: string
 }
 
-export default function UiContactCard({ item }: Props) {
+export default function UiContactCard({ item, endPoint }: Props) {
   const formattedHeroImage = formateHeroImage(item.anchorImg)
+  console.log(endPoint)
   return (
     <Link
       href={`/anchorperson/${item.slug}`}
