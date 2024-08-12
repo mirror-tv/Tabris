@@ -16,7 +16,11 @@ import { Category, fetchCategoryBySlug } from '~/graphql/query/category'
 import type { Sale } from '~/graphql/query/sales'
 import { getSales } from '~/graphql/query/sales'
 import styles from '~/styles/pages/category.module.scss'
-import { FormattedPostCard, formatArticleCard } from '~/utils'
+import {
+  FormattedPostCard,
+  formatArticleCard,
+  formateDateAtTaipei,
+} from '~/utils'
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 // import GPTAdStatic from '~/components/ads/gpt/gpt-ad'
 
@@ -146,8 +150,37 @@ export default async function CategoryPage({
     )
   }
 
+  const postJsonData = categoryPosts?.slice(5).map((post, index) => {
+    return {
+      '@type': 'ListItem',
+      position: index + 1 + '',
+      item: {
+        '@type': 'NewsArticle',
+        url: `https://www.mnews.tw${post.href}`,
+        headline: post.images.w3200 ?? post.images.original,
+        image: post.images.original,
+        dateCreated: formateDateAtTaipei(
+          post.publishTime,
+          'YYYY.MM.DD HH:mm',
+          ''
+        ),
+      },
+    }
+  })
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    numberOfItems: '5',
+    itemListElement: postJsonData,
+  }
+
   return (
     <section className={styles.postsList}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <GptPopup adKey="MB_CATEGORY" />
       <UiHeadingBordered title={categoryData.name} />
       {postsCount !== 0 && (
