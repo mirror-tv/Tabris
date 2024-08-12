@@ -4,7 +4,6 @@ import Link from 'next/link'
 import type { Contact } from '~/graphql/query/contact'
 import styles from './_styles/ui-contact-card.module.scss'
 import { formateHeroImage } from '~/utils'
-
 type Props = {
   item: Contact
 }

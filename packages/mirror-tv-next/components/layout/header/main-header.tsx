@@ -50,7 +50,11 @@ export default async function MainHeader() {
   let categoriesData: Category[] = []
   let showsData: Show[] = []
 
-  const { allCategories, allSponsors, allShows } = await getData()
+  const {
+    allCategories = [],
+    allSponsors = [],
+    allShows = [],
+  } = await getData()
 
   categoriesData = allCategories
   sponsorsData = allSponsors
