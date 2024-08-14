@@ -78,7 +78,12 @@ const SearchResult = ({
           amountOfElements={searchResultNumber}
           fetchListInPage={handleClickLoadMore}
           isAutoFetch={false}
-          loader={<UiLoadMoreButton title="看更多" className={styles.more} />}
+          loader={
+            <UiLoadMoreButton
+              title="看更多"
+              className={`${styles.more} g-button-load-more`}
+            />
+          }
         >
           {(list) => {
             return list.map((item) => {

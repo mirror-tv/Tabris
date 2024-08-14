@@ -60,7 +60,7 @@ const MobileSearchBar = () => {
                 <div
                   className={`${styles.searchIcon} ${
                     isSearching && styles.isSearchingIcon
-                  }`}
+                  } search-icon`}
                 >
                   GO
                 </div>
