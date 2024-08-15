@@ -15,7 +15,7 @@ switch (ENV) {
     SITE_URL = 'https://mnews.tw'
     YOUTUBE_API_URL = 'https://mnews.tw'
     GTM_ID = 'GTM-PK7VRFX'
-    GLOBAL_CACHE_SETTING = 300
+    GLOBAL_CACHE_SETTING = 0
     HEADER_JSON_URL = 'https://mnews.tw/json/header_v2.json'
     FLASH_NEWS_JSON_URL = 'https://mnews.tw/json/flash_news.json'
     SCHEDULE_JSON_URL = 'https://mnews.tw/json/tv-schedule.json'
@@ -29,7 +29,7 @@ switch (ENV) {
     SITE_URL = 'https://staging.mnews.tw'
     YOUTUBE_API_URL = 'https://staging.mnews.tw'
     GTM_ID = 'GTM-NFH6FDH'
-    GLOBAL_CACHE_SETTING = 300
+    GLOBAL_CACHE_SETTING = 0
     HEADER_JSON_URL = 'https://staging.mnews.tw/json/header_v2.json'
     FLASH_NEWS_JSON_URL = 'https://staging.mnews.tw/json/flash_news.json'
     SCHEDULE_JSON_URL = 'https://staging.mnews.tw/json/tv-schedule.json'

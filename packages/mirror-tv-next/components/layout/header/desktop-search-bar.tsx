@@ -22,7 +22,7 @@ const HeaderSearchBar = () => {
         value={keyword}
         onChange={(e) => setKeyword(e.target.value)}
       />
-      <button type="submit" className={styles.searchButton}>
+      <button type="submit" className={`${styles.searchButton} search-icon`}>
         <Image
           className={styles.searchInputIcon}
           src="/icons/icon-search.svg"
