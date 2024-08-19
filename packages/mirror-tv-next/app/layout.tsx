@@ -12,6 +12,7 @@ import {
 } from '~/constants/environment-variables'
 import '../styles/global.css'
 import CompassFit from '~/components/ads/compass-fit'
+import TagManagerWrapper from './tag-manager'
 
 export const revalidate = GLOBAL_CACHE_SETTING
 
@@ -97,6 +98,7 @@ export default function RootLayout({
       <body>
         <>
           <MainHeader />
+          <TagManagerWrapper />
           {children}
           <Footer />
           <CompassFit />

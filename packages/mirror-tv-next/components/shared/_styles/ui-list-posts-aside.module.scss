@@ -18,8 +18,10 @@
 
 .bordered {
   @include media-breakpoint-up(md) {
-    border: 1px solid $color-grey-deep;
     padding: 24px;
+  }
+  @include media-breakpoint-up(xl) {
+    border: 1px solid $color-grey-deep;
   }
 }
 
