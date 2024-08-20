@@ -1,4 +1,4 @@
-import { formatePostImage } from './image-handler'
+import { formateHeroImage } from './image-handler'
 import type { PostCardItem } from '~/graphql/query/posts'
 import type { PostImage } from '~/utils/image-handler'
 
@@ -17,7 +17,7 @@ const formatArticleCard = (post: PostCardItem): FormattedPostCard => {
     slug: post.slug,
     style: post.style,
     name: post.name,
-    images: formatePostImage(post),
+    images: formateHeroImage(post.heroImage || post.ogImage || {}),
     publishTime: new Date(post.publishTime),
   }
 }
