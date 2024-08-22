@@ -84,7 +84,7 @@ const getPostsByCategorySlug = gql`
       }
       first: $first
       skip: $skip
-      sortBy: [isFeatured_ASC, publishTime_DESC]
+      sortBy: [publishTime_DESC]
     ) {
       publishTime
       ...listingPostFragment

@@ -42,11 +42,24 @@ export default function SideMenu({
   }`
 
   // Splitting shows into multiple columns with 7 shows each
-  const columns = []
-  const showsPerColumn = 7
+  const columns: Show[][] = []
 
-  for (let i = 0; i < shows.length; i += showsPerColumn) {
-    columns.push(shows.slice(i, i + showsPerColumn))
+  if (Array.isArray(shows)) {
+    const sortedShows: Show[][] = [[], []]
+
+    for (let i = 0; i < shows.length; i++) {
+      if (shows[i].sortOrder) {
+        sortedShows[0].push(shows[i])
+      } else {
+        sortedShows[1].push(shows[i])
+      }
+    }
+
+    const newShowsList = [...sortedShows[0], ...sortedShows[1].reverse()]
+    for (let i = 0; i < shows.length; i += 2) {
+      const group: Show[] = newShowsList.slice(i, i + 2) // 取出两个 shows 为一组
+      columns.push(group)
+    }
   }
 
   // Bottom Links
@@ -96,34 +109,36 @@ export default function SideMenu({
       </button>
       <div className={sidebarWrapperClasses}>
         {/* Sponsors Block */}
-        <div className={styles.sponsorsBlock}>
-          <div className={styles.sponsorsWrapper}>
-            {sponsors.slice(0, 3).map((sponsor) => {
-              const formattedLogo = formateHeroImage(sponsor.logo ?? {})
-              return (
-                <div key={sponsor.id}>
-                  <Link
-                    href={
-                      sponsor.url
-                        ? sponsor.url
-                        : `/topic/${sponsor.topic?.slug}`
-                    }
-                    className={styles.sponsorItem}
-                  >
-                    <CallbackImage
-                      alt="Sponsor Logo"
-                      images={formattedLogo}
-                      loadingImage="/images/loading.svg"
-                      defaultImage="/images/image-default.jpg"
-                      rwd={{ default: '100px' }}
-                      priority={true}
-                    />
-                  </Link>
-                </div>
-              )
-            })}
+        {!!sponsors?.length && (
+          <div className={styles.sponsorsBlock}>
+            <div className={styles.sponsorsWrapper}>
+              {sponsors.slice(0, 3).map((sponsor) => {
+                const formattedLogo = formateHeroImage(sponsor.logo ?? {})
+                return (
+                  <div key={sponsor.id}>
+                    <Link
+                      href={
+                        sponsor.url
+                          ? sponsor.url
+                          : `/topic/${sponsor.topic?.slug}`
+                      }
+                      className={styles.sponsorItem}
+                    >
+                      <CallbackImage
+                        alt="Sponsor Logo"
+                        images={formattedLogo}
+                        loadingImage="/images/loading.svg"
+                        defaultImage="/images/image-default.jpg"
+                        rwd={{ default: '100px' }}
+                        priority={true}
+                      />
+                    </Link>
+                  </div>
+                )
+              })}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Categories Block */}
         <ul className={styles.categoriesBlock}>

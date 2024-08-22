@@ -108,11 +108,15 @@
   line-height: normal;
 
   @include media-breakpoint-up(md) {
-    padding: 0 16px;
+    padding: 0 $header-padding-md;
   }
 
   @include media-breakpoint-up(xl) {
-    padding-left: calc((100vw - 1200px) / 2);
+    padding: 0 calc((100dvw - $header-max-width-xl) / 2);
+  }
+
+  @include media-breakpoint-up(xxl) {
+    padding: 0 calc((100dvw - $header-max-width-xxl) / 2);
   }
 }
 
