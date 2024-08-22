@@ -15,7 +15,7 @@ type Show = {
   id: string
   slug: string
   name: string
-  sortOrder: number | null
+  sortOrder: string | null
   bannerImg: BannerImage | null
 }
 

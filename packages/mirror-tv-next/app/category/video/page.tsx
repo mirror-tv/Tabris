@@ -181,7 +181,7 @@ export default async function VideoCategoryPage() {
         data?.allShows?.sort((a, b) => {
           if (a.sortOrder === null) return 1
           if (b.sortOrder === null) return -1
-          return a.sortOrder - b.sortOrder
+          return parseInt(a.sortOrder) - parseInt(b.sortOrder)
         }) ?? []
       )
     },
