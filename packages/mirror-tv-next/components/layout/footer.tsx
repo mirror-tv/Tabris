@@ -160,6 +160,10 @@ export default function Footer(): JSX.Element {
             >
               Google 隱私權與條款
             </a>
+            <br />
+            <span className={styles.agree}>
+              瀏覽此頁面即代表您同意上述授權條款及細則
+            </span>
           </p>
         </div>
       </div>

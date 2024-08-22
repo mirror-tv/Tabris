@@ -59,8 +59,22 @@ export default function NavItems({ categories, shows }: NavItemProps) {
   const columns = []
   const showsPerColumn = 7
 
-  for (let i = 0; i < shows.length; i += showsPerColumn) {
-    columns.push(shows.slice(i, i + showsPerColumn))
+  if (Array.isArray(shows)) {
+    const sortedShows: Show[][] = [[], []]
+
+    for (let i = 0; i < shows.length; i++) {
+      if (shows[i].sortOrder) {
+        sortedShows[0].push(shows[i])
+      } else {
+        sortedShows[1].push(shows[i])
+      }
+    }
+
+    const newShowsList = [...sortedShows[0], ...sortedShows[1].reverse()]
+
+    for (let i = 0; i < shows.length; i += showsPerColumn) {
+      columns.push(newShowsList.slice(i, i + showsPerColumn))
+    }
   }
 
   return (

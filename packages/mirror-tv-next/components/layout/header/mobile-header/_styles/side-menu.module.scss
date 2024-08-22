@@ -28,7 +28,7 @@
 
 .sponsorsBlock {
   background: #153047;
-  height: 92px;
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -37,7 +37,7 @@
 .sponsorsWrapper {
   display: flex;
   gap: 20px;
-  height: 52px;
+  padding: 20px;
   align-items: center;
   overflow: hidden;
 }
@@ -45,7 +45,7 @@
 .sponsorItem {
   display: block;
   position: relative;
-  width: 100px;
+  width: 80px;
   height: 52px;
   overflow: hidden;
   object-fit: contain;
@@ -55,7 +55,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    max-width: 100px;
+    max-width: 80px;
     max-height: 52px;
   }
 }
@@ -64,7 +64,8 @@
   background: #153047;
   display: flex;
   justify-content: center;
-  padding: 20px 42px;
+  padding-top: 36px;
+  padding-bottom: 20px;
 }
 
 .categoriesWrapper {
@@ -72,7 +73,7 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   justify-items: center;
-  row-gap: 20px;
+  row-gap: 28px;
 }
 
 .bottomBlock {
@@ -108,14 +109,17 @@
 
 .showsBlock {
   background: #000;
-  padding: 12px 42px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 40px;
+  padding-right: 40px;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .showColumn {
   display: flex;
-  flex-direction: column;
   gap: 12px;
 }
 
@@ -125,6 +129,7 @@
   font-style: normal;
   font-weight: 400;
   line-height: normal;
+  width: calc(50% - 6px);
 }
 
 .activeShow {

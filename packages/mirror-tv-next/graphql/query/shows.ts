@@ -6,6 +6,7 @@ export type Show = {
   slug: string
   name: string
   bannerImg: HeroImage | null
+  sortOrder?: string | null
 }
 
 export type HostOrStaff = {
