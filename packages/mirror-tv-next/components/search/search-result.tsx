@@ -38,7 +38,7 @@ const SearchResult = ({
       ),
       postStyle: 'article',
       mobileLayoutDirection: 'column' as const,
-      postTitleHighlightText: '',
+      postTitleHighlightText: keyword,
     }
   }
   const handleClickLoadMore = async (page: number) => {

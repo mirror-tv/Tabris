@@ -27,17 +27,20 @@ export default function UiPostCard({
 
   // keyword 時有些字體會被 height light
   const highlightTextProducer = (title: string): string | TrustedHTML => {
-    const highlightTextProducer = (text: string) => {
+    // If no keyword is provided, return the original title
+    if (!postTitleHighlightText) return title
+
+    const wrapInHighlightSpan = (text: string): string => {
       return `<span style="color: #014db8">${text}</span>`
     }
-    const re = new RegExp(title.split(' ').join('|'), 'gi')
-    return title.replace(re, function (matchedText) {
-      return highlightTextProducer(matchedText)
-    })
+
+    // Create a case-insensitive regular expression to find the keyword
+    const highlightRegex = new RegExp(postTitleHighlightText, 'gi')
+
+    return title.replace(highlightRegex, wrapInHighlightSpan)
   }
-  const postTitleProcessed = postTitleHighlightText
-    ? highlightTextProducer(title)
-    : title
+
+  const postTitleProcessed = highlightTextProducer(title)
 
   return (
     <a

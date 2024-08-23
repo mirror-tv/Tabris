@@ -45,19 +45,8 @@ export default function SideMenu({
   const columns: Show[][] = []
 
   if (Array.isArray(shows)) {
-    const sortedShows: Show[][] = [[], []]
-
-    for (let i = 0; i < shows.length; i++) {
-      if (shows[i].sortOrder) {
-        sortedShows[0].push(shows[i])
-      } else {
-        sortedShows[1].push(shows[i])
-      }
-    }
-
-    const newShowsList = [...sortedShows[0], ...sortedShows[1].reverse()]
     for (let i = 0; i < shows.length; i += 2) {
-      const group: Show[] = newShowsList.slice(i, i + 2) // 取出两个 shows 为一组
+      const group: Show[] = shows.slice(i, i + 2) // 取出两个 shows 为一组
       columns.push(group)
     }
   }
