@@ -68,6 +68,7 @@ export default function PostsListManager({
                   title={postItem.name}
                   date={postItem.publishTime}
                   postStyle={postItem.style}
+                  label={postItem.label ?? ''}
                   mobileLayoutDirection="row"
                 />
               </li>

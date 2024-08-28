@@ -9,6 +9,7 @@ type Sale = {
       name: string
     }
   }
+  __typename: 'Sale'
 }
 
 const getSales = gql`

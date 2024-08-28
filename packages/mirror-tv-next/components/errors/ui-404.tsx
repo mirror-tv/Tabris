@@ -28,8 +28,9 @@ export default function Ui404() {
     fetchDataAndSetState()
   }, [])
 
-  const formattedPosts: FormattedPostCard[] =
-    popularPosts.map(formatArticleCard)
+  const formattedPosts: FormattedPostCard[] = popularPosts.map((post) =>
+    formatArticleCard(post)
+  )
 
   return (
     <div className={`${font.className} ${styles.error}`}>

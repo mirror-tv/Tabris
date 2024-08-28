@@ -103,7 +103,9 @@ export default async function CategoryPage({
       },
     })
     salePosts =
-      data?.allSales?.map((sale) => formatArticleCard(sale?.adPost)) ?? []
+      data?.allSales?.map((sale) =>
+        formatArticleCard(sale?.adPost, { label: '特企' })
+      ) ?? []
   } catch (err) {
     const annotatingError = errors.helpers.wrap(
       err,
