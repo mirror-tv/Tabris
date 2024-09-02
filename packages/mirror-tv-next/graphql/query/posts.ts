@@ -84,7 +84,7 @@ const getPostsByCategorySlug = gql`
       }
       first: $first
       skip: $skip
-      sortBy: [publishTime_DESC]
+      sortBy: [publishTime_DESC, id_DESC]
     ) {
       publishTime
       ...listingPostFragment

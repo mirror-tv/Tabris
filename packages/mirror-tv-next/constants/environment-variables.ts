@@ -9,6 +9,7 @@ let SCHEDULE_JSON_URL: string
 let POPULAR_POSTS_URL: string
 let POPULAR_VIDEOS_JSON_URL: string
 let YOUTUBE_API_URL: string
+let FEATURE_POSTS_URL: string
 
 switch (ENV) {
   case 'prod':
@@ -22,7 +23,7 @@ switch (ENV) {
     POPULAR_POSTS_URL = 'https://mnews.tw/json/popularlist.json'
     POPULAR_VIDEOS_JSON_URL =
       'https://mnews.tw/json/popular-videonews-list.json'
-
+    FEATURE_POSTS_URL = 'https://www.mnews.tw/api/gcs/featured_categories_post'
     break
 
   case 'staging':
@@ -30,13 +31,14 @@ switch (ENV) {
     YOUTUBE_API_URL = 'https://staging.mnews.tw'
     GTM_ID = 'GTM-NFH6FDH'
     GLOBAL_CACHE_SETTING = 0
-    HEADER_JSON_URL = 'https://mnews.tw/json/header_v2-1.json'
+    HEADER_JSON_URL = 'https://staging.mnews.tw/json/header_v2-1.json'
     FLASH_NEWS_JSON_URL = 'https://staging.mnews.tw/json/flash_news.json'
     SCHEDULE_JSON_URL = 'https://staging.mnews.tw/json/tv-schedule.json'
     POPULAR_POSTS_URL = 'https://staging.mnews.tw/json/popularlist.json'
     POPULAR_VIDEOS_JSON_URL =
       'https://staging.mnews.tw/json/popular-videonews-list.json'
-
+    FEATURE_POSTS_URL =
+      'https://staging.mnews.tw/api/gcs/featured_categories_post'
     break
 
   case 'dev':
@@ -50,7 +52,7 @@ switch (ENV) {
     POPULAR_POSTS_URL = 'https://dev.mnews.tw/json/popularlist.json'
     POPULAR_VIDEOS_JSON_URL =
       'https://mnews.tw/json/popular-videonews-list.json'
-
+    FEATURE_POSTS_URL = 'https://dev.mnews.tw/api/gcs/featured_categories_post'
     break
 
   default:
@@ -64,7 +66,7 @@ switch (ENV) {
     POPULAR_POSTS_URL = 'https://dev.mnews.tw/json/popularlist.json'
     POPULAR_VIDEOS_JSON_URL =
       'https://mnews.tw/json/popular-videonews-list.json'
-
+    FEATURE_POSTS_URL = 'https://dev.mnews.tw/api/gcs/featured_categories_post'
     break
 }
 
@@ -79,4 +81,5 @@ export {
   POPULAR_POSTS_URL,
   POPULAR_VIDEOS_JSON_URL,
   YOUTUBE_API_URL,
+  FEATURE_POSTS_URL,
 }

@@ -9,9 +9,7 @@ type Props = {
 }
 
 export default function UiPostCard({ item }: Props) {
-  console.log(item)
   const formattedHeroImage = formateHeroImage(item.heroImage ?? {})
-  console.log({ formattedHeroImage })
   return (
     <Link
       href={`/story/${item.slug}`}

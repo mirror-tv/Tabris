@@ -23,7 +23,7 @@ export default function PlayPauseButton({
 
   return (
     <div
-      className={`${styles.togglePlayBtn} player__control `}
+      className={`${styles.togglePlayBtn} GTM-player-control `}
       onClick={handleClick}
     >
       <span

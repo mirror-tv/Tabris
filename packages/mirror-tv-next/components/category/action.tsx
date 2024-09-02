@@ -9,7 +9,7 @@ type FetchMoreItemsType = {
   categorySlug: string
   pageSize: number
   isWithCount: boolean
-  salePostsCount: number
+  filteredSlug: string[]
 }
 
 async function fetchPostsItems({
@@ -17,7 +17,7 @@ async function fetchPostsItems({
   categorySlug,
   pageSize,
   isWithCount,
-  salePostsCount,
+  filteredSlug = [],
 }: FetchMoreItemsType): Promise<{
   allPosts: PostCardItem[]
   _allPostsMeta?: { count: number }
@@ -31,11 +31,10 @@ async function fetchPostsItems({
       query: getPostsByCategorySlug,
       variables: {
         categorySlug,
-        // 第一頁因為有置頂文章，因此要多抓一篇
-        first: page === 0 ? pageSize + 1 - salePostsCount : pageSize,
-        skip: page === 0 ? 0 : page * pageSize + 1 - salePostsCount,
+        first: pageSize,
+        skip: page * pageSize,
         withCount: isWithCount,
-        filteredSlug: FILTERED_SLUG,
+        filteredSlug: [...FILTERED_SLUG, ...filteredSlug],
       },
     })
     return data
