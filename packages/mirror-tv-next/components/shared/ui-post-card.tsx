@@ -8,6 +8,7 @@ export type UiPostCardProps = {
   href: string
   postStyle: string | undefined
   images: PostImage
+  label?: string
 
   // Differentiate two usages in / and /category/:name pages
   mobileLayoutDirection: 'row' | 'column'
@@ -22,6 +23,7 @@ export default function UiPostCard({
   postStyle = 'article',
   mobileLayoutDirection = 'column',
   postTitleHighlightText,
+  label = '',
 }: UiPostCardProps) {
   const isVideoNews = postStyle === 'videoNews'
 
@@ -53,6 +55,7 @@ export default function UiPostCard({
       target="_blank"
       rel="noreferrer noopener"
     >
+      {!!label && <span className={styles.label}>{label}</span>}
       <span className={styles.cardWrapper}>
         <figure className={styles.cardImage}>
           <ResponsiveImage

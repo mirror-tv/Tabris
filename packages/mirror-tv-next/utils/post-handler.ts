@@ -1,5 +1,6 @@
 import { formateHeroImage } from './image-handler'
 import type { PostCardItem } from '~/graphql/query/posts'
+import { FeaturePost } from '~/types/api-data'
 import type { PostImage } from '~/utils/image-handler'
 
 export type FormattedPostCard = {
@@ -9,16 +10,22 @@ export type FormattedPostCard = {
   name: string
   images: PostImage
   publishTime: Date
+  label?: string
 }
 
-const formatArticleCard = (post: PostCardItem): FormattedPostCard => {
+const formatArticleCard = (
+  post: PostCardItem | FeaturePost,
+  options?: { label?: string | undefined }
+): FormattedPostCard => {
+  const imageObj = post.heroImage || (post as PostCardItem).ogImage || {}
   return {
     href: `/story/${post.slug}`,
     slug: post.slug,
     style: post.style,
     name: post.name,
-    images: formateHeroImage(post.heroImage || post.ogImage || {}),
+    images: formateHeroImage(imageObj),
     publishTime: new Date(post.publishTime),
+    label: options?.label,
   }
 }
 

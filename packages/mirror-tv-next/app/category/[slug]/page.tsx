@@ -1,4 +1,5 @@
 import errors from '@twreporter/errors'
+import axios from 'axios'
 import type { Metadata } from 'next'
 import dynamic from 'next/dynamic'
 import { notFound } from 'next/navigation'
@@ -9,6 +10,7 @@ import PostsListManager from '~/components/category/posts-list-manager'
 import UiFeaturePost from '~/components/category/ui-feature-post'
 import UiHeadingBordered from '~/components/shared/ui-heading-bordered'
 import {
+  FEATURE_POSTS_URL,
   GLOBAL_CACHE_SETTING,
   SITE_URL,
 } from '~/constants/environment-variables'
@@ -16,6 +18,7 @@ import { Category, fetchCategoryBySlug } from '~/graphql/query/category'
 import type { Sale } from '~/graphql/query/sales'
 import { getSales } from '~/graphql/query/sales'
 import styles from '~/styles/pages/category.module.scss'
+import { FeaturePost } from '~/types/api-data'
 import {
   FormattedPostCard,
   formatArticleCard,
@@ -88,6 +91,7 @@ export default async function CategoryPage({
   let postsCount: number = 0
   let categoryPosts: FormattedPostCard[] = []
   let salePosts: FormattedPostCard[] = []
+  let featurePost: FeaturePost | null = null
 
   categoryData = await fetchCategoryData(params.slug)
   if (!categoryData.name) return notFound()
@@ -103,7 +107,9 @@ export default async function CategoryPage({
       },
     })
     salePosts =
-      data?.allSales?.map((sale) => formatArticleCard(sale?.adPost)) ?? []
+      data?.allSales?.map((sale) =>
+        formatArticleCard(sale?.adPost, { label: '特企' })
+      ) ?? []
   } catch (err) {
     const annotatingError = errors.helpers.wrap(
       err,
@@ -123,15 +129,43 @@ export default async function CategoryPage({
   }
 
   try {
+    const {
+      data: { allPosts },
+    } = await axios.get(FEATURE_POSTS_URL)
+    featurePost = allPosts.find((post: FeaturePost) =>
+      post.categories.some((category) => category.name === categoryData.name)
+    )
+  } catch (err) {
+    const annotatingError = errors.helpers.wrap(
+      err,
+      'UnhandledError',
+      'Error occurs while fetching feature posts data in category page'
+    )
+
+    console.error(
+      JSON.stringify({
+        severity: 'ERROR',
+        message: errors.helpers.printAll(annotatingError, {
+          withStack: false,
+          withPayload: true,
+        }),
+      })
+    )
+  }
+
+  try {
     const { allPosts, _allPostsMeta } = await fetchPostsItems({
       page: 0,
-      salePostsCount: salePosts?.length ?? 0,
       categorySlug: categoryData.slug,
       pageSize: PAGE_SIZE,
       isWithCount: true,
+      filteredSlug: featurePost ? [featurePost.slug] : [],
     })
     postsCount = _allPostsMeta?.count ?? 0
     categoryPosts = allPosts.map((post) => formatArticleCard(post)) ?? []
+    if (featurePost) {
+      categoryPosts.unshift(formatArticleCard(featurePost))
+    }
   } catch (err) {
     const annotatingError = errors.helpers.wrap(
       err,
@@ -168,6 +202,20 @@ export default async function CategoryPage({
     }
   })
 
+  const salesLength = salePosts?.length || 0
+  const salesPostsInsertIndex = [2, 4, 8, 10].slice(0, salesLength)
+  const renderedPostsListInit: FormattedPostCard[] = [...categoryPosts.slice(1)]
+
+  if (salesLength) {
+    salesPostsInsertIndex.forEach((position, index) => {
+      renderedPostsListInit.splice(
+        position,
+        0,
+        salePosts[salesLength - 1 - index]
+      )
+    })
+  }
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
@@ -187,11 +235,11 @@ export default async function CategoryPage({
         <div className={`${styles.listWrapper} list-latest-wrapper`}>
           <UiFeaturePost post={categoryPosts[0]} />
           <PostsListManager
-            salePostsList={salePosts}
             categorySlug={categoryData.slug}
             pageSize={PAGE_SIZE}
             postsCount={postsCount}
-            initPostsList={categoryPosts.slice(1)}
+            initPostsList={renderedPostsListInit}
+            filteredSlug={featurePost ? [featurePost.slug] : []}
           />
         </div>
       )}

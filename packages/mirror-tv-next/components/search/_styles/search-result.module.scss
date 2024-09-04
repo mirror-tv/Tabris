@@ -1,9 +1,8 @@
-@import '/styles/theme/breakpoints';
-@import '/styles/theme/variable';
+@import "/styles/theme/breakpoints";
+@import "/styles/theme/variable";
 
 .main {
   min-height: 100dvh;
-  max-width: 1200px;
   margin: 0 auto;
   padding-top: 50px; /* the height of mobile nav*/
   display: flex;
@@ -15,7 +14,12 @@
     padding: 36px 40px 48px;
   }
   @include media-breakpoint-up(lg) {
-    padding: 80px 40px 32px;
+    padding-top: 80px;
+    padding-bottom: 32px;
+  }
+  @include media-breakpoint-up(xl) {
+    max-width: 1000px;
+    padding: 80px 0px 32px;
   }
 }
 

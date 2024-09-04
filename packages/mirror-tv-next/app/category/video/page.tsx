@@ -166,9 +166,9 @@ export default async function VideoCategoryPage() {
     ) => {
       // post in json doesn't have 'style' attribute
       return (
-        popularPostsData?.report?.map((post) =>
-          formatArticleCard({ ...post, style: 'videoNews' })
-        ) ?? []
+        popularPostsData?.report
+          ?.map((post) => formatArticleCard({ ...post, style: 'videoNews' }))
+          ?.slice(5) ?? []
       )
     },
     'Error occurs while fetching popular videos in video category page'
@@ -249,7 +249,10 @@ export default async function VideoCategoryPage() {
           categoryName: getCategoryNameBySlug(
             videoPostsData?.categorySlug ?? ''
           ),
-          posts: videoPostsData?.data?.allPosts?.map(formatArticleCard) ?? [],
+          posts:
+            videoPostsData?.data?.allPosts?.map((post) =>
+              formatArticleCard(post)
+            ) ?? [],
           count: videoPostsData?.data?._allPostsMeta?.count ?? 0,
         }
       },

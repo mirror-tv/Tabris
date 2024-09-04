@@ -64,7 +64,10 @@ export default function VideoPostsList({
     })
     if (!newPosts) return
     setFetchedTime((prev) => prev + 1)
-    setPostsList((oldPost) => [...oldPost, ...newPosts.map(formatArticleCard)])
+    setPostsList((oldPost) => [
+      ...oldPost,
+      ...newPosts.map((post) => formatArticleCard(post)),
+    ])
     setIsFetching(false)
   }
 
