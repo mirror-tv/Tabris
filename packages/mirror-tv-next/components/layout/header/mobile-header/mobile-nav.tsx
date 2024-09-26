@@ -1,8 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import type { Category } from '~/graphql/query/category'
-import type { Show } from '~/graphql/query/shows'
-import type { Sponsor } from '~/graphql/query/sponsors'
+import type { Category, Show, Sponsor } from '~/types/header'
 
 import styles from './_styles/mobile-nav.module.scss'
 import SideMenu from './side-menu'

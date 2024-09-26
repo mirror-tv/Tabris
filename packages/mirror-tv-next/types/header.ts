@@ -1,4 +1,4 @@
-type Category = {
+export type Category = {
   name: string
   slug: string
   sortOrder: number | null
@@ -11,7 +11,7 @@ type BannerImage = {
   urlOriginal: string
 }
 
-type Show = {
+export type Show = {
   id: string
   slug: string
   name: string
@@ -19,7 +19,7 @@ type Show = {
   bannerImg: BannerImage | null
 }
 
-type Sponsor = {
+export type Sponsor = {
   id: string
   title: string | null
   url: string | null

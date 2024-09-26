@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import type { Sponsor } from '~/types/header'
 import styles from './_styles/header-top.module.scss'
 import type { Sponsor } from '~/graphql/query/sponsors'
 import { formateHeroImage } from '~/utils'

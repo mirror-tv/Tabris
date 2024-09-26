@@ -11,6 +11,7 @@ import {
   SITE_URL,
 } from '~/constants/environment-variables'
 import '../styles/global.css'
+import { AppProvider } from '../context/header-json-provider'
 import CompassFit from '~/components/ads/compass-fit'
 import TagManagerWrapper from './tag-manager'
 
@@ -96,11 +97,12 @@ export default function RootLayout({
         })();`}
       </Script>
       <body>
-        <>
+        <AppProvider>
           <MainHeader />
           <TagManagerWrapper />
           {children}
           <Footer />
+        </AppProvider>
           <CompassFit />
         </>
       </body>
