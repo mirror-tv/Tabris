@@ -1,0 +1,25 @@
+// size-hide.scss
+@import 'breakpoints';
+
+// Mobile-hide: 在手機版（md）以下隱藏
+.mobile-hide {
+  @include media-breakpoint-down(md) {
+    display: none;
+  }
+}
+
+// Tablet-hide: 在桌機版（md ~ xl）隱藏
+.tablet-hide {
+  @include media-breakpoint-up(md) {
+    @include media-breakpoint-down(xl) {
+      display: none;
+    }
+  }
+}
+
+// Desktop-hide: 大於等於 xl 時隱藏
+.desktop-hide {
+  @include media-breakpoint-up(xl) {
+    display: none;
+  }
+}

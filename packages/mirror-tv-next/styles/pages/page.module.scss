@@ -1,4 +1,5 @@
 @import '/styles/theme/breakpoints';
+@import '/styles/theme/size-hide';
 
 .main {
   min-height: 100dvh;
@@ -14,7 +15,7 @@
   padding: 0 8px;
   width: 100%;
 
-  @include media-breakpoint-up(md) {
-    display: none;
-  }
+  // mobile only
+  @extend .tablet-hide;
+  @extend .desktop-hide;
 }

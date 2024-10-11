@@ -1,4 +1,5 @@
 @import '/styles/theme/breakpoints';
+@import '/styles/theme/size-hide';
 
 .main {
   margin: 0 auto;
@@ -53,10 +54,8 @@
 }
 
 .desktopOnly {
-  display: none;
-  @include media-breakpoint-up(xl) {
-    display: block;
-  }
+  @extend .desktop-hide;
+  @extend .tablet-hide;
 }
 
 .mobileOnly {
@@ -64,9 +63,7 @@
   @include media-breakpoint-up(md) {
     padding: 0;
   }
-  @include media-breakpoint-up(xl) {
-    display: none;
-  }
+  @extend .desktop-hide;
 }
 
 .mobileAside {
