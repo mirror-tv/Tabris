@@ -3,6 +3,12 @@
 .podcast {
   font-feature-settings: 'clig' off, 'liga' off;
   letter-spacing: 0.5px;
+  @include media-breakpoint-up(md) {
+    max-width: 688px;
+  }
+  @include media-breakpoint-up(xl) {
+    max-width: $max-width-xl;
+  }
 }
 
 .title {

@@ -4,12 +4,17 @@
 .item {
   padding: 8px 0;
   margin: 0 4px 0 4px;
+  max-width: 100%;
   &:hover {
     cursor: pointer;
     h4 {
       color: $color-blue;
       font-weight: 500;
       line-height: normal;
+      max-width: 100%;
+      overflow: hidden;
+      display: -webkit-box;
+      text-overflow: ellipsis;
     }
   }
   & + & {
@@ -29,6 +34,7 @@
     align-items: center;
     flex: 1;
     justify-content: space-between;
+    max-width: 100%;
   }
 }
 

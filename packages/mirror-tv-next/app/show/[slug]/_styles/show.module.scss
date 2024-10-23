@@ -63,28 +63,12 @@
   }
 }
 
-.aside {
-  display: none;
-  @include media-breakpoint-up(md) {
-    display: block;
-    min-width: 336px;
-    max-width: 336px;
-    padding: 0;
-    margin: 0 0 0 44px;
-    * {
-      margin: 10px;
-    }
-  }
-  @include media-breakpoint-up(xl) {
-    margin: 0 0 0 auto;
-  }
-}
-
 .show {
   flex: 1;
   margin: 24px 0 0;
   @include media-breakpoint-up(md) {
     margin: 40px 0 0;
+    max-width: 100%;
   }
   @include media-breakpoint-up(xl) {
     margin: 48px 0 0;

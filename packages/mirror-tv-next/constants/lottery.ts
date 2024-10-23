@@ -1,0 +1,1 @@
+export const ARTICLE_READ_THRESHOLD = 30
