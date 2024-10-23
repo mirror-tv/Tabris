@@ -76,7 +76,7 @@ export default function Counter() {
 
   return (
     <div>
-      {(ENV === 'dev' || ENV === 'local' || ENV === 'staging') && (
+      {(ENV === 'dev' || ENV === 'local') && (
         <div className={styles.sudo} onClick={clickSudo}>
           點我新增 30 篇（只會在 dev 出現）
         </div>

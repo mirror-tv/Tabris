@@ -10,6 +10,7 @@ import {
   GTM_ID,
   SITE_URL,
   LOTTERY_FEATURE_TOGGLE,
+  ENV,
 } from '~/constants/environment-variables'
 import '../styles/global.css'
 import CompassFit from '~/components/ads/compass-fit'
@@ -42,7 +43,15 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   const now = new Date()
-  const targetDate = new Date('2024-10-23T13:00:00+08:00')
+  let targetDate
+  if (ENV === 'prod') {
+    targetDate = new Date('2024-10-24T12:00:00+08:00')
+  } else if (ENV === 'staging') {
+    targetDate = new Date('2024-10-24T11:30:00+08:00')
+  } else {
+    targetDate = new Date('2024-10-23T13:00:00+08:00')
+  }
+
   return (
     <html lang="zh-Hant" className={`${noto_sans.variable} `}>
       <GoogleTagManager gtmId={GTM_ID} />
