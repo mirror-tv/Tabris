@@ -3,6 +3,8 @@ import Image from 'next/image'
 import styles from './_styles/info-submission-modal.module.scss'
 import { ARTICLE_READ_THRESHOLD } from '~/constants/lottery'
 import { submitFormAction } from './action'
+import { ENV } from '~/constants/environment-variables'
+import axios from 'axios'
 
 interface Props {
   readSlugs: string[]
@@ -66,7 +68,30 @@ export default function InfoSubmissionModal({
 
     const data = [[name, phone, address, email, new Date()]]
     try {
-      const response = await submitFormAction(data)
+      let response
+      if (ENV === 'prod') {
+        try {
+          response = await axios.post('/api/sheets', JSON.stringify(data), {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+          if (response.status !== 200) {
+            throw new Error(
+              `Error: ${response.status} - ${response.statusText}`
+            )
+          }
+          return response.data
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+          console.log(
+            JSON.stringify({ severity: 'ERROR', message: error.stack })
+          )
+          return { status: error, error }
+        }
+      } else {
+        response = await submitFormAction(data)
+      }
       if (!response || response.status === 'error') {
         throw new Error(response?.error || 'Unknown error occurred')
       }
