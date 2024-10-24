@@ -71,23 +71,21 @@ export default function InfoSubmissionModal({
       let response
       if (ENV === 'prod') {
         try {
-          response = await axios.post('/api/sheets', JSON.stringify(data), {
+          const res = await axios.post('/api/sheets', JSON.stringify(data), {
             headers: {
               'Content-Type': 'application/json',
             },
           })
-          if (response.status !== 200) {
-            throw new Error(
-              `Error: ${response.status} - ${response.statusText}`
-            )
+          if (res.status !== 200) {
+            throw new Error(`Error: ${res.status} - ${res.statusText}`)
           }
-          return response.data
+          response = res.data
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
           console.log(
             JSON.stringify({ severity: 'ERROR', message: error.stack })
           )
-          return { status: error, error }
+          response = { status: error, error }
         }
       } else {
         response = await submitFormAction(data)
