@@ -181,6 +181,9 @@ export default function GptAd({
         case adKey?.includes('PC'):
           setShouldAd(isDesktopWidth)
           return
+        case adKey?.includes('ALL'):
+          setShouldAd(true)
+          return
         default:
           setShouldAd(true)
           return

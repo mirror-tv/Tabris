@@ -64,6 +64,15 @@ const nextConfig = {
           },
         ],
       },
+      {
+        source: '/search/:keyword',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=600, must-revalidate',
+          },
+        ],
+      },
     ]
   },
   webpack: (config) => {

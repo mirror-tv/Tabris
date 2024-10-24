@@ -9,10 +9,13 @@ import {
   GLOBAL_CACHE_SETTING,
   GTM_ID,
   SITE_URL,
+  LOTTERY_FEATURE_TOGGLE,
+  ENV,
 } from '~/constants/environment-variables'
 import '../styles/global.css'
 import CompassFit from '~/components/ads/compass-fit'
 import TagManagerWrapper from './tag-manager'
+import Counter from '~/components/layout/lottery/counter'
 
 export const revalidate = GLOBAL_CACHE_SETTING
 
@@ -39,6 +42,16 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const now = new Date()
+  let targetDate
+  if (ENV === 'prod') {
+    targetDate = new Date('2024-10-24T12:00:00+08:00')
+  } else if (ENV === 'staging') {
+    targetDate = new Date('2024-10-24T11:30:00+08:00')
+  } else {
+    targetDate = new Date('2024-10-23T13:00:00+08:00')
+  }
+
   return (
     <html lang="zh-Hant" className={`${noto_sans.variable} `}>
       <GoogleTagManager gtmId={GTM_ID} />
@@ -101,6 +114,7 @@ export default function RootLayout({
           <TagManagerWrapper />
           {children}
           <Footer />
+          {LOTTERY_FEATURE_TOGGLE === 'on' && now > targetDate && <Counter />}
           <CompassFit />
         </>
       </body>

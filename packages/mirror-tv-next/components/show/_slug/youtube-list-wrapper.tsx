@@ -6,6 +6,7 @@ import { formateYoutubeListRes } from '~/utils'
 
 type YoutubeListHandlerProps = {
   urls: (string | null)[]
+  isDesktop: boolean
 }
 
 type YoutubeListInfoFormatted = {
@@ -15,6 +16,7 @@ type YoutubeListInfoFormatted = {
 
 export default async function YoutubeListWrapper({
   urls = [],
+  isDesktop,
 }: YoutubeListHandlerProps) {
   const getListIdAndName = (inputString: string | null, index: number) => {
     if (!inputString) return null
@@ -60,8 +62,6 @@ export default async function YoutubeListWrapper({
   })
 
   return (
-    <section>
-      <YoutubeListHandler playLists={playListRendered} />
-    </section>
+    <YoutubeListHandler playLists={playListRendered} isDesktop={isDesktop} />
   )
 }

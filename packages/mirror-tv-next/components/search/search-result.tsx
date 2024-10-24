@@ -7,8 +7,6 @@ import type { SearchItem, SearchResponse } from '~/types/search'
 import InfiniteScrollList from '@readr-media/react-infinite-scroll-list'
 import { searchAPI } from '~/app/search/[keyword]/action'
 import errors from '@twreporter/errors'
-import { GPTPlaceholderDesktop } from '../ads/gpt/gpt-placeholder'
-import GptAd from '../ads/gpt/gpt-ad'
 
 type SearchResultProps = {
   keyword: string
@@ -72,10 +70,6 @@ const SearchResult = ({
 
   return (
     <main className={styles.main}>
-      <GPTPlaceholderDesktop>
-        <p>廣告</p>
-        <GptAd pageKey="all" adKey="PC_HD" />
-      </GPTPlaceholderDesktop>
       <p className={styles.searchKeyword}>{keyword}</p>
       <ol className={`${styles.searchResultList} search-result__list`}>
         <InfiniteScrollList

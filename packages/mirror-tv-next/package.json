@@ -20,6 +20,7 @@
     "dayjs": "^1.11.10",
     "graphql": "^16.8.1",
     "graphql-tag": "^2.12.6",
+    "js-cookie": "^3.0.5",
     "next": "14.0.3",
     "react": "^18",
     "react-dom": "18.2.0",
@@ -33,6 +34,7 @@
   },
   "devDependencies": {
     "@types/google-publisher-tag": "^1.20240219.0",
+    "@types/js-cookie": "^3.0.6",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

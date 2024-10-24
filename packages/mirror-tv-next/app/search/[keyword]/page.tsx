@@ -3,6 +3,8 @@ import SearchResult from '~/components/search/search-result'
 import errors from '@twreporter/errors'
 import { searchAPI } from './action'
 import type { SearchResponse, SearchItem } from '~/types/search'
+import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
+import GptAd from '~/components/ads/gpt/gpt-ad'
 
 type SearchPageProps = {
   params: { keyword: string }
@@ -46,7 +48,16 @@ export default async function SearchPage({ params }: SearchPageProps) {
     )
   }
 
-  if (!searchResultList.length) return <NoSearchResult keyword={keyword} />
+  if (!searchResultList.length)
+    return (
+      <>
+        <GPTPlaceholderDesktop>
+          <p>廣告</p>
+          <GptAd pageKey="all" adKey="PC_HD" />
+        </GPTPlaceholderDesktop>
+        <NoSearchResult keyword={keyword} />
+      </>
+    )
 
   const searchResultProps = {
     keyword,
@@ -54,5 +65,13 @@ export default async function SearchPage({ params }: SearchPageProps) {
     startIndex,
     searchResultNumber,
   }
-  return <SearchResult {...searchResultProps} />
+  return (
+    <>
+      <GPTPlaceholderDesktop>
+        <p>廣告</p>
+        <GptAd pageKey="all" adKey="PC_HD" />
+      </GPTPlaceholderDesktop>
+      <SearchResult {...searchResultProps} />
+    </>
+  )
 }

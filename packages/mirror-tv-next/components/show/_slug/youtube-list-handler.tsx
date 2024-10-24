@@ -10,16 +10,21 @@ import { formateYoutubeListRes } from '~/utils'
 
 type YoutubeListHandlerProps = {
   playLists: FormatPlayListItems[]
+  isDesktop: boolean
 }
 
 export default function YoutubeListHandler({
   playLists = [],
+  isDesktop,
 }: YoutubeListHandlerProps) {
   const [activeList, setActiveList] = useState(0)
   const [listData, setListData] = useState(playLists)
   const { width } = useWindowDimensions()
   const isMobile = useMemo(() => {
     return width && width < 768
+  }, [width])
+  const nowIsDesktop = useMemo(() => {
+    return width && width >= 1200
   }, [width])
 
   const fetchMoreItems = async (index: number) => {
@@ -39,6 +44,8 @@ export default function YoutubeListHandler({
       return newData
     })
   }
+
+  if (nowIsDesktop !== isDesktop) return null
 
   return (
     <>
