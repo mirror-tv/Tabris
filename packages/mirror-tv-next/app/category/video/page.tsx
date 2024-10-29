@@ -168,7 +168,7 @@ export default async function VideoCategoryPage() {
       return (
         popularPostsData?.report
           ?.map((post) => formatArticleCard({ ...post, style: 'videoNews' }))
-          ?.slice(5) ?? []
+          ?.slice(0, 5) ?? []
       )
     },
     'Error occurs while fetching popular videos in video category page'
