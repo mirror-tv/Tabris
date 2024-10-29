@@ -166,9 +166,9 @@ export default async function VideoCategoryPage() {
     ) => {
       // post in json doesn't have 'style' attribute
       return (
-        popularPostsData?.report
-          ?.map((post) => formatArticleCard({ ...post, style: 'videoNews' }))
-          ?.slice(0, 5) ?? []
+        popularPostsData?.report?.map((post) =>
+          formatArticleCard({ ...post, style: 'videoNews' })
+        ) ?? []
       )
     },
     'Error occurs while fetching popular videos in video category page'
