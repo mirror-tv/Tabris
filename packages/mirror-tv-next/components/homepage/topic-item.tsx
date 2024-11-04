@@ -14,7 +14,7 @@ type TopicListProps = {
 export default function TopicItem({ topic, isFirst }: TopicListProps) {
   const postsList = topic.sortDir === 'asc' ? topic.postASC : topic.postDESC
   return (
-    <li className={styles.item}>
+    <li className={`${styles.item} ${isFirst ? styles.isFirst : ''}`}>
       {isFirst && (
         <Link
           href={`/topic/${topic.slug}`}
@@ -37,36 +37,40 @@ export default function TopicItem({ topic, isFirst }: TopicListProps) {
         </Link>
       )}
       <div className={`${styles.postsList} ${isFirst ? '' : styles.border}`}>
-        <Link
-          href={`/topic/${topic.slug}`}
-          target="_blank"
-          rel="noreferrer noopener"
-          className={`${styles.title} `}
-        >
-          {topic.name}
-        </Link>
-        <ul>
-          {postsList.map((post) => {
-            return (
-              <li key={post.slug} className={styles.postItem}>
-                <Link
-                  href={`/story/${post.slug}`}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className={styles.post}
-                >
-                  {post.name}
-                </Link>
-              </li>
-            )
-          })}
-        </ul>
+        <div>
+          <Link
+            href={`/topic/${topic.slug}`}
+            target="_blank"
+            rel="noreferrer noopener"
+            className={`${styles.title} `}
+          >
+            {topic.name}
+          </Link>
+          <ul>
+            {postsList.map((post) => {
+              return (
+                <li key={post.slug} className={styles.postItem}>
+                  <Link
+                    href={`/story/${post.slug}`}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className={styles.post}
+                  >
+                    {post.name}
+                  </Link>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
         <div className={styles.btnGroup}>
           <UiMoreTopicBtn title="更多報導" link={`/topic/${topic.slug}`} />
           <UiMoreTopicBtn
             title="更多專題"
             link="/topic"
-            className={styles.secondMoreBtn}
+            className={`${styles.secondMoreBtn} ${
+              isFirst ? styles.btnOfFirst : ''
+            }`}
           />
         </div>
       </div>

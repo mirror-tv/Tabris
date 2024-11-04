@@ -9,6 +9,19 @@
   }
 }
 
+.isFirst {
+  @include media-breakpoint-up(xl) {
+    display: flex;
+    gap: 24px;
+    > div {
+      margin-top: 0;
+      display: flex;
+      justify-content: space-between;
+      flex-direction: column;
+    }
+  }
+}
+
 .imgWrapper {
   aspect-ratio: 2;
   margin-bottom: 12px;
@@ -16,6 +29,12 @@
   @include media-breakpoint-up(md) {
     margin-bottom: 24px;
     aspect-ratio: calc(680 / 382);
+  }
+  @include media-breakpoint-up(xl) {
+    width: 581px;
+    height: 324px;
+    aspect-ratio: auto;
+    margin: 0;
   }
 }
 
@@ -91,5 +110,14 @@
   &:hover {
     background: #004dbc;
     color: #e7e7e7;
+  }
+  @include media-breakpoint-up(xl) {
+    display: none;
+  }
+}
+
+.btnOfFirst {
+  @include media-breakpoint-up(xl) {
+    display: block;
   }
 }

@@ -16,6 +16,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  @include media-breakpoint-up(xl) {
+    align-items: start;
+    justify-content: start;
+  }
 }
 
 .listTitle {
@@ -35,4 +39,11 @@
 
 .list {
   margin-top: 32px;
+  @include media-breakpoint-up(xl) {
+    display: flex;
+    gap: 38px;
+    & > li {
+      width: calc((100% - 38px * 2) / 3);
+    }
+  }
 }
