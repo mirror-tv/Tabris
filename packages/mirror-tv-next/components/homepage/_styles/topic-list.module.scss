@@ -7,7 +7,7 @@
   @include media-breakpoint-up(md) {
     max-width: 680px;
   }
-  @include media-breakpoint-up(md) {
+  @include media-breakpoint-up(xl) {
     max-width: $max-width-xl;
   }
 }

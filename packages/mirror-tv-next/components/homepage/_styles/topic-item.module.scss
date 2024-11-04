@@ -3,17 +3,27 @@
 
 .item {
   display: block;
-  margin-top: 32px;
+  margin-top: 36px;
+  @include media-breakpoint-up(md) {
+    margin-top: 30px;
+  }
 }
 
 .imgWrapper {
   aspect-ratio: 2;
-  margin-top: 36px;
   margin-bottom: 12px;
+  display: block;
+  @include media-breakpoint-up(md) {
+    margin-bottom: 24px;
+    aspect-ratio: calc(680 / 382);
+  }
 }
 
 .postsList {
   margin: 0 16px;
+  @include media-breakpoint-up(md) {
+    margin: 0;
+  }
 }
 
 .title {
@@ -29,6 +39,11 @@
   &:hover {
     color: $color-blue-deep;
     text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  @include media-breakpoint-up(md) {
+    font-size: 20px;
+    line-height: 28px;
   }
 }
 
@@ -54,6 +69,7 @@
   color: #4a4a4a;
   &:hover {
     text-decoration: underline;
+    text-underline-offset: 4px;
   }
 }
 
@@ -63,6 +79,10 @@
   align-items: center;
   gap: 8px;
   margin-top: 12px;
+  @include media-breakpoint-up(md) {
+    justify-content: start;
+    align-items: start;
+  }
 }
 
 .secondMoreBtn {
