@@ -1,0 +1,37 @@
+@import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
+
+.container {
+  margin: 0 auto;
+  @include media-breakpoint-up(md) {
+    max-width: 680px;
+  }
+  @include media-breakpoint-up(md) {
+    max-width: $max-width-xl;
+  }
+}
+
+.titleWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.listTitle {
+  border-image: linear-gradient(
+      to bottom,
+      $color-blue-deep 35%,
+      transparent 35%,
+      transparent 65%,
+      $color-blue-deep 65%
+    )
+    5 !important;
+
+  p {
+    color: $color-blue-deep;
+  }
+}
+
+.list {
+  margin-top: 32px;
+}
