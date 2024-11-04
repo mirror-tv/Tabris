@@ -1,10 +1,10 @@
 'use client'
 import { type FeatureTopic } from '~/graphql/query/topic'
-// import styles from './_styles/topic-item.module.scss'
 import Image from '@readr-media/react-image'
 import { formateHeroImage } from '~/utils'
 import Link from 'next/link'
 import styles from './_styles/topic-item.module.scss'
+import UiMoreTopicBtn from './ui-more-topic-btn'
 
 type TopicListProps = {
   isFirst: boolean
@@ -16,7 +16,12 @@ export default function TopicItem({ topic, isFirst }: TopicListProps) {
   return (
     <li className={styles.item}>
       {isFirst && (
-        <div className={styles.imgWrapper}>
+        <Link
+          href={`/topic/${topic.slug}`}
+          target="_blank"
+          rel="noreferrer noopener"
+          className={styles.imgWrapper}
+        >
           <Image
             images={formateHeroImage(topic.heroImage ?? {})}
             alt={topic.name}
@@ -29,7 +34,7 @@ export default function TopicItem({ topic, isFirst }: TopicListProps) {
             }}
             key={topic.slug}
           />
-        </div>
+        </Link>
       )}
       <div className={`${styles.postsList} ${isFirst ? '' : styles.border}`}>
         <Link
@@ -56,6 +61,14 @@ export default function TopicItem({ topic, isFirst }: TopicListProps) {
             )
           })}
         </ul>
+        <div className={styles.btnGroup}>
+          <UiMoreTopicBtn title="更多報導" link={`/topic/${topic.slug}`} />
+          <UiMoreTopicBtn
+            title="更多專題"
+            link="/topic"
+            className={styles.secondMoreBtn}
+          />
+        </div>
       </div>
     </li>
   )

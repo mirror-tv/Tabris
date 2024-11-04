@@ -56,3 +56,20 @@
     text-decoration: underline;
   }
 }
+
+.btnGroup {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.secondMoreBtn {
+  background: #004dbc;
+  color: #fff;
+  &:hover {
+    background: #004dbc;
+    color: #e7e7e7;
+  }
+}

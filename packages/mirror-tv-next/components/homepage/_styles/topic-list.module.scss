@@ -3,6 +3,7 @@
 
 .container {
   margin: 0 auto;
+  margin-bottom: 48px;
   @include media-breakpoint-up(md) {
     max-width: 680px;
   }
