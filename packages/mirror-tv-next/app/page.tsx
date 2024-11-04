@@ -4,6 +4,8 @@ import styles from '~/styles/pages/page.module.scss'
 import { GPTPlaceholderMobile } from '~/components/ads/gpt/gpt-placeholder'
 import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
 import GptPopup from '~/components/ads/gpt/gpt-popup'
+import { GLOBAL_CACHE_SETTING } from '~/constants/environment-variables'
+import PopularPostsList from '~/components/homepage/popular-posts-list'
 import TopicList from '~/components/homepage/topic-list'
 import { getClient } from '~/apollo-client'
 import { fetchFeatureTopics, type FeatureTopic } from '~/graphql/query/topic'
@@ -11,6 +13,9 @@ import errors from '@twreporter/errors'
 import { handleResponse } from '~/utils'
 
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
+
+export const revalidate = GLOBAL_CACHE_SETTING
+
 
 export default async function Home() {
   const client = getClient()
@@ -70,6 +75,7 @@ export default async function Home() {
       <div className={styles.mobFlashNewsWrapper}>
         <MainFlashNews />
       </div>
+      <PopularPostsList />
       <TopicList title="推薦專題" topics={allTopics} />
     </main>
   )

@@ -5,7 +5,7 @@ import YoutubeList from './youtube-list'
 import type { FormatPlayListItems } from './youtube-list'
 import { useMemo, useState } from 'react'
 import styles from './_styles/youtube-list-handler.module.scss'
-import { fetchYoutubeList } from './action-yt'
+import { fetchYoutubeList } from '../../../app/_actions/show-yt'
 import { formateYoutubeListRes } from '~/utils'
 
 type YoutubeListHandlerProps = {

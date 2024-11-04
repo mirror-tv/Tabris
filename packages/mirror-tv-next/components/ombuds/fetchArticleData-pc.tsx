@@ -1,5 +1,5 @@
 import type { Post } from '~/graphql/query/ombuds'
-import { fetchOmbudsPosts } from '~/components/ombuds/action'
+import { fetchOmbudsPosts } from '~/app/_actions/ombud'
 import SwiperManager from './swiperManager'
 import styles from './_styles/fetchArticleData-pc.module.scss'
 

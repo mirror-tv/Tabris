@@ -1,7 +1,7 @@
 'use client'
 import Image from 'next/image'
 import InfiniteScrollList from '@readr-media/react-infinite-scroll-list'
-import { fetchTopics } from '~/components/topic/action'
+import { fetchTopics } from '~/app/_actions/topic'
 import UiTopicCard from '~/components/topic/ui-topic-card'
 import { Topic } from '~/graphql/query/topic'
 import styles from './_styles/topics-list-manager.module.scss'

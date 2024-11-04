@@ -1,7 +1,7 @@
 'use client'
 import UiLoadMoreButton from '../shared/ui-load-more-button'
 import { PostCardItem } from '~/graphql/query/posts'
-import { fetchPostsItems } from '~/components/category/action'
+import { fetchPostsItems } from '~/app/_actions/category'
 import styles from './_styles/posts-list-manager.module.scss'
 import UiPostCard from '~/components/shared/ui-post-card'
 import { formatArticleCard, FormattedPostCard } from '~/utils'

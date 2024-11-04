@@ -2,32 +2,18 @@
 
 import { Varela_Round } from 'next/font/google'
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
 
 import Link from 'next/link'
 import ResponsiveImage from '~/components/shared/responsive-image'
 import styles from './_styles/ui-404.module.scss'
 import type { FormattedPostCard } from '~/utils'
 import { formatArticleCard } from '~/utils'
-import { fetchPopularPosts } from './action'
+import { useData } from '~/context/data-context'
 
 const font = Varela_Round({ subsets: ['latin'], weight: '400' })
 
 export default function Ui404() {
-  const [popularPosts, setPopularPosts] = useState([])
-  useEffect(() => {
-    const fetchDataAndSetState = async () => {
-      try {
-        const { data } = await fetchPopularPosts()
-        setPopularPosts(data.report)
-      } catch (error) {
-        console.error('Error fetching popular posts:', error)
-      }
-    }
-
-    fetchDataAndSetState()
-  }, [])
-
+  const { popularPosts } = useData()
   const formattedPosts: FormattedPostCard[] = popularPosts.map((post) =>
     formatArticleCard(post)
   )

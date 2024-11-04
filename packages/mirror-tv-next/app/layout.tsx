@@ -1,3 +1,4 @@
+import { DataProvider } from '~/context/data-context'
 import { GoogleTagManager } from '@next/third-parties/google'
 import type { Metadata } from 'next'
 import { Noto_Sans } from 'next/font/google'
@@ -10,12 +11,13 @@ import {
   GTM_ID,
   SITE_URL,
   LOTTERY_FEATURE_TOGGLE,
-  ENV,
 } from '~/constants/environment-variables'
 import '../styles/global.css'
 import CompassFit from '~/components/ads/compass-fit'
 import TagManagerWrapper from './tag-manager'
 import Counter from '~/components/layout/lottery/counter'
+import { fetchPopularPosts } from '~/app/_actions/popular-data'
+import { RawPopularPost } from '~/types/popular-post'
 
 export const revalidate = GLOBAL_CACHE_SETTING
 
@@ -37,19 +39,18 @@ const noto_sans = Noto_Sans({
   variable: '--font-noto-sans',
 })
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const now = new Date()
-  let targetDate
-  if (ENV === 'prod') {
-    targetDate = new Date('2024-10-24T12:00:00+08:00')
-  } else if (ENV === 'staging') {
-    targetDate = new Date('2024-10-24T11:30:00+08:00')
-  } else {
-    targetDate = new Date('2024-10-23T13:00:00+08:00')
+  let initialPopularPosts: RawPopularPost[] = []
+
+  try {
+    const { data } = await fetchPopularPosts()
+    initialPopularPosts = data.report
+  } catch (error) {
+    console.error('Failed to fetch popular posts:', error)
   }
 
   return (
@@ -109,14 +110,14 @@ export default function RootLayout({
         })();`}
       </Script>
       <body>
-        <>
+        <DataProvider initialPopularPosts={initialPopularPosts}>
           <MainHeader />
           <TagManagerWrapper />
           {children}
           <Footer />
-          {LOTTERY_FEATURE_TOGGLE === 'on' && now > targetDate && <Counter />}
+          {LOTTERY_FEATURE_TOGGLE === 'on' && <Counter />}
           <CompassFit />
-        </>
+        </DataProvider>
       </body>
     </html>
   )

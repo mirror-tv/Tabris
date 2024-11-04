@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import UiPostCard from './ui-post-card'
 import type { Post } from '~/graphql/query/ombuds'
-import { fetchOmbudsPosts } from './action'
+import { fetchOmbudsPosts } from '../../app/_actions/ombud'
 import styles from './_styles/more-items-manager.module.scss'
 
 type Props = {

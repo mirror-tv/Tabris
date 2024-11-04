@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import styles from './_styles/info-submission-modal.module.scss'
 import { ARTICLE_READ_THRESHOLD } from '~/constants/lottery'
-import { submitFormAction } from './action'
+import { submitFormAction } from '../../../app/_actions/lottery'
 import { ENV } from '~/constants/environment-variables'
 import axios from 'axios'
 

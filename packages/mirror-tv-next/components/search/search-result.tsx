@@ -5,7 +5,7 @@ import { formateHeroImage } from '~/utils'
 import UiLoadMoreButton from '../shared/ui-load-more-button'
 import type { SearchItem, SearchResponse } from '~/types/search'
 import InfiniteScrollList from '@readr-media/react-infinite-scroll-list'
-import { searchAPI } from '~/app/search/[keyword]/action'
+import { searchAPI } from '~/app/_actions/search-api'
 import errors from '@twreporter/errors'
 
 type SearchResultProps = {
