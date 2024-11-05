@@ -52,10 +52,10 @@ switch (ENV) {
     HEADER_JSON_URL = 'https://dev.mnews.tw/json/header_v2-1.json'
     FLASH_NEWS_JSON_URL = 'https://dev.mnews.tw/json/flash_news.json'
     SCHEDULE_JSON_URL = 'https://dev.mnews.tw/json/tv-schedule.json'
-    POPULAR_POSTS_URL = 'https://dev.mnews.tw/json/popularlist.json'
+    POPULAR_POSTS_URL = 'https://mnews.tw/json/popularlist.json'
     POPULAR_VIDEOS_JSON_URL =
       'https://mnews.tw/json/popular-videonews-list.json'
-    FEATURE_POSTS_URL = 'https://dev.mnews.tw/api/gcs/featured_categories_post'
+    FEATURE_POSTS_URL = 'https://mnews.tw/api/gcs/featured_categories_post'
     LOTTERY_FEATURE_TOGGLE = 'on'
     break
 
@@ -67,7 +67,7 @@ switch (ENV) {
     HEADER_JSON_URL = 'https://dev.mnews.tw/json/header_v2.json'
     FLASH_NEWS_JSON_URL = 'https://dev.mnews.tw/json/flash_news.json'
     SCHEDULE_JSON_URL = 'https://dev.mnews.tw/json/tv-schedule.json'
-    POPULAR_POSTS_URL = 'https://dev.mnews.tw/json/popularlist.json'
+    POPULAR_POSTS_URL = 'https://mnews.tw/json/popularlist.json'
     POPULAR_VIDEOS_JSON_URL =
       'https://mnews.tw/json/popular-videonews-list.json'
     FEATURE_POSTS_URL = 'https://dev.mnews.tw/api/gcs/featured_categories_post'
