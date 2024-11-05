@@ -6,7 +6,6 @@ export type Topic = {
   id: string
   slug: string
   name: string
-  sortOrder: number
   briefApiData: string
   heroImage: HeroImage
   sortDir?: string
@@ -57,7 +56,7 @@ export type SingleTopic = Topic & {
   }
 }
 
-export type FeatureTopic = Topic & {
+export type FeatureTopic = Omit<Topic, 'sortDir' | 'briefApiData'> & {
   postDESC: {
     slug: string
     name: string
