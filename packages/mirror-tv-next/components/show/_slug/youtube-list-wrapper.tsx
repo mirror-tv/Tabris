@@ -1,4 +1,4 @@
-import { fetchYoutubeList } from './action-yt'
+import { fetchYoutubeList } from '../../../app/_actions/show-yt'
 import { handleResponse } from '~/utils'
 import type { FormatPlayListItems } from './youtube-list'
 import YoutubeListHandler from './youtube-list-handler'

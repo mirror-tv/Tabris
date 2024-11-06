@@ -1,7 +1,4 @@
-import {
-  fetchSortDir,
-  fetchTopicItems,
-} from '~/components/topic/single-topic/action'
+import { fetchSortDir, fetchTopicItems } from '~/app/_actions/signal-topic'
 import MoreItemsManager from '~/components/topic/single-topic/more-items-manager'
 import type { Post } from '~/graphql/query/topic'
 

@@ -4,10 +4,14 @@ import styles from '~/styles/pages/page.module.scss'
 import { GPTPlaceholderMobile } from '~/components/ads/gpt/gpt-placeholder'
 import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
 import GptPopup from '~/components/ads/gpt/gpt-popup'
+import { GLOBAL_CACHE_SETTING } from '~/constants/environment-variables'
+import PopularPostsList from '~/components/homepage/popular-posts-list'
 
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 
-export default function Home() {
+export const revalidate = GLOBAL_CACHE_SETTING
+
+export default async function Home() {
   return (
     <main className={styles.main}>
       <GptPopup adKey="MB_HOME" />
@@ -23,6 +27,7 @@ export default function Home() {
       <div className={styles.mobFlashNewsWrapper}>
         <MainFlashNews />
       </div>
+      <PopularPostsList title="熱門新聞" />
     </main>
   )
 }

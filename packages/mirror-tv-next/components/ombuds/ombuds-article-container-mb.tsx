@@ -1,5 +1,5 @@
 import type { Post } from '~/graphql/query/ombuds'
-import { fetchOmbudsPosts } from '~/components/ombuds/action'
+import { fetchOmbudsPosts } from '~/app/_actions/ombud'
 import MoreItemsManager from '~/components/ombuds/more-items-manager'
 import styles from './_styles/ombuds-article-container.module.scss'
 

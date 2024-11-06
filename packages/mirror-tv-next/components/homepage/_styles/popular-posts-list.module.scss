@@ -1,0 +1,76 @@
+@import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
+
+.container {
+  padding: 0 16px;
+  margin: 36px auto 0;
+  padding-bottom: 40px;
+  max-width: 535px;
+  @include media-breakpoint-up(xl) {
+    max-width: 1072px;
+  }
+}
+
+.titleWrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 33px;
+  @include media-breakpoint-up(xl) {
+    display: block;
+  }
+}
+
+.title {
+  border-image: linear-gradient(
+      180deg,
+      $color-blue-deep 35%,
+      transparent 0,
+      transparent 65%,
+      $color-blue-deep 0
+    )
+    5 !important;
+  p {
+    color: $color-blue-deep;
+  }
+}
+
+.list {
+  @include media-breakpoint-up(xl) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 49px;
+  }
+}
+
+.item {
+  position: relative;
+  border-bottom: 1px solid #000;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  color: #0d1821;
+}
+
+.date {
+  font-weight: 300;
+  font-size: 14px;
+  line-height: 16px;
+  letter-spacing: 0.5px;
+  color: #004ebc;
+  margin-bottom: 12px;
+}
+
+.name {
+  font-size: 20px;
+  line-height: 28px;
+  color: #0d1821;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  &:hover {
+    text-decoration-line: underline;
+    color: #004ebc;
+    text-underline-offset: 2px;
+  }
+}

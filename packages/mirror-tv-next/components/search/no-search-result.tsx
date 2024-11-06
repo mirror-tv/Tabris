@@ -1,36 +1,20 @@
+'use client'
 import Image from 'next/image'
 import styles from './_styles/no-search-result.module.scss'
-import { formatePostImage } from '~/utils'
 import type { FormattedPostCard } from '~/utils'
-import type { PopularSearchItem } from '~/types/api-data'
-import type { PostCardItem } from '~/graphql/query/posts'
 import NoSearchResultList from './no-search-result-list'
-import { fetchPopularPosts } from '../errors/action'
+import { useData } from '~/context/data-context'
+import { formatArticleCard } from '~/utils'
+
 type NoSearchResultProps = {
   keyword: string
 }
 
-const NoSearchResult = async ({ keyword }: NoSearchResultProps) => {
-  let popularPostList: PopularSearchItem[] = []
-  try {
-    const { data } = await fetchPopularPosts()
-    popularPostList = data.report
-  } catch (e) {
-    console.error('popularPostList_error', e)
-  }
-  const formatArticleCard = (articleCardList: PopularSearchItem) => {
-    return {
-      href: `/story/${articleCardList.slug}`,
-      slug: articleCardList.slug,
-      name: articleCardList.name,
-      // TODO: turn formatePostImage into formateHeroImage
-      images: formatePostImage(articleCardList as PostCardItem),
-      publishTime: new Date(articleCardList.publishTime),
-    }
-  }
-
-  const formattedPosts: FormattedPostCard[] =
-    popularPostList.map(formatArticleCard)
+const NoSearchResult = ({ keyword }: NoSearchResultProps) => {
+  const { popularPosts } = useData()
+  const formattedPosts: FormattedPostCard[] = popularPosts.map((post) =>
+    formatArticleCard(post)
+  )
 
   return (
     <main className={styles.main}>

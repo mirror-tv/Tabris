@@ -1,6 +1,6 @@
 'use client'
 import { useMemo, useRef, useState } from 'react'
-import { fetchOmbudsPosts } from './action'
+import { fetchOmbudsPosts } from '../../app/_actions/ombud'
 import { Swiper, SwiperSlide, SwiperRef } from 'swiper/react'
 import { Navigation } from 'swiper/modules'
 import type { Post } from '~/graphql/query/ombuds'
