@@ -7,41 +7,32 @@ import GptPopup from '~/components/ads/gpt/gpt-popup'
 import { GLOBAL_CACHE_SETTING } from '~/constants/environment-variables'
 import PopularPostsList from '~/components/homepage/popular-posts-list'
 import TopicList from '~/components/homepage/topic-list'
-import { getClient } from '~/apollo-client'
-import { fetchFeatureTopics, type FeatureTopic } from '~/graphql/query/topic'
+import { type FeatureTopic } from '~/graphql/query/topic'
 import errors from '@twreporter/errors'
 import { handleResponse } from '~/utils'
+import { getFeatureTopics } from './_actions/homepage/feature-topics'
 
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 
 export const revalidate = GLOBAL_CACHE_SETTING
 
-
 export default async function Home() {
-  const client = getClient()
-  const getFeatureTopics = () =>
-    client.query<{ allTopics: FeatureTopic[] }>({
-      query: fetchFeatureTopics,
-      variables: {
-        topicFirst: 4,
-        postFirst: 3,
-      },
-    })
-
   let allTopics: FeatureTopic[] = []
 
   try {
-    const responses = await Promise.allSettled([getFeatureTopics()])
+    const responses = await Promise.allSettled([
+      getFeatureTopics({ topicFirst: 4, postFirst: 3 }),
+    ])
     allTopics = handleResponse(
       responses[0],
       (
-        latestPostsData:
+        featureTopicsData:
           | Awaited<ReturnType<typeof getFeatureTopics>>
           | undefined
       ) => {
-        return latestPostsData?.data?.allTopics ?? []
+        return featureTopicsData?.data?.allTopics ?? []
       },
-      'Error occurs while fetching category data in video category page'
+      'Error occurs while fetching feature topics data in homepage'
     )
   } catch (error) {
     console.error(
