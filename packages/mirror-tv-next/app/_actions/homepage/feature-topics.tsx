@@ -30,7 +30,6 @@ async function getFeatureTopics({
       'UnhandledError',
       'Error occurs while fetching feature topics data in homepage'
     )
-
     console.error(
       JSON.stringify({
         severity: 'ERROR',
@@ -40,7 +39,6 @@ async function getFeatureTopics({
         }),
       })
     )
-    throw annotatingError
   }
 }
 

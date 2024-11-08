@@ -18,6 +18,10 @@ export default async function TopicList({ title }: TopicListProps) {
     return null
   }
 
+  if (!allTopics?.[0]) {
+    return null
+  }
+
   return (
     <section className={styles.container}>
       <div className={styles.titleWrapper}>
