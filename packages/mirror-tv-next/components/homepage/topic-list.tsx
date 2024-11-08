@@ -9,7 +9,7 @@ type TopicListProps = {
 }
 
 export default async function TopicList({ title }: TopicListProps) {
-  let allTopics: FeatureTopic[] = []
+  let allTopics: FeatureTopic[] | undefined = []
 
   try {
     const response = await getFeatureTopics({ topicFirst: 4, postFirst: 3 })

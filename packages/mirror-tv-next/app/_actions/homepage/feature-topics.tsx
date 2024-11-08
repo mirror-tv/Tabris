@@ -11,9 +11,12 @@ type fetchFeatureTopicsType = {
 async function getFeatureTopics({
   topicFirst,
   postFirst,
-}: fetchFeatureTopicsType): Promise<{
-  data: { allTopics: FeatureTopic[] }
-}> {
+}: fetchFeatureTopicsType): Promise<
+  | {
+      data: { allTopics: FeatureTopic[] }
+    }
+  | undefined
+> {
   const client = getClient()
   try {
     const { data } = await client.query<{ allTopics: FeatureTopic[] }>({
