@@ -6,12 +6,13 @@ import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
 import GptPopup from '~/components/ads/gpt/gpt-popup'
 import { GLOBAL_CACHE_SETTING } from '~/constants/environment-variables'
 import PopularPostsList from '~/components/homepage/popular-posts-list'
+import TopicList from '~/components/homepage/topic-list'
 
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 
 export const revalidate = GLOBAL_CACHE_SETTING
 
-export default async function Home() {
+export default function Home() {
   return (
     <main className={styles.main}>
       <GptPopup adKey="MB_HOME" />
@@ -28,6 +29,7 @@ export default async function Home() {
         <MainFlashNews />
       </div>
       <PopularPostsList title="熱門新聞" />
+      <TopicList title="推薦專題" />
     </main>
   )
 }

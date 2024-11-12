@@ -6,9 +6,9 @@ export type Topic = {
   id: string
   slug: string
   name: string
-  sortOrder: number
   briefApiData: string
   heroImage: HeroImage
+  sortDir?: string
 }
 
 type HeroVideo = {
@@ -54,6 +54,14 @@ export type SingleTopic = Topic & {
   meta: {
     count: number
   }
+}
+
+export type FeatureTopic = Omit<Topic, 'briefApiData'> & {
+  postDESC: {
+    slug: string
+    name: string
+  }[]
+  postASC: { slug: string; name: string }[]
 }
 
 const getTopics = gql`
@@ -166,9 +174,46 @@ const fetchPostSortDirBySlug = gql`
   }
 `
 
+const fetchFeatureTopics = gql`
+  query fetchFeaturedTopics($topicFirst: Int = 4, $postFirst: Int = 3) {
+    allTopics(
+      where: { state: published, isFeatured: true }
+      first: $topicFirst
+      sortBy: [sortOrder_ASC, updatedAt_DESC]
+    ) {
+      id
+      slug
+      name
+      heroImage {
+        urlMobileSized
+        urlTabletSized
+        urlOriginal
+      }
+      sortDir
+      postDESC: post(
+        first: $postFirst
+        sortBy: publishTime_DESC
+        where: { state: published }
+      ) {
+        slug
+        name
+      }
+      postASC: post(
+        first: $postFirst
+        sortBy: publishTime_ASC
+        where: { state: published }
+      ) {
+        slug
+        name
+      }
+    }
+  }
+`
+
 export {
   fetchPostItemsByTopicSlug,
   fetchPostSortDirBySlug,
   fetchSingleTopicByTopicSlug,
   getTopics,
+  fetchFeatureTopics,
 }

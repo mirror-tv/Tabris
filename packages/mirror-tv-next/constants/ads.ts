@@ -322,21 +322,21 @@ const GPT_UNITS: GPTUnits = {
   // page key: show，節目頁
   show: {
     // ad key
-    ALL_R1: {
+    PC_R1: {
       adUnit: 'mnews_program_sidebar_300x250_01',
       adSize: [
         [300, 250],
         [1, 1],
       ],
     },
-    ALL_R2: {
+    PC_R2: {
       adUnit: 'mnews_program_sidebar_300x250_02',
       adSize: [
         [300, 250],
         [1, 1],
       ],
     },
-    ALL_R3: {
+    PC_R3: {
       adUnit: 'mnews_program_sidebar_300x600_03',
       adSize: [
         [300, 600],

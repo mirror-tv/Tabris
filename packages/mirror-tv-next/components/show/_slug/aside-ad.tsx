@@ -14,9 +14,10 @@ export default function AsideAd({ shownOnMobile }: { shownOnMobile: boolean }) {
 
   return (
     <aside className={styles.aside}>
-      <GPTAd pageKey="show" adKey="ALL_R1" />
-      <GPTAd pageKey="show" adKey="ALL_R2" />
-      <GPTAd pageKey="show" adKey="ALL_R3" />
+      <GPTAd pageKey="show" adKey="PC_R1" />
+      <GPTAd pageKey="show" adKey="PC_R2" />
+      <GPTAd pageKey="show" adKey="PC_R3" />
+      <GPTAd pageKey="show" adKey="MB_M2" />
     </aside>
   )
 }
