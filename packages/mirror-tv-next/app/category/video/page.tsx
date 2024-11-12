@@ -8,7 +8,7 @@ import { handleResponse, formatArticleCard, FormattedPostCard } from '~/utils'
 import type { Category } from '~/graphql/query/category'
 import { fetchFeatureCategories } from '~/graphql/query/categories'
 import { getClient } from '~/apollo-client'
-import { fetchVideoPostsItems } from '~/components/category/video/action'
+import { fetchVideoPostsItems } from '~/app/_actions/category-video'
 import styles from '~/styles/pages/category-video-page.module.scss'
 import VideoPostsList from '~/components/category/video/video-posts-list'
 import type { HeroImage } from '~/types/common'
@@ -166,9 +166,9 @@ export default async function VideoCategoryPage() {
     ) => {
       // post in json doesn't have 'style' attribute
       return (
-        popularPostsData?.report
-          ?.map((post) => formatArticleCard({ ...post, style: 'videoNews' }))
-          ?.slice(5) ?? []
+        popularPostsData?.report?.map((post) =>
+          formatArticleCard({ ...post, style: 'videoNews' })
+        ) ?? []
       )
     },
     'Error occurs while fetching popular videos in video category page'

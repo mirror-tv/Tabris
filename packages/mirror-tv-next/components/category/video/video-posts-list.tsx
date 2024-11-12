@@ -3,7 +3,7 @@ import { useMemo, useRef, useState } from 'react'
 import styles from './_styles/video-posts-list.module.scss'
 import UiHeadingBordered from '~/components/shared/ui-heading-bordered'
 import { Swiper, SwiperSlide, SwiperRef } from 'swiper/react'
-import { fetchVideoPostsItems } from '~/components/category/video/action'
+import { fetchVideoPostsItems } from '~/app/_actions/category-video'
 import { formatArticleCard, FormattedPostCard } from '~/utils'
 import useWindowDimensions from '~/hooks/use-window-dimensions'
 

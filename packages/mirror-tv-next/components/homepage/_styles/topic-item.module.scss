@@ -1,0 +1,123 @@
+@import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
+
+.item {
+  display: block;
+  margin-top: 36px;
+  @include media-breakpoint-up(md) {
+    margin-top: 30px;
+  }
+}
+
+.isFirst {
+  @include media-breakpoint-up(xl) {
+    display: flex;
+    gap: 24px;
+    > div {
+      margin-top: 0;
+      display: flex;
+      justify-content: space-between;
+      flex-direction: column;
+    }
+  }
+}
+
+.imgWrapper {
+  aspect-ratio: 2;
+  margin-bottom: 12px;
+  display: block;
+  @include media-breakpoint-up(md) {
+    margin-bottom: 24px;
+    aspect-ratio: calc(680 / 382);
+  }
+  @include media-breakpoint-up(xl) {
+    width: 581px;
+    height: 324px;
+    aspect-ratio: auto;
+    margin: 0;
+  }
+}
+
+.postsList {
+  margin: 0 16px;
+  @include media-breakpoint-up(md) {
+    margin: 0;
+  }
+}
+
+.title {
+  display: block;
+  margin-bottom: 12px;
+  margin-top: 8px;
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 500;
+  color: $color-blue-light;
+  width: fit-content;
+  transition: 0.5s;
+  &:hover {
+    color: $color-blue-deep;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  @include media-breakpoint-up(md) {
+    font-size: 20px;
+    line-height: 28px;
+  }
+}
+
+.border {
+  border-top: 4px solid $color-blue-light;
+}
+
+.postItem {
+  display: block;
+  padding: 12px 0;
+  border-bottom: 1px solid #f4f5f7;
+}
+
+.post {
+  display: block;
+  font-size: 16px;
+  line-height: 22px;
+  word-wrap: break-word;
+  -webkit-line-clamp: 1;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: #4a4a4a;
+  &:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+}
+
+.btnGroup {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  @include media-breakpoint-up(md) {
+    justify-content: start;
+    align-items: start;
+  }
+}
+
+.secondMoreBtn {
+  background: #004dbc;
+  color: #fff;
+  &:hover {
+    background: #004dbc;
+    color: #e7e7e7;
+  }
+  @include media-breakpoint-up(xl) {
+    display: none;
+  }
+}
+
+.btnOfFirst {
+  @include media-breakpoint-up(xl) {
+    display: block;
+  }
+}

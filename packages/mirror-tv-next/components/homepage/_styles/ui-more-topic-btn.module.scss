@@ -1,0 +1,19 @@
+@import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
+
+.customButton {
+  display: inline-block;
+  text-align: center;
+  font-size: 16px;
+  line-height: 22px;
+  color: #004dbc;
+  padding: 8px 14px;
+  border: 1px solid #004dbc;
+  border-radius: 12px;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  &:hover {
+    background: #e7e7e7;
+  }
+}

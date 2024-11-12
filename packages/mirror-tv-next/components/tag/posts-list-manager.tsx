@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import UiPostCard from '~/components/shared/ui-post-card'
-import { fetchPostsItems } from '~/components/tag/action'
+import { fetchPostsItems } from '~/app/_actions/tag'
 import { PostCardItem } from '~/graphql/query/posts'
 import styles from './_styles/posts-list-manager.module.scss'
 import { formatArticleCard } from '~/utils'
@@ -44,7 +44,7 @@ export default function PostsListManager({
         <ol className={styles.posts}>
           {formattedPostsList(postsList)?.map((postItem) => {
             return (
-              <li key={postItem.slug} className="ist-handler__item">
+              <li key={postItem.slug} className="list-handler__item">
                 <UiPostCard
                   href={postItem.href}
                   images={postItem.images}

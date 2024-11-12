@@ -1,38 +1,23 @@
+'use client'
 import { getClient } from '~/apollo-client'
 import styles from './_styles/aside.module.scss'
 import { getLatestPosts, PostCardItem } from '~/graphql/query/posts'
 import { formatArticleCard, FormattedPostCard, handleResponse } from '~/utils'
 import UiListPostsAside from '~/components/shared/ui-list-posts-aside'
-import {
-  POPULAR_POSTS_URL,
-  GLOBAL_CACHE_SETTING,
-} from '~/constants/environment-variables'
+
 import dynamic from 'next/dynamic'
+import { useData } from '~/context/data-context'
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 const MicroAd = dynamic(() => import('~/components/ads/micro-ad'))
 
-type RawPopularPost = {
-  id: string
-  name: string
-  slug: string
-  source: string
-  heroImage: {
-    urlMobileSized: string
-    urlOriginal: string
-    urlDesktopSized: string
-    urlTabletSized: string
-    urlTinySized: string
-  }
-  publishTime: string
-}
-
-type RawPopularPostData = {
-  report: RawPopularPost[]
-}
-
 export default async function CategoryPageLayoutAside() {
+  const { popularPosts } = useData()
   let latestPosts: FormattedPostCard[] = []
-  let popularPosts: FormattedPostCard[] = []
+
+  const formattedPopularPosts =
+    popularPosts
+      ?.map((post) => formatArticleCard({ ...post, style: 'article' }))
+      ?.slice(0, 5) ?? []
 
   const client = getClient()
 
@@ -46,18 +31,7 @@ export default async function CategoryPageLayoutAside() {
       },
     })
 
-  const fetchPopularPosts = () =>
-    fetch(POPULAR_POSTS_URL, {
-      next: { revalidate: GLOBAL_CACHE_SETTING },
-    }).then((res) => {
-      // use type assertion to eliminate any
-      return res.json() as unknown as RawPopularPostData
-    })
-
-  const responses = await Promise.allSettled([
-    fetchLatestPosts(),
-    fetchPopularPosts(),
-  ])
+  const responses = await Promise.allSettled([fetchLatestPosts()])
 
   latestPosts = handleResponse(
     responses[0],
@@ -72,31 +46,14 @@ export default async function CategoryPageLayoutAside() {
     'Error occurs while fetching latest posts in category page'
   )
 
-  popularPosts = handleResponse(
-    responses[1],
-    (
-      popularPostsData:
-        | Awaited<ReturnType<typeof fetchPopularPosts>>
-        | undefined
-    ) => {
-      // post in json doesn't have 'style' attribute
-      return (
-        popularPostsData?.report
-          ?.map((post) => formatArticleCard({ ...post, style: 'article' }))
-          ?.slice(5) ?? []
-      )
-    },
-    'Error occurs while fetching popular posts in category page'
-  )
-
   return (
     <aside className={styles.aside}>
       <GPTAd pageKey="category" adKey="PC_R1" />
-      {!!popularPosts.length && (
+      {!!formattedPopularPosts.length && (
         <UiListPostsAside
           listTitle="熱門新聞"
           page="category"
-          listData={popularPosts}
+          listData={formattedPopularPosts}
           className={`aside__list-popular ${styles.asideItem}`}
         />
       )}

@@ -86,6 +86,7 @@
     display: -webkit-box;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    line-height: 150%;
     @include media-breakpoint-up(xl) {
       margin-top: 12px;
       -webkit-line-clamp: 3;

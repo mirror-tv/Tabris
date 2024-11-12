@@ -27,7 +27,7 @@ const HeaderSearchBar = () => {
           className={styles.searchInputIcon}
           src="/icons/icon-search.svg"
           alt="search icon"
-          layout="fill"
+          fill
         />
       </button>
     </form>
