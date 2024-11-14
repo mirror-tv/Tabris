@@ -4,7 +4,7 @@ import { YoutubeResponse } from '~/types/youtube'
 
 import { fetchYoutubeData } from '~/utils'
 
-type fetchYoutubeListProps = {
+type FetchYoutubeListProps = {
   list: { nextPageToken: string; id: string | undefined }
   take: number
 }
@@ -12,7 +12,7 @@ type fetchYoutubeListProps = {
 async function fetchYoutubeList({
   list,
   take,
-}: fetchYoutubeListProps): Promise<YoutubeResponse> {
+}: FetchYoutubeListProps): Promise<YoutubeResponse> {
   if (!list.id) throw new Error('id of youtube list is not exit')
   try {
     const pageToken = list.nextPageToken

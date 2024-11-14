@@ -1,0 +1,47 @@
+@import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
+
+.container {
+  background-color: #004dbc;
+  min-width: 100vw;
+  max-width: 100vw;
+  margin-bottom: 36px;
+  padding: 36px 16px;
+  display: flex;
+  flex-direction: column;
+  @include media-breakpoint-up(md) {
+    padding: 28px 0;
+    margin-bottom: 45px;
+  }
+  @include media-breakpoint-up(xl) {
+    padding: 32px 0;
+    margin-bottom: 32px;
+  }
+}
+
+.titleWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+.listTitle {
+  border-image: linear-gradient(
+      to bottom,
+      #fff 35%,
+      transparent 35%,
+      transparent 65%,
+      #fff 65%
+    )
+    5 !important;
+
+  p {
+    color: #fff;
+  }
+}
+
+.list {
+  overflow: scroll;
+  scrollbar-width: none;
+}
