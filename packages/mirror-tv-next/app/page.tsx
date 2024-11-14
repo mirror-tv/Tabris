@@ -7,6 +7,7 @@ import GptPopup from '~/components/ads/gpt/gpt-popup'
 import { GLOBAL_CACHE_SETTING } from '~/constants/environment-variables'
 import PopularPostsList from '~/components/homepage/popular-posts-list'
 import TopicList from '~/components/homepage/topic-list'
+import ShowList from '~/components/homepage/show-list-init'
 
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 
@@ -28,6 +29,7 @@ export default function Home() {
       <div className={styles.mobFlashNewsWrapper}>
         <MainFlashNews />
       </div>
+      <ShowList title="節目" />
       <PopularPostsList title="熱門新聞" />
       <TopicList title="推薦專題" />
     </main>

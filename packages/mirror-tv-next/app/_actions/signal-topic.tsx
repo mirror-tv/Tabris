@@ -7,14 +7,14 @@ import {
   fetchPostSortDirBySlug,
 } from '~/graphql/query/topic'
 
-type fetchTopicItemsProps = {
+type FetchTopicItemsProps = {
   page: number
   pageSize: number
   slug: string
   sortBy: string
 }
 
-type fetchSortDirProps = {
+type FetchSortDirProps = {
   slug: string
 }
 
@@ -30,7 +30,7 @@ async function fetchTopicItems({
   pageSize,
   slug,
   sortBy,
-}: fetchTopicItemsProps): Promise<{
+}: FetchTopicItemsProps): Promise<{
   items: Post[]
 }> {
   const client = getClient()
@@ -65,7 +65,7 @@ async function fetchTopicItems({
   }
 }
 
-async function fetchSortDir({ slug }: fetchSortDirProps): Promise<{
+async function fetchSortDir({ slug }: FetchSortDirProps): Promise<{
   sortDir: string
 }> {
   const client = getClient()

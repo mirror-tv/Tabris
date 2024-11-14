@@ -34,8 +34,16 @@ export type ShowWithDetail = {
 }
 
 const fetchShows = gql`
-  query fetchShows {
-    allShows(sortBy: [sortOrder_ASC, createdAt_DESC]) {
+  query fetchShows(
+    $take: Int = 0
+    $skip: Int = 0
+    $isGetCount: Boolean = false
+  ) {
+    allShows(
+      sortBy: [sortOrder_ASC, createdAt_DESC]
+      first: $take
+      skip: $skip
+    ) {
       id
       slug
       name
@@ -44,6 +52,9 @@ const fetchShows = gql`
         urlTabletSized
         urlOriginal
       }
+    }
+    _allShowsMeta @include(if: $isGetCount) {
+      count
     }
   }
 `

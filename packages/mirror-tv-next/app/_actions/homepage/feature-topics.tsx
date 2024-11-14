@@ -3,7 +3,7 @@ import errors from '@twreporter/errors'
 import { getClient } from '~/apollo-client'
 import { fetchFeatureTopics, type FeatureTopic } from '~/graphql/query/topic'
 
-type fetchFeatureTopicsType = {
+type FetchFeatureTopicsType = {
   topicFirst: number
   postFirst: number
 }
@@ -11,7 +11,7 @@ type fetchFeatureTopicsType = {
 async function getFeatureTopics({
   topicFirst,
   postFirst,
-}: fetchFeatureTopicsType): Promise<
+}: FetchFeatureTopicsType): Promise<
   | {
       data: { allTopics: FeatureTopic[] }
     }

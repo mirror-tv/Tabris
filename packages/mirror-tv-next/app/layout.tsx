@@ -10,12 +10,10 @@ import {
   GLOBAL_CACHE_SETTING,
   GTM_ID,
   SITE_URL,
-  LOTTERY_FEATURE_TOGGLE,
 } from '~/constants/environment-variables'
 import '../styles/global.css'
 import CompassFit from '~/components/ads/compass-fit'
 import TagManagerWrapper from './tag-manager'
-import Counter from '~/components/layout/lottery/counter'
 import { fetchPopularPosts } from '~/app/_actions/popular-data'
 import { RawPopularPost } from '~/types/popular-post'
 
@@ -115,7 +113,6 @@ export default async function RootLayout({
           <TagManagerWrapper />
           {children}
           <Footer />
-          {LOTTERY_FEATURE_TOGGLE === 'on' && <Counter />}
           <CompassFit />
         </DataProvider>
       </body>
