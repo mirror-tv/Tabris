@@ -200,7 +200,6 @@
   line-height: normal;
   color: #e3e3e3;
   border-top: 2px solid $color-yellow;
-
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
@@ -213,7 +212,7 @@
 }
 
 .showItem {
-  width: 70px;
+  width: 80px;
 }
 
 .showItem:hover {
