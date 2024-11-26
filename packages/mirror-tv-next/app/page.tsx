@@ -7,9 +7,13 @@ import GptPopup from '~/components/ads/gpt/gpt-popup'
 import { GLOBAL_CACHE_SETTING } from '~/constants/environment-variables'
 import PopularPostsList from '~/components/homepage/popular-posts-list'
 import TopicList from '~/components/homepage/topic-list'
+import LiveCamList from '~/components/homepage/live-cam-list'
 import ShowList from '~/components/homepage/show-list-init'
 
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
+const PromotionVideoList = dynamic(
+  () => import('~/components/homepage/promotion-video-list')
+)
 
 export const revalidate = GLOBAL_CACHE_SETTING
 
@@ -30,7 +34,10 @@ export default function Home() {
         <MainFlashNews />
       </div>
       <ShowList title="節目" />
+      <GPTAd pageKey="home" adKey="PC_BT" />
       <PopularPostsList title="熱門新聞" />
+      <LiveCamList title="直播現場" />
+      <PromotionVideoList title="發燒單元" />
       <TopicList title="推薦專題" />
     </main>
   )

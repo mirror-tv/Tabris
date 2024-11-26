@@ -13,13 +13,15 @@ export default function UiMoreTopicBtn({
   className,
 }: UiLoadMoreButtonProps) {
   return (
-    <Link
-      href={link}
-      target="_blank"
-      rel="noreferrer noopener"
-      className={[styles.customButton, className].join(' ')}
-    >
-      {title}
-    </Link>
+    <button className={className}>
+      <Link
+        href={link}
+        target="_blank"
+        rel="noreferrer noopener"
+        className={[styles.customButton, className].join(' ')}
+      >
+        {title}
+      </Link>
+    </button>
   )
 }

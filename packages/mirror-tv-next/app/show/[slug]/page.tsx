@@ -172,7 +172,7 @@ export default async function ShowPage({
         <h1 className={styles.title}>{show.name}</h1>
         <figure className={styles.banner}>
           <ResponsiveImage
-            images={formateHeroImage(show.bannerImg ?? {})}
+            images={formateHeroImage(show.picture ?? show.bannerImg ?? {})}
             alt={show.name || 'show-banner'}
             rwd={{ desktop: '1200px' }}
             priority={true}

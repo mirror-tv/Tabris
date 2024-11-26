@@ -18,8 +18,6 @@ import UiLinksList from '~/components/category/video/ui-links-list'
 import { HEADER_JSON_URL } from '~/constants/environment-variables'
 import type { HeaderData } from '~/types/header'
 import type { PromotionVideo } from '~/graphql/query/promotion-video'
-import { getPromotionVideos } from '~/graphql/query/promotion-video'
-import { getVideoByName } from '~/graphql/query/videos'
 import type { Video } from '~/graphql/query/videos'
 import AsideVideoListHandler from '~/components/category/video/aside-video-list-handler'
 import type { VideoEditorChoice } from '~/graphql/query/video-editor-choice'
@@ -33,6 +31,8 @@ import {
   GPTPlaceholderDesktop,
 } from '~/components/ads/gpt/gpt-placeholder'
 import UiAsideVideosList from '~/components/shared/ui-aside-videos-list'
+import { getVideo } from '~/app/_actions/share/video'
+import { fetchPromotionVideosServerAction } from '~/app/_actions/share/promotion-videos'
 
 export const revalidate = GLOBAL_CACHE_SETTING
 
@@ -104,33 +104,14 @@ export default async function VideoCategoryPage() {
     })
 
   const fetchPromotionVideos = () =>
-    client.query<{
-      allPromotionVideos: PromotionVideo[]
-    }>({
-      query: getPromotionVideos,
+    fetchPromotionVideosServerAction({
+      take: 5,
+      pageName: 'category video page',
     })
 
-  const fetchOtherStreaming = () =>
-    client.query<{
-      allVideos: Video[]
-    }>({
-      query: getVideoByName,
-      variables: {
-        name: 'live-cam',
-        take: 2,
-      },
-    })
+  const fetchOtherStreaming = () => getVideo({ name: 'live-cam', take: 2 })
 
-  const fetchLiveVideo = () =>
-    client.query<{
-      allVideos: Video[]
-    }>({
-      query: getVideoByName,
-      variables: {
-        name: 'mnews-live',
-        take: 1,
-      },
-    })
+  const fetchLiveVideo = () => getVideo({ name: 'mnews-live', take: 1 })
 
   const fetchVideoEditorChoice = () =>
     client.query<{ allVideoEditorChoices: VideoEditorChoice[] }>({
@@ -211,6 +192,7 @@ export default async function VideoCategoryPage() {
     },
     'Error occurs while fetching live videos in video category page'
   )
+
   allVideoEditorChoices = handleResponse(
     responses[6],
     (data: Awaited<ReturnType<typeof fetchVideoEditorChoice>> | undefined) => {
