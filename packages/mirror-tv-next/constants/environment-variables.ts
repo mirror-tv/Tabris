@@ -17,7 +17,7 @@ switch (ENV) {
     YOUTUBE_API_URL = 'https://mnews.tw'
     GTM_ID = 'GTM-PK7VRFX'
     GLOBAL_CACHE_SETTING = 0
-    HEADER_JSON_URL = 'https://mnews.tw/json/header_v2.json'
+    HEADER_JSON_URL = 'https://www.mnews.tw/json/header_v2-1.json%20'
     FLASH_NEWS_JSON_URL = 'https://mnews.tw/json/flash_news.json'
     SCHEDULE_JSON_URL = 'https://mnews.tw/json/tv-schedule.json'
     POPULAR_POSTS_URL = 'https://mnews.tw/json/popularlist.json'
