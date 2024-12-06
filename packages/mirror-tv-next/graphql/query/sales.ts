@@ -7,7 +7,7 @@ type Sale = {
     publishTime: string
     categories: {
       name: string
-    }
+    }[]
   }
   __typename: 'Sale'
 }

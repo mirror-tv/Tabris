@@ -38,6 +38,9 @@
   height: 16px;
   width: 1px;
   background-color: $color-grey-deep;
+  @include media-breakpoint-up(md) {
+    width: 2px;
+  }
 }
 
 .active::after {
@@ -123,6 +126,16 @@
 .liRest {
   padding: 0 10px;
   position: relative;
+
+  @include media-breakpoint-up(md) {
+    color: #a6a6a6;
+    margin: 0;
+    padding: 0 14px;
+    font-size: 14px;
+  }
+  @include media-breakpoint-up(xl) {
+    font-size: 16px;
+  }
 }
 
 .liRest::before {
@@ -133,6 +146,9 @@
   height: 16px;
   width: 1px;
   background-color: #a6a6a6;
+  @include media-breakpoint-up(md) {
+    width: 2px;
+  }
 }
 
 .liRest::after {
@@ -144,10 +160,11 @@
   height: 2px;
   background-color: transparent;
   transition: width 0.4s ease-in-out;
+  transform: translate(7px, 0);
 }
 
 .liRest:hover::after {
-  width: 100%;
+  width: calc(100% - 14px);
   background-color: $color-yellow;
 }
 
@@ -187,6 +204,9 @@
   height: 16px;
   width: 1px;
   background-color: #a6a6a6;
+  @include media-breakpoint-up(md) {
+    width: 2px;
+  }
 }
 
 .showBox {
@@ -217,4 +237,12 @@
 
 .showItem:hover {
   color: $color-yellow;
+}
+
+.hidden {
+  position: fixed;
+  display: flex;
+  opacity: 0;
+  top: -100%;
+  left: -100%;
 }

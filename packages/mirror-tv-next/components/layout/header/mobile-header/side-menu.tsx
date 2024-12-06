@@ -6,24 +6,22 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { HEADER_BOTTOM_LINKS } from '~/constants/constant'
 import type { Category } from '~/graphql/query/category'
-import type { Show } from '~/graphql/query/shows'
+import type { Show } from '~/types/header'
 import type { Sponsor } from '~/graphql/query/sponsors'
 import styles from './_styles/side-menu.module.scss'
 import { formateHeroImage } from '~/utils'
+import { useData } from '~/context/data-context'
 
 type SideMenuProps = {
   categories: Category[]
-  shows: Show[]
   sponsors: Sponsor[]
 }
 
-export default function SideMenu({
-  categories,
-  shows,
-  sponsors,
-}: SideMenuProps) {
+export default function SideMenu({ categories, sponsors }: SideMenuProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const path = usePathname()
+  const { headerData } = useData()
+  const shows: Show[] = headerData.allShows
 
   const toggleSidebar = () => {
     setIsSidebarOpen((prevState) => !prevState)

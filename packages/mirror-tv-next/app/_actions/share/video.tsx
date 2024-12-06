@@ -8,12 +8,14 @@ type GetVideoType = {
   name: string
   take: number
   errorMessage?: string
+  withDescription?: boolean
 }
 
 async function getVideo({
   name,
   take,
   errorMessage = '',
+  withDescription = false,
 }: GetVideoType): Promise<{
   data: { allVideos: Video[] }
 }> {
@@ -24,6 +26,7 @@ async function getVideo({
       variables: {
         name,
         take,
+        withDescription,
       },
     })
     return { data }

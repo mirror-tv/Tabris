@@ -1,7 +1,6 @@
 import errors from '@twreporter/errors'
 import MobileNav from '~/components/layout/header/mobile-header/mobile-nav'
 import type { Category } from '~/graphql/query/category'
-import type { Show } from '~/graphql/query/shows'
 import type { Sponsor } from '~/graphql/query/sponsors'
 
 import {
@@ -48,32 +47,22 @@ async function getData() {
 export default async function MainHeader() {
   let sponsorsData: Sponsor[] = []
   let categoriesData: Category[] = []
-  let showsData: Show[] = []
 
-  const {
-    allCategories = [],
-    allSponsors = [],
-    allShows = [],
-  } = await getData()
+  const { allCategories = [], allSponsors = [] } = await getData()
 
   categoriesData = allCategories
   sponsorsData = allSponsors
-  showsData = allShows
 
   return (
     <header className={styles.header}>
       <div className={styles.pcHeaderWrapper}>
         <HeaderTop sponsors={sponsorsData} />
-        <HeaderNav categories={categoriesData} shows={showsData} />
+        <HeaderNav categories={categoriesData} />
         <HeaderBottom />
       </div>
       <div className={styles.mobHeaderWrapper}>
         <div className={styles.placeholder} />
-        <MobileNav
-          categories={categoriesData}
-          shows={showsData}
-          sponsors={sponsorsData}
-        />
+        <MobileNav categories={categoriesData} sponsors={sponsorsData} />
       </div>
     </header>
   )

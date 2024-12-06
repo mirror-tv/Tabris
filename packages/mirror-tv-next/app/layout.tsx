@@ -9,6 +9,7 @@ import { META_DESCRIPTION, SITE_TITLE } from '~/constants/constant'
 import {
   GLOBAL_CACHE_SETTING,
   GTM_ID,
+  HEADER_JSON_URL,
   SITE_URL,
 } from '~/constants/environment-variables'
 import '../styles/global.css'
@@ -16,6 +17,7 @@ import CompassFit from '~/components/ads/compass-fit'
 import TagManagerWrapper from './tag-manager'
 import { fetchPopularPosts } from '~/app/_actions/popular-data'
 import { RawPopularPost } from '~/types/popular-post'
+import type { HeaderData } from '~/types/header'
 
 export const revalidate = GLOBAL_CACHE_SETTING
 
@@ -43,10 +45,27 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
   let initialPopularPosts: RawPopularPost[] = []
+  let initialHeaderData: HeaderData = {
+    allCategories: [],
+    allShows: [],
+    allSponsors: [],
+  }
 
   try {
     const { data } = await fetchPopularPosts()
     initialPopularPosts = data.report
+  } catch (error) {
+    console.error('Failed to fetch popular posts:', error)
+  }
+
+  try {
+    const data = await fetch(HEADER_JSON_URL, {
+      next: { revalidate: GLOBAL_CACHE_SETTING },
+    }).then((res) => {
+      // use type assertion to eliminate any
+      return res.json() as unknown as HeaderData
+    })
+    initialHeaderData = data
   } catch (error) {
     console.error('Failed to fetch popular posts:', error)
   }
@@ -108,7 +127,10 @@ export default async function RootLayout({
         })();`}
       </Script>
       <body>
-        <DataProvider initialPopularPosts={initialPopularPosts}>
+        <DataProvider
+          initialPopularPosts={initialPopularPosts}
+          initialHeaderData={initialHeaderData}
+        >
           <MainHeader />
           <TagManagerWrapper />
           {children}

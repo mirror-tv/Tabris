@@ -7,6 +7,17 @@ export type PostCardItem = ListingPost & {
   ogImage?: HeroImage | null
 }
 
+export type PostWithCategory = ListingPost & {
+  publishTime: Date
+  categories: {
+    slug: string
+    name: string
+  }[]
+  heroVideo: {
+    coverPhoto: HeroImage
+  }
+}
+
 const getPostsByTagName = gql`
   query fetchPostsByTagName(
     $tagName: String!
@@ -141,9 +152,53 @@ const getVideoPostsByCategorySlug = gql`
   ${listingPost}
 `
 
+const getPostsWithCategory = gql`
+  query getPostsWithCategory(
+    $first: Int = 12
+    $skip: Int = 0
+    $withCount: Boolean = false
+    $filteredSlug: [String] = [""]
+  ) {
+    allPosts(
+      where: {
+        state: published
+        slug_not_in: $filteredSlug
+        style_not_in: [wide, projects, script, campaign, readr]
+      }
+      first: $first
+      skip: $skip
+      sortBy: publishTime_DESC
+    ) {
+      ...listingPostFragment
+      publishTime
+      categories {
+        slug
+        name
+      }
+      heroVideo {
+        coverPhoto {
+          urlMobileSized
+          urlOriginal
+        }
+      }
+    }
+    _allPostsMeta(
+      where: {
+        state: published
+        slug_not_in: $filteredSlug
+        style_not_in: [wide, projects, script, campaign, readr]
+      }
+    ) @include(if: $withCount) {
+      count
+    }
+  }
+  ${listingPost}
+`
+
 export {
   getPostsByTagName,
   getLatestPosts,
   getPostsByCategorySlug,
   getVideoPostsByCategorySlug,
+  getPostsWithCategory,
 }

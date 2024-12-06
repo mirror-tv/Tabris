@@ -1,10 +1,13 @@
 'use client'
 import { createContext, useContext, useState, ReactNode } from 'react'
+import type { HeaderData } from '~/types/header'
 import type { RawPopularPost } from '~/types/popular-post'
 
 type DataContextType = {
   popularPosts: RawPopularPost[]
   setPopularPosts: (posts: RawPopularPost[]) => void
+  headerData: HeaderData
+  setHeaderData: (data: HeaderData) => void
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined)
@@ -12,15 +15,25 @@ const DataContext = createContext<DataContextType | undefined>(undefined)
 export function DataProvider({
   children,
   initialPopularPosts,
+  initialHeaderData,
 }: {
   children: ReactNode
   initialPopularPosts: RawPopularPost[]
+  initialHeaderData: HeaderData
 }) {
   const [popularPosts, setPopularPosts] =
     useState<RawPopularPost[]>(initialPopularPosts)
+  const [headerData, setHeaderData] = useState<HeaderData>(initialHeaderData)
 
   return (
-    <DataContext.Provider value={{ popularPosts, setPopularPosts }}>
+    <DataContext.Provider
+      value={{
+        popularPosts,
+        setPopularPosts,
+        headerData,
+        setHeaderData,
+      }}
+    >
       {children}
     </DataContext.Provider>
   )

@@ -27,7 +27,7 @@ export default function PopularPostsList({ title }: PopularPostsListType) {
             ''
           )
           return (
-            <li className={styles.item} key={post.slug}>
+            <div className={`${styles.item} popular-list`} key={post.slug}>
               <p className={styles.date}>{formattedDate}</p>
               <Link
                 href={`/story/${post.slug}`}
@@ -37,7 +37,8 @@ export default function PopularPostsList({ title }: PopularPostsListType) {
               >
                 {post.name}
               </Link>
-            </li>
+              <div className="promotion aside__item"></div>
+            </div>
           )
         })}
       </ul>

@@ -12,11 +12,8 @@ import { fetchVideoPostsItems } from '~/app/_actions/category-video'
 import styles from '~/styles/pages/category-video-page.module.scss'
 import VideoPostsList from '~/components/category/video/video-posts-list'
 import type { HeroImage } from '~/types/common'
-import type { Show } from '~/graphql/query/shows'
 import UiShowsList from '~/components/category/video/ui-shows-list'
 import UiLinksList from '~/components/category/video/ui-links-list'
-import { HEADER_JSON_URL } from '~/constants/environment-variables'
-import type { HeaderData } from '~/types/header'
 import type { PromotionVideo } from '~/graphql/query/promotion-video'
 import type { Video } from '~/graphql/query/videos'
 import AsideVideoListHandler from '~/components/category/video/aside-video-list-handler'
@@ -72,7 +69,6 @@ export default async function VideoCategoryPage() {
     categoryName: string
   }[] = []
   let allCategories: Category[] = []
-  let allShows: Show[] = []
   let allPromotionVideos: PromotionVideo[] = []
   let otherStreamings: Video[] = []
   let liveVideo: Video[] = []
@@ -95,14 +91,6 @@ export default async function VideoCategoryPage() {
       return res.json() as unknown as RowPopularVideoData
     })
 
-  const fetchHeaderJson = () =>
-    fetch(HEADER_JSON_URL, {
-      next: { revalidate: GLOBAL_CACHE_SETTING },
-    }).then((res) => {
-      // use type assertion to eliminate any
-      return res.json() as unknown as HeaderData
-    })
-
   const fetchPromotionVideos = () =>
     fetchPromotionVideosServerAction({
       take: 5,
@@ -121,7 +109,6 @@ export default async function VideoCategoryPage() {
   const responses = await Promise.allSettled([
     fetchAllCategory(),
     fetchPopularPosts(),
-    fetchHeaderJson(),
     fetchPromotionVideos(),
     fetchOtherStreaming(),
     fetchLiveVideo(),
@@ -155,22 +142,8 @@ export default async function VideoCategoryPage() {
     'Error occurs while fetching popular videos in video category page'
   )
 
-  allShows = handleResponse(
-    responses[2],
-    (data: Awaited<ReturnType<typeof fetchHeaderJson>> | undefined) => {
-      return (
-        data?.allShows?.sort((a, b) => {
-          if (a.sortOrder === null) return 1
-          if (b.sortOrder === null) return -1
-          return parseInt(a.sortOrder) - parseInt(b.sortOrder)
-        }) ?? []
-      )
-    },
-    'Error occurs while fetching all shows in video category page'
-  )
-
   allPromotionVideos = handleResponse(
-    responses[3],
+    responses[2],
     (data: Awaited<ReturnType<typeof fetchPromotionVideos>> | undefined) => {
       return data?.data?.allPromotionVideos ?? []
     },
@@ -178,7 +151,7 @@ export default async function VideoCategoryPage() {
   )
 
   otherStreamings = handleResponse(
-    responses[4],
+    responses[3],
     (data: Awaited<ReturnType<typeof fetchOtherStreaming>> | undefined) => {
       return data?.data?.allVideos ?? []
     },
@@ -186,7 +159,7 @@ export default async function VideoCategoryPage() {
   )
 
   liveVideo = handleResponse(
-    responses[5],
+    responses[4],
     (data: Awaited<ReturnType<typeof fetchLiveVideo>> | undefined) => {
       return data?.data?.allVideos ?? []
     },
@@ -194,7 +167,7 @@ export default async function VideoCategoryPage() {
   )
 
   allVideoEditorChoices = handleResponse(
-    responses[6],
+    responses[5],
     (data: Awaited<ReturnType<typeof fetchVideoEditorChoice>> | undefined) => {
       return data?.data?.allVideoEditorChoices ?? []
     },
@@ -282,9 +255,7 @@ export default async function VideoCategoryPage() {
               )}
               <GPTAd pageKey="video" adKey="PC_R2" />
               <GPTAd pageKey="video" adKey="PC_R3" />
-              {!!allShows.length && (
-                <UiShowsList title="節目" showsList={allShows} />
-              )}
+              <UiShowsList title="節目" />
               <UiLinksList fbHref="https://www.facebook.com/mnewstw/" />
             </section>
           </aside>
@@ -334,9 +305,7 @@ export default async function VideoCategoryPage() {
           <GPTAd pageKey="video" adKey="PC_R2" />
           <GPTAd pageKey="video" adKey="PC_R3" />
           <GPTAd pageKey="video" adKey="MB_M3" />
-          {!!allShows.length && (
-            <UiShowsList title="節目" showsList={allShows} />
-          )}
+          <UiShowsList title="節目" />
           <GPTAd pageKey="video" adKey="MB_M4" />
           <UiLinksList fbHref="https://www.facebook.com/mnewstw/" />
         </section>
