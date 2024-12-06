@@ -1,14 +1,17 @@
-import type { Show } from '~/graphql/query/shows'
+'use client'
 import UiShowCard from './ui-show-card'
 import UiHeadingBordered from '~/components/shared/ui-heading-bordered'
 import styles from './_styles/ui-show-cards-list.module.scss'
+import { useData } from '~/context/data-context'
 
 type UiShowsListProps = {
   title: string
-  showsList: Show[]
 }
 
-export default function UiShowsList({ showsList, title }: UiShowsListProps) {
+export default function UiShowsList({ title }: UiShowsListProps) {
+  const { headerData } = useData()
+  const showsList = headerData?.allShows ?? []
+  if (!showsList.length) return null
   return (
     <>
       <UiHeadingBordered title={title} className={styles.title} />

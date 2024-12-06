@@ -1,5 +1,5 @@
 import { formateHeroImage } from './image-handler'
-import type { PostCardItem } from '~/graphql/query/posts'
+import type { PostCardItem, PostWithCategory } from '~/graphql/query/posts'
 import { FeaturePost } from '~/types/api-data'
 import type { PostImage } from '~/utils/image-handler'
 
@@ -14,7 +14,7 @@ export type FormattedPostCard = {
 }
 
 const formatArticleCard = (
-  post: PostCardItem | FeaturePost,
+  post: PostCardItem | FeaturePost | PostWithCategory,
   options?: { label?: string | undefined }
 ): FormattedPostCard => {
   const imageObj = post.heroImage || (post as PostCardItem).ogImage || {}
@@ -25,7 +25,9 @@ const formatArticleCard = (
     name: post.name,
     images: formateHeroImage(imageObj),
     publishTime: new Date(post.publishTime),
-    label: options?.label,
+    label:
+      options?.label ||
+      (post as FeaturePost | PostWithCategory).categories?.[0]?.name,
   }
 }
 

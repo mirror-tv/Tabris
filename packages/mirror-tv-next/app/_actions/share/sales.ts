@@ -1,35 +1,24 @@
 'use server'
 import errors from '@twreporter/errors'
 import { getClient } from '~/apollo-client'
-import { Show, fetchShows } from '~/graphql/query/shows'
+import { Sale, getSales } from '~/graphql/query/sales'
 
-type fetchFeatureTopicsType = {
+type FetchSalesType = {
   take: number
-  skip: number
-  isGetCount: boolean
+  pageName: string
 }
 
-async function getShows({
-  take = 12,
-  skip = 0,
-  isGetCount = false,
-}: fetchFeatureTopicsType): Promise<
-  | {
-      data: { allShows: Show[] }
-    }
-  | undefined
-> {
+async function fetchSales({ take, pageName }: FetchSalesType): Promise<{
+  data: { allSales: Sale[] }
+}> {
   const client = getClient()
   try {
     const { data } = await client.query<{
-      allShows: Show[]
-      _allShowsMeta?: { count: number }
+      allSales: Sale[]
     }>({
-      query: fetchShows,
+      query: getSales,
       variables: {
-        take,
-        skip,
-        isGetCount,
+        first: take,
       },
     })
     return { data }
@@ -37,9 +26,7 @@ async function getShows({
     const annotatingError = errors.helpers.wrap(
       err,
       'UnhandledError',
-      `Error occurs while fetching shows data from ${skip + 1} to ${
-        skip + take + 1
-      } in homepage`
+      `Error occurs while fetching sales in ${pageName}`
     )
     console.error(
       JSON.stringify({
@@ -51,6 +38,7 @@ async function getShows({
       })
     )
   }
+  return { data: { allSales: [] } }
 }
 
-export { getShows }
+export { fetchSales }

@@ -1,13 +1,12 @@
 'use client'
 import styles from './_styles/show-list-handler.module.scss'
-import { getShows } from '~/app/_actions/homepage/shows'
-import { Show } from '~/graphql/query/shows'
 import InfiniteScrollList from '@readr-media/react-infinite-scroll-list'
 import useWindowDimensions from '~/hooks/use-window-dimensions'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import Image from '@readr-media/react-image'
 import { formateHeroImage } from '~/utils'
 import Link from 'next/link'
+import type { Show } from '~/types/header'
 
 type ShowListHandlerProps = {
   initShows: Show[]
@@ -21,7 +20,6 @@ export default function ShowListHandler({
   initShows,
   showsCount,
 }: ShowListHandlerProps) {
-  const [showsHasFetched, setShowsHasFetched] = useState(initShows)
   const { width } = useWindowDimensions()
   const pageSize = useMemo(() => {
     return width && width > 1200 ? SHOW_PER_PAGE_XL : SHOW_PER_PAGE_MD
@@ -30,35 +28,7 @@ export default function ShowListHandler({
   const fetchMoreShows = async (page: number) => {
     const startIdx = pageSize * (page - 1)
     const endIdx = pageSize * page
-    const renderedShowsCount = startIdx
-    const showNotRendered = showsHasFetched.length - renderedShowsCount
-
-    // 如果目前資料已經足夠顯示當前頁數的內容
-    if (showNotRendered > pageSize) {
-      return showsHasFetched.slice(
-        startIdx,
-        Math.min(endIdx, showsHasFetched.length)
-      )
-    }
-
-    // 當 data 不足以滿足頁面需求時，進行新的數據請求
-    const takeCount = pageSize - showNotRendered
-    const res = await getShows({
-      take: takeCount,
-      skip: showsHasFetched.length,
-      isGetCount: false,
-    })
-    const newShows = res?.data?.allShows ?? []
-
-    // 合併新舊數據
-    const newCombinedShows = [...showsHasFetched, ...newShows]
-    setShowsHasFetched(newCombinedShows)
-
-    // 返回需要渲染的內容，確保最後一頁能包含所有剩餘的內容
-    return newCombinedShows.slice(
-      startIdx,
-      Math.min(endIdx, newCombinedShows.length)
-    )
+    return initShows.slice(startIdx, Math.min(endIdx, initShows.length))
   }
 
   return (
@@ -72,12 +42,12 @@ export default function ShowListHandler({
       key={pageSize}
     >
       {(renderList) => (
-        <ol className={styles.showList}>
+        <ol className={`${styles.showList} show-list`}>
           {renderList.map((item) => (
             <Link
               id={item.id}
               key={item.id}
-              className={`${styles.item} show-card__img`}
+              className={`${styles.item} `}
               href={`/show/${item.slug}`}
               target="_blank"
               rel="noreferrer noopener"

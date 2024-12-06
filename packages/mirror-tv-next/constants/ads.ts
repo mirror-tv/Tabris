@@ -78,22 +78,15 @@ const GPT_UNITS: GPTUnits = {
   // page key: home，首頁
   home: {
     // ad key
-    PC_R1: {
-      adUnit: 'mnews_home_sidebar_300x250_01',
-      adSize: [
-        [300, 250],
-        [1, 1],
-      ],
-    },
-    PC_R2: {
-      adUnit: 'mnews_home_sidebar_300x250_02',
-      adSize: [
-        [300, 250],
-        [1, 1],
-      ],
-    },
     PC_BT: {
       adUnit: 'mnews_home_900x280',
+      adSize: [
+        [900, 280],
+        [1, 1],
+      ],
+    },
+    PC_BT2: {
+      adUnit: 'mnews_home_middle_900x280',
       adSize: [
         [900, 280],
         [1, 1],

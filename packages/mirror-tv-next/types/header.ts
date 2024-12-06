@@ -11,7 +11,7 @@ type BannerImage = {
   urlOriginal: string
 }
 
-type Show = {
+export type Show = {
   id: string
   slug: string
   name: string

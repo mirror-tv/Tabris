@@ -1,0 +1,51 @@
+@import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
+
+.latest {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  margin: 0 auto;
+  margin-top: 36px;
+  max-width: 100dvw;
+  overflow: hidden;
+  margin-bottom: 32px;
+  @include media-breakpoint-up(md) {
+    max-width: 554px;
+  }
+  @include media-breakpoint-up(xl) {
+    max-width: 1128px;
+  }
+}
+
+.listTitle {
+  width: fit-content;
+  margin: 0 auto;
+  margin-bottom: 20px;
+  border-image: linear-gradient(
+      to bottom,
+      $color-blue-deep 35%,
+      transparent 35%,
+      transparent 65%,
+      $color-blue-deep 65%
+    )
+    5 !important;
+
+  p {
+    color: $color-blue-deep;
+  }
+  @include media-breakpoint-up(xl) {
+    margin-left: 0;
+  }
+}
+
+.liveAndEditor {
+  display: flex;
+  flex-direction: column;
+  @include media-breakpoint-up(xl) {
+    flex-direction: row-reverse;
+    width: 1120px;
+    margin: 0 auto;
+    gap: 23px;
+  }
+}

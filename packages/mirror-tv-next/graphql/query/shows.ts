@@ -1,14 +1,6 @@
 import gql from 'graphql-tag'
 import type { HeroImage } from '~/types/common'
 
-export type Show = {
-  id: string
-  slug: string
-  name: string
-  bannerImg: HeroImage | null
-  sortOrder?: string | null
-}
-
 export type HostOrStaff = {
   slug: string
   name: string | null
@@ -32,32 +24,6 @@ export type ShowWithDetail = {
   playList02: string | null
   trailerPlaylist: string | null
 }
-
-const fetchShows = gql`
-  query fetchShows(
-    $take: Int = 0
-    $skip: Int = 0
-    $isGetCount: Boolean = false
-  ) {
-    allShows(
-      sortBy: [sortOrder_ASC, createdAt_DESC]
-      first: $take
-      skip: $skip
-    ) {
-      id
-      slug
-      name
-      bannerImg {
-        urlMobileSized
-        urlTabletSized
-        urlOriginal
-      }
-    }
-    _allShowsMeta @include(if: $isGetCount) {
-      count
-    }
-  }
-`
 
 const fetchShowBySlug = gql`
   query fetchShowBySlug(
@@ -126,4 +92,4 @@ const fetchShowBySlug = gql`
   }
 `
 
-export { fetchShows, fetchShowBySlug }
+export { fetchShowBySlug }

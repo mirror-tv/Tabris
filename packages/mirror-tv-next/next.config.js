@@ -73,6 +73,24 @@ const nextConfig = {
           },
         ],
       },
+      {
+        source: '/category/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=300, must-revalidate',
+          },
+        ],
+      },
+      {
+        source: '/category/video',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=300, must-revalidate',
+          },
+        ],
+      },
     ]
   },
   webpack: (config) => {
