@@ -2,22 +2,13 @@ import { type FeatureTopic } from '~/graphql/query/topic'
 import styles from './_styles/topic-list.module.scss'
 import UiHeadingBordered from '~/components/shared/ui-heading-bordered'
 import TopicItem from './topic-item'
-import { getFeatureTopics } from '~/app/_actions/homepage/feature-topics'
 
 type TopicListProps = {
   title: string
+  allTopics: FeatureTopic[] | undefined
 }
 
-export default async function TopicList({ title }: TopicListProps) {
-  let allTopics: FeatureTopic[] | undefined = []
-
-  try {
-    const response = await getFeatureTopics({ topicFirst: 4, postFirst: 3 })
-    allTopics = response?.data?.allTopics
-  } catch (error) {
-    return null
-  }
-
+export default async function TopicList({ title, allTopics }: TopicListProps) {
   if (!allTopics?.[0]) {
     return null
   }

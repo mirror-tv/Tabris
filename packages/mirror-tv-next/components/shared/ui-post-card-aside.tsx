@@ -7,7 +7,7 @@ type UiPostCardAsideProps = {
   date: Date
   href: string
   postStyle: string
-  page: 'category' | 'stroy'
+  page: 'category' | 'story'
   images: PostImage
 }
 
@@ -20,6 +20,10 @@ export default function UiPostCardAside({
   page = 'category',
 }: UiPostCardAsideProps) {
   const isVideoNews = postStyle === 'videoNews'
+  const isCategoryPage = (type: string) => type === 'category'
+  const figureClassNameByProps = isCategoryPage(page)
+    ? 'categoryImage'
+    : 'storyImage'
 
   return (
     <a
@@ -28,7 +32,9 @@ export default function UiPostCardAside({
       target="_blank"
       rel="noreferrer noopener"
     >
-      <figure className={[styles.image, styles[`${page}Image`]].join(' ')}>
+      <figure
+        className={[styles.image, styles[figureClassNameByProps]].join(' ')}
+      >
         <ResponsiveImage
           images={images}
           alt={title}
@@ -39,7 +45,7 @@ export default function UiPostCardAside({
       </figure>
       <div className={styles.info}>
         <span className={styles.title}>{title}</span>
-        {page === 'stroy' && (
+        {page === 'story' && (
           <span className={styles.date}>
             {formateDateAtTaipei(date, 'YYYY.MM.DD HH:mm', '')}
           </span>

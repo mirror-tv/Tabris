@@ -8,6 +8,7 @@
   max-width: 535px;
   @include media-breakpoint-up(xl) {
     max-width: 1072px;
+    padding: 0 0 40px 0;
   }
 }
 
@@ -38,7 +39,7 @@
   @include media-breakpoint-up(xl) {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0 49px;
+    gap: 0 24px;
   }
 }
 
@@ -48,6 +49,10 @@
   padding-bottom: 12px;
   margin-bottom: 12px;
   color: #0d1821;
+  @include media-breakpoint-up(xl) {
+    width: 519px;
+    height: 120px;
+  }
 }
 
 .date {

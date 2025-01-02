@@ -1,4 +1,4 @@
-import { PostCardItem } from '~/graphql/query/posts'
+import { type PostCardItem } from '~/graphql/query/posts'
 import { Topic } from '~/graphql/query/topic'
 import type { HeroImage } from '~/types/common'
 

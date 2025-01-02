@@ -44,7 +44,6 @@ export default function NavItems({ categories }: NavItemProps) {
     // Desktop/Tablet view - calculate available space
     const maxWidth = isViewportWidthUpXl ? 800 : 450
     const otherItemWidth = isViewportWidthUpXl ? 300 : 160
-    console.log(maxWidth, width)
 
     let firstLineItemCount = 0
     let currentWidth = 0

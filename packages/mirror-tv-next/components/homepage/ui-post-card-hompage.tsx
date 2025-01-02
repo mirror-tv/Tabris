@@ -33,8 +33,8 @@ export default function UiPostCardHomepage({
       {!!label && (
         <span
           className={`${styles.label} ${
-            label === SALES_LABEL_NAME ? styles.yellowBack : ''
-          }}`}
+            label === SALES_LABEL_NAME ? styles.yellowBlack : ''
+          }`}
         >
           {label}
         </span>

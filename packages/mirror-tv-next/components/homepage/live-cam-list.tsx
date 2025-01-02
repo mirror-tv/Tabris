@@ -1,24 +1,18 @@
 import styles from './_styles/live-cam-list.module.scss'
 import UiHeadingBordered from '~/components/shared/ui-heading-bordered'
 import type { Video } from '~/graphql/query/videos'
-import { getVideo } from '~/app/_actions/share/video'
 import YoutubeEmbed from '../shared/youtube-embed'
 import { extractYoutubeId } from '~/utils'
 
 type LiveCamListProps = {
   title: string
+  allLiveVideo: Video[]
 }
 
-export default async function LiveCamList({ title }: LiveCamListProps) {
-  let allLiveVideo: Video[] | undefined = []
-
-  try {
-    const response = await getVideo({ name: 'live-cam', take: 2 })
-    allLiveVideo = response?.data?.allVideos
-  } catch (error) {
-    return null
-  }
-
+export default async function LiveCamList({
+  title,
+  allLiveVideo,
+}: LiveCamListProps) {
   if (!allLiveVideo?.[0]) {
     return null
   }

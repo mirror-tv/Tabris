@@ -1,4 +1,4 @@
-@import '/styles/theme/breakpoints';
+@import "/styles/theme/breakpoints";
 
 .card {
   display: flex;
@@ -29,7 +29,8 @@
   }
 }
 
-.categoryImage {
+.categoryImage,
+.storyImage {
   width: 130px;
   min-width: 130px;
   height: 130px;

@@ -1,25 +1,19 @@
 import styles from './_styles/live.module.scss'
-import { getVideo } from '~/app/_actions/share/video'
 import { extractYoutubeId } from '~/utils'
 import dynamic from 'next/dynamic'
 const YoutubeEmbed = dynamic(() => import('../shared/youtube-embed'))
 
-export default async function Live() {
-  let liveUrl: string = ''
-  let liveDesc: string = ''
-
-  const response = await getVideo({
-    name: 'mnews-live',
-    take: 1,
-    withDescription: true,
-  })
-  liveUrl =
-    response?.data?.allVideos?.[0]?.youtubeUrl ??
-    response?.data?.allVideos?.[0]?.url ??
-    ''
-  liveDesc = response?.data?.allVideos?.[0]?.description ?? ''
-
-  if (!liveUrl) {
+export default async function Live({
+  liveData,
+}: {
+  liveData: {
+    id: string
+    youtubeUrl: string
+    url: string
+    description: string
+  }
+}) {
+  if (!liveData?.url && !liveData?.youtubeUrl) {
     return null
   }
 
@@ -32,7 +26,7 @@ export default async function Live() {
         </div>
         <YoutubeEmbed
           className={styles.video}
-          youtubeId={extractYoutubeId(liveUrl)}
+          youtubeId={extractYoutubeId(liveData.url || liveData.youtubeUrl)}
           autoplay={true}
           muted={true}
           loop={false}
@@ -40,7 +34,7 @@ export default async function Live() {
         />
       </div>
       <div className={styles.info}>
-        <p className={styles.desc}>{liveDesc}</p>
+        <p className={styles.desc}>{liveData.description}</p>
         <span className={styles.title}>鏡新聞 LIVE</span>
       </div>
     </section>

@@ -4,37 +4,21 @@ import UiHeadingBordered from '~/components/shared/ui-heading-bordered'
 import YoutubeEmbed from '../shared/youtube-embed'
 import { extractYoutubeId } from '~/utils'
 import { PromotionVideo } from '~/graphql/query/promotion-video'
-import { fetchPromotionVideosServerAction } from '~/app/_actions/share/promotion-videos'
 import { useEffect, useRef, useState } from 'react'
 import useWindowDimensions from '~/hooks/use-window-dimensions'
 
 type PromotionVideoListProps = {
   title: string
+  allPromotionVideos: PromotionVideo[]
 }
 
-export default function PromotionVideoList({ title }: PromotionVideoListProps) {
+export default function PromotionVideoList({
+  title,
+  allPromotionVideos,
+}: PromotionVideoListProps) {
   const promotionListRef = useRef<HTMLDivElement>(null)
   const [shouldShowBtn, setShouldShowBtn] = useState(false)
   const { width } = useWindowDimensions()
-  const [allPromotionVideos, setAllPromotionVideos] = useState<
-    PromotionVideo[]
-  >([])
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetchPromotionVideosServerAction({
-          take: 5,
-          pageName: 'homepage',
-        })
-        setAllPromotionVideos(response?.data?.allPromotionVideos || [])
-      } catch (error) {
-        setAllPromotionVideos([])
-      }
-    }
-
-    fetchData()
-  }, [])
 
   useEffect(() => {
     const checkScrollable = () => {

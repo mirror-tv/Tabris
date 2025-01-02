@@ -1,7 +1,6 @@
 import { formateHeroImage } from './image-handler'
-import type { PostCardItem, PostWithCategory } from '~/graphql/query/posts'
-import { FeaturePost } from '~/types/api-data'
 import type { PostImage } from '~/utils/image-handler'
+import { type HeroImage } from '~/types/common'
 
 export type FormattedPostCard = {
   href: string
@@ -11,23 +10,55 @@ export type FormattedPostCard = {
   images: PostImage
   publishTime: Date
   label?: string
+  __typeName?: string
+}
+
+type FormatArticleCardInput = {
+  slug: string
+  name: string
+  publishTime: string | Date
+  heroImage?: HeroImage | null
+  ogImage?: HeroImage | null
+  thumbnail?: string | null
+  style?: string
+  categories?: { name: string }[]
+  __typename?: string
 }
 
 const formatArticleCard = (
-  post: PostCardItem | FeaturePost | PostWithCategory,
-  options?: { label?: string | undefined }
+  post: FormatArticleCardInput,
+  options?: { label?: string }
 ): FormattedPostCard => {
-  const imageObj = post.heroImage || (post as PostCardItem).ogImage || {}
-  return {
-    href: `/story/${post.slug}`,
+  const postFormatArticleCardInput = {
     slug: post.slug,
-    style: post.style,
     name: post.name,
+    publishTime: post.publishTime,
+    heroImage: 'heroImage' in post ? post.heroImage : null,
+    ogImage: 'ogImage' in post ? post.ogImage : null,
+    thumbnail: 'thumbnail' in post ? post.thumbnail : null,
+    style: 'style' in post ? post.style : undefined,
+    categories: 'categories' in post ? post.categories : undefined,
+    __typename:
+      '__typename' in post ? String(post['__typename'] ?? '') : undefined,
+  }
+  const imageObj =
+    postFormatArticleCardInput.heroImage ??
+    postFormatArticleCardInput.ogImage ??
+    (postFormatArticleCardInput.thumbnail
+      ? { urlOriginal: postFormatArticleCardInput.thumbnail }
+      : {})
+  return {
+    href:
+      postFormatArticleCardInput.__typename === 'External'
+        ? `/external/${post.slug}`
+        : `/story/${post.slug}`,
+    slug: postFormatArticleCardInput.slug,
+    style: postFormatArticleCardInput.style ?? 'article',
+    name: postFormatArticleCardInput.name,
     images: formateHeroImage(imageObj),
-    publishTime: new Date(post.publishTime),
-    label:
-      options?.label ||
-      (post as FeaturePost | PostWithCategory).categories?.[0]?.name,
+    publishTime: new Date(postFormatArticleCardInput.publishTime),
+    label: options?.label || postFormatArticleCardInput.categories?.[0]?.name,
+    __typeName: postFormatArticleCardInput.__typename ?? '',
   }
 }
 
