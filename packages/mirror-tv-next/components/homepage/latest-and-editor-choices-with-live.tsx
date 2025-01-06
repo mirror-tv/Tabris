@@ -20,10 +20,17 @@ const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 
 type LatestAndEditorchoicesWithLiveProps = {
   latestListTitle: string
+  liveData: {
+    id: string
+    youtubeUrl: string
+    url: string
+    description: string
+  }
 }
 
 export default async function LatestAndEditorchoicesWithLive({
   latestListTitle,
+  liveData,
 }: LatestAndEditorchoicesWithLiveProps) {
   let editorChoices: EditorChoices[] = []
   let salesPosts: Sale[] = []
@@ -94,7 +101,7 @@ export default async function LatestAndEditorchoicesWithLive({
   return (
     <>
       <section className={styles.liveAndEditor}>
-        <Live />
+        <Live liveData={liveData} />
         <EditorChoicesSwiper editorChoices={editorChoices} />
       </section>
       <GPTAd pageKey="home" adKey="MB_M2" />

@@ -16,8 +16,11 @@ import '../styles/global.css'
 import CompassFit from '~/components/ads/compass-fit'
 import TagManagerWrapper from './tag-manager'
 import { fetchPopularPosts } from '~/app/_actions/popular-data'
-import { RawPopularPost } from '~/types/popular-post'
+import { type RawPopularPost } from '~/types/popular-post'
+import { getLatestPostsForAside } from './_actions/category/get-latest-posts'
+import { type PostCardItem } from '~/graphql/query/posts'
 import type { HeaderData } from '~/types/header'
+import { handleResponse } from '~/utils'
 
 export const revalidate = GLOBAL_CACHE_SETTING
 
@@ -45,19 +48,35 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
   let initialPopularPosts: RawPopularPost[] = []
+  let initialLatestPosts: PostCardItem[] = []
   let initialHeaderData: HeaderData = {
     allCategories: [],
     allShows: [],
     allSponsors: [],
   }
 
-  try {
-    const { data } = await fetchPopularPosts()
-    initialPopularPosts = data.report
-  } catch (error) {
-    console.error('Failed to fetch popular posts:', error)
-  }
+  const [popularPostsResult, latestPostsResult] = await Promise.allSettled([
+    fetchPopularPosts(),
+    getLatestPostsForAside(),
+  ])
 
+  const getDataFromPopularPostsResult = (
+    value: Awaited<ReturnType<typeof fetchPopularPosts>> | undefined
+  ) => value?.data || []
+  const getAllPostsFromLatestPostsResult = (
+    value: Awaited<ReturnType<typeof getLatestPostsForAside>> | undefined
+  ) => value?.data.allPosts || []
+
+  initialPopularPosts = handleResponse(
+    popularPostsResult,
+    getDataFromPopularPostsResult,
+    'Error occurs while fetching popular posts'
+  )
+  initialLatestPosts = handleResponse(
+    latestPostsResult,
+    getAllPostsFromLatestPostsResult,
+    'Error occurs while fetching latest posts'
+  )
   try {
     const data = await fetch(HEADER_JSON_URL, {
       next: { revalidate: GLOBAL_CACHE_SETTING },
@@ -129,6 +148,7 @@ export default async function RootLayout({
       <body>
         <DataProvider
           initialPopularPosts={initialPopularPosts}
+          initialLatestPosts={initialLatestPosts}
           initialHeaderData={initialHeaderData}
         >
           <MainHeader />

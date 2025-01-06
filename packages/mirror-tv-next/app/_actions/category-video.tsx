@@ -3,7 +3,7 @@ import { FILTERED_SLUG } from '~/constants/constant'
 import errors from '@twreporter/errors'
 import {
   getVideoPostsByCategorySlug,
-  PostCardItem,
+  type PostCardItem,
 } from '~/graphql/query/posts'
 import { getClient } from '~/apollo-client'
 

@@ -1,0 +1,58 @@
+@import '/styles/theme/breakpoints';
+
+.followUsWrapper {
+  display: flex;
+  flex-direction: column;
+  @include media-breakpoint-up(md) {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.followUs {
+  color: #153047;
+  font-size: 20px;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 120%;
+  letter-spacing: 0.5px;
+  text-align: center;
+  margin-bottom: 8px;
+  @include media-breakpoint-up(md) {
+    font-size: 32px;
+    max-width: 65px;
+    word-wrap: break-word;
+    margin-right: 20px;
+    margin-bottom: 0px;
+  }
+}
+.desktopOnly {
+  display: none;
+  @include media-breakpoint-up(md) {
+    display: inherit;
+  }
+}
+.socialMediaList {
+  background-color: #153047;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 13px 18px;
+  flex: 1;
+  border-radius: 8px;
+
+  @include media-breakpoint-up(md) {
+    height: 78px;
+  }
+  li {
+    img {
+      width: 30px;
+      height: 30px;
+
+      @include media-breakpoint-up(md) {
+        width: 42px;
+        height: 42px;
+      }
+    }
+  }
+}

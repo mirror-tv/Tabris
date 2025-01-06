@@ -6,7 +6,7 @@ import UiPostCardAside from './ui-post-card-aside'
 type UiListPostsAsideProps = {
   listTitle: string
   listData: FormattedPostCard[]
-  page: 'category' | 'stroy' // 目前這兩個頁面會用共基本部分，但有些細微樣式不同
+  page: 'category' | 'story' // 目前這兩個頁面會用共基本部分，但有些細微樣式不同
   className: string // for gtm
 }
 
