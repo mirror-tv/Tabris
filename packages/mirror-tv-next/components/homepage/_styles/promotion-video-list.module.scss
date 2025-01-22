@@ -55,6 +55,12 @@
   padding: 0 36px;
 }
 
+.center {
+  width: fit-content;
+  justify-content: center;
+  margin: 0 auto;
+}
+
 .item {
   min-width: 358px;
   flex-shrink: 0;

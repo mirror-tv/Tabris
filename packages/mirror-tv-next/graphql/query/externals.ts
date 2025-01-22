@@ -1,11 +1,10 @@
 import gql from 'graphql-tag'
+import {
+  listingExternal,
+  type ListingExternal,
+} from '../fragments/listing-external'
 
-export type External = {
-  publishTime: string
-  slug: string
-  name: string
-  thumbnail: string | null
-}
+export type External = ListingExternal
 
 const getExternalsByTagName = gql`
   query fetchExternalsByTagName(
@@ -25,10 +24,7 @@ const getExternalsByTagName = gql`
       skip: $skip
       sortBy: publishTime_DESC
     ) {
-      publishTime
-      slug
-      name
-      thumbnail
+      ...listingExternalFragment
     }
     _allExternalsMeta(
       where: {
@@ -40,6 +36,40 @@ const getExternalsByTagName = gql`
       count
     }
   }
+  ${listingExternal}
 `
 
-export { getExternalsByTagName }
+const getExternalsByCategory = gql`
+  query fetchExternalsByCategory(
+    $categorySlug: String!
+    $first: Int = 12
+    $skip: Int = 0
+    $withCount: Boolean = false
+    $filteredSlug: [String] = [""]
+  ) {
+    allExternals(
+      where: {
+        state: published
+        slug_not_in: $filteredSlug
+        categories_some: { slug: $categorySlug }
+      }
+      first: $first
+      skip: $skip
+      sortBy: publishTime_DESC
+    ) {
+      ...listingExternalFragment
+    }
+    _allExternalsMeta(
+      where: {
+        state: published
+        slug_not_in: $filteredSlug
+        categories_some: { slug: $categorySlug }
+      }
+    ) @include(if: $withCount) {
+      count
+    }
+  }
+  ${listingExternal}
+`
+
+export { getExternalsByTagName, getExternalsByCategory }

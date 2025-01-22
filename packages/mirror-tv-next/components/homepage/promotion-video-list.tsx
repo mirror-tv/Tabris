@@ -56,7 +56,10 @@ export default function PromotionVideoList({
       <section className={styles.container}>
         <UiHeadingBordered title={title} className={styles.listTitle} />
         <div className={styles.listWrapper}>
-          <div className={styles.list} ref={promotionListRef}>
+          <div
+            className={`${styles.list} ${!shouldShowBtn ? styles.center : ''}`}
+            ref={promotionListRef}
+          >
             {allPromotionVideos.map((video) => {
               const youtubeId = extractYoutubeId(video.ytUrl)
               return (

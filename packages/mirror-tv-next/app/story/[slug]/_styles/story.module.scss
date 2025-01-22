@@ -1,13 +1,15 @@
-@import '/styles/theme/breakpoints';
-@import '/styles/theme/variable';
-.wrapper {
-  margin: 0 auto;
+@import "/styles/theme/breakpoints";
+@import "/styles/theme/variable";
+
+.LayoutWrapper {
+  display: flex;
+  flex-direction: column;
   @include media-breakpoint-up(md) {
+    margin: 0 auto;
     max-width: $story-wrapper-max-width-md;
   }
   @include media-breakpoint-up(xl) {
     max-width: $story-max-width-xl;
-    display: flex;
   }
   @include media-breakpoint-up(xxl) {
     max-width: $story-max-width-xl;
@@ -18,11 +20,12 @@
   min-height: calc(100dvh - 50px); // header height
   padding: 86px 16px 48px;
   flex: 1;
-
   @include media-breakpoint-up(md) {
     min-height: calc(100dvh - 152px); // header height
     max-width: $story-max-width-md;
     padding: 28px 0 50px;
+    display: flex;
+    flex-direction: column;
   }
   @include media-breakpoint-up(xl) {
     max-width: $max-width-xl;
@@ -30,6 +33,8 @@
   }
   @include media-breakpoint-up(xxl) {
     max-width: $max-width-xxl;
+    gap: 96px;
+    flex-direction: row;
   }
 }
 
@@ -41,6 +46,7 @@
 
   @include media-breakpoint-up(md) {
     max-width: 600px;
+    margin: 0;
   }
   @include media-breakpoint-up(xl) {
     max-width: $max-width-xl;
@@ -57,5 +63,30 @@
   gap: 40px;
   @include media-breakpoint-up(md) {
     gap: 48px;
+  }
+}
+
+.heroImageMobile {
+  display: flex;
+  img {
+    max-height: 168px;
+  }
+
+  @include media-breakpoint-up(md) {
+    display: none;
+  }
+}
+
+.heroImageDesktop {
+  figure {
+    display: none;
+
+    @include media-breakpoint-up(md) {
+      display: flex;
+      flex-direction: column;
+      img {
+        max-height: 315px;
+      }
+    }
   }
 }

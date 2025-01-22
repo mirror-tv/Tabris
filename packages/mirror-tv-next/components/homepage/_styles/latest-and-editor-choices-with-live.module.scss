@@ -42,6 +42,7 @@
 .liveAndEditor {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   @include media-breakpoint-up(xl) {
     flex-direction: row-reverse;
     width: 1120px;

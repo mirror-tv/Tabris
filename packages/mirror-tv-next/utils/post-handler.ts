@@ -10,7 +10,7 @@ export type FormattedPostCard = {
   images: PostImage
   publishTime: Date
   label?: string
-  __typeName?: string
+  __typename?: string
 }
 
 type FormatArticleCardInput = {
@@ -20,6 +20,7 @@ type FormatArticleCardInput = {
   heroImage?: HeroImage | null
   ogImage?: HeroImage | null
   thumbnail?: string | null
+  images?: PostImage | null
   style?: string
   categories?: { name: string }[]
   __typename?: string
@@ -36,17 +37,24 @@ const formatArticleCard = (
     heroImage: 'heroImage' in post ? post.heroImage : null,
     ogImage: 'ogImage' in post ? post.ogImage : null,
     thumbnail: 'thumbnail' in post ? post.thumbnail : null,
+    images: 'images' in post ? post.images : null,
     style: 'style' in post ? post.style : undefined,
     categories: 'categories' in post ? post.categories : undefined,
     __typename:
       '__typename' in post ? String(post['__typename'] ?? '') : undefined,
   }
-  const imageObj =
-    postFormatArticleCardInput.heroImage ??
-    postFormatArticleCardInput.ogImage ??
-    (postFormatArticleCardInput.thumbnail
-      ? { urlOriginal: postFormatArticleCardInput.thumbnail }
-      : {})
+  const imageObj: PostImage =
+    postFormatArticleCardInput.images ??
+    formateHeroImage(
+      postFormatArticleCardInput.heroImage ??
+        postFormatArticleCardInput.ogImage ??
+        postFormatArticleCardInput.thumbnail
+        ? {
+            urlOriginal: postFormatArticleCardInput.thumbnail ?? undefined,
+          }
+        : undefined
+    )
+
   return {
     href:
       postFormatArticleCardInput.__typename === 'External'
@@ -55,11 +63,21 @@ const formatArticleCard = (
     slug: postFormatArticleCardInput.slug,
     style: postFormatArticleCardInput.style ?? 'article',
     name: postFormatArticleCardInput.name,
-    images: formateHeroImage(imageObj),
+    images: imageObj,
     publishTime: new Date(postFormatArticleCardInput.publishTime),
     label: options?.label || postFormatArticleCardInput.categories?.[0]?.name,
-    __typeName: postFormatArticleCardInput.__typename ?? '',
+    __typename: postFormatArticleCardInput.__typename ?? '',
   }
 }
 
-export { formatArticleCard }
+const combineAndSortedByPublishedTime = (list: FormatArticleCardInput[]) => {
+  return list
+    .map((post) => formatArticleCard(post))
+    .sort((a, b) => {
+      const dateA = new Date(a.publishTime || 0).getTime()
+      const dateB = new Date(b.publishTime || 0).getTime()
+      return dateB - dateA
+    })
+}
+
+export { formatArticleCard, combineAndSortedByPublishedTime }
