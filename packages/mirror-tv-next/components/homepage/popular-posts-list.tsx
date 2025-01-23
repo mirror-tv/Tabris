@@ -27,7 +27,10 @@ export default function PopularPostsList({ title }: PopularPostsListType) {
             ''
           )
           return (
-            <div className={`${styles.item} popular-list`} key={post.slug}>
+            <div
+              className={`${styles.item} popular-list__item item`}
+              key={post.slug}
+            >
               <p className={styles.date}>{formattedDate}</p>
               <Link
                 href={`/story/${post.slug}`}

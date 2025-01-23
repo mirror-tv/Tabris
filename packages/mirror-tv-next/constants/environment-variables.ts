@@ -10,7 +10,7 @@ let POPULAR_POSTS_URL: string
 let POPULAR_VIDEOS_JSON_URL: string
 let YOUTUBE_API_URL: string
 let FEATURE_POSTS_URL: string
-const HOMEPAGE_SON_URL: string =
+let HOMEPAGE_SON_URL: string =
   'https://storage.googleapis.com/static-mnews-tw-dev/files/json/topic_video.json'
 
 switch (ENV) {
@@ -26,6 +26,8 @@ switch (ENV) {
     POPULAR_VIDEOS_JSON_URL =
       'https://mnews.tw/json/popular-videonews-list.json'
     FEATURE_POSTS_URL = 'https://www.mnews.tw/api/gcs/featured_categories_post'
+    HOMEPAGE_SON_URL =
+      'https://storage.googleapis.com/static-mnews-tw-prod/files/json/topic_video.json'
     break
 
   case 'staging':
@@ -41,6 +43,8 @@ switch (ENV) {
       'https://mnews.tw/json/popular-videonews-list.json'
     FEATURE_POSTS_URL =
       'https://staging.mnews.tw/api/gcs/featured_categories_post'
+    HOMEPAGE_SON_URL =
+      'https://storage.googleapis.com/static-mnews-tw-staging/files/json/topic_video.json'
     break
 
   case 'dev':

@@ -31,30 +31,32 @@ const Aside: React.FC = () => {
 
   return (
     <aside className={styles.aside}>
-      <GPTAd pageKey={asideCategory} adKey="PC_R2" />
-      <UiListPostsAside
-        listTitle="即時新聞"
-        page={asideCategory}
-        listData={formattedLatestPosts}
-        className={`aside__list-latest ${styles.asideItem}`}
-      />
-      <div className={styles.microId}>
-        <MicroAd
-          unitIdMobile="4300420"
-          unitIdDesktop="4300419"
-          className={styles.microAd}
-          condition="!isTablet"
-        />
-      </div>
-      <GPTAd pageKey={asideCategory} adKey="PC_R1" />
-      {!!formattedPopularPosts.length && (
+      <div className={styles.asideWrapper}>
+        <GPTAd pageKey={asideCategory} adKey="PC_R2" />
         <UiListPostsAside
-          listTitle="熱門新聞"
+          listTitle="即時新聞"
           page={asideCategory}
-          listData={formattedPopularPosts}
-          className={`aside__list-popular ${styles.asideItem}`}
+          listData={formattedLatestPosts}
+          className={`aside__list-latest ${styles.asideItem}`}
         />
-      )}
+        <div className={styles.microId}>
+          <MicroAd
+            unitIdMobile="4300420"
+            unitIdDesktop="4300419"
+            className={styles.microAd}
+            condition="!isTablet"
+          />
+        </div>
+        <GPTAd pageKey={asideCategory} adKey="PC_R1" />
+        {!!formattedPopularPosts.length && (
+          <UiListPostsAside
+            listTitle="熱門新聞"
+            page={asideCategory}
+            listData={formattedPopularPosts}
+            className={`aside__list-popular ${styles.asideItem}`}
+          />
+        )}
+      </div>
     </aside>
   )
 }

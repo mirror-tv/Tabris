@@ -19,7 +19,7 @@ export default function UiShowCard({
 }: UiShowCardProps) {
   return (
     <Link
-      className={styles.image}
+      className={`${styles.image} show-card__img`}
       href={`/show/${slug}/`}
       target="_blank"
       rel="noopener noreferrer"

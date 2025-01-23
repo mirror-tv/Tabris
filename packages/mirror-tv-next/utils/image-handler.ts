@@ -39,7 +39,7 @@ function formatePostImage(post: Post | Topic): PostImage {
   return images
 }
 
-function formateHeroImage(heroImage: HeroImage) {
+function formateHeroImage(heroImage: HeroImage | undefined) {
   const images: PostImage = {
     original: '/images/image-default.jpg',
   }

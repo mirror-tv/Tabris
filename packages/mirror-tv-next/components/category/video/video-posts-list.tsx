@@ -153,13 +153,17 @@ export default function VideoPostsList({
           <div
             className={`${styles.prevArrow} slide-btn__arrow`}
             ref={prevButtonRef}
-          ></div>
+          >
+            <span></span>
+          </div>
         </button>
         <button>
           <div
             className={`${styles.nextArrow} slide-btn__arrow`}
             ref={nextButtonRef}
-          ></div>
+          >
+            <span></span>
+          </div>
         </button>
       </ol>
     </div>

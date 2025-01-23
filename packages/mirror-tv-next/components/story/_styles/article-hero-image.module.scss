@@ -1,0 +1,25 @@
+@import "/styles/theme/breakpoints";
+@import "/styles/theme/variable";
+
+.heroImageWrapper {
+  display: flex;
+  flex: 1;
+  width: 100vw;
+  margin-left: $story-hero-image-full-screen;
+  @include media-breakpoint-up(xxl) {
+    margin: unset;
+    width: 100%;
+  }
+  figure {
+    width: 100%;
+    max-height: 168px;
+    object-fit: cover;
+
+    @include media-breakpoint-up(md) {
+      max-height: 365px;
+    }
+    figcaption {
+      padding: 0 16px;
+    }
+  }
+}
