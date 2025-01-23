@@ -48,11 +48,11 @@ const formatArticleCard = (
     formateHeroImage(
       postFormatArticleCardInput.heroImage ??
         postFormatArticleCardInput.ogImage ??
-        postFormatArticleCardInput.thumbnail
-        ? {
-            urlOriginal: postFormatArticleCardInput.thumbnail ?? undefined,
-          }
-        : undefined
+        (postFormatArticleCardInput.thumbnail
+          ? {
+              urlOriginal: postFormatArticleCardInput.thumbnail ?? undefined,
+            }
+          : undefined)
     )
 
   return {
