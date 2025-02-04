@@ -60,9 +60,9 @@ export default function TopicItem({ topic, isFirst }: TopicListProps) {
                     href={`/story/${post.slug}`}
                     target="_blank"
                     rel="noreferrer noopener"
-                    className={styles.post}
+                    className={`${styles.post} GTM-homage-topic-news`}
                   >
-                    <span className="title">{post.name}</span>
+                    <span>{post.name}</span>
                   </Link>
                 </li>
               )
