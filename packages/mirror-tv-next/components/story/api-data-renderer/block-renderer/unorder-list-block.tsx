@@ -8,7 +8,7 @@ export interface ApiDataUnOrderListBlock extends ApiDataBlockBase {
   alignment: 'center'
 }
 
-const UnOrderListBlock = ({ data }: { data: ApiDataUnOrderListBlock }) => {
+const UnorderListBlock = ({ data }: { data: ApiDataUnOrderListBlock }) => {
   const blockContentData = getFirstElement(data.content)
   return (
     <ul className={styles.unOrderListBlock}>
@@ -19,4 +19,4 @@ const UnOrderListBlock = ({ data }: { data: ApiDataUnOrderListBlock }) => {
   )
 }
 
-export default UnOrderListBlock
+export default UnorderListBlock

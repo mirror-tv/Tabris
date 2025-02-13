@@ -2,7 +2,7 @@ import BlockquoteBlock from './block-renderer/blockquote-block'
 import HeadersBlock from './block-renderer/headers-block'
 import OrderListBlock from './block-renderer/order-list-block'
 import { type ApiData, ApiDataBlockType } from './block-renderer/type'
-import UnOrderListBlock from './block-renderer/unorder-list-block'
+import UnorderListBlock from './block-renderer/unorder-list-block'
 import UnstyledBlock from './block-renderer/unstyled-block'
 import InfoBoxBlock from './block-renderer/info-box-block'
 import EmbedCodeBlock from './block-renderer/embed-code-block'
@@ -46,7 +46,7 @@ const ApiDataRenderer = ({ contentData }: ApiDataRendererPropsType) => {
             return <OrderListBlock key={apiDataBlock.id} data={apiDataBlock} />
           case ApiDataBlockType.UnOrderList:
             return (
-              <UnOrderListBlock key={apiDataBlock.id} data={apiDataBlock} />
+              <UnorderListBlock key={apiDataBlock.id} data={apiDataBlock} />
             )
           case ApiDataBlockType.InfoBox:
             return <InfoBoxBlock key={apiDataBlock.id} data={apiDataBlock} />
