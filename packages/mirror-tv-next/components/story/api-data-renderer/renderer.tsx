@@ -17,7 +17,7 @@ type ApiDataRendererPropsType = {
 }
 
 const ApiDataRenderer = ({ contentData }: ApiDataRendererPropsType) => {
-  const parsedContentData: ApiData = JSON.parse(contentData as string)
+  const parsedContentData: ApiData = JSON.parse(contentData)
   return (
     <article className={styles.article}>
       {parsedContentData.map((apiDataBlock) => {
