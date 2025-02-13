@@ -1,5 +1,5 @@
-@import '/styles/theme/breakpoints';
-@import '/styles/theme/variable';
+@import "/styles/theme/breakpoints";
+@import "/styles/theme/variable";
 
 .blockquoteBlock {
   padding-top: 30px;
@@ -35,10 +35,10 @@
     height: 24px;
     margin-right: 8px;
   }
-}
-.imageContainer.start {
-  justify-content: flex-start;
-}
-.imageContainer.end {
-  justify-content: flex-end;
+  &.start {
+    justify-content: flex-start;
+  }
+  &.end {
+    justify-content: flex-end;
+  }
 }
