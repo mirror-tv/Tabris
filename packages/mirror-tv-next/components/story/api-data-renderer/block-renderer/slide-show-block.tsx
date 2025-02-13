@@ -36,10 +36,10 @@ export default function SlideShowBlock({ data }: { data: ApiDataSlideshow }) {
   const decideDevice = (width?: number): DeviceType => {
     if (!width) return 'original'
     const devices = [
-      { max: 768, device: 'mobile' as const },
-      { max: 1024, device: 'tablet' as const },
-      { max: 1280, device: 'desktop' as const },
-    ]
+      { max: 768, device: 'mobile' },
+      { max: 1024, device: 'tablet' },
+      { max: 1280, device: 'desktop' },
+    ] as const
     return devices.find((device) => width < device.max)?.device || 'original'
   }
   const slideImages: SlideshowContentPart[] = data.content.map(
