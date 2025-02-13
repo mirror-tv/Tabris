@@ -64,11 +64,9 @@ const AnnotationBlock = ({ data }: { data: ApiDataAnnotation }) => {
 
   return (
     <div className={styles.annotationBlock}>
-      <p className={styles.annotationTitle}>
+      <p className={styles.annotationTitle} onClick={toggleOpen}>
         {annotationData?.text}
-        <button onClick={toggleOpen} className={styles.toggleButton}>
-          (註)
-        </button>
+        <span className={styles.toggleButton}>(註)</span>
         {indicatorSvg(isOpen)}
       </p>
       {isOpen ? (
