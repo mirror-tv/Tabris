@@ -5,10 +5,9 @@ import { useCallback, useState } from 'react'
 import { getFirstElement } from '~/utils/common'
 
 // 提取 text 和 annotation 的函數
-const extractAnnotationData = (data: { blockContentData: string }) => {
+const extractAnnotationData = (blockContentData: string) => {
   const regexForAnnotation = /<!--__ANNOTATION__=\{(.*?)\}-->/
-  const blockContentDataMatched =
-    data.blockContentData.match(regexForAnnotation)
+  const blockContentDataMatched = blockContentData.match(regexForAnnotation)
 
   // NOTE: 如果 blockContentDataMatched 有值，則提取 annotation 的 text 和 annotation
   if (blockContentDataMatched && blockContentDataMatched[1]) {
@@ -51,7 +50,7 @@ const AnnotationBlock = ({ data }: { data: ApiDataAnnotation }) => {
   }, [])
 
   const blockContentData = getFirstElement(data.content)
-  const annotationData = extractAnnotationData({ blockContentData })
+  const annotationData = extractAnnotationData(blockContentData)
 
   return (
     <div className={styles.annotationBlock}>
