@@ -11,15 +11,15 @@ const HeadersBlock = ({
   blockType,
 }: {
   data: ApiHeadersBlock
-  blockType: ApiHeadersBlock['type']
+  blockType: ApiDataBlockType.HeaderOne | ApiDataBlockType.HeaderTwo
 }) => {
   const blockContentData = getFirstElement(data.content)
 
   const renderHeader = () => {
     switch (blockType) {
-      case 'header-one':
+      case ApiDataBlockType.HeaderOne:
         return <h1 dangerouslySetInnerHTML={{ __html: blockContentData }} />
-      case 'header-two':
+      case ApiDataBlockType.HeaderTwo:
         return <h2 dangerouslySetInnerHTML={{ __html: blockContentData }} />
       default:
         console.error(`Unhandled block type: ${blockType}`)
