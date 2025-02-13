@@ -1,7 +1,7 @@
 'use client'
 import { ApiDataBlockBase, type ApiDataBlockType } from './type'
 import styles from './_styles/annotation-block.module.scss'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { getFirstElement } from '~/utils/common'
 
 // 提取 text 和 annotation 的函數
@@ -50,15 +50,8 @@ const AnnotationBlock = ({ data }: { data: ApiDataAnnotation }) => {
     setIsOpen((prev) => !prev)
   }, [])
 
-  const blockContentData = useMemo(
-    () => getFirstElement(data.content),
-    [data.content]
-  )
-
-  const annotationData = useMemo(
-    () => extractAnnotationData({ blockContentData }),
-    [blockContentData]
-  )
+  const blockContentData = getFirstElement(data.content)
+  const annotationData = extractAnnotationData({ blockContentData })
 
   return (
     <div className={styles.annotationBlock}>
