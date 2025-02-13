@@ -1,3 +1,4 @@
+import { getFirstElement } from '~/utils/common'
 import styles from './_styles/headers-block.module.scss'
 import { ApiDataBlockType, type ApiDataBlockBase } from './type'
 export interface ApiHeadersBlock extends ApiDataBlockBase {
@@ -12,7 +13,6 @@ const HeadersBlock = ({
   data: ApiHeadersBlock
   blockType: ApiHeadersBlock['type']
 }) => {
-  const getFirstElement = <T,>(data: T[]) => data[0]
   const blockContentData = getFirstElement(data.content)
 
   const renderHeader = () => {

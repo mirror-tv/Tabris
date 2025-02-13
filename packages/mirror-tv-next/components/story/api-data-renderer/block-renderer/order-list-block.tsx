@@ -1,3 +1,4 @@
+import { getFirstElement } from '~/utils/common'
 import styles from './_styles/order-list-block.module.scss'
 import { ApiDataBlockBase, ApiDataBlockType } from './type'
 
@@ -8,7 +9,6 @@ export interface ApiDataOrderList extends ApiDataBlockBase {
 }
 
 const OrderListBlock = ({ data }: { data: ApiDataOrderList }) => {
-  const getFirstElement = (data: ApiDataOrderList['content']) => data[0]
   const blockContentData = getFirstElement(data.content)
   return (
     <ol className={styles.orderListBlock}>

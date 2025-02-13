@@ -2,9 +2,8 @@
 import { ApiDataBlockBase, type ApiDataBlockType } from './type'
 import styles from './_styles/annotation-block.module.scss'
 import { useCallback, useMemo, useState } from 'react'
-type AnnotationBlockProps = {
-  data: string[]
-}
+import { getFirstElement } from '~/utils/common'
+
 // 提取 text 和 annotation 的函數
 const extractAnnotationData = (data: { blockContentData: string }) => {
   const regexForAnnotation = /<!--__ANNOTATION__=\{(.*?)\}-->/
@@ -45,7 +44,6 @@ function indicatorSvg(shouldRotate: boolean) {
   )
 }
 const AnnotationBlock = ({ data }: { data: ApiDataAnnotation }) => {
-  const getFirstElement = (data: AnnotationBlockProps['data']) => data[0]
   const [isOpen, setIsOpen] = useState(false)
 
   const toggleOpen = useCallback(() => {

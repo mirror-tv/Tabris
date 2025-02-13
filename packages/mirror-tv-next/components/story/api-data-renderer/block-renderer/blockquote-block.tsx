@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import styles from './_styles/blockquote-block.module.scss'
 import { ApiDataBlockBase, ApiDataBlockType } from './type'
+import { getFirstElement } from '~/utils/common'
 
 export interface ApiDataBlockquote extends ApiDataBlockBase {
   type: ApiDataBlockType.Blockquote
@@ -9,7 +10,6 @@ export interface ApiDataBlockquote extends ApiDataBlockBase {
 }
 
 const BlockquoteBlock = ({ data }: { data: ApiDataBlockquote }) => {
-  const getFirstElement = (data: string[]) => data[0]
   const mergeClasses = (...classes: string[]) => classes.join(' ')
   const blockContentData = getFirstElement(data.content)
 

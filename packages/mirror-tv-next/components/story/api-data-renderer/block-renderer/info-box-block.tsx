@@ -1,5 +1,6 @@
 import { ApiDataBlockType, type ApiDataBlockBase } from './type'
 import styles from './_styles/info-box-block.module.scss'
+import { getFirstElement } from '~/utils/common'
 type ContentInfoBox = {
   body: string
   title: string
@@ -12,7 +13,6 @@ export interface ApiDataInfoBox extends ApiDataBlockBase {
 }
 
 const InfoBoxBlock = ({ data }: { data: ApiDataInfoBox }) => {
-  const getFirstElement = (data: ApiDataInfoBox['content']) => data[0]
   const blockContentData = getFirstElement(data.content)
   const { title, body } = blockContentData
   return (
