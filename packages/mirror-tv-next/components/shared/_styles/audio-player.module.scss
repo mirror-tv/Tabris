@@ -58,15 +58,6 @@
             transition: transform 0.2s ease;
             transform-origin: left;
 
-            // @keyframes progressAnimation {
-            //     from {
-            //         transform: scaleX(0);
-            //     }
-            //     to {
-            //         transform: scaleX(1);
-            //     }
-            // }
-
             &.animated {
                 animation: progressAnimation 0.5s forwards;
             }
