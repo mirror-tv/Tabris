@@ -6,9 +6,7 @@ export interface SingleRelatedPost {
 }
 
 export interface SinglePost {
-  brief: string
   briefApiData: string
-  contentApiData: string
   relatedPosts: SingleRelatedPost[]
   heroImage: {
     id: string
