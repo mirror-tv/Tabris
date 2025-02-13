@@ -1,4 +1,4 @@
-import { ApiDataBlockBase, ApiDataBlockType } from './type'
+import { type ApiDataBlockBase, ApiDataBlockType } from './type'
 import styles from './_styles/youtube-block.module.scss'
 type ContentYoutube = {
   id: string

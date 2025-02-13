@@ -1,6 +1,6 @@
 import { getFirstElement } from '~/utils/common'
 import styles from './_styles/order-list-block.module.scss'
-import { ApiDataBlockBase, ApiDataBlockType } from './type'
+import { type ApiDataBlockBase, ApiDataBlockType } from './type'
 
 export interface ApiDataOrderList extends ApiDataBlockBase {
   type: ApiDataBlockType.OrderList

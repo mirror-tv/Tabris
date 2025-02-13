@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import styles from './_styles/blockquote-block.module.scss'
-import { ApiDataBlockBase, ApiDataBlockType } from './type'
+import { type ApiDataBlockBase, ApiDataBlockType } from './type'
 import { getFirstElement } from '~/utils/common'
 
 export interface ApiDataBlockquote extends ApiDataBlockBase {
