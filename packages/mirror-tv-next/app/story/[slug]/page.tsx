@@ -17,7 +17,6 @@ const StoryPage = async (props: StoryPageTypes) => {
 
   return (
     <div>
-      <ApiDataRenderer contentData={contentApiData} />
       <section className={styles.socialAndRelatedWrapper}>
         <ArticleHeroImage
           heroImage={heroImage}
@@ -27,6 +26,7 @@ const StoryPage = async (props: StoryPageTypes) => {
         <ArticleSocialList />
         <ArticleRelatedPosts relatedPosts={relatedPosts} />
       </section>
+      <ApiDataRenderer contentData={contentApiData} />
     </div>
   )
 }
