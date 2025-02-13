@@ -14,9 +14,9 @@ export interface ApiDataYoutube extends ApiDataBlockBase {
 }
 
 const YoutubeBlock = ({ data }: { data: ApiDataYoutube }) => {
-  const youtubeData = data
-  const youtubeId = youtubeData.content[0].id
-  const youtubeDescription = youtubeData.content[0].description
+  const youtubeData = data.content[0]
+  const youtubeId = youtubeData.id
+  const youtubeDescription = youtubeData.description
   return (
     <div className={styles.youtubeContainer}>
       <iframe
