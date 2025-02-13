@@ -2,6 +2,13 @@
     margin-top: 30px;
     padding: "0 40px";
     max-width: "100%";
+    .swiper-button-next {
+        color: #014db8;
+        background-color: #014db8;
+        &:after {
+            color: #fff !important;
+        }
+    }
 }
 
 .swiperSlide {
@@ -18,4 +25,45 @@
 
 .slideShowImage {
     object-fit: contain;
+}
+.swiper-button-next {
+    background-image: none;
+    &:after {
+        content: "";
+        display: none;
+    }
+}
+
+.swiperContainer {
+    position: relative;
+}
+.swiperButton {
+    position: absolute;
+    top: 50%;
+    z-index: 10;
+    border: 5px solid #014db8;
+    transform: rotate(45deg);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    &:active {
+        outline: none;
+    }
+    &:focus {
+        outline: none;
+    }
+}
+.swiperButtonNext {
+    right: 0;
+    border-left: none;
+    border-bottom: none;
+}
+.swiperButtonPrev {
+    left: 0;
+    border-right: none;
+    border-top: none;
+}
+.swiper-pagination-current {
+    color: #014db8;
 }

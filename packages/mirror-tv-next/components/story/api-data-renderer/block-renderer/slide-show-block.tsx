@@ -1,15 +1,14 @@
 'use client'
 // Import Swiper React components
-import { Swiper, SwiperSlide } from 'swiper/react'
-import { Navigation, Pagination } from 'swiper/modules'
+import { Swiper, SwiperRef, SwiperSlide } from 'swiper/react'
 // Import Swiper styles
 import 'swiper/css'
-import 'swiper/css/pagination'
-import 'swiper/css/navigation'
 import styles from './_styles/slide-show-block.module.scss'
 import useWindowDimensions from '~/hooks/use-window-dimensions'
 import { ApiDataBlockType, type ApiDataBlockBase } from './type'
 import Image from 'next/image'
+import { useRef } from 'react'
+import SlideShowPagination from './slide-show-pagination'
 
 type SlideshowContentPart = {
   url: string
@@ -33,6 +32,7 @@ export interface ApiDataSlideshow extends ApiDataBlockBase {
 
 export default function SlideShowBlock({ data }: { data: ApiDataSlideshow }) {
   const { width } = useWindowDimensions()
+  const swiperRef = useRef<SwiperRef>(null)
   if (!width) return null
   const decideDevice = (
     width?: number
@@ -48,21 +48,21 @@ export default function SlideShowBlock({ data }: { data: ApiDataSlideshow }) {
   const slideImages: SlideshowContentPart[] = data.content.map(
     (item) => item[decideDevice(width)]
   )
-  const swiperModules = [Navigation, Pagination]
+
   const swiperClass = styles.swiper
   const swiperSpaceBetween = 40
   const swiperSlidesPerView = 1
-  const paginationConfig = {
-    type: 'fraction' as const,
+  const styleClassMapper = (classes: string[]) => {
+    return classes.join(' ')
   }
+
   return (
-    <div>
+    <div className={styles.swiperContainer}>
       <Swiper
-        modules={swiperModules}
+        ref={swiperRef}
         className={swiperClass}
         spaceBetween={swiperSpaceBetween}
         slidesPerView={swiperSlidesPerView}
-        pagination={paginationConfig}
         navigation
         loop
       >
@@ -72,14 +72,29 @@ export default function SlideShowBlock({ data }: { data: ApiDataSlideshow }) {
               <Image
                 className={styles.slideShowImage}
                 src={img.url}
-                alt="slides"
+                alt="swiper slides"
                 fill
                 priority
               />
             </div>
           </SwiperSlide>
         ))}
+        <SlideShowPagination />
       </Swiper>
+      <button
+        className={styleClassMapper([
+          styles.swiperButton,
+          styles.swiperButtonNext,
+        ])}
+        onClick={() => swiperRef.current?.swiper.slideNext()}
+      />
+      <button
+        className={styleClassMapper([
+          styles.swiperButton,
+          styles.swiperButtonPrev,
+        ])}
+        onClick={() => swiperRef.current?.swiper.slidePrev()}
+      />
     </div>
   )
 }
