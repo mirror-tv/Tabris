@@ -23,10 +23,10 @@ const StoryPage = async (props: StoryPageTypes) => {
           title={heroCaption}
           heroCaption={heroCaption}
         />
+        <ApiDataRenderer contentData={contentApiData} />
         <ArticleSocialList />
         <ArticleRelatedPosts relatedPosts={relatedPosts} />
       </section>
-      <ApiDataRenderer contentData={contentApiData} />
     </div>
   )
 }
