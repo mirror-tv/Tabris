@@ -10,21 +10,20 @@ import Image from 'next/image'
 import { useRef } from 'react'
 import SlideShowPagination from './slide-show-pagination'
 
+type DeviceType = 'original' | 'desktop' | 'tablet' | 'mobile' | 'tiny'
+
 type SlideshowContentPart = {
   url: string
   width: number
   height: number
 }
+
 type ApiDataSlideshowContent = {
-  url: string
-  original: SlideshowContentPart
-  desktop: SlideshowContentPart
-  tablet: SlideshowContentPart
-  mobile: SlideshowContentPart
-  tiny: SlideshowContentPart
   id: string
   name: string
-}
+  url: string
+} & Record<DeviceType, SlideshowContentPart>
+
 export interface ApiDataSlideshow extends ApiDataBlockBase {
   type: ApiDataBlockType.Slideshow
   content: ApiDataSlideshowContent[]
@@ -34,9 +33,7 @@ export default function SlideShowBlock({ data }: { data: ApiDataSlideshow }) {
   const { width } = useWindowDimensions()
   const swiperRef = useRef<SwiperRef>(null)
   if (!width) return null
-  const decideDevice = (
-    width?: number
-  ): 'original' | 'desktop' | 'tablet' | 'mobile' | 'tiny' => {
+  const decideDevice = (width?: number): DeviceType => {
     if (!width) return 'original'
     const devices = [
       { max: 768, device: 'mobile' as const },
