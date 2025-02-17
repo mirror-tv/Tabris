@@ -1,13 +1,36 @@
+%buttonBase {
+    position: absolute;
+    top: 50%;
+    z-index: 10;
+    border: 5px solid #014db8;
+    transform: rotate(45deg);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    &:active,
+    &:focus {
+        outline: none;
+    }
+}
+
 .swiper {
     margin-top: 30px;
     padding: "0 40px";
     max-width: "100%";
-    .swiper-button-next {
-        color: #014db8;
-        background-color: #014db8;
+
+    :global(.swiper-button-next),
+    :global(.swiper-button-prev) {
+        @extend %buttonBase;
+        background-image: none;
+        border-bottom: none;
         &:after {
-            color: #fff !important;
+            content: "";
+            display: none;
         }
+    }
+    :global(.swiper-pagination-current) {
+        color: #014db8;
     }
 }
 
@@ -23,47 +46,21 @@
     aspect-ratio: 16/9;
 }
 
-.slideShowImage {
-    object-fit: contain;
-}
-.swiper-button-next {
-    background-image: none;
-    &:after {
-        content: "";
-        display: none;
+.swiperContainer {
+    position: relative;
+    .swiper {
+        :global(.swiper-button-next) {
+            border-left: none;
+            border-bottom: none;
+        }
+
+        :global(.swiper-button-prev) {
+            border-right: none;
+            border-top: none;
+        }
     }
 }
 
-.swiperContainer {
-    position: relative;
-}
-.swiperButton {
-    position: absolute;
-    top: 50%;
-    z-index: 10;
-    border: 5px solid #014db8;
-    transform: rotate(45deg);
-    width: 40px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    &:active {
-        outline: none;
-    }
-    &:focus {
-        outline: none;
-    }
-}
-.swiperButtonNext {
-    right: 0;
-    border-left: none;
-    border-bottom: none;
-}
-.swiperButtonPrev {
-    left: 0;
-    border-right: none;
-    border-top: none;
-}
-.swiper-pagination-current {
-    color: #014db8;
+.slideShowImage {
+    object-fit: contain;
 }
