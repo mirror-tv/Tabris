@@ -3,12 +3,14 @@
 import { Swiper, SwiperRef, SwiperSlide } from 'swiper/react'
 // Import Swiper styles
 import 'swiper/css'
+import 'swiper/css/navigation'
+import 'swiper/css/pagination'
 import styles from './_styles/slide-show-block.module.scss'
 import useWindowDimensions from '~/hooks/use-window-dimensions'
 import { ApiDataBlockType, type ApiDataBlockBase } from './type'
 import Image from 'next/image'
 import { useRef } from 'react'
-import SlideShowPagination from './slide-show-pagination'
+import { Navigation, Pagination } from 'swiper/modules'
 
 type DeviceType = 'original' | 'desktop' | 'tablet' | 'mobile' | 'tiny'
 
@@ -49,9 +51,6 @@ export default function SlideShowBlock({ data }: { data: ApiDataSlideshow }) {
   const swiperClass = styles.swiper
   const swiperSpaceBetween = 40
   const swiperSlidesPerView = 1
-  const styleClassMapper = (classes: string[]) => {
-    return classes.join(' ')
-  }
 
   return (
     <div className={styles.swiperContainer}>
@@ -61,7 +60,12 @@ export default function SlideShowBlock({ data }: { data: ApiDataSlideshow }) {
         spaceBetween={swiperSpaceBetween}
         slidesPerView={swiperSlidesPerView}
         navigation
+        pagination={{
+          clickable: true,
+          type: 'fraction',
+        }}
         loop
+        modules={[Navigation, Pagination]}
       >
         {slideImages.map((img) => (
           <SwiperSlide key={img.url} className={styles.swiperSlide}>
@@ -76,22 +80,7 @@ export default function SlideShowBlock({ data }: { data: ApiDataSlideshow }) {
             </div>
           </SwiperSlide>
         ))}
-        <SlideShowPagination />
       </Swiper>
-      <button
-        className={styleClassMapper([
-          styles.swiperButton,
-          styles.swiperButtonNext,
-        ])}
-        onClick={() => swiperRef.current?.swiper.slideNext()}
-      />
-      <button
-        className={styleClassMapper([
-          styles.swiperButton,
-          styles.swiperButtonPrev,
-        ])}
-        onClick={() => swiperRef.current?.swiper.slidePrev()}
-      />
     </div>
   )
 }
