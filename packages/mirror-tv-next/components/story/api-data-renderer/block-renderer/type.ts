@@ -6,7 +6,7 @@ import { type ApiHeadersBlock } from './headers-block'
 import { type ApiDataInfoBox } from './info-box-block'
 import { type ApiDataOrderList } from './order-list-block'
 import { type ApiDataSlideshow } from './slide-show-block'
-import { type ApiDataUnOrderListBlock } from './unorder-list-block'
+import { type ApiDataUnorderListBlock } from './unorder-list-block'
 import { type ApiDataUnstyled } from './unstyled-block'
 import { type ApiDataVideo } from './video-block'
 import { type ApiDataYoutube } from './youtube-block'
@@ -38,7 +38,7 @@ interface ApiDataBlockBase {
 }
 
 export type ApiDataBlock =
-  | ApiDataUnOrderListBlock
+  | ApiDataUnorderListBlock
   | ApiDataInfoBox
   | ApiDataUnstyled
   | ApiHeadersBlock
