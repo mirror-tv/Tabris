@@ -24,8 +24,7 @@ export interface ApiDataAudio extends ApiDataBlockBase {
 }
 
 const AudioBlock = ({ data }: { data: ApiDataAudio }) => {
-  const apiDataAudio = data
-  const audioData = apiDataAudio.content[0]
+  const audioData = data.content[0]
   return <AudioPlayer src={audioData.url} title={audioData.name} />
 }
 
