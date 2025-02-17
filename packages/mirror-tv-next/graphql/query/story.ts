@@ -37,8 +37,6 @@ const fetchStoryBySlug = gql`
         urlTinySized
       }
       heroCaption
-      brief
-      briefApiData
       contentApiData
       relatedPosts(where: { state: published }) {
         slug
