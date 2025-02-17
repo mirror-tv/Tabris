@@ -57,10 +57,6 @@
             border-radius: 3px;
             transition: transform 0.2s ease;
             transform-origin: left;
-
-            &.animated {
-                animation: progressAnimation 0.5s forwards;
-            }
         }
     }
 
