@@ -17,13 +17,13 @@ const StoryPage = async (props: StoryPageTypes) => {
 
   return (
     <div>
+      <ArticleHeroImage
+        heroImage={heroImage}
+        title={heroCaption}
+        heroCaption={heroCaption}
+      />
+      <ApiDataRenderer contentData={contentApiData} />
       <section className={styles.socialAndRelatedWrapper}>
-        <ArticleHeroImage
-          heroImage={heroImage}
-          title={heroCaption}
-          heroCaption={heroCaption}
-        />
-        <ApiDataRenderer contentData={contentApiData} />
         <ArticleSocialList />
         <ArticleRelatedPosts relatedPosts={relatedPosts} />
       </section>
