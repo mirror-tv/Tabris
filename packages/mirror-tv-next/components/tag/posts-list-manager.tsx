@@ -1,5 +1,5 @@
 'use client'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import UiPostCard from '~/components/shared/ui-post-card'
 import {
   fetchPostsItems,
@@ -34,16 +34,13 @@ export default function PostsListManager({
     ...initPostsList,
     ...initExternalsList,
   ])
+  const isExternal = (post: FormattedPostCard) => post.__typename === 'External'
 
   const [postsList, setPostsList] = useState<FormattedPostCard[]>(initFetchList)
   const differentPostsCount = useRef({
     rendered: {
-      posts: initFetchList
-        .slice(0, pageSize)
-        .filter((post) => !isExternal(post)).length,
-      externals: initFetchList
-        .slice(0, pageSize)
-        .filter((post) => isExternal(post)).length,
+      posts: 0,
+      externals: 0,
     },
     fetched: {
       posts: initPostsList.length,
@@ -51,7 +48,22 @@ export default function PostsListManager({
     },
   })
 
-  const isExternal = (post: FormattedPostCard) => post.__typename === 'External'
+  useEffect(() => {
+    differentPostsCount.current = {
+      rendered: {
+        posts: initFetchList
+          .slice(0, pageSize)
+          .filter((post) => !isExternal(post)).length,
+        externals: initFetchList
+          .slice(0, pageSize)
+          .filter((post) => isExternal(post)).length,
+      },
+      fetched: {
+        posts: initPostsList.length,
+        externals: initExternalsList.length,
+      },
+    }
+  }, [initFetchList])
 
   const handleClickLoadMore = async (page: number) => {
     // 如果庫存（fetch 到但還沒 render 的）不夠，則 fetch
