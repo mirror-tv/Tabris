@@ -4,7 +4,7 @@ export type Category = {
   id?: string
   name: string
   slug: string
-  style: 'normal' | 'highlight'
+  style?: 'normal' | 'highlight'
 }
 
 const fetchCategoryBySlug = gql`
