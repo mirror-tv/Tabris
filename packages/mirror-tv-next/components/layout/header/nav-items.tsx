@@ -59,15 +59,12 @@ export default function NavItems({ categories }: NavItemProps) {
         break
       }
     }
-
     setRenderedCategoryIndex(firstLineItemCount)
   }
 
   useEffect(() => {
     window.addEventListener('resize', resetRenderedCategory)
-
     resetRenderedCategory()
-
     // Clean up the event listener on component unmount
     return () => {
       window.removeEventListener('resize', resetRenderedCategory)
@@ -109,7 +106,6 @@ export default function NavItems({ categories }: NavItemProps) {
           {categories.slice(0, renderedCategoryIndex).map((category) => {
             // Check if the category's slug matches the path
             const isActive = path === `/category/${category.slug}`
-
             return (
               <li
                 key={category.id}
@@ -117,7 +113,9 @@ export default function NavItems({ categories }: NavItemProps) {
               >
                 <Link
                   href={`/category/${category.slug}`}
-                  className="category-nav__link"
+                  className={`category-nav__link ${
+                    category.style === 'highlight' ? styles.highlight : ''
+                  }`}
                 >
                   {category.name}
                 </Link>
