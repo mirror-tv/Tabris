@@ -1,7 +1,7 @@
 import NoSearchResult from '~/components/search/no-search-result'
 import SearchResult from '~/components/search/search-result'
 import errors from '@twreporter/errors'
-import { searchAPI } from '../../_actions/search-api'
+import { searchAPI } from '~/app/_actions/search-api'
 import type { SearchResponse, SearchItem } from '~/types/search'
 import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
 import GptAd from '~/components/ads/gpt/gpt-ad'
