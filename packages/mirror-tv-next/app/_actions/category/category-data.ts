@@ -31,6 +31,6 @@ export async function fetchCategoryData(slug: string): Promise<Category> {
         }),
       })
     )
-    return { name: '', slug: '' }
+    return { name: '', slug: '', style: 'normal' }
   }
 }
