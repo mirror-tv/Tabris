@@ -12,12 +12,12 @@ import {
   HEADER_JSON_URL,
   SITE_URL,
 } from '~/constants/environment-variables'
-import '../styles/global.css'
+import '~/styles/global.css'
 import CompassFit from '~/components/ads/compass-fit'
-import TagManagerWrapper from './tag-manager'
+import TagManagerWrapper from '~/app/tag-manager'
 import { fetchPopularPosts } from '~/app/_actions/popular-data'
 import { type RawPopularPost } from '~/types/popular-post'
-import { getLatestPostsForAside } from './_actions/category/get-latest-posts'
+import { getLatestPostsForAside } from '~/app/_actions/category/get-latest-posts'
 import { type PostCardItem } from '~/graphql/query/posts'
 import type { HeaderData } from '~/types/header'
 import { handleResponse } from '~/utils'
@@ -90,7 +90,7 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="zh-Hant" className={`${noto_sans.variable} `}>
+    <html lang="zh-Hant" className={`${noto_sans.variable}`}>
       <GoogleTagManager gtmId={GTM_ID} />
       <Script
         async
