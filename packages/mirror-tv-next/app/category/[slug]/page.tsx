@@ -164,7 +164,7 @@ export default async function CategoryPage({
         headline: post.name,
         image: post.images.w3200 ?? post.images.original,
         dateCreated: formateDateAtTaipei(
-          post.publishTime,
+          new Date(post.publishTime),
           'YYYY.MM.DD HH:mm',
           ''
         ),

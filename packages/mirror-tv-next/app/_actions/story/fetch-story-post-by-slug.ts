@@ -1,24 +1,24 @@
 import { getClient } from '~/apollo-client'
 import {
   fetchStoryBySlug as fetchStoryBySlugDocument,
-  type FetchStoryBySlugResponse,
+  SinglePost,
 } from '~/graphql/query/story'
 import errors from '@twreporter/errors'
 
 export async function fetchStoryBySlug(
   slug: string
-): Promise<FetchStoryBySlugResponse['allPosts']> {
+): Promise<{ allPosts: SinglePost[] }> {
   const client = getClient()
   try {
     const { data } = await client.query<{
-      allPosts: FetchStoryBySlugResponse['allPosts']
+      allPosts: SinglePost[]
     }>({
       query: fetchStoryBySlugDocument,
       variables: {
         slug,
       },
     })
-    return data.allPosts ?? []
+    return data ?? []
   } catch (err) {
     const annotatingError = errors.helpers.wrap(
       err,
@@ -35,6 +35,6 @@ export async function fetchStoryBySlug(
         }),
       })
     )
-    return []
+    return { allPosts: [] }
   }
 }

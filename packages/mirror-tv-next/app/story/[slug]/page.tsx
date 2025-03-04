@@ -11,7 +11,7 @@ type StoryPageTypes = {
 const StoryPage = async (props: StoryPageTypes) => {
   const { params } = props
   const fetchStoryBySlugResponse = await fetchStoryBySlug(params.slug)
-  const [storyData] = fetchStoryBySlugResponse
+  const [storyData] = fetchStoryBySlugResponse.allPosts
   const { relatedPosts, heroImage, heroCaption } = storyData
 
   return (

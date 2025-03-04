@@ -44,7 +44,7 @@ export default function UiListPostsAside({
                 title={item.name}
                 page={page}
                 postStyle={item.style ?? ''}
-                date={item.publishTime}
+                date={new Date(item.publishTime)}
               />
             </li>
           )

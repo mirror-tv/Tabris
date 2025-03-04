@@ -5,10 +5,7 @@ import {
   POPULAR_POSTS_URL,
 } from '~/constants/environment-variables'
 import { fetchStoryBySlug } from '~/app/_actions/story/fetch-story-post-by-slug'
-import {
-  type SinglePost,
-  type FetchStoryBySlugResponse,
-} from '~/graphql/query/story'
+import { type SinglePost } from '~/graphql/query/story'
 import type {
   InferGetServerSidePropsType,
   GetServerSideProps,
@@ -17,7 +14,11 @@ import type {
 import { styled } from 'styled-components'
 import PostList from '~/components/story/amp/post-list'
 import { formateHeroImage, getHeroImageOfAmp } from '~/utils/image-handler'
-import { type FormattedPostCard, formatArticleCard } from '~/utils'
+import {
+  type FormattedPostCard,
+  formatArticleCard,
+  handleResponse,
+} from '~/utils'
 import { type RawPopularPost } from '~/types/popular-post'
 import errors from '@twreporter/errors'
 
@@ -76,56 +77,60 @@ export const getServerSideProps: GetServerSideProps<{
 
   const { slug = '' } = params as { slug: string }
 
-  const [storyData]: FetchStoryBySlugResponse['allPosts'] =
-    await fetchStoryBySlug(slug)
+  const fetchStoryDataFunction = () => fetchStoryBySlug(slug)
 
-  if (!storyData) {
-    return { notFound: true }
-  }
-
-  let popularPostsList: FormattedPostCard[] = []
-  try {
-    const popularListRes = await fetch(POPULAR_POSTS_URL, {
+  const fetchPopularList = () =>
+    fetch(POPULAR_POSTS_URL, {
       next: { revalidate: GLOBAL_CACHE_SETTING },
     }).then((res) => {
       return res.json() as unknown as { report: RawPopularPost[] }
     })
-    popularPostsList =
-      popularListRes?.report
-        ?.map((post: RawPopularPost) => formatArticleCard(post))
-        ?.map((post) => {
-          return {
-            ...post,
-            publishTime:
-              post.publishTime instanceof Date
-                ? post.publishTime.toISOString()
-                : post.publishTime,
-            label: post.label ?? null,
-          }
-        }) ?? []
-  } catch (error) {
-    const annotatingError = errors.helpers.wrap(
-      error,
-      'UnhandledError',
-      `Error occurs while fetching poplar data for amp page`
-    )
 
-    console.error(
-      JSON.stringify({
-        severity: 'ERROR',
-        message: errors.helpers.printAll(annotatingError, {
-          withStack: false,
-          withPayload: true,
-        }),
-      })
-    )
-    console.error(error)
+  const responses = await Promise.allSettled([
+    fetchStoryDataFunction(),
+    fetchPopularList(),
+  ])
+
+  const storyData: SinglePost | undefined = handleResponse(
+    responses[0],
+    (
+      response: Awaited<ReturnType<typeof fetchStoryDataFunction>> | undefined
+    ) => {
+      return response?.allPosts?.[0]
+    },
+    'Error occurs while fetching story data in story amp page'
+  )
+
+  if (!storyData || !Object.keys(storyData).length) {
+    return { notFound: true }
   }
 
-  const props = {
-    storyData,
-    popularPostsList,
-  }
+  const popularPostsList = handleResponse(
+    responses[1],
+    (response: Awaited<ReturnType<typeof fetchPopularList>> | undefined) => {
+      return (
+        response?.report
+          ?.slice(0, 5)
+          ?.map((post: RawPopularPost) => formatArticleCard(post))
+          ?.map((post) => {
+            return {
+              ...post,
+              publishTime:
+                post.publishTime instanceof Date
+                  ? post.publishTime.toISOString()
+                  : post.publishTime,
+              label: post.label ?? null,
+            }
+          }) ?? []
+      )
+    },
+    'Error occurs while fetching popular data in story amp page'
+  )
 
-  return { props }
+  return {
+    props: {
+      storyData,
+      popularPostsList,
+    },
+  }
 }
