@@ -1,5 +1,9 @@
 import AMPLayout from '~/components/story/amp/layout'
-import { ENV } from '~/constants/environment-variables'
+import {
+  ENV,
+  GLOBAL_CACHE_SETTING,
+  POPULAR_POSTS_URL,
+} from '~/constants/environment-variables'
 import { fetchStoryBySlug } from '~/app/_actions/story/fetch-story-post-by-slug'
 import {
   type SinglePost,
@@ -11,6 +15,11 @@ import type {
   GetServerSidePropsContext,
 } from 'next'
 import { styled } from 'styled-components'
+import PostList from '~/components/story/amp/post-list'
+import { formateHeroImage, getHeroImageOfAmp } from '~/utils/image-handler'
+import { type FormattedPostCard, formatArticleCard } from '~/utils'
+import { type RawPopularPost } from '~/types/popular-post'
+import errors from '@twreporter/errors'
 
 export const config = { amp: true }
 
@@ -36,39 +45,27 @@ const HeroImhCaption = styled.figcaption`
 
 export default function AmpPage({
   storyData,
+  popularPostsList = [],
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const {
-    heroImage: {
-      urlOriginal,
-      urlDesktopSized,
-      urlTabletSized,
-      urlMobileSized,
-      urlTinySized,
-    },
-    heroCaption,
-  } = storyData
-
-  // TODO: 整理成 function 重復使用
-  const heroImage =
-    urlMobileSized ??
-    urlTabletSized ??
-    urlDesktopSized ??
-    urlOriginal ??
-    urlTinySized ??
-    '/images/default-og-img.jpg'
+  if (!storyData) return null
+  const { heroImage = {}, heroCaption = '' } = storyData
+  const heroSrc = getHeroImageOfAmp(formateHeroImage(heroImage))
 
   return (
     <AMPLayout>
       <ImageWrapper>
-        <amp-img src={heroImage} layout="fill" />
+        <amp-img src={heroSrc} layout="fill" />
       </ImageWrapper>
       {heroCaption && <HeroImhCaption>{heroCaption}</HeroImhCaption>}
+      // 正文
+      <PostList title="熱門新聞" list={popularPostsList} />
     </AMPLayout>
   )
 }
 
 export const getServerSideProps: GetServerSideProps<{
-  storyData: SinglePost
+  storyData: SinglePost | undefined
+  popularPostsList: FormattedPostCard[]
 }> = async (context: GetServerSidePropsContext) => {
   const { params, res } = context
   if (ENV === 'prod') {
@@ -86,8 +83,48 @@ export const getServerSideProps: GetServerSideProps<{
     return { notFound: true }
   }
 
+  let popularPostsList: FormattedPostCard[] = []
+  try {
+    const popularListRes = await fetch(POPULAR_POSTS_URL, {
+      next: { revalidate: GLOBAL_CACHE_SETTING },
+    }).then((res) => {
+      return res.json() as unknown as { report: RawPopularPost[] }
+    })
+    popularPostsList =
+      popularListRes?.report
+        ?.map((post: RawPopularPost) => formatArticleCard(post))
+        ?.map((post) => {
+          return {
+            ...post,
+            publishTime:
+              post.publishTime instanceof Date
+                ? post.publishTime.toISOString()
+                : post.publishTime,
+            label: post.label ?? null,
+          }
+        }) ?? []
+  } catch (error) {
+    const annotatingError = errors.helpers.wrap(
+      error,
+      'UnhandledError',
+      `Error occurs while fetching poplar data for amp page`
+    )
+
+    console.error(
+      JSON.stringify({
+        severity: 'ERROR',
+        message: errors.helpers.printAll(annotatingError, {
+          withStack: false,
+          withPayload: true,
+        }),
+      })
+    )
+    console.error(error)
+  }
+
   const props = {
     storyData,
+    popularPostsList,
   }
 
   return { props }

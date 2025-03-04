@@ -8,8 +8,8 @@ export type FormattedPostCard = {
   style?: string
   name: string
   images: PostImage
-  publishTime: Date
-  label?: string
+  publishTime: Date | string
+  label?: string | null
   __typename?: string
 }
 
