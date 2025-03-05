@@ -1,5 +1,3 @@
-'use server'
-
 import { getClient } from '~/apollo-client'
 import { getLatestPosts, type PostCardItem } from '~/graphql/query/posts'
 
@@ -20,6 +18,6 @@ const queryArgs = {
 /**
  * Fetches the latest 5 posts to be displayed in the aside section in category page.
  */
-export const getLatestPostsForAside = () => {
+export const getLatestPostsForAmp = () => {
   return client.query<QueryType>(queryArgs)
 }

@@ -20,7 +20,8 @@ import {
   handleResponse,
 } from '~/utils'
 import { type RawPopularPost } from '~/types/popular-post'
-import errors from '@twreporter/errors'
+import { PostCardItem } from '~/graphql/query/posts'
+import { getLatestPostsForAmp } from '~/app/_actions/story/amp/get-latest-posts'
 
 export const config = { amp: true }
 
@@ -47,6 +48,7 @@ const HeroImhCaption = styled.figcaption`
 export default function AmpPage({
   storyData,
   popularPostsList = [],
+  latestPostsList,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   if (!storyData) return null
   const { heroImage = {}, heroCaption = '' } = storyData
@@ -60,6 +62,7 @@ export default function AmpPage({
       {heroCaption && <HeroImhCaption>{heroCaption}</HeroImhCaption>}
       // 正文
       <PostList title="熱門新聞" list={popularPostsList} />
+      <PostList title="即時新聞" list={latestPostsList} />
     </AMPLayout>
   )
 }
@@ -67,6 +70,7 @@ export default function AmpPage({
 export const getServerSideProps: GetServerSideProps<{
   storyData: SinglePost | undefined
   popularPostsList: FormattedPostCard[]
+  latestPostsList: FormattedPostCard[]
 }> = async (context: GetServerSidePropsContext) => {
   const { params, res } = context
   if (ENV === 'prod') {
@@ -89,6 +93,7 @@ export const getServerSideProps: GetServerSideProps<{
   const responses = await Promise.allSettled([
     fetchStoryDataFunction(),
     fetchPopularList(),
+    getLatestPostsForAmp(),
   ])
 
   const storyData: SinglePost | undefined = handleResponse(
@@ -127,10 +132,34 @@ export const getServerSideProps: GetServerSideProps<{
     'Error occurs while fetching popular data in story amp page'
   )
 
+  const latestPostsList = handleResponse(
+    responses[2],
+    (
+      response: Awaited<ReturnType<typeof getLatestPostsForAmp>> | undefined
+    ) => {
+      return (
+        response?.data?.allPosts
+          ?.map((post: PostCardItem) => formatArticleCard(post))
+          ?.map((post) => {
+            return {
+              ...post,
+              publishTime:
+                post.publishTime instanceof Date
+                  ? post.publishTime.toISOString()
+                  : post.publishTime,
+              label: post.label ?? null,
+            }
+          }) ?? []
+      )
+    },
+    'Error occurs while fetching latest data in story amp page'
+  )
+
   return {
     props: {
       storyData,
       popularPostsList,
+      latestPostsList,
     },
   }
 }
