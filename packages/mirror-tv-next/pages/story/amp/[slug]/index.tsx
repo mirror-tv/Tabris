@@ -22,6 +22,7 @@ import {
 import { type RawPopularPost } from '~/types/popular-post'
 import { PostCardItem } from '~/graphql/query/posts'
 import { getLatestPostsForAmp } from '~/app/_actions/story/amp/get-latest-posts'
+import RelatedPostList from '~/components/story/amp/related-post-list'
 
 export const config = { amp: true }
 
@@ -51,7 +52,7 @@ export default function AmpPage({
   latestPostsList,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   if (!storyData) return null
-  const { heroImage = {}, heroCaption = '' } = storyData
+  const { heroImage = {}, heroCaption = '', relatedPosts = [] } = storyData
   const heroSrc = getHeroImageOfAmp(formateHeroImage(heroImage))
 
   return (
@@ -61,8 +62,13 @@ export default function AmpPage({
       </ImageWrapper>
       {heroCaption && <HeroImhCaption>{heroCaption}</HeroImhCaption>}
       // 正文
-      <PostList title="熱門新聞" list={popularPostsList} />
-      <PostList title="即時新聞" list={latestPostsList} />
+      {relatedPosts && <RelatedPostList title="相關新聞" list={relatedPosts} />}
+      {!!popularPostsList.length && (
+        <PostList title="熱門新聞" list={popularPostsList} />
+      )}
+      {!!latestPostsList.length && (
+        <PostList title="即時新聞" list={latestPostsList} />
+      )}
     </AMPLayout>
   )
 }
