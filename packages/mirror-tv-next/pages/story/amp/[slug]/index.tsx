@@ -61,7 +61,6 @@ export default function AmpPage({
         <amp-img src={heroSrc} layout="fill" />
       </ImageWrapper>
       {heroCaption && <HeroImhCaption>{heroCaption}</HeroImhCaption>}
-      // 正文
       {relatedPosts && <RelatedPostList title="相關新聞" list={relatedPosts} />}
       {!!popularPostsList.length && (
         <PostList title="熱門新聞" list={popularPostsList} />
