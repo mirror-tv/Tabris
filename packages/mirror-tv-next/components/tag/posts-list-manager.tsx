@@ -140,7 +140,7 @@ export default function PostsListManager({
                     href={postItem.href}
                     images={postItem.images}
                     title={postItem.name}
-                    date={new Date(postItem.publishTime)}
+                    date={postItem.publishTime}
                     postStyle={postItem.style}
                     mobileLayoutDirection="column"
                   />

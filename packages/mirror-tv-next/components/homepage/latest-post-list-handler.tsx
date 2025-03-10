@@ -52,7 +52,7 @@ export default function LatestPostListHandler({
                 href={postItem.href}
                 images={postItem.images}
                 title={postItem.name}
-                date={new Date(postItem.publishTime)}
+                date={postItem.publishTime}
                 postStyle={postItem.style}
                 label={postItem.label ?? ''}
               />

@@ -37,7 +37,7 @@ export default function UiFeaturePost({ post }: UiFeaturePostProps) {
       >
         <span className={styles.title}>{name}</span>
         <span className={styles.date}>
-          {formateDateAtTaipei(new Date(publishTime), 'YYYY/MM/DD HH:mm', '')}
+          {formateDateAtTaipei(publishTime, 'YYYY/MM/DD HH:mm', '')}
         </span>
       </span>
     </a>

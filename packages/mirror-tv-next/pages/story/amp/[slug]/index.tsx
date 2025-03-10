@@ -15,7 +15,7 @@ import { styled } from 'styled-components'
 import PostList from '~/components/story/amp/post-list'
 import { formateHeroImage, getHeroImageOfAmp } from '~/utils/image-handler'
 import {
-  type FormattedPostCard,
+  type FormattedPostCardJson,
   formatArticleCard,
   handleResponse,
 } from '~/utils'
@@ -74,8 +74,8 @@ export default function AmpPage({
 
 export const getServerSideProps: GetServerSideProps<{
   storyData: SinglePost | undefined
-  popularPostsList: FormattedPostCard[]
-  latestPostsList: FormattedPostCard[]
+  popularPostsList: FormattedPostCardJson[]
+  latestPostsList: FormattedPostCardJson[]
 }> = async (context: GetServerSidePropsContext) => {
   const { params, res } = context
   if (ENV === 'prod') {

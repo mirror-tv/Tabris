@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { FormattedPostCard } from '~/utils'
+import { FormattedPostCardJson } from '~/utils'
 import { getHeroImageOfAmp } from '~/utils/image-handler'
 
 const Wrapper = styled.section`
@@ -51,7 +51,7 @@ const CardTitle = styled.span`
 
 type PostListProps = {
   title: string
-  list: FormattedPostCard[]
+  list: FormattedPostCardJson[]
 }
 
 export default function PostList({ title, list }: PostListProps) {

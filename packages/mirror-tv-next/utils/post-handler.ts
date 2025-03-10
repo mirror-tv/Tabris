@@ -8,9 +8,17 @@ export type FormattedPostCard = {
   style?: string
   name: string
   images: PostImage
-  publishTime: Date | string
-  label?: string | null
+  publishTime: Date
+  label?: string
   __typename?: string
+}
+
+export type FormattedPostCardJson = Omit<
+  FormattedPostCard,
+  'publishTime' | 'label'
+> & {
+  publishTime: string
+  label?: string | null
 }
 
 type FormatArticleCardInput = {
