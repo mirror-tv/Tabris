@@ -21,8 +21,8 @@ import {
 } from '~/utils'
 import { type RawPopularPost } from '~/types/popular-post'
 import { PostCardItem } from '~/graphql/query/posts'
-import { getLatestPostsForAmp } from '~/app/_actions/story/amp/get-latest-posts'
 import RelatedPostList from '~/components/story/amp/related-post-list'
+import { getLatestPostsFunction } from '~/utils/fetch-function'
 
 export const config = { amp: true }
 
@@ -98,7 +98,7 @@ export const getServerSideProps: GetServerSideProps<{
   const responses = await Promise.allSettled([
     fetchStoryDataFunction(),
     fetchPopularList(),
-    getLatestPostsForAmp(),
+    getLatestPostsFunction(),
   ])
 
   const storyData: SinglePost | undefined = handleResponse(
@@ -140,7 +140,7 @@ export const getServerSideProps: GetServerSideProps<{
   const latestPostsList = handleResponse(
     responses[2],
     (
-      response: Awaited<ReturnType<typeof getLatestPostsForAmp>> | undefined
+      response: Awaited<ReturnType<typeof getLatestPostsFunction>> | undefined
     ) => {
       return (
         response?.data?.allPosts
