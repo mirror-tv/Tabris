@@ -50,7 +50,7 @@ export default function RelatedPostList({ title, list }: PostListProps) {
               className="amp-card-list-item"
             >
               <CardLink
-                href={`/story/${item.slug}`}
+                href={`/story/amp/${item.slug}`}
                 target="_blank"
                 rel="noreferrer noopener"
               >

@@ -67,7 +67,7 @@ export default function PostList({ title, list }: PostListProps) {
               className="amp-card-list-item"
             >
               <CardLink
-                href={item.href}
+                href={item.href.replace('/story/', '/story/amp/')}
                 target="_blank"
                 rel="noreferrer noopener"
               >
