@@ -1,6 +1,5 @@
 import type { PostImage } from './image-handler'
 import { formateHeroImage, formatePostImage } from './image-handler'
-
 import {
   extractYoutubeId,
   handleApiData,

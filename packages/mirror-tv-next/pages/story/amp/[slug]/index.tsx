@@ -4,7 +4,7 @@ import {
   GLOBAL_CACHE_SETTING,
   POPULAR_POSTS_URL,
 } from '~/constants/environment-variables'
-import { fetchStoryBySlug } from '~/app/_actions/story/fetch-story-post-by-slug'
+import { fetchStoryBySlug } from '~/utils/fetch-function'
 import { type SinglePost } from '~/graphql/query/story'
 import type {
   InferGetServerSidePropsType,
@@ -61,7 +61,9 @@ export default function AmpPage({
         <amp-img src={heroSrc} layout="fill" />
       </ImageWrapper>
       {heroCaption && <HeroImhCaption>{heroCaption}</HeroImhCaption>}
-      {relatedPosts && <RelatedPostList title="相關新聞" list={relatedPosts} />}
+      {!!relatedPosts.length && (
+        <RelatedPostList title="相關新聞" list={relatedPosts} />
+      )}
       {!!popularPostsList.length && (
         <PostList title="熱門新聞" list={popularPostsList} />
       )}
