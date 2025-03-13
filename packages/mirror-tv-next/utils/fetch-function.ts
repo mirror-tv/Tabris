@@ -1,5 +1,10 @@
 import { getClient } from '~/apollo-client'
 import { getLatestPosts, type PostCardItem } from '~/graphql/query/posts'
+import {
+  fetchStoryBySlug as fetchStoryBySlugDocument,
+  SinglePost,
+} from '~/graphql/query/story'
+import errors from '@twreporter/errors'
 
 type QueryType = {
   allPosts: PostCardItem[]
@@ -21,12 +26,6 @@ const queryArgs = {
 export const getLatestPostsFunction = () => {
   return client.query<QueryType>(queryArgs)
 }
-
-import {
-  fetchStoryBySlug as fetchStoryBySlugDocument,
-  SinglePost,
-} from '~/graphql/query/story'
-import errors from '@twreporter/errors'
 
 export async function fetchStoryBySlug(
   slug: string

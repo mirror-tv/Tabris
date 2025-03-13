@@ -2,7 +2,7 @@ import ArticleRelatedPosts from '~/components/story/article-related-posts'
 import ArticleSocialList from '~/components/story/article-social-list'
 
 import styles from './_styles/story.module.scss'
-import { fetchStoryBySlug } from '~/app/_actions/story/fetch-story-post-by-slug'
+import { fetchStoryBySlug } from '~/utils/fetch-function'
 import ArticleHeroImage from '~/components/story/article-hero-image'
 
 type StoryPageTypes = {
