@@ -24,6 +24,5 @@ export {
   formateYoutubeListRes,
   fetchYoutubeData,
   FetchError,
-  FormattedPostCardJson,
 }
-export type { FormattedPostCard, PostImage }
+export type { FormattedPostCard, PostImage, FormattedPostCardJson }

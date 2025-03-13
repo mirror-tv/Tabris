@@ -54,7 +54,7 @@ export default function LatestPostListHandler({
                 title={postItem.name}
                 date={postItem.publishTime}
                 postStyle={postItem.style}
-                label={postItem.label ?? ''}
+                label={postItem.label}
               />
             </ol>
           ))}

@@ -117,24 +117,24 @@ export const getServerSideProps: GetServerSideProps<{
     return { notFound: true }
   }
 
+  const formatPostAsJson = (
+    post: RawPopularPost | PostCardItem
+  ): FormattedPostCardJson => {
+    const formattedPost = formatArticleCard(post)
+    return {
+      ...formattedPost,
+      publishTime:
+        formattedPost.publishTime instanceof Date
+          ? formattedPost.publishTime.toISOString()
+          : formattedPost.publishTime,
+      label: formattedPost.label ?? null,
+    }
+  }
+
   const popularPostsList = handleResponse(
     responses[1],
     (response: Awaited<ReturnType<typeof fetchPopularList>> | undefined) => {
-      return (
-        response?.report
-          ?.slice(0, 5)
-          ?.map((post: RawPopularPost) => formatArticleCard(post))
-          ?.map((post) => {
-            return {
-              ...post,
-              publishTime:
-                post.publishTime instanceof Date
-                  ? post.publishTime.toISOString()
-                  : post.publishTime,
-              label: post.label ?? null,
-            }
-          }) ?? []
-      )
+      return response?.report?.slice(0, 5)?.map(formatPostAsJson) ?? []
     },
     'Error occurs while fetching popular data in story amp page'
   )
@@ -144,20 +144,7 @@ export const getServerSideProps: GetServerSideProps<{
     (
       response: Awaited<ReturnType<typeof getLatestPostsFunction>> | undefined
     ) => {
-      return (
-        response?.data?.allPosts
-          ?.map((post: PostCardItem) => formatArticleCard(post))
-          ?.map((post) => {
-            return {
-              ...post,
-              publishTime:
-                post.publishTime instanceof Date
-                  ? post.publishTime.toISOString()
-                  : post.publishTime,
-              label: post.label ?? null,
-            }
-          }) ?? []
-      )
+      return response?.data?.allPosts?.map(formatPostAsJson) ?? []
     },
     'Error occurs while fetching latest data in story amp page'
   )
