@@ -19,7 +19,15 @@ declare namespace JSX {
       React.VideoHTMLAttributes<HTMLVideoElement>,
       HTMLVideoElement
     >
-
+    'amp-youtube': React.DetailedHTMLProps<
+      React.HTMLAttributes<HTMLElement>,
+      HTMLElement
+    > & {
+      'data-videoid': string
+      width?: string | number
+      height?: string | number
+      layout?: string
+    }
     'amp-script': React.DetailedHTMLProps<
       React.HTMLAttributes<HTMLElement>,
       HTMLElement

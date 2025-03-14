@@ -28,6 +28,15 @@ const HOMEPAGE_POSTS_PAGE_SIZE = 12
 
 const SALES_LABEL_NAME = '特企'
 
+const CONTACT_MAPPING = {
+  writers: '記者',
+  photographers: '攝影',
+  cameraOperators: '影音',
+  designers: '設計',
+  engineers: '工程',
+  vocals: '主播',
+}
+
 export {
   HEADER_BOTTOM_LINKS,
   META_DESCRIPTION,
@@ -36,4 +45,5 @@ export {
   URL_PROGRAMABLE_SEARCH,
   HOMEPAGE_POSTS_PAGE_SIZE,
   SALES_LABEL_NAME,
+  CONTACT_MAPPING,
 }
