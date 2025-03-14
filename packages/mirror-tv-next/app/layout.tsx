@@ -17,7 +17,7 @@ import CompassFit from '~/components/ads/compass-fit'
 import TagManagerWrapper from '~/app/tag-manager'
 import { fetchPopularPosts } from '~/app/_actions/popular-data'
 import { type RawPopularPost } from '~/types/popular-post'
-import { getLatestPostsForAside } from '~/app/_actions/category/get-latest-posts'
+import { getLatestPostsAside } from '~/app/_actions/share/get-latest-posts'
 import { type PostCardItem } from '~/graphql/query/posts'
 import type { HeaderData } from '~/types/header'
 import { handleResponse } from '~/utils'
@@ -57,14 +57,14 @@ export default async function RootLayout({
 
   const [popularPostsResult, latestPostsResult] = await Promise.allSettled([
     fetchPopularPosts(),
-    getLatestPostsForAside(),
+    getLatestPostsAside(),
   ])
 
   const getDataFromPopularPostsResult = (
     value: Awaited<ReturnType<typeof fetchPopularPosts>> | undefined
   ) => value?.data || []
   const getAllPostsFromLatestPostsResult = (
-    value: Awaited<ReturnType<typeof getLatestPostsForAside>> | undefined
+    value: Awaited<ReturnType<typeof getLatestPostsAside>> | undefined
   ) => value?.data.allPosts || []
 
   initialPopularPosts = handleResponse(
