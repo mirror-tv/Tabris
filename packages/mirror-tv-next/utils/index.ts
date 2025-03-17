@@ -1,6 +1,5 @@
 import type { PostImage } from './image-handler'
 import { formateHeroImage, formatePostImage } from './image-handler'
-
 import {
   extractYoutubeId,
   handleApiData,
@@ -9,7 +8,7 @@ import {
   FetchError,
 } from './common'
 import { formateDateAtTaipei } from './date-handler'
-import type { FormattedPostCard } from './post-handler'
+import type { FormattedPostCard, FormattedPostCardJson } from './post-handler'
 import { formatArticleCard } from './post-handler'
 import { formateYoutubeListRes, fetchYoutubeData } from './youtube'
 
@@ -26,4 +25,4 @@ export {
   fetchYoutubeData,
   FetchError,
 }
-export type { FormattedPostCard, PostImage }
+export type { FormattedPostCard, PostImage, FormattedPostCardJson }

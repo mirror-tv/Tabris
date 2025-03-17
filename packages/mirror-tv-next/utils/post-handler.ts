@@ -13,6 +13,14 @@ export type FormattedPostCard = {
   __typename?: string
 }
 
+export type FormattedPostCardJson = Omit<
+  FormattedPostCard,
+  'publishTime' | 'label'
+> & {
+  publishTime: string
+  label?: string | null
+}
+
 type FormatArticleCardInput = {
   slug: string
   name: string
