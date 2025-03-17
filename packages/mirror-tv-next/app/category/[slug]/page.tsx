@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import dynamic from 'next/dynamic'
+// import dynamic from 'next/dynamic'
 import { notFound } from 'next/navigation'
 import GptPopup from '~/components/ads/gpt/gpt-popup'
 import {
@@ -20,11 +20,11 @@ import { FeaturePost } from '~/types/api-data'
 import {
   FormattedPostCard,
   formatArticleCard,
-  formateDateAtTaipei,
+  // formateDateAtTaipei,
   handleResponse,
 } from '~/utils'
 import { fetchSales } from '~/app/_actions/share/sales'
-const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
+// const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 import { SALES_LABEL_NAME } from '~/constants/constant'
 import { fetchCategoryData } from '~/app/_actions/category/category-data'
 
@@ -154,30 +154,30 @@ export default async function CategoryPage({
     'Error occurs while fetching category externals data in category page'
   )
 
-  const postJsonData = categoryPosts?.slice(5).map((post, index) => {
-    return {
-      '@type': 'ListItem',
-      position: index + 1 + '',
-      item: {
-        '@type': 'NewsArticle',
-        url: `https://www.mnews.tw${post.href}`,
-        headline: post.name,
-        image: post.images.w3200 ?? post.images.original,
-        dateCreated: formateDateAtTaipei(
-          post.publishTime,
-          'YYYY.MM.DD HH:mm',
-          ''
-        ),
-      },
-    }
-  })
+  // const postJsonData = categoryPosts?.slice(5).map((post, index) => {
+  //   return {
+  //     '@type': 'ListItem',
+  //     position: index + 1 + '',
+  //     item: {
+  //       '@type': 'NewsArticle',
+  //       url: `https://www.mnews.tw${post.href}`,
+  //       headline: post.name,
+  //       image: post.images.w3200 ?? post.images.original,
+  //       dateCreated: formateDateAtTaipei(
+  //         post.publishTime,
+  //         'YYYY.MM.DD HH:mm',
+  //         ''
+  //       ),
+  //     },
+  //   }
+  // })
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'ItemList',
-    numberOfItems: '5',
-    itemListElement: postJsonData,
-  }
+  // const jsonLd = {
+  //   '@context': 'https://schema.org',
+  //   '@type': 'ItemList',
+  //   numberOfItems: '5',
+  //   itemListElement: postJsonData,
+  // }
 
   let hasFeaturePostInJson = true
   if (!featurePost?.slug) {
@@ -199,10 +199,10 @@ export default async function CategoryPage({
 
   return (
     <section className={styles.postsList}>
-      <script
+      {/* <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      /> */}
       <GptPopup adKey="MB_CATEGORY" />
       <UiHeadingBordered title={categoryData.name} />
       {featurePost && (
@@ -221,11 +221,11 @@ export default async function CategoryPage({
           />
         </div>
       )}
-      <div className={styles.gptContainer}>
+      {/* <div className={styles.gptContainer}>
         <div className={styles.gptWrapper}>
           <GPTAd pageKey="category" adKey="PC_BT" />
         </div>
-      </div>
+      </div> */}
     </section>
   )
 }

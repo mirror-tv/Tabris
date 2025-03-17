@@ -18,10 +18,7 @@ export interface SinglePost {
     urlTinySized: string
   }
   heroCaption: string
-}
-
-export interface FetchStoryBySlugResponse {
-  allPosts: SinglePost[]
+  __typename: string
 }
 
 const fetchStoryBySlug = gql`
