@@ -2,7 +2,7 @@ import ArticleRelatedPosts from '~/components/story/article-related-posts'
 import ArticleSocialList from '~/components/story/article-social-list'
 
 import styles from './_styles/story.module.scss'
-import { fetchStoryBySlug } from '~/app/_actions/story/fetch-story-post-by-slug'
+import { fetchStoryBySlug } from '~/utils/fetch-function'
 import ArticleHeroImage from '~/components/story/article-hero-image'
 
 type StoryPageTypes = {
@@ -11,7 +11,7 @@ type StoryPageTypes = {
 const StoryPage = async (props: StoryPageTypes) => {
   const { params } = props
   const fetchStoryBySlugResponse = await fetchStoryBySlug(params.slug)
-  const [storyData] = fetchStoryBySlugResponse
+  const [storyData] = fetchStoryBySlugResponse.allPosts
   const { relatedPosts, heroImage, heroCaption } = storyData
 
   return (

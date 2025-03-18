@@ -1,16 +1,28 @@
 import AMPLayout from '~/components/story/amp/layout'
-import { ENV } from '~/constants/environment-variables'
-import { fetchStoryBySlug } from '~/app/_actions/story/fetch-story-post-by-slug'
 import {
-  type SinglePost,
-  type FetchStoryBySlugResponse,
-} from '~/graphql/query/story'
+  ENV,
+  GLOBAL_CACHE_SETTING,
+  POPULAR_POSTS_URL,
+} from '~/constants/environment-variables'
+import { fetchStoryBySlug } from '~/utils/fetch-function'
+import { type SinglePost } from '~/graphql/query/story'
 import type {
   InferGetServerSidePropsType,
   GetServerSideProps,
   GetServerSidePropsContext,
 } from 'next'
 import { styled } from 'styled-components'
+import PostList from '~/components/story/amp/post-list'
+import { formateHeroImage, getHeroImageOfAmp } from '~/utils/image-handler'
+import {
+  type FormattedPostCardJson,
+  formatArticleCard,
+  handleResponse,
+} from '~/utils'
+import { type RawPopularPost } from '~/types/popular-post'
+import { PostCardItem } from '~/graphql/query/posts'
+import RelatedPostList from '~/components/story/amp/related-post-list'
+import { getLatestPostsFunction } from '~/utils/fetch-function'
 
 export const config = { amp: true }
 
@@ -36,39 +48,36 @@ const HeroImhCaption = styled.figcaption`
 
 export default function AmpPage({
   storyData,
+  popularPostsList = [],
+  latestPostsList,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const {
-    heroImage: {
-      urlOriginal,
-      urlDesktopSized,
-      urlTabletSized,
-      urlMobileSized,
-      urlTinySized,
-    },
-    heroCaption,
-  } = storyData
-
-  // TODO: 整理成 function 重復使用
-  const heroImage =
-    urlMobileSized ??
-    urlTabletSized ??
-    urlDesktopSized ??
-    urlOriginal ??
-    urlTinySized ??
-    '/images/default-og-img.jpg'
+  if (!storyData) return null
+  const { heroImage = {}, heroCaption = '', relatedPosts = [] } = storyData
+  const heroSrc = getHeroImageOfAmp(formateHeroImage(heroImage))
 
   return (
     <AMPLayout>
       <ImageWrapper>
-        <amp-img src={heroImage} layout="fill" />
+        <amp-img src={heroSrc} layout="fill" />
       </ImageWrapper>
       {heroCaption && <HeroImhCaption>{heroCaption}</HeroImhCaption>}
+      {!!relatedPosts.length && (
+        <RelatedPostList title="相關新聞" list={relatedPosts} />
+      )}
+      {!!popularPostsList.length && (
+        <PostList title="熱門新聞" list={popularPostsList} />
+      )}
+      {!!latestPostsList.length && (
+        <PostList title="即時新聞" list={latestPostsList} />
+      )}
     </AMPLayout>
   )
 }
 
 export const getServerSideProps: GetServerSideProps<{
-  storyData: SinglePost
+  storyData: SinglePost | undefined
+  popularPostsList: FormattedPostCardJson[]
+  latestPostsList: FormattedPostCardJson[]
 }> = async (context: GetServerSidePropsContext) => {
   const { params, res } = context
   if (ENV === 'prod') {
@@ -79,16 +88,72 @@ export const getServerSideProps: GetServerSideProps<{
 
   const { slug = '' } = params as { slug: string }
 
-  const [storyData]: FetchStoryBySlugResponse['allPosts'] =
-    await fetchStoryBySlug(slug)
+  const fetchStoryDataFunction = () => fetchStoryBySlug(slug)
 
-  if (!storyData) {
+  const fetchPopularList = () =>
+    fetch(POPULAR_POSTS_URL, {
+      next: { revalidate: GLOBAL_CACHE_SETTING },
+    }).then((res) => {
+      return res.json() as unknown as { report: RawPopularPost[] }
+    })
+
+  const responses = await Promise.allSettled([
+    fetchStoryDataFunction(),
+    fetchPopularList(),
+    getLatestPostsFunction(),
+  ])
+
+  const storyData: SinglePost | undefined = handleResponse(
+    responses[0],
+    (
+      response: Awaited<ReturnType<typeof fetchStoryDataFunction>> | undefined
+    ) => {
+      return response?.allPosts?.[0]
+    },
+    'Error occurs while fetching story data in story amp page'
+  )
+
+  if (!storyData || !Object.keys(storyData).length) {
     return { notFound: true }
   }
 
-  const props = {
-    storyData,
+  const formatPostAsJson = (
+    post: RawPopularPost | PostCardItem
+  ): FormattedPostCardJson => {
+    const formattedPost = formatArticleCard(post)
+    return {
+      ...formattedPost,
+      publishTime:
+        formattedPost.publishTime instanceof Date
+          ? formattedPost.publishTime.toISOString()
+          : formattedPost.publishTime,
+      label: formattedPost.label ?? null,
+    }
   }
 
-  return { props }
+  const popularPostsList = handleResponse(
+    responses[1],
+    (response: Awaited<ReturnType<typeof fetchPopularList>> | undefined) => {
+      return response?.report?.slice(0, 5)?.map(formatPostAsJson) ?? []
+    },
+    'Error occurs while fetching popular data in story amp page'
+  )
+
+  const latestPostsList = handleResponse(
+    responses[2],
+    (
+      response: Awaited<ReturnType<typeof getLatestPostsFunction>> | undefined
+    ) => {
+      return response?.data?.allPosts?.map(formatPostAsJson) ?? []
+    },
+    'Error occurs while fetching latest data in story amp page'
+  )
+
+  return {
+    props: {
+      storyData,
+      popularPostsList,
+      latestPostsList,
+    },
+  }
 }

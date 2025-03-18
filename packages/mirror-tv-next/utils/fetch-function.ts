@@ -1,24 +1,46 @@
 import { getClient } from '~/apollo-client'
+import { getLatestPosts, type PostCardItem } from '~/graphql/query/posts'
 import {
   fetchStoryBySlug as fetchStoryBySlugDocument,
-  type FetchStoryBySlugResponse,
+  SinglePost,
 } from '~/graphql/query/story'
 import errors from '@twreporter/errors'
 
+type QueryType = {
+  allPosts: PostCardItem[]
+}
+const client = getClient()
+const firstNItems = 5
+const filteredSlugList: string[] = []
+const queryArgs = {
+  query: getLatestPosts,
+  variables: {
+    first: firstNItems,
+    filteredSlug: filteredSlugList,
+  },
+}
+
+/**
+ * Fetches the latest 5 posts to be displayed in the aside section in category page.
+ */
+export const getLatestPostsFunction = () => {
+  return client.query<QueryType>(queryArgs)
+}
+
 export async function fetchStoryBySlug(
   slug: string
-): Promise<FetchStoryBySlugResponse['allPosts']> {
+): Promise<{ allPosts: SinglePost[] }> {
   const client = getClient()
   try {
     const { data } = await client.query<{
-      allPosts: FetchStoryBySlugResponse['allPosts']
+      allPosts: SinglePost[]
     }>({
       query: fetchStoryBySlugDocument,
       variables: {
         slug,
       },
     })
-    return data.allPosts ?? []
+    return data ?? []
   } catch (err) {
     const annotatingError = errors.helpers.wrap(
       err,
@@ -35,6 +57,6 @@ export async function fetchStoryBySlug(
         }),
       })
     )
-    return []
+    return { allPosts: [] }
   }
 }
