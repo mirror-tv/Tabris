@@ -5,9 +5,21 @@ export interface SingleRelatedPost {
   name: string
 }
 
+export interface SinglePersonInfo {
+  slug: string
+  name: string
+}
+
 export interface SinglePost {
+  id: string
+  title: string
+  style: string
+  publishTime: string
   contentApiData: string
   relatedPosts: SingleRelatedPost[]
+  heroVideo: {
+    youtubeUrl: string
+  }
   heroImage: {
     id: string
     name: string
@@ -18,12 +30,30 @@ export interface SinglePost {
     urlTinySized: string
   }
   heroCaption: string
+  categories: {
+    slug: string
+    title: string
+  }[]
+  writers: SinglePersonInfo[]
+  photographers: SinglePersonInfo[]
+  cameraOperators: SinglePersonInfo[]
+  designers: SinglePersonInfo[]
+  engineers: SinglePersonInfo[]
+  vocals: SinglePersonInfo[]
+  otherbyline: string
   __typename: string
 }
 
 const fetchStoryBySlug = gql`
   query fetchStoryBySlug($slug: String!) {
     allPosts(where: { slug: $slug, state_not_in: invisible }) {
+      id
+      title: name
+      style
+      publishTime
+      heroVideo {
+        youtubeUrl
+      }
       heroImage {
         id
         name
@@ -35,6 +65,35 @@ const fetchStoryBySlug = gql`
       }
       heroCaption
       contentApiData
+      categories {
+        slug
+        title: name
+      }
+      writers {
+        name
+        slug
+      }
+      photographers {
+        name
+        slug
+      }
+      cameraOperators {
+        name
+        slug
+      }
+      designers {
+        name
+        slug
+      }
+      engineers {
+        name
+        slug
+      }
+      vocals {
+        name
+        slug
+      }
+      otherbyline
       relatedPosts(where: { state: published }) {
         slug
         name

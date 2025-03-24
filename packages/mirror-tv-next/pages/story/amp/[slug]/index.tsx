@@ -18,11 +18,13 @@ import {
   type FormattedPostCardJson,
   formatArticleCard,
   handleResponse,
+  extractYoutubeId,
 } from '~/utils'
 import { type RawPopularPost } from '~/types/popular-post'
 import { PostCardItem } from '~/graphql/query/posts'
 import RelatedPostList from '~/components/story/amp/related-post-list'
 import { getLatestPostsFunction } from '~/utils/fetch-function'
+import HeroInfo from '~/components/story/amp/hero-info'
 
 export const config = { amp: true }
 
@@ -32,6 +34,7 @@ const ImageWrapper = styled.figure`
   margin: 0;
   height: calc(100vw * 0.66);
   overflow: hidden;
+  margin-left: -16px;
   img {
     object-fit: cover;
     object-position: center;
@@ -42,8 +45,21 @@ const HeroImhCaption = styled.figcaption`
   font-size: 14px;
   line-height: 1.5;
   color: #000;
-  padding: 0 16px;
   margin: 8px 0 0;
+`
+
+const Main = styled.main`
+  padding: 0 16px;
+  margin: 0 0 48px;
+`
+
+const HeroImageAndVideo = styled.section`
+  margin-bottom: 24px;
+
+  .hero-video {
+    width: 100vw;
+    margin-left: -16px;
+  }
 `
 
 export default function AmpPage({
@@ -52,15 +68,58 @@ export default function AmpPage({
   latestPostsList,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   if (!storyData) return null
-  const { heroImage = {}, heroCaption = '', relatedPosts = [] } = storyData
-  const heroSrc = getHeroImageOfAmp(formateHeroImage(heroImage))
+  const {
+    heroImage = {},
+    heroCaption = '',
+    relatedPosts = [],
+    title = '',
+    publishTime = '',
+    categories = [],
+    writers,
+    photographers,
+    cameraOperators,
+    designers,
+    engineers,
+    vocals,
+    otherbyline,
+    style = 'article',
+    heroVideo = { youtubeUrl: '' },
+  } = storyData
+  const heroImgSrc = getHeroImageOfAmp(formateHeroImage(heroImage))
+  const heroVideoId = extractYoutubeId(heroVideo?.youtubeUrl) ?? ''
 
   return (
     <AMPLayout>
-      <ImageWrapper>
-        <amp-img src={heroSrc} layout="fill" />
-      </ImageWrapper>
-      {heroCaption && <HeroImhCaption>{heroCaption}</HeroImhCaption>}
+      <Main>
+        <HeroImageAndVideo>
+          {style === 'videoNews' && heroVideoId ? (
+            <amp-youtube
+              data-videoid={heroVideoId}
+              width="480"
+              height="270"
+              layout="responsive"
+              className="hero-video"
+            ></amp-youtube>
+          ) : (
+            <ImageWrapper>
+              <amp-img src={heroImgSrc} layout="fill" />
+            </ImageWrapper>
+          )}
+          {heroCaption && <HeroImhCaption>{heroCaption}</HeroImhCaption>}
+        </HeroImageAndVideo>
+        <HeroInfo
+          title={title}
+          publishTime={publishTime}
+          categories={categories}
+          writers={writers}
+          photographers={photographers}
+          cameraOperators={cameraOperators}
+          designers={designers}
+          engineers={engineers}
+          vocals={vocals}
+          otherbyline={otherbyline}
+        />
+      </Main>
       {!!relatedPosts.length && (
         <RelatedPostList title="相關新聞" list={relatedPosts} />
       )}
