@@ -25,11 +25,7 @@ export interface ApiDataAnnotation extends ApiDataBlockBase {
   content: [string]
   alignment: 'center'
 }
-<<<<<<< Updated upstream
-function indicatorSvg(shouldRotate: boolean) {
-=======
 function indicatorSvg(shouldRotate: boolean, onClickCallBack: () => void) {
->>>>>>> Stashed changes
   const transform = shouldRotate ? 'rotate(180)' : 'rotate(0)' // 確保在關閉時旋轉回來
   return (
     <svg
@@ -40,10 +36,7 @@ function indicatorSvg(shouldRotate: boolean, onClickCallBack: () => void) {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       transform={transform}
-<<<<<<< Updated upstream
-=======
       onClick={onClickCallBack}
->>>>>>> Stashed changes
     >
       <circle cx="10" cy="10" r="10" fill="none" stroke="#90A5DB" />
       <path d="M10 15L5.66987 7.5L14.3301 7.5L10 15Z" fill="#004DB8" />
@@ -63,19 +56,11 @@ const AnnotationBlock = ({ data }: { data: ApiDataAnnotation }) => {
   return (
     <div className={styles.annotationBlock}>
       <p className={styles.annotationTitle}>
-<<<<<<< Updated upstream
-        <span onClick={toggleOpen} className={styles.annotationText}>
-          {annotationData?.text}
-        </span>
-        <span className={styles.toggleButton}>(註)</span>
-        {indicatorSvg(isOpen)}
-=======
         <span className={styles.annotationText}>{annotationData?.text}</span>
         <span className={styles.toggleButton} onClick={toggleOpen}>
           (註)
         </span>
         {indicatorSvg(isOpen, toggleOpen)}
->>>>>>> Stashed changes
       </p>
       {isOpen ? (
         <p

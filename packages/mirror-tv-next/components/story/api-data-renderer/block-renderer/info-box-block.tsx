@@ -19,11 +19,7 @@ const InfoBoxBlock = ({ data }: { data: ApiDataInfoBox }) => {
     <div className={styles.infoBoxWrapper}>
       <p className={styles.infoBoxTitle}>{title}</p>
       <div
-<<<<<<< Updated upstream
-        className="info-box-body"
-=======
         className={styles.infoBoxBody}
->>>>>>> Stashed changes
         dangerouslySetInnerHTML={{ __html: body }}
       />
     </div>
