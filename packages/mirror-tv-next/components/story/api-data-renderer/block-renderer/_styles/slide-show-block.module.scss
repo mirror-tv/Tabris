@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 %buttonBase {
     position: absolute;
     top: 50%;
@@ -63,4 +64,96 @@
 
 .slideShowImage {
     object-fit: contain;
+=======
+@import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
+
+%buttonBase {
+  position: absolute;
+  top: 50%;
+  z-index: 10;
+  border: 5px solid $color-blue;
+  transform: rotate(45deg);
+  width: 26px;
+  height: 26px;
+  display: flex;
+  justify-content: center;
+  &:active,
+  &:focus {
+    outline: none;
+  }
+}
+
+.swiper {
+  width: 100%;
+
+  //   :global(.swiper-button-next),
+  //   :global(.swiper-button-prev) {
+  //     opacity: 0;
+  //     position: absolute;
+  //     bottom: 0;
+  //     left: 0;
+  //     &:after {
+  //       content: '';
+  //       display: none;
+  //     }
+  //     @include media-breakpoint-up(md) {
+  //       background-image: none;
+  //       border-bottom: none;
+  //     }
+  //   }
+  :global(.swiper-pagination-current) {
+    color: $color-blue;
+  }
+}
+
+.swiperSlide {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: 100vw;
+}
+
+.swiperContainer {
+  position: relative;
+}
+
+.slideShowImageContainer {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+}
+
+.slideShowImage {
+  object-fit: contain;
+}
+
+.prevArrow,
+.nextArrow {
+  width: 30px;
+  height: 100%;
+  outline: none;
+  border: 1px solid red;
+  &:after {
+    content: '';
+    color: $color-blue;
+    border-top: 5px solid $color-blue;
+    border-right: 5px solid $color-blue;
+    transform: rotate(45deg);
+    width: 26px;
+    height: 26px;
+  }
+}
+
+.nextArrow {
+  transform: rotate(225deg);
+}
+
+.imageDescription {
+  margin-top: 60px;
+  color: #4a4a4a;
+  font-size: 15px;
+>>>>>>> Stashed changes
 }

@@ -24,6 +24,10 @@ type ApiDataSlideshowContent = {
   id: string
   name: string
   url: string
+<<<<<<< Updated upstream
+=======
+  title: string
+>>>>>>> Stashed changes
 } & Record<DeviceType, SlideshowContentPart>
 
 export interface ApiDataSlideshow extends ApiDataBlockBase {
@@ -44,9 +48,16 @@ export default function SlideShowBlock({ data }: { data: ApiDataSlideshow }) {
     ] as const
     return devices.find((device) => width < device.max)?.device || 'original'
   }
+<<<<<<< Updated upstream
   const slideImages: SlideshowContentPart[] = data.content.map(
     (item) => item[decideDevice(width)]
   )
+=======
+  const slideData: { image: SlideshowContentPart; title: string }[] =
+    data.content.map((item) => {
+      return { image: item[decideDevice(width)], title: item.title }
+    })
+>>>>>>> Stashed changes
 
   const swiperClass = styles.swiper
   const swiperSpaceBetween = 40
@@ -59,13 +70,17 @@ export default function SlideShowBlock({ data }: { data: ApiDataSlideshow }) {
         className={swiperClass}
         spaceBetween={swiperSpaceBetween}
         slidesPerView={swiperSlidesPerView}
+<<<<<<< Updated upstream
         navigation
+=======
+>>>>>>> Stashed changes
         pagination={{
           clickable: true,
           type: 'fraction',
         }}
         loop
         modules={[Navigation, Pagination]}
+<<<<<<< Updated upstream
       >
         {slideImages.map((img) => (
           <SwiperSlide key={img.url} className={styles.swiperSlide}>
@@ -73,14 +88,38 @@ export default function SlideShowBlock({ data }: { data: ApiDataSlideshow }) {
               <Image
                 className={styles.slideShowImage}
                 src={img.url}
+=======
+        navigation={{
+          nextEl: '.nextNav',
+          prevEl: '.prevNav',
+        }}
+      >
+        {slideData.map((item) => (
+          <SwiperSlide key={item.image.url} className={styles.swiperSlide}>
+            <div className={styles.slideShowImageContainer}>
+              <Image
+                className={styles.slideShowImage}
+                src={item.image.url}
+>>>>>>> Stashed changes
                 alt="swiper slides"
                 fill
                 priority
               />
             </div>
+<<<<<<< Updated upstream
           </SwiperSlide>
         ))}
       </Swiper>
+=======
+            <figcaption className={styles.imageDescription}>
+              {item.title}
+            </figcaption>
+          </SwiperSlide>
+        ))}
+      </Swiper>
+      <div className={`${styles.prevArrow} nextNav`} />
+      <div className={`${styles.nextArrow} prevNav`} />
+>>>>>>> Stashed changes
     </div>
   )
 }

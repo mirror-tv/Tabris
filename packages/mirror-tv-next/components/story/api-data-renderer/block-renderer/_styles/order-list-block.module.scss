@@ -1,7 +1,17 @@
 .orderListBlock {
+<<<<<<< Updated upstream
     margin-top: 30px;
     line-height: 1.75;
     list-style: decimal;
     list-style-position: inside;
     padding-left: 1rem;
+=======
+  list-style: decimal;
+  list-style-position: inside;
+  padding-left: 2rem;
+  font-feature-settings: 'liga' off, 'clig' off;
+  font-size: 16px;
+  font-style: normal;
+  line-height: 180%;
+>>>>>>> Stashed changes
 }

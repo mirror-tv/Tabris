@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 .annotationBlock {
     display: flex;
     cursor: pointer;
@@ -27,4 +28,35 @@
     background-color: #fff;
     border-top: 3px solid #014db8;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+=======
+@import '/styles/theme/variable';
+
+.annotationBlock {
+  font-feature-settings: 'liga' off, 'clig' off;
+  svg {
+    cursor: pointer;
+  }
+}
+
+.toggleButton {
+  color: $color-blue;
+  cursor: pointer;
+  margin: 0 8px;
+}
+
+.rotated {
+  display: inline;
+  transition: transform 0.3s ease;
+}
+
+.annotationContent {
+  padding: 13px 10px;
+  margin-top: 16px;
+  color: #4a4a4a;
+  font-size: 14px;
+  line-height: 160%;
+  background-color: #fff;
+  border-top: 3px solid $color-blue;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+>>>>>>> Stashed changes
 }

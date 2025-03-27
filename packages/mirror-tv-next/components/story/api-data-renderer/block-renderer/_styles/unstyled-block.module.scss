@@ -1,7 +1,25 @@
 .textBlock {
+<<<<<<< Updated upstream
   margin-top: 30px;
+=======
+>>>>>>> Stashed changes
   font-size: 16px;
   font-weight: 400;
   line-height: 28.8px;
   text-align: justify;
+<<<<<<< Updated upstream
+=======
+
+  a {
+    text-decoration-line: underline;
+    text-decoration-style: solid;
+    text-decoration-skip-ink: none;
+    text-decoration-thickness: auto;
+    text-underline-offset: auto;
+    color: #004dbc;
+    &:hover {
+      color: #036;
+    }
+  }
+>>>>>>> Stashed changes
 }
