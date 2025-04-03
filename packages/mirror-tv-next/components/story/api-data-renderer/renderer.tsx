@@ -25,16 +25,6 @@ const ApiDataRenderer = ({ contentData }: ApiDataRendererPropsType) => {
           case ApiDataBlockType.Unstyled:
             return <UnstyledBlock key={apiDataBlock.id} data={apiDataBlock} />
           case ApiDataBlockType.HeaderOne:
-<<<<<<< Updated upstream
-            return (
-              <HeadersBlock
-                data={apiDataBlock}
-                blockType={apiDataBlock.type}
-                key={apiDataBlock.id}
-              />
-            )
-=======
->>>>>>> Stashed changes
           case ApiDataBlockType.HeaderTwo:
             return (
               <HeadersBlock

@@ -7,10 +7,11 @@ import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 import styles from './_styles/slide-show-block.module.scss'
 import useWindowDimensions from '~/hooks/use-window-dimensions'
-import { ApiDataBlockType, type ApiDataBlockBase } from './type'
+import { type ApiDataBlockType, type ApiDataBlockBase } from './type'
 import Image from 'next/image'
 import { useRef } from 'react'
 import { Navigation, Pagination } from 'swiper/modules'
+import { type PaginationOptions } from 'swiper/types'
 
 type DeviceType = 'original' | 'desktop' | 'tablet' | 'mobile' | 'tiny'
 
@@ -54,6 +55,18 @@ export default function SlideShowBlock({ data }: { data: ApiDataSlideshow }) {
   const swiperSpaceBetween = 40
   const swiperSlidesPerView = 1
 
+  const pagination: PaginationOptions = {
+    el: '.swiper-pagination',
+    type: 'custom',
+    renderCustom(swiper, current: number, total: number) {
+      return `
+        <span class="swiper-pagination-current">${current}</span>
+        |
+        <span class="swiper-pagination-total">${total}</span>
+      `
+    },
+  }
+
   return (
     <div className={styles.swiperContainer}>
       <Swiper
@@ -61,10 +74,7 @@ export default function SlideShowBlock({ data }: { data: ApiDataSlideshow }) {
         className={swiperClass}
         spaceBetween={swiperSpaceBetween}
         slidesPerView={swiperSlidesPerView}
-        pagination={{
-          clickable: true,
-          type: 'fraction',
-        }}
+        pagination={pagination}
         loop
         modules={[Navigation, Pagination]}
         navigation={{
@@ -83,14 +93,19 @@ export default function SlideShowBlock({ data }: { data: ApiDataSlideshow }) {
                 priority
               />
             </div>
+            <div className={styles.mobNavWrapper}>
+              <span className={styles.mobNavPrev} />
+              <div className={`swiper-pagination ${styles.pagination}`} />
+              <span className={styles.mobNavNext} />
+            </div>
             <figcaption className={styles.imageDescription}>
               {item.title}
             </figcaption>
           </SwiperSlide>
         ))}
+        <button className={`${styles.prevArrow} prevNav`}></button>
+        <button className={`${styles.nextArrow} nextNav`}></button>
       </Swiper>
-      <div className={`${styles.prevArrow} nextNav`} />
-      <div className={`${styles.nextArrow} prevNav`} />
     </div>
   )
 }
