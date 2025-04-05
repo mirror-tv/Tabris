@@ -82,7 +82,7 @@ export default function SlideShowBlock({ data }: { data: ApiDataSlideshow }) {
           prevEl: '.prevNav',
         }}
       >
-        {slideData.map((item) => (
+        {slideData.map((item, index) => (
           <SwiperSlide key={item.image.url} className={styles.swiperSlide}>
             <div className={styles.slideShowImageContainer}>
               <Image
@@ -93,18 +93,26 @@ export default function SlideShowBlock({ data }: { data: ApiDataSlideshow }) {
                 priority
               />
             </div>
-            <div className={styles.mobNavWrapper}>
+            {/* <div className={styles.mobNavWrapper}>
               <span className={styles.mobNavPrev} />
-              <div className={`swiper-pagination ${styles.pagination}`} />
+              <div className={styles.pagination}>
+                <span className={styles.currentPag}>{index + 1}</span> |{' '}
+                {slideData.length}
+              </div>
               <span className={styles.mobNavNext} />
-            </div>
+            </div> */}
             <figcaption className={styles.imageDescription}>
               {item.title}
             </figcaption>
           </SwiperSlide>
         ))}
-        <button className={`${styles.prevArrow} prevNav`}></button>
-        <button className={`${styles.nextArrow} nextNav`}></button>
+        <button className={`${styles.prevArrow} prevNav`}>
+          <span className={styles.mobNavPrev} />
+        </button>
+        <button className={`${styles.nextArrow} nextNav`}>
+          <span className={styles.mobNavNext} />
+        </button>
+        <div className={`swiper-pagination ${styles.pagination}`} />
       </Swiper>
     </div>
   )
