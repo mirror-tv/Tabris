@@ -107,10 +107,10 @@ export default function SlideShowBlock({ data }: { data: ApiDataSlideshow }) {
           </SwiperSlide>
         ))}
         <button className={`${styles.prevArrow} prevNav`}>
-          <span className={styles.mobNavPrev} />
+          <span className={styles.navPrev} />
         </button>
         <button className={`${styles.nextArrow} nextNav`}>
-          <span className={styles.mobNavNext} />
+          <span className={styles.navNext} />
         </button>
         <div className={`swiper-pagination ${styles.pagination}`} />
       </Swiper>
