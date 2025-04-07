@@ -82,7 +82,7 @@ export default function SlideShowBlock({ data }: { data: ApiDataSlideshow }) {
           prevEl: '.prevNav',
         }}
       >
-        {slideData.map((item, index) => (
+        {slideData.map((item) => (
           <SwiperSlide key={item.image.url} className={styles.swiperSlide}>
             <div className={styles.slideShowImageContainer}>
               <Image
@@ -93,14 +93,6 @@ export default function SlideShowBlock({ data }: { data: ApiDataSlideshow }) {
                 priority
               />
             </div>
-            {/* <div className={styles.mobNavWrapper}>
-              <span className={styles.mobNavPrev} />
-              <div className={styles.pagination}>
-                <span className={styles.currentPag}>{index + 1}</span> |{' '}
-                {slideData.length}
-              </div>
-              <span className={styles.mobNavNext} />
-            </div> */}
             <figcaption className={styles.imageDescription}>
               {item.title}
             </figcaption>

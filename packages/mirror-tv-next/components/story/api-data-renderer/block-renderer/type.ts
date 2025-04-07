@@ -25,6 +25,7 @@ enum ApiDataBlockType {
   Audio = 'audio',
   EmbedCode = 'embeddedcode',
   Youtube = 'youtube',
+  QuoteBy = 'quoteby',
 }
 type OrderListData = string[][]
 

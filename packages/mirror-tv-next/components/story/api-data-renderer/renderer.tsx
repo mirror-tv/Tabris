@@ -66,4 +66,12 @@ const ApiDataRenderer = ({ contentData }: ApiDataRendererPropsType) => {
   )
 }
 
+// unhandled apiData type {
+//   id: 'evrtl',
+//   type: 'quoteby',
+//   alignment: 'center',
+//   content: [ { quoteBy: 'quote by', quote: 'quote by' } ],
+//   styles: {}
+// }
+
 export default ApiDataRenderer
