@@ -2,22 +2,6 @@
 @import '/styles/theme/variable';
 @import '/styles/theme/z-index';
 
-%buttonBase {
-  position: absolute;
-  top: 50%;
-  z-index: 10;
-  border: 5px solid $color-blue;
-  transform: rotate(45deg);
-  width: 26px;
-  height: 26px;
-  display: flex;
-  justify-content: center;
-  &:active,
-  &:focus {
-    outline: none;
-  }
-}
-
 .swiper {
   width: 100%;
   position: relative;
