@@ -6,12 +6,14 @@ interface PlayPauseButtonProps {
   isPlaying: boolean
   togglePlayPause: () => void
   hasError: boolean
+  color?: string
 }
 
 export default function PlayPauseButton({
   isPlaying,
   togglePlayPause,
   hasError,
+  color = 'white',
 }: PlayPauseButtonProps) {
   const [active, setActive] = useState(false)
 
@@ -30,6 +32,11 @@ export default function PlayPauseButton({
         className={`${isPlaying ? styles.pause : styles.play} ${
           hasError ? (isPlaying ? styles.pauseErr : styles.playErr) : ''
         }`}
+        style={{
+          borderLeft: isPlaying ? `4px solid ${color}` : `12px solid ${color}`,
+          borderRight: isPlaying ? `4px solid ${color}` : 'none',
+        }}
+        key={isPlaying ? 'play' : 'pause'}
       />
     </div>
   )

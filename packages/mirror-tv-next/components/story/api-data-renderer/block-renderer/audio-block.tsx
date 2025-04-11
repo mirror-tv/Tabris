@@ -1,6 +1,6 @@
 'use client'
 import { type ApiDataBlockBase, ApiDataBlockType } from './type'
-import AudioPlayer from '~/components/shared/audio-player'
+import AudioPlayer from '~/components/story/api-data-renderer/block-renderer/audio-player'
 
 type CoverPhoto = {
   id: string

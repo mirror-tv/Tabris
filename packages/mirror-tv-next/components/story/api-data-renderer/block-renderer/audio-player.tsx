@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect } from 'react'
 import styles from './_styles/audio-player.module.scss'
-import PlayPauseButton from '../show/_slug/podcast/play-pause-btn'
+import PlayPauseButton from '~/components/show/_slug/podcast/play-pause-btn'
 
 interface AudioPlayerProps {
   src: string
@@ -18,6 +18,7 @@ export default function AudioPlayer({
   const [duration, setDuration] = useState(0)
   const audioRef = useRef<HTMLAudioElement>(null)
   const progressRef = useRef<HTMLDivElement>(null)
+  const barRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     const audio = audioRef.current
@@ -79,7 +80,7 @@ export default function AudioPlayer({
 
   return (
     <div className={styles['audio-player']}>
-      <div className={styles['audio-player-title']}>{title}</div>
+      <div className={styles['audio-player-title']}>{title + 123}</div>
 
       <div className={styles['progress-bar-container']}>
         <div
@@ -90,6 +91,7 @@ export default function AudioPlayer({
             isPlaying={isPlaying}
             togglePlayPause={togglePlay}
             hasError={false}
+            color="#FFCC01"
           />
         </div>
         <div
@@ -101,15 +103,21 @@ export default function AudioPlayer({
           aria-valuemax={100}
           aria-valuenow={(currentTime / duration) * 100}
         >
-          <div
-            className={`${styles['progress']} ${
-              currentTime > 0 ? styles['animated'] : ''
-            }`}
-            style={{ transform: `scaleX(${currentTime / duration})` }}
+          <input
+            type="range"
+            min={0}
+            max={duration}
+            value={currentTime}
+            className={`${styles['progress']} progress`}
+            style={{
+              background: `linear-gradient(to right, #014db8 0%, #014db8 ${
+                (currentTime / duration) * 100
+              }%, #979797 ${(currentTime / duration) * 100}%, #979797 100%)`,
+            }}
           />
           <div className={styles['time']}>
             <p>{formatTime(currentTime)}</p>
-            <p> {duration ? formatTime(duration) : '00:00'}</p>
+            <p> {duration ? formatTime(duration - currentTime) : '00:00'}</p>
           </div>
         </div>
         <audio ref={audioRef} src={src} preload="metadata" />
