@@ -18,7 +18,6 @@ export default function AudioPlayer({
   const [duration, setDuration] = useState(0)
   const audioRef = useRef<HTMLAudioElement>(null)
   const progressRef = useRef<HTMLDivElement>(null)
-  const barRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     const audio = audioRef.current
