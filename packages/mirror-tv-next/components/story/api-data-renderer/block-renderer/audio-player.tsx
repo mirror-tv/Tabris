@@ -79,7 +79,7 @@ export default function AudioPlayer({
 
   return (
     <div className={styles['audio-player']}>
-      <div className={styles['audio-player-title']}>{title + 123}</div>
+      <div className={styles['audio-player-title']}>{title}</div>
 
       <div className={styles['progress-bar-container']}>
         <div
