@@ -1,0 +1,10 @@
+@import '/styles/theme/breakpoints';
+.article {
+  display: flex;
+  flex-direction: column;
+  width: calc(100vw - 3rem);
+  gap: 32px;
+  @include media-breakpoint-up(lg) {
+    width: 600px;
+  }
+}

@@ -169,7 +169,7 @@ export const getServerSideProps: GetServerSideProps<{
     ) => {
       return response?.allPosts?.[0]
     },
-    'Error occurs while fetching story data in story amp page'
+    `Error occurs while fetching story data in story amp page (${slug}: slug)`
   )
 
   if (!storyData || !Object.keys(storyData).length) {
@@ -195,7 +195,7 @@ export const getServerSideProps: GetServerSideProps<{
     (response: Awaited<ReturnType<typeof fetchPopularList>> | undefined) => {
       return response?.report?.slice(0, 5)?.map(formatPostAsJson) ?? []
     },
-    'Error occurs while fetching popular data in story amp page'
+    `Error occurs while fetching popular data in story amp page (slug: ${slug})`
   )
 
   const latestPostsList = handleResponse(
@@ -205,7 +205,7 @@ export const getServerSideProps: GetServerSideProps<{
     ) => {
       return response?.data?.allPosts?.map(formatPostAsJson) ?? []
     },
-    'Error occurs while fetching latest data in story amp page'
+    `Error occurs while fetching latest data in story amp page (slug: ${slug})`
   )
 
   return {

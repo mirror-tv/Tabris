@@ -15,6 +15,7 @@ export interface SinglePost {
   title: string
   style: string
   publishTime: string
+  contentApiData: string
   relatedPosts: SingleRelatedPost[]
   heroVideo: {
     youtubeUrl: string
@@ -63,6 +64,7 @@ const fetchStoryBySlug = gql`
         urlTinySized
       }
       heroCaption
+      contentApiData
       categories {
         slug
         title: name
