@@ -45,7 +45,7 @@ const StoryPage = async (props: StoryPageTypes) => {
         title={heroCaption}
         heroCaption={heroCaption}
       />
-       <ArticleInfo
+      <ArticleInfo
         title={title}
         publishTime={publishTimeTaipei}
         category={categories?.[0]}
