@@ -1,5 +1,5 @@
-@import "/styles/theme/breakpoints";
-@import "/styles/theme/variable";
+@import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
 
 .LayoutWrapper {
   display: flex;
@@ -63,30 +63,5 @@
   gap: 40px;
   @include media-breakpoint-up(md) {
     gap: 48px;
-  }
-}
-
-.heroImageMobile {
-  display: flex;
-  img {
-    max-height: 168px;
-  }
-
-  @include media-breakpoint-up(md) {
-    display: none;
-  }
-}
-
-.heroImageDesktop {
-  figure {
-    display: none;
-
-    @include media-breakpoint-up(md) {
-      display: flex;
-      flex-direction: column;
-      img {
-        max-height: 315px;
-      }
-    }
   }
 }
