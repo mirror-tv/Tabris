@@ -24,8 +24,8 @@ const ArticleHeroImage: React.FC<ArticleHeroImageProps> = (props) => {
           rwd={{
             mobile: '100vw',
             tablet: '100vw',
-            laptop: '100vw',
-            desktop: '100vw',
+            laptop: '1200px',
+            desktop: '1200px',
             default: '100vw',
           }}
           priority

@@ -1,0 +1,44 @@
+@import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
+
+.infoBoxWrapper {
+  padding-top: 30px;
+  padding: 24px 20px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+
+  @include media-breakpoint-up(md) {
+    padding: 24px 40px;
+  }
+
+  li {
+    display: flex;
+    line-height: 28px;
+    font-size: 16px;
+    font-weight: 400;
+    color: #4a4a4a;
+    &::before {
+      content: '';
+      margin-top: 10px;
+      margin-right: 12px;
+      width: 8px;
+      height: 8px;
+      background-color: #e7e7e7;
+      border-radius: 50%;
+    }
+  }
+}
+
+.infoBoxTitle {
+  color: #014db8;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 35px;
+}
+
+.infoBoxBody {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}

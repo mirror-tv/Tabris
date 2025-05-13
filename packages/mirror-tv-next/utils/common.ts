@@ -88,6 +88,8 @@ class FetchError extends Error {
   }
 }
 
+const getFirstElement = <T>(data: T[]) => data[0]
+
 export {
   extractYoutubeId,
   isServer,
@@ -95,4 +97,5 @@ export {
   handleApiData,
   handleMetaDesc,
   FetchError,
+  getFirstElement,
 }
