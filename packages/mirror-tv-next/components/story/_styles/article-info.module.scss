@@ -1,0 +1,38 @@
+@import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
+
+.categoryAndPublishTime {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #000;
+  font-size: 14px;
+  line-height: 1.57;
+  text-align: right;
+}
+
+.category {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: $color-blue;
+}
+
+.title {
+  color: #000;
+  font-size: 32px;
+  font-weight: 500;
+  margin-top: 8px;
+}
+
+.credit {
+  margin-top: 12px;
+  list-style-type: none;
+}
+
+.creditItem {
+  display: inline-block;
+  margin-right: 12px;
+  font-size: 14px;
+  line-height: 20px;
+}

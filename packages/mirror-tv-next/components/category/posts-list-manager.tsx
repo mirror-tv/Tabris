@@ -102,8 +102,8 @@ export default function PostsListManager({
       ...newPosts,
     ])
     const newListSlice = newPostList.slice(
-      (page - 1) * pageSize - salesCount,
-      page * pageSize - salesCount
+      (page - 1) * pageSize - salesCount + 1,
+      page * pageSize - salesCount + 1
     )
 
     differentPostsCount.current = {

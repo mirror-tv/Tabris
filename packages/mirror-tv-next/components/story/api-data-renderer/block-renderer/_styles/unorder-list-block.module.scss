@@ -1,0 +1,20 @@
+.unOrderListBlock {
+  padding-left: 2rem;
+  li {
+    font-size: 16px;
+    line-height: 1.8;
+    position: relative;
+    padding: 0 0 0 20px;
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translate(50%, -50%);
+      width: 4px;
+      height: 4px;
+      background-color: #000;
+      border-radius: 50%;
+    }
+  }
+}
