@@ -75,11 +75,12 @@ export default function PostsListManager({
 
     let newPosts: PostCardItem[] = []
     let newExternals: External[] = []
+
     if (isNeedFetchPost) {
       const postRes = await fetchPostsByCategory({
-        skip: fetched.posts,
+        skip: fetched.posts + (hasFeaturePostInJson ? 0 : 1),
         categorySlug,
-        pageSize,
+        pageSize: pageSize,
         isWithCount: false,
         filteredSlug,
       })
@@ -101,9 +102,10 @@ export default function PostsListManager({
       ...newExternals,
       ...newPosts,
     ])
+
     const newListSlice = newPostList.slice(
-      (page - 1) * pageSize - salesCount + 1,
-      page * pageSize - salesCount + 1
+      (page - 1) * pageSize - salesCount + 1 - (hasFeaturePostInJson ? 0 : 1),
+      page * pageSize - salesCount + 1 - (hasFeaturePostInJson ? 0 : 1)
     )
 
     differentPostsCount.current = {
