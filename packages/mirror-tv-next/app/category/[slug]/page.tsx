@@ -80,9 +80,11 @@ export default async function CategoryPage({
     featurePostResult,
     (response: Awaited<ReturnType<typeof fetchFeaturePosts>> | undefined) => {
       if (!response?.allPosts) return null
-      const post = response.allPosts.find((post: FeaturePost) =>
-        post.categories.some((category) => category.id === categoryData.id)
-      )
+      const post = response.allPosts.find((post: FeaturePost) => {
+        return post.categories.some(
+          (category) => category.name === categoryData.name
+        )
+      })
       return post ? formatArticleCard(post) : null
     },
     'Error occurs while fetching category feature posts data in category page'
