@@ -82,7 +82,7 @@ export default async function CategoryPage({
       if (!response?.allPosts) return null
       const post = response.allPosts.find((post: FeaturePost) => {
         return post.categories.some(
-          (category) => category.name === categoryData.name
+          (category) => category.id === categoryData.id
         )
       })
       return post ? formatArticleCard(post) : null
