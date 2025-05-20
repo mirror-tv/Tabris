@@ -61,7 +61,7 @@ switch (ENV) {
     POPULAR_POSTS_URL = 'https://mnews.tw/json/popularlist.json'
     POPULAR_VIDEOS_JSON_URL =
       'https://mnews.tw/json/popular-videonews-list.json'
-    FEATURE_POSTS_URL = 'https://mnews.tw/api/gcs/featured_categories_post'
+    FEATURE_POSTS_URL = 'https://dev.mnews.tw/api/gcs/featured_categories_post'
     GA4_ID = 'G-YZ07T9YJ6T'
     break
 
