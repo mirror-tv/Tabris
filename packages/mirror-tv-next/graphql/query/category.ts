@@ -10,6 +10,7 @@ export type Category = {
 const fetchCategoryBySlug = gql`
   query fetchCategoryBySlug($slug: String!) {
     allCategories(where: { slug: $slug }) {
+      id
       name
       slug
     }
