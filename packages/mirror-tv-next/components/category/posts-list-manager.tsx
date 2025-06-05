@@ -20,7 +20,7 @@ type PostsListManagerProps = {
   filteredSlug: string[]
   externalsCount: number
   salePosts: FormattedPostCard[]
-  hasFeaturePostInJson: boolean
+  newestPostType: 'json' | 'external' | 'post'
   externals: FormattedPostCard[]
   categoryPosts: FormattedPostCard[]
 }
@@ -32,7 +32,7 @@ export default function PostsListManager({
   filteredSlug = [],
   externalsCount,
   salePosts,
-  hasFeaturePostInJson,
+  newestPostType,
   externals,
   categoryPosts,
 }: PostsListManagerProps) {
@@ -78,7 +78,7 @@ export default function PostsListManager({
 
     if (isNeedFetchPost) {
       const postRes = await fetchPostsByCategory({
-        skip: fetched.posts + (hasFeaturePostInJson ? 0 : 1),
+        skip: fetched.posts + (newestPostType === 'post' ? 1 : 0),
         categorySlug,
         pageSize: pageSize,
         isWithCount: false,
@@ -87,8 +87,15 @@ export default function PostsListManager({
       newPosts = postRes.allPosts ?? []
     }
     if (isNeedFetchExternal) {
+      console.log('fetch external:', fetched.externals, postsListWithSales, {
+        skip: fetched.externals + (newestPostType === 'external' ? 1 : 0),
+        categorySlug,
+        pageSize,
+        isWithCount: false,
+        filteredSlug,
+      })
       const externalRes = await fetchExternalsByCategory({
-        skip: fetched.externals,
+        skip: fetched.externals + (newestPostType === 'external' ? 1 : 0),
         categorySlug,
         pageSize,
         isWithCount: false,
@@ -104,8 +111,11 @@ export default function PostsListManager({
     ])
 
     const newListSlice = newPostList.slice(
-      (page - 1) * pageSize - salesCount + 1 - (hasFeaturePostInJson ? 0 : 1),
-      page * pageSize - salesCount + 1 - (hasFeaturePostInJson ? 0 : 1)
+      (page - 1) * pageSize -
+        salesCount +
+        1 -
+        (newestPostType !== 'json' ? 1 : 0),
+      page * pageSize - salesCount + 1 - (newestPostType !== 'json' ? 1 : 0)
     )
 
     differentPostsCount.current = {
@@ -134,7 +144,7 @@ export default function PostsListManager({
             postsCount +
             externalsCount +
             salesCount -
-            (hasFeaturePostInJson ? 0 : 1)
+            (newestPostType !== 'json' ? 1 : 0)
           }
           fetchListInPage={handleFetchLoadMore}
           isAutoFetch={false}

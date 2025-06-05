@@ -59,6 +59,7 @@ export default async function CategoryPage({
   let categoryData: Category = { name: '', slug: '' }
   let salePosts: FormattedPostCard[] = []
   let featurePost: FormattedPostCard | null = null
+  let newestPostType: 'external' | 'post' | 'json' = 'json'
 
   categoryData = await fetchCategoryData(params.slug)
   if (!categoryData.name) return notFound()
@@ -181,7 +182,6 @@ export default async function CategoryPage({
     itemListElement: postJsonData,
   }
 
-  let hasFeaturePostInJson = true
   if (!featurePost?.slug) {
     const newestPostIsExternal =
       (externalsCount &&
@@ -189,6 +189,7 @@ export default async function CategoryPage({
         new Date(externals[0].publishTime) >
           new Date(categoryPosts[0].publishTime)) ||
       !postsCount
+    newestPostType = newestPostIsExternal ? 'external' : 'post'
     if (newestPostIsExternal) {
       featurePost = externals[0]
       externals.splice(0, 1)
@@ -196,7 +197,6 @@ export default async function CategoryPage({
       featurePost = categoryPosts[0]
       categoryPosts.splice(0, 1)
     }
-    hasFeaturePostInJson = false
   }
 
   return (
@@ -217,7 +217,7 @@ export default async function CategoryPage({
             externalsCount={externalsCount}
             filteredSlug={filteredSlug}
             salePosts={salePosts}
-            hasFeaturePostInJson={hasFeaturePostInJson}
+            newestPostType={newestPostType}
             categoryPosts={categoryPosts}
             externals={externals}
           />
