@@ -13,6 +13,12 @@ export type SingleAnchor = Contact & {
   twitter: string | null
   bioApiData: string
   showhostImg: HeroImage
+  relatedShows?: {
+    id: string
+    name: string
+    playList01: string | null
+    playList02: string | null
+  }[]
   __typename: string
 }
 
@@ -33,9 +39,10 @@ const fetchContactBySlug = gql`
         urlDesktopSized
       }
       relatedShows @include(if: $shouldFetchRelatedShows) {
-        slug
+        id
         name
-        isArtShow
+        playList01
+        playList02
       }
     }
   }

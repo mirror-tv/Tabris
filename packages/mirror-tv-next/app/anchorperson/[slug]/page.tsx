@@ -16,7 +16,7 @@ import { handleApiData } from '~/utils'
 import dynamic from 'next/dynamic'
 import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
-
+import AnchorShowList from '~/components/anchorperson/anchor-show-list'
 export const revalidate = GLOBAL_CACHE_SETTING
 
 export async function generateMetadata({
@@ -91,11 +91,11 @@ export default async function singleAnchor({
       query: fetchContactBySlug,
       variables: {
         slug: params.slug,
+        shouldFetchRelatedShows: true,
       },
     })
     const data = response.data
     singleAnchor = data.allContacts[0]
-
     if (!singleAnchor) {
       const annotatingError = errors.helpers.wrap(
         new Error('Anchor not found'),
@@ -175,6 +175,15 @@ export default async function singleAnchor({
               ))}
             </div>
           </div>
+        </section>
+        <section>
+          {singleAnchor.relatedShows?.map((item) => (
+            <AnchorShowList
+              key={item.id}
+              listName={item.name}
+              urls={[item.playList01, item.playList02]}
+            />
+          ))}
         </section>
       </main>
     </>

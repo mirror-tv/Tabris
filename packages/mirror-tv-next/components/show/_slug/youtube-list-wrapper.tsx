@@ -1,6 +1,6 @@
 import { fetchYoutubeList } from '../../../app/_actions/show-yt'
 import { handleResponse } from '~/utils'
-import type { FormatPlayListItems } from './youtube-list'
+import type { FormatPlayListItems } from '~/types/api-data'
 import YoutubeListHandler from './youtube-list-handler'
 import { formateYoutubeListRes } from '~/utils'
 
