@@ -4,14 +4,7 @@ import styles from './_styles/youtube-list.module.scss'
 import { useEffect, useMemo, useState } from 'react'
 import useWindowDimensions from '~/hooks/use-window-dimensions'
 import UiLoadMoreButton from '~/components/shared/ui-load-more-button'
-
-export type FormatPlayListItems = {
-  name?: string
-  id?: string
-  items: { id: string; title: string }[] | undefined
-  nextPageToken: string | undefined
-  totalItems: number
-}
+import type { FormatPlayListItems } from '~/types/api-data'
 
 type YoutubeListProps = {
   playListObj: FormatPlayListItems

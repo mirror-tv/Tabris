@@ -1,17 +1,15 @@
 import { fetchYoutubeList } from '../../../app/_actions/show-yt'
 import { handleResponse } from '~/utils'
-import type { FormatPlayListItems } from './youtube-list'
+import type {
+  FormatPlayListItems,
+  YoutubeListInfoFormatted,
+} from '~/types/api-data'
 import YoutubeListHandler from './youtube-list-handler'
 import { formateYoutubeListRes } from '~/utils'
 
 type YoutubeListHandlerProps = {
   urls: (string | null)[]
   isDesktop: boolean
-}
-
-type YoutubeListInfoFormatted = {
-  url: string
-  sectionName: string
 }
 
 export default async function YoutubeListWrapper({
