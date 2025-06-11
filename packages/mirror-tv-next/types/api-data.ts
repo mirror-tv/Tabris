@@ -32,3 +32,8 @@ export type FormatPlayListItems = {
   nextPageToken: string | undefined
   totalItems: number
 }
+
+export type YoutubeListInfoFormatted = {
+  url: string
+  sectionName: string
+}

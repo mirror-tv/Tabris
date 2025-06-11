@@ -142,6 +142,14 @@ export default async function singleAnchor({
 
   const bio = handleApiData(singleAnchor.bioApiData)
 
+  const allShowsList: string[] = []
+
+  singleAnchor.relatedShows?.forEach((show) => {
+    allShowsList.push(
+      ...([show.playList01, show.playList02].filter(Boolean) as string[])
+    )
+  })
+
   return (
     <>
       <GPTPlaceholderDesktop>
@@ -180,7 +188,6 @@ export default async function singleAnchor({
           {singleAnchor.relatedShows?.map((item) => (
             <AnchorShowList
               key={item.id}
-              listName={item.name}
               urls={[item.playList01, item.playList02]}
             />
           ))}
