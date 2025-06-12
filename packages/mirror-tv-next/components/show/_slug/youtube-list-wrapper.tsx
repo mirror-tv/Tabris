@@ -1,9 +1,7 @@
 import { fetchYoutubeList } from '../../../app/_actions/show-yt'
 import { handleResponse } from '~/utils'
-import type {
-  FormatPlayListItems,
-  YoutubeListInfoFormatted,
-} from '~/types/api-data'
+import type { FormatPlayListItems } from '~/types/api-data'
+import { YoutubeListInfoFormatted } from '~/types/youtube'
 import YoutubeListHandler from './youtube-list-handler'
 import { formateYoutubeListRes } from '~/utils'
 
@@ -50,9 +48,8 @@ export default async function YoutubeListWrapper({
       (res: Awaited<ReturnType<typeof fetchYoutubeList>> | undefined) => {
         if (!res) return
         playListRendered.push({
-          ...formateYoutubeListRes(res),
+          ...formateYoutubeListRes(res, youtubeListIds[i].url),
           name: youtubeListIds[i].sectionName,
-          id: youtubeListIds[i].url,
         })
       },
       'Error occurs while fetching youtube list in show page'

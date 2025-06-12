@@ -35,7 +35,10 @@ export default function YoutubeListHandler({
       },
       take: 30,
     })
-    const formattedResponse = formateYoutubeListRes(response)
+    const formattedResponse = formateYoutubeListRes(
+      response,
+      listData[index].id
+    )
     const { items = [], nextPageToken = '' } = formattedResponse
     setListData((prev) => {
       const newData = [...prev]

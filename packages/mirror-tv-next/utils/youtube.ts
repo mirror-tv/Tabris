@@ -5,7 +5,8 @@ import { FetchError } from './index'
 import { YOUTUBE_API_URL } from '~/constants/environment-variables'
 
 const formateYoutubeListRes = (
-  response: YoutubeResponse
+  response: YoutubeResponse,
+  playlistId: string
 ): FormatPlayListItems => {
   const filteredItems = response?.items?.filter(
     (item) => item?.status?.privacyStatus === 'public'
@@ -17,7 +18,7 @@ const formateYoutubeListRes = (
     }
   }
   return {
-    id: response?.id,
+    id: playlistId,
     items: filteredItems?.map((item) => formatPlayListItems(item)) ?? [],
     nextPageToken: response?.nextPageToken,
     totalItems: response.pageInfo.totalResults,
