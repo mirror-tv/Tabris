@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import UiPostCard from '~/components/shared/ui-post-card'
 import {
   fetchPostsItems,
@@ -36,41 +36,39 @@ export default function PostsListManager({
   ])
   const isExternal = (post: FormattedPostCard) => post.__typename === 'External'
 
-  const [postsList, setPostsList] = useState<FormattedPostCard[]>(initFetchList)
-  const differentPostsCount = useRef({
-    rendered: {
-      posts: 0,
-      externals: 0,
-    },
-    fetched: {
-      posts: initPostsList.length,
-      externals: initExternalsList.length,
-    },
-  })
+  /* 
+  關於改使用 useState，Gemini 的解釋：
+  如果一個值只在組件內部被讀取和修改，且它的變化不應該觸發重新渲染（例如，計時器 ID、DOM 元素引用），那麼 useRef 是合適的。
+  如果一個值雖然不直接渲染，但它的變化會影響到組件的行為或邏輯，而這些行為或邏輯的變化最終會導致 UI 的更新（即使是間接的），那麼 useState 通常是更安全的選擇，因為它能保證所有依賴這個值的邏輯都能在最新狀態下執行。
+  在您的情境中，differentPostsCount 顯然屬於後者。它決定了何時以及如何發送網絡請求，這些請求的結果最終會更新 postsList，而 postsList 的更新是會觸發 UI 渲染的。因此，確保 differentPostsCount 的即時性至關重要。
+  所以，雖然從「不直接渲染」的角度看 useRef 似乎合理，但從「狀態變化影響副作用邏輯」的角度看，useState 才是解決陳舊閉包問題並確保邏輯正確性的更佳選擇。我之前建議的方案（將 useRef 改為 useState，並使用 function 更新）就是為了解決這個核心問題
+  **/
+  const [differentPostsCount, setDifferentPostsCount] = useState(() => {
+    const renderedPosts = initFetchList
+      .slice(0, pageSize)
+      .filter((post) => !isExternal(post)).length
+    const renderedExternals = initFetchList
+      .slice(0, pageSize)
+      .filter((post) => isExternal(post)).length
 
-  useEffect(() => {
-    differentPostsCount.current = {
+    return {
       rendered: {
-        posts: initFetchList
-          .slice(0, pageSize)
-          .filter((post) => !isExternal(post)).length,
-        externals: initFetchList
-          .slice(0, pageSize)
-          .filter((post) => isExternal(post)).length,
+        posts: renderedPosts,
+        externals: renderedExternals,
       },
       fetched: {
         posts: initPostsList.length,
         externals: initExternalsList.length,
       },
     }
-  }, [initFetchList])
+  })
 
-  const handleClickLoadMore = async (page: number) => {
-    // 如果庫存（fetch 到但還沒 render 的）不夠，則 fetch
-    const { rendered, fetched } = differentPostsCount.current
+  const handleClickLoadMore = async () => {
+    // 直接從 state 取得最新的 differentPostsCount
+    const { rendered, fetched } = differentPostsCount
     const isNeedFetchPost: boolean = fetched.posts - rendered.posts <= pageSize
     const isNeedFetchExternal: boolean =
-      fetched.externals - rendered.posts <= pageSize
+      fetched.externals - rendered.externals <= pageSize
 
     let newPosts: PostCardItem[] = []
     let newExternals: External[] = []
@@ -92,29 +90,28 @@ export default function PostsListManager({
       })
       newExternals = externalRes.allExternals ?? []
     }
-    const newPostList = combineAndSortedByPublishedTime([
-      ...postsList,
+
+    const newlyFetchedAndCombined = combineAndSortedByPublishedTime([
       ...newExternals,
       ...newPosts,
     ])
-    const newListSlice = newPostList.slice(
-      (page - 1) * pageSize,
-      page * pageSize
-    )
-    differentPostsCount.current = {
+
+    setDifferentPostsCount((prevCounts) => ({
       rendered: {
         posts:
-          rendered.posts +
-          newListSlice.filter((post) => !isExternal(post)).length,
-        externals: rendered.externals + newListSlice.filter(isExternal).length,
+          prevCounts.rendered.posts +
+          newlyFetchedAndCombined.filter((post) => !isExternal(post)).length,
+        externals:
+          prevCounts.rendered.externals +
+          newlyFetchedAndCombined.filter(isExternal).length,
       },
       fetched: {
-        posts: fetched.posts + newPosts.length,
-        externals: fetched.externals + newExternals.length,
+        posts: prevCounts.fetched.posts + newPosts.length,
+        externals: prevCounts.fetched.externals + newExternals.length,
       },
-    }
-    setPostsList(newPostList)
-    return newListSlice
+    }))
+
+    return newlyFetchedAndCombined
   }
 
   return (
@@ -134,8 +131,11 @@ export default function PostsListManager({
         >
           {(renderList) => (
             <ol className={styles.posts}>
-              {renderList.map((postItem) => (
-                <li key={postItem.slug} className="list-handler__item">
+              {renderList.map((postItem, index) => (
+                <li
+                  key={`${index}-${postItem.slug}`}
+                  className="list-handler__item"
+                >
                   <UiPostCard
                     href={postItem.href}
                     images={postItem.images}

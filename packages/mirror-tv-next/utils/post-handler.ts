@@ -79,13 +79,23 @@ const formatArticleCard = (
 }
 
 const combineAndSortedByPublishedTime = (list: FormatArticleCardInput[]) => {
-  return list
+  const seenSlugs = new Set<string>()
+  const uniqueList: FormattedPostCard[] = []
+
+  list
     .map((post) => formatArticleCard(post))
     .sort((a, b) => {
       const dateA = new Date(a.publishTime || 0).getTime()
       const dateB = new Date(b.publishTime || 0).getTime()
       return dateB - dateA
     })
+    .forEach((post) => {
+      if (!seenSlugs.has(post.slug)) {
+        seenSlugs.add(post.slug)
+        uniqueList.push(post)
+      }
+    })
+  return uniqueList
 }
 
 export { formatArticleCard, combineAndSortedByPublishedTime }
