@@ -2,6 +2,7 @@ import { fetchYoutubeList } from '~/app/_actions/show-yt'
 import type {
   FormatPlayListItems,
   YoutubeListInfoFormatted,
+  YoutubeResponse,
 } from '~/types/api-data'
 import { formateYoutubeListRes, handleResponse } from '~/utils'
 import YoutubeEmbed from '../shared/youtube-embed'
@@ -54,7 +55,7 @@ export default async function AnchorShowList({
     )
   })
   const renderedList: {
-    value: Awaited<ReturnType<typeof fetchYoutubeList>>
+    value: YoutubeResponse
     name: YoutubeListInfoFormatted
   }[] = []
   listResponse.forEach((res, i) => {
@@ -64,6 +65,12 @@ export default async function AnchorShowList({
         name: youtubeListIds[i],
       })
     }
+  })
+
+  renderedList.sort((a, b) => {
+    const dateA = new Date(a.value.items?.[0]?.snippet?.publishedAt || 0)
+    const dateB = new Date(b.value.items?.[0]?.snippet?.publishedAt || 0)
+    return dateB.getTime() - dateA.getTime()
   })
 
   return (
@@ -83,35 +90,27 @@ export default async function AnchorShowList({
             </a>
           </div>
           <ul className={styles.listContainer}>
-            {value?.items?.map(
-              (
-                ytItem: {
-                  id: string
-                  snippet: { title: string; resourceId: { videoId: string } }
-                },
-                ytIndex: number
-              ) => {
-                return (
-                  <li key={ytIndex + ytItem.id} className={styles.item}>
-                    <YoutubeEmbed
-                      youtubeId={ytItem.snippet?.resourceId.videoId}
-                      autoplay={false}
-                      muted={false}
-                      loop={true}
-                      controls={true}
-                    />
-                    <a
-                      className={styles.itemName}
-                      href={`https://www.youtube.com/watch?v=${ytItem.snippet?.resourceId.videoId}`}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                    >
-                      {ytItem.snippet.title}
-                    </a>
-                  </li>
-                )
-              }
-            )}
+            {value?.items?.map((ytItem, ytIndex) => {
+              return (
+                <li key={ytIndex + ytItem.id} className={styles.item}>
+                  <YoutubeEmbed
+                    youtubeId={ytItem.snippet?.resourceId.videoId}
+                    autoplay={false}
+                    muted={false}
+                    loop={true}
+                    controls={true}
+                  />
+                  <a
+                    className={styles.itemName}
+                    href={`https://www.youtube.com/watch?v=${ytItem.snippet?.resourceId.videoId}`}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  >
+                    {ytItem.snippet.title}
+                  </a>
+                </li>
+              )
+            })}
           </ul>
         </section>
       ))}
