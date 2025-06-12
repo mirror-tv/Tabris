@@ -1,6 +1,6 @@
 'use server'
 import errors from '@twreporter/errors'
-import { YoutubeResponse } from '~/types/youtube'
+import type { YoutubeResponse } from '~/types/youtube'
 
 import { fetchYoutubeData } from '~/utils'
 

@@ -24,3 +24,11 @@ export type FeaturePost = {
   categories: Category[]
   heroImage: HeroImage
 }
+
+export type FormatPlayListItems = {
+  name?: string
+  id: string
+  items: { id: string; title: string }[] | undefined
+  nextPageToken: string | undefined
+  totalItems: number
+}

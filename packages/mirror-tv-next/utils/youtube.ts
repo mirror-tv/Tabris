@@ -1,11 +1,12 @@
 import type { YoutubeItem, YoutubeResponse } from '~/types/youtube'
-import type { FormatPlayListItems } from '~/components/show/_slug/youtube-list'
+import type { FormatPlayListItems } from '~/types/api-data'
 import axios, { AxiosResponse } from 'axios'
 import { FetchError } from './index'
 import { YOUTUBE_API_URL } from '~/constants/environment-variables'
 
 const formateYoutubeListRes = (
-  response: YoutubeResponse
+  response: YoutubeResponse,
+  playlistId: string
 ): FormatPlayListItems => {
   const filteredItems = response?.items?.filter(
     (item) => item?.status?.privacyStatus === 'public'
@@ -17,6 +18,7 @@ const formateYoutubeListRes = (
     }
   }
   return {
+    id: playlistId,
     items: filteredItems?.map((item) => formatPlayListItems(item)) ?? [],
     nextPageToken: response?.nextPageToken,
     totalItems: response.pageInfo.totalResults,
