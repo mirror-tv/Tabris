@@ -1,7 +1,6 @@
 import styles from './_styles/ui-post-card-homepage.module.scss'
 import { formateDateAtTaipei, PostImage } from '~/utils'
 import ResponsiveImage from '../shared/responsive-image'
-import { SALES_LABEL_NAME } from '~/constants/constant'
 
 export type UiPostCardProps = {
   title: string
@@ -9,7 +8,6 @@ export type UiPostCardProps = {
   href: string
   postStyle: string | undefined
   images: PostImage
-  label?: string
   postTitleHighlightText?: string
 }
 
@@ -19,7 +17,6 @@ export default function UiPostCardHomepage({
   href = '',
   images,
   postStyle = 'article',
-  label = '',
 }: UiPostCardProps) {
   const isVideoNews = postStyle === 'videoNews'
 
@@ -30,15 +27,6 @@ export default function UiPostCardHomepage({
       target="_blank"
       rel="noreferrer noopener"
     >
-      {!!label && (
-        <span
-          className={`${styles.label} ${
-            label === SALES_LABEL_NAME ? styles.yellowBlack : ''
-          }`}
-        >
-          {label}
-        </span>
-      )}
       <span className={styles.cardWrapper}>
         <figure className={styles.cardImage}>
           <ResponsiveImage
