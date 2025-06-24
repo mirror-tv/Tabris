@@ -11,7 +11,7 @@ type ShowListProps = {
 
 export default function ShowListInit({ title }: ShowListProps) {
   const { headerData } = useData()
-  const initShows: Show[] = headerData.allShows
+  const initShows: Show[] = headerData.allShows.filter((show) => !show.listShow)
   const showsCount: number = headerData.allShows.length
 
   if (!showsCount) return null
