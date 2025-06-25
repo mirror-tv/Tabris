@@ -21,7 +21,7 @@ export default function SideMenu({ categories, sponsors }: SideMenuProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const path = usePathname()
   const { headerData } = useData()
-  const shows: Show[] = headerData.allShows
+  const shows: Show[] = headerData.allShows?.filter((show) => !show.listShow)
 
   const toggleSidebar = () => {
     setIsSidebarOpen((prevState) => !prevState)
