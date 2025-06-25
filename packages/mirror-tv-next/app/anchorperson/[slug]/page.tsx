@@ -12,11 +12,14 @@ import {
 import type { SingleAnchor } from '~/graphql/query/contact'
 import { fetchContactBySlug } from '~/graphql/query/contact'
 import styles from '~/styles/pages/single-anchorperson-page.module.scss'
-import { handleApiData } from '~/utils'
+import { formateYoutubeListRes, handleApiData, handleResponse } from '~/utils'
 import dynamic from 'next/dynamic'
 import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 import AnchorShowList from '~/components/anchorperson/anchor-show-list'
+import { YoutubeListInfoFormatted, YoutubeResponse } from '~/types/youtube'
+import { fetchYoutubeList } from '~/app/_actions/show-yt'
+import { FormatPlayListItems } from '~/types/api-data'
 export const revalidate = GLOBAL_CACHE_SETTING
 
 export async function generateMetadata({
@@ -76,6 +79,59 @@ export async function generateMetadata({
         '/images/default-og-img.jpg',
     },
   }
+}
+
+const getVideoListByListUrls = async (urls: string[]) => {
+  const getListIdAndName = (inputString: string | null) => {
+    if (!inputString) return null
+    const idWithName = inputString.includes('playlist?list=')
+      ? inputString.split('list=')[1]
+      : inputString.split('https://youtu.be/')[1]
+    const [url, sectionName = inputString?.split('：')[1]] =
+      idWithName.split('：')
+    return { url, sectionName }
+  }
+  const youtubeListIds = urls
+    .filter((url): url is string => url !== null)
+    .map((url) => getListIdAndName(url))
+    .filter((item): item is YoutubeListInfoFormatted => item?.url !== null)
+
+  const listResponse = await Promise.allSettled(
+    youtubeListIds.map((item) =>
+      fetchYoutubeList({
+        list: { id: item.url, nextPageToken: '' },
+        take: 3,
+      })
+    )
+  )
+  const playListRendered: FormatPlayListItems[] = []
+
+  listResponse.forEach((res, i) => {
+    handleResponse(
+      res,
+      (res: Awaited<ReturnType<typeof fetchYoutubeList>> | undefined) => {
+        if (!res) return
+        playListRendered.push({
+          ...formateYoutubeListRes(res, youtubeListIds[i].url),
+          name: youtubeListIds[i].sectionName,
+        })
+      },
+      'Error occurs while fetching youtube list in show page'
+    )
+  })
+  const renderedList: {
+    value: YoutubeResponse
+    name: YoutubeListInfoFormatted
+  }[] = []
+  listResponse.forEach((res, i) => {
+    if (res.status === 'fulfilled' && res.value?.items?.length) {
+      renderedList.push({
+        value: res.value,
+        name: youtubeListIds[i],
+      })
+    }
+  })
+  return renderedList
 }
 
 export default async function singleAnchor({
@@ -149,6 +205,12 @@ export default async function singleAnchor({
       ...([show.playList01, show.playList02].filter(Boolean) as string[])
     )
   })
+  let renderedList = await getVideoListByListUrls(allShowsList)
+  renderedList = renderedList?.sort((a, b) => {
+    const dateA = new Date(a.value?.items?.[0]?.snippet?.publishedAt || 0)
+    const dateB = new Date(b.value?.items?.[0]?.snippet?.publishedAt || 0)
+    return dateB.getTime() - dateA.getTime()
+  })
 
   return (
     <>
@@ -185,11 +247,8 @@ export default async function singleAnchor({
           </div>
         </section>
         <section>
-          {singleAnchor.relatedShows?.map((item) => (
-            <AnchorShowList
-              key={item.id}
-              urls={[item.playList01, item.playList02]}
-            />
+          {renderedList.map((list, index) => (
+            <AnchorShowList key={index} list={list} />
           ))}
         </section>
       </main>
