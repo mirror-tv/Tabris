@@ -17,6 +17,7 @@ export type Show = {
   name: string
   sortOrder: string | null
   bannerImg: BannerImage | null
+  listShow?: boolean | null
 }
 
 type Sponsor = {

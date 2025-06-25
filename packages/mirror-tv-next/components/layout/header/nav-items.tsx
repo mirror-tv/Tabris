@@ -17,7 +17,7 @@ export default function NavItems({ categories }: NavItemProps) {
   const path = usePathname()
   const { width } = useWindowDimensions()
   const { headerData } = useData()
-  const shows: Show[] = headerData.allShows
+  const shows: Show[] = headerData.allShows.filter((show) => !show.listShow)
 
   const [showRest, setShowRest] = useState(false)
   const [showBox, setShowBox] = useState(false)
