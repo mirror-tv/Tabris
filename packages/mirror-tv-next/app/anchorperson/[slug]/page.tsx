@@ -205,6 +205,7 @@ export default async function singleAnchor({
       ...([show.playList01, show.playList02].filter(Boolean) as string[])
     )
   })
+
   let renderedList = await getVideoListByListUrls(allShowsList)
   renderedList = renderedList?.sort((a, b) => {
     const dateA = new Date(a.value?.items?.[0]?.snippet?.publishedAt || 0)
