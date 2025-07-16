@@ -1,6 +1,6 @@
-import styles from './_styles/special-event.module.scss'
+import styles from './_styles/recall-iframe.module.scss'
 
-export default async function SpecialEvent() {
+export default async function RecallIframe() {
   return (
     <section className={styles.container}>
       <h2 id="special-event-title" className={styles.title}>

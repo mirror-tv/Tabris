@@ -1,7 +1,6 @@
 // 這裡管理的是在 Build 階段就會寫死數值的環境變數 (通常為 `NEXT_PUBLCI_` 開頭)
 const ENV = process.env.NEXT_PUBLIC_ENV || 'local'
-const SPECIALEVENT_FEATURE_TOGGLE =
-  process.env.NEXT_PUBLIC_SPECIALEVENT || 'false'
+const RECALL_FEATURE_TOGGLE_2025 = process.env.NEXT_PUBLIC_SPECIALEVENT || false
 let SITE_URL: string
 let GTM_ID: string
 let GLOBAL_CACHE_SETTING: number
@@ -97,5 +96,5 @@ export {
   FEATURE_POSTS_URL,
   HOMEPAGE_SON_URL,
   GA4_ID,
-  SPECIALEVENT_FEATURE_TOGGLE,
+  RECALL_FEATURE_TOGGLE_2025,
 }
