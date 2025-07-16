@@ -14,7 +14,7 @@ import LiveCamList from '~/components/homepage/live-cam-list'
 import ShowList from '~/components/homepage/show-list-init'
 import LatestAndEditorchoicesWithLive from '~/components/homepage/latest-and-editor-choices-with-live'
 import errors from '@twreporter/errors'
-import { RECALL_FEATURE_TOGGLE_2025 } from '~/constants/config'
+import { RECALL_FEATURE_TOGGLE_2025 } from '~/constants/environment-variables'
 import RecallIframe from '~/components/homepage/recall-iframe'
 
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
@@ -68,7 +68,7 @@ export default async function Home() {
       <div className={styles.mobFlashNewsWrapper}>
         <MainFlashNews />
       </div>
-      {RECALL_FEATURE_TOGGLE_2025 && <RecallIframe />}
+      {RECALL_FEATURE_TOGGLE_2025 === 'True' && <RecallIframe />}
       <LatestAndEditorchoicesWithLive
         latestListTitle="即時新聞"
         liveData={homepageJsonData.allVideos?.[0]}

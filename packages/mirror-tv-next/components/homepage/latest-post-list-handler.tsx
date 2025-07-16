@@ -5,6 +5,7 @@ import { FormattedPostCard, formatArticleCard } from '~/utils'
 import { HOMEPAGE_POSTS_PAGE_SIZE } from '~/constants/constant'
 import { getLatestPostsServerAction } from '~/app/_actions/homepage/latest-posts'
 import UiPostCardHomepage from './ui-post-card-hompage'
+import { RECALL_FEATURE_TOGGLE_2025 } from '~/constants/environment-variables'
 
 type LatestPostListHandlerProps = {
   initPosts: FormattedPostCard[]
@@ -28,6 +29,7 @@ export default function LatestPostListHandler({
     })
     return postsResponse?.data?.allPosts?.map((post) => formatArticleCard(post))
   }
+  console.log({ RECALL_FEATURE_TOGGLE_2025 })
 
   return (
     <InfiniteScrollList<FormattedPostCard>
