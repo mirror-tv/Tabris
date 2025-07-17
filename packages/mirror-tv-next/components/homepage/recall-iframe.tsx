@@ -7,7 +7,7 @@ export default async function RecallIframe() {
         2025 鏡週刊立委罷免即時開票
       </h2>
       <iframe
-        src="https://www.mirrormedia.mg/projects/election2024-homepage/index.html"
+        src="https://dev.mirrordaily.news/projects/election2025-homepage/index.html"
         className={styles.iframe}
       ></iframe>
       <a
