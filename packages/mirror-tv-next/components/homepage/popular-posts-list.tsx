@@ -4,7 +4,6 @@ import styles from './_styles/popular-posts-list.module.scss'
 import Link from 'next/link'
 import UiHeadingBordered from '../shared/ui-heading-bordered'
 import { formateDateAtTaipei } from '~/utils'
-import { RECALL_FEATURE_TOGGLE_2025 } from '~/constants/environment-variables'
 
 type PopularPostsListType = {
   title: string
@@ -12,8 +11,6 @@ type PopularPostsListType = {
 
 export default function PopularPostsList({ title }: PopularPostsListType) {
   const { popularPosts } = useData()
-
-  console.log({ RECALL_FEATURE_TOGGLE_2025 }, typeof RECALL_FEATURE_TOGGLE_2025)
 
   if (!popularPosts.length) return null
 
