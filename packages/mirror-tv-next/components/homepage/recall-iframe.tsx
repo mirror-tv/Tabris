@@ -1,12 +1,10 @@
-import { RECALL_FEATURE_TOGGLE_2025 } from '~/constants/environment-variables'
 import styles from './_styles/recall-iframe.module.scss'
 
 export default async function RecallIframe() {
   return (
     <section className={styles.container}>
       <h2 id="special-event-title" className={styles.title}>
-        2025 鏡週刊立委罷免即時開票{typeof RECALL_FEATURE_TOGGLE_2025} is{' '}
-        {RECALL_FEATURE_TOGGLE_2025}
+        2025 鏡週刊立委罷免即時開票
       </h2>
       <iframe
         src="https://dev.mirrordaily.news/projects/election2025-homepage/index.html"
