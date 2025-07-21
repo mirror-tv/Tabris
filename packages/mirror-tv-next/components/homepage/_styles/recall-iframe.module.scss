@@ -21,7 +21,6 @@
   font-family: 'Noto Sans CJK TC';
   font-size: 16px;
   font-weight: 700;
-  margin-bottom: 8px;
   @include media-breakpoint-up(xl) {
     font-size: 20px;
   }
@@ -45,4 +44,7 @@
   text-underline-position: from-font;
   text-align: center;
   margin-top: 16px;
+  @include media-breakpoint-up(xl) {
+    margin-top: 12px;
+  }
 }
