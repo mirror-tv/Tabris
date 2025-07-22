@@ -28,8 +28,11 @@
 }
 
 .iframe {
-  height: 235px;
+  height: 250px;
   overflow: hidden;
+  @include media-breakpoint-up(md) {
+    height: 235px;
+  }
 }
 
 .more {
