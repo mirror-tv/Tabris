@@ -10,6 +10,7 @@ export default async function RecallIframe() {
     ENV === 'dev' || ENV === 'local'
       ? `https://dev.mnews.tw/projects/dev-taiwan-elections/index.html`
       : `https://www.mnews.tw/projects/dev-taiwan-elections/index.html`
+  console.log({ ENV, iframeSrc, linkHref })
   return (
     <section className={styles.container}>
       <h2 id="special-event-title" className={styles.title}>
