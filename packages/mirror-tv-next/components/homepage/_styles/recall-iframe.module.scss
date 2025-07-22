@@ -21,13 +21,14 @@
   font-family: 'Noto Sans CJK TC';
   font-size: 16px;
   font-weight: 700;
+  margin-bottom: 16px;
   @include media-breakpoint-up(xl) {
     font-size: 20px;
   }
 }
 
 .iframe {
-  height: 210px;
+  height: 235px;
   overflow: hidden;
 }
 
