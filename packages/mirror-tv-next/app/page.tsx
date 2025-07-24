@@ -8,7 +8,6 @@ import {
   GLOBAL_CACHE_SETTING,
   HOMEPAGE_SON_URL,
   ENV,
-  RECALL_DISPLAY_JSON_URL,
 } from '~/constants/environment-variables'
 import PopularPostsList from '~/components/homepage/popular-posts-list'
 import TopicList from '~/components/homepage/topic-list'
@@ -17,6 +16,7 @@ import ShowList from '~/components/homepage/show-list-init'
 import LatestAndEditorchoicesWithLive from '~/components/homepage/latest-and-editor-choices-with-live'
 import errors from '@twreporter/errors'
 import RecallIframe from '~/components/homepage/recall-iframe'
+import { RECALL_DISPLAY_JSON_URL } from '~/constants/constant'
 
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 const PromotionVideoList = dynamic(
@@ -42,7 +42,7 @@ export default async function Home() {
       next: { revalidate: GLOBAL_CACHE_SETTING },
     }).then((res) => res.json())
     IS_SHOW_RECALL_2025 =
-      recallDisplayJsonData[
+      recallDisplayJsonData?.[
         ENV === 'local' ? `display_iframe_dev` : `display_iframe_${ENV}`
       ] === 'TRUE'
   } catch (err) {

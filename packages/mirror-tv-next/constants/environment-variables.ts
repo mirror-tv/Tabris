@@ -12,8 +12,6 @@ let YOUTUBE_API_URL: string
 let FEATURE_POSTS_URL: string
 let HOMEPAGE_SON_URL: string =
   'https://storage.googleapis.com/static-mnews-tw-dev/files/json/topic_video.json'
-const RECALL_DISPLAY_JSON_URL =
-  'https://storage.googleapis.com/whoareyou-gcs.readr.tw/json/202507_recall_homepage_display.json'
 let GA4_ID: string
 
 switch (ENV) {
@@ -97,5 +95,4 @@ export {
   FEATURE_POSTS_URL,
   HOMEPAGE_SON_URL,
   GA4_ID,
-  RECALL_DISPLAY_JSON_URL,
 }
