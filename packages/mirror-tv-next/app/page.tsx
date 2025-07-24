@@ -38,9 +38,14 @@ export default async function Home() {
     homepageJsonData = await fetch(HOMEPAGE_SON_URL, {
       next: { revalidate: GLOBAL_CACHE_SETTING },
     }).then((res) => res.json())
+
     const recallDisplayJsonData = await fetch(RECALL_DISPLAY_JSON_URL, {
       next: { revalidate: GLOBAL_CACHE_SETTING },
-    }).then((res) => res.json())
+    })
+      .then((res) => res.json())
+      .catch((err) => {
+        console.error(err)
+      })
     IS_SHOW_RECALL_2025 =
       recallDisplayJsonData?.[
         ENV === 'local' ? `display_iframe_dev` : `display_iframe_${ENV}`
