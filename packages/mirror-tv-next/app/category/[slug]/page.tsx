@@ -30,10 +30,6 @@ import { fetchCategoryData } from '~/app/_actions/category/category-data'
 
 export const revalidate = GLOBAL_CACHE_SETTING
 
-type FeaturePostsResponse = {
-  allPosts: FeaturePost[]
-}
-
 export async function generateMetadata({
   params,
 }: {
@@ -42,97 +38,13 @@ export async function generateMetadata({
   const { slug } = params
   const categoryData = await fetchCategoryData(slug)
 
-  let firstPost = null
-
-  const fetchFeaturePosts = (): Promise<FeaturePostsResponse> =>
-    fetch(FEATURE_POSTS_URL).then((res) => res.json())
-
-  const [featurePostResult] = await Promise.allSettled([fetchFeaturePosts()])
-
-  firstPost = handleResponse(
-    featurePostResult,
-    (response: Awaited<ReturnType<typeof fetchFeaturePosts>> | undefined) => {
-      if (!response?.allPosts) return null
-      const post = response.allPosts.find((post: FeaturePost) => {
-        return post.categories.some((category) => {
-          return category.id === categoryData.id
-        })
-      })
-      return post ? formatArticleCard(post) : null
-    },
-    'Error occurs while fetching category feature posts data in category page'
-  )
-
-  let ogImage = '/images/default-og-img.jpg'
-  if (firstPost) {
-    ogImage = firstPost.images.w3200 ?? '/images/default-og-img.jpg'
-  } else {
-    const fetchCategoryPosts = () =>
-      fetchPostsByCategory({
-        skip: 0,
-        categorySlug: categoryData.slug,
-        pageSize: 1,
-        isWithCount: false,
-        filteredSlug: [],
-      })
-    const fetchCategoryExternals = () =>
-      fetchExternalsByCategory({
-        skip: 0,
-        categorySlug: categoryData.slug,
-        pageSize: 1,
-        isWithCount: false,
-        filteredSlug: [],
-      })
-
-    const [postsResult, externalsResult] = await Promise.allSettled([
-      fetchCategoryPosts(),
-      fetchCategoryExternals(),
-    ])
-
-    const categoryPosts = handleResponse(
-      postsResult,
-      (
-        postResponse: Awaited<ReturnType<typeof fetchCategoryPosts>> | undefined
-      ) => {
-        return (
-          postResponse?.allPosts?.map((post) => formatArticleCard(post)) ?? []
-        )
-      },
-      'Error occurs while fetching category posts data in category page'
-    )
-
-    const externals = handleResponse(
-      externalsResult,
-      (
-        response: Awaited<ReturnType<typeof fetchCategoryExternals>> | undefined
-      ) => {
-        return (
-          response?.allExternals?.map((post) => formatArticleCard(post)) ?? []
-        )
-      },
-      'Error occurs while fetching category externals data in category page'
-    )
-
-    const newestPostIsExternal =
-      (externals?.length &&
-        categoryPosts?.length &&
-        new Date(externals[0].publishTime) >
-          new Date(categoryPosts[0].publishTime)) ||
-      !categoryPosts?.length
-    if (newestPostIsExternal) {
-      ogImage = externals[0].images.w3200 ?? '/images/default-og-img.jpg'
-    } else {
-      ogImage = categoryPosts[0].images.w3200 ?? '/images/default-og-img.jpg'
-    }
-  }
-
   return {
     metadataBase: new URL(SITE_URL),
     title: `${categoryData.name} - 鏡新聞`,
     openGraph: {
       title: `${categoryData.name} - 鏡新聞`,
       images: {
-        url: ogImage,
+        url: '/images/default-og-img.jpg',
       },
     },
   }
@@ -151,6 +63,10 @@ export default async function CategoryPage({
 
   categoryData = await fetchCategoryData(params.slug)
   if (!categoryData.name) return notFound()
+
+  type FeaturePostsResponse = {
+    allPosts: FeaturePost[]
+  }
 
   const fetchFeaturePosts = (): Promise<FeaturePostsResponse> =>
     fetch(FEATURE_POSTS_URL).then((res) => res.json())
