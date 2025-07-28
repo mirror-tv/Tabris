@@ -36,7 +36,6 @@ export default function PostsListManager({
   externals,
   categoryPosts,
 }: PostsListManagerProps) {
-  console.log({ externals })
   const isExternal = (post: FormattedPostCard) => post.__typename === 'External'
   const initPostsList = combineAndSortedByPublishedTime([
     ...categoryPosts,
