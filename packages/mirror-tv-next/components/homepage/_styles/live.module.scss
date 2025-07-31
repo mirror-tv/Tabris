@@ -79,9 +79,13 @@
   display: flex;
   justify-content: space-between;
   padding: 16px;
+  flex-direction: column-reverse;
+  gap: 8px;
   @include media-breakpoint-up(md) {
     padding: 16px 20px;
     margin-bottom: 16px;
+    flex-direction: row;
+    gap: 0;
   }
 }
 
