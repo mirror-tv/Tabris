@@ -73,7 +73,6 @@
 }
 
 .info {
-  height: 200px;
   background: #153047;
   margin-bottom: 12px;
   display: flex;
@@ -82,6 +81,7 @@
   flex-direction: column-reverse;
   gap: 8px;
   @include media-breakpoint-up(md) {
+    height: 200px;
     padding: 16px 20px;
     margin-bottom: 16px;
     flex-direction: row;
