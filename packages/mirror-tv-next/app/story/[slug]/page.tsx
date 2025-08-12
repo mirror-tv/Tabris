@@ -7,6 +7,7 @@ import ArticleHeroImage from '~/components/story/article-hero-image'
 import ApiDataRenderer from '~/components/story/api-data-renderer/renderer'
 import { formateDateAtTaipei } from '~/utils'
 import ArticleInfo from '~/components/story/article-info'
+import { notFound } from 'next/navigation'
 
 type StoryPageTypes = {
   params: { slug: string }
@@ -15,6 +16,9 @@ const StoryPage = async (props: StoryPageTypes) => {
   const { params } = props
   const fetchStoryBySlugResponse = await fetchStoryBySlug(params.slug)
   const [storyData] = fetchStoryBySlugResponse.allPosts
+  if (!storyData) {
+    notFound()
+  }
 
   const {
     contentApiData,

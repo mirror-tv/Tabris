@@ -12,6 +12,7 @@ import SlideShowBlock from './block-renderer/slide-show-block'
 import VideoBlock from './block-renderer/video-block'
 import YoutubeBlock from './block-renderer/youtube-block'
 import styles from './_styles/api-data-renderer.module.scss'
+import ImageBlock from './block-renderer/image-block'
 type ApiDataRendererPropsType = {
   contentData: string
 }
@@ -33,6 +34,8 @@ const ApiDataRenderer = ({ contentData }: ApiDataRendererPropsType) => {
                 key={apiDataBlock.id}
               />
             )
+          case ApiDataBlockType.Image:
+            return <ImageBlock key={apiDataBlock.id} data={apiDataBlock} />
           case ApiDataBlockType.Blockquote:
             return <BlockquoteBlock key={apiDataBlock.id} data={apiDataBlock} />
           case ApiDataBlockType.OrderList:

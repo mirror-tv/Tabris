@@ -10,6 +10,7 @@ import { type ApiDataUnorderListBlock } from './unorder-list-block'
 import { type ApiDataUnstyled } from './unstyled-block'
 import { type ApiDataVideo } from './video-block'
 import { type ApiDataYoutube } from './youtube-block'
+import { type ApiImageBlock } from './image-block'
 
 enum ApiDataBlockType {
   Unstyled = 'unstyled',
@@ -26,6 +27,7 @@ enum ApiDataBlockType {
   EmbedCode = 'embeddedcode',
   Youtube = 'youtube',
   QuoteBy = 'quoteby',
+  Image = 'image',
 }
 type OrderListData = string[][]
 
@@ -51,6 +53,7 @@ export type ApiDataBlock =
   | ApiDataSlideshow
   | ApiDataVideo
   | ApiDataYoutube
+  | ApiImageBlock
 export type ApiData = ApiDataBlock[]
 
 export { type ApiDataBlockBase, ApiDataBlockType, type OrderListData }
