@@ -4,6 +4,7 @@
   flex-direction: column;
   width: calc(100vw - 3rem);
   @include media-breakpoint-up(lg) {
+    max-width: 600px;
     width: 600px;
   }
   > * + * {

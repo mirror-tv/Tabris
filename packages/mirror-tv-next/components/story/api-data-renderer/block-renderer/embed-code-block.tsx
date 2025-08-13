@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useRef } from 'react'
 import { type ApiDataBlockBase, ApiDataBlockType } from './type'
+import styles from './_styles/embed-code-block.module.scss'
 
 type ContentEmbedCode = {
   caption: string
@@ -45,6 +46,12 @@ export default function EmbedCodeBlock({ data }: { data: ApiDataEmbedCode }) {
       const scripts = ele.querySelectorAll('script')
       const nonScripts = ele.querySelectorAll('div#draft-embed > :not(script)')
 
+      // 檢測是否包含 YouTube iframe
+      const hasYouTubeIframe =
+        embeddedCode.includes('youtube.com/embed') ||
+        embeddedCode.includes('youtu.be') ||
+        embeddedCode.includes('youtube.com/watch')
+
       nonScripts.forEach((ele) => {
         fragment.appendChild(ele)
       })
@@ -61,12 +68,17 @@ export default function EmbedCodeBlock({ data }: { data: ApiDataEmbedCode }) {
 
       node.appendChild(fragment)
 
+      // 如果包含 YouTube iframe，加上 youtube className
+      if (hasYouTubeIframe) {
+        node.classList.add(styles.youtube)
+      }
+
       run.current = true
     }
   }, [embeddedCode])
 
   return (
-    <section className="embed-code-block">
+    <section className={styles.container}>
       <div
         className={`embed ${isScrollVideo ? 'top-layer' : ''}`}
         ref={embedRef}

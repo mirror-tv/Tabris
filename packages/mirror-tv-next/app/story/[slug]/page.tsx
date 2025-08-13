@@ -16,6 +16,7 @@ const StoryPage = async (props: StoryPageTypes) => {
   const { params } = props
   const fetchStoryBySlugResponse = await fetchStoryBySlug(params.slug)
   const [storyData] = fetchStoryBySlugResponse.allPosts
+  console.log('storyData', storyData)
   if (!storyData) {
     notFound()
   }
