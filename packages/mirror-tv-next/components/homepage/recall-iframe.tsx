@@ -17,7 +17,7 @@ export default async function RecallIframe() {
       </h2>
       <iframe src={iframeSrc} className={styles.iframe}></iframe>
       <a
-        className={`GTM-click_2025_election_page ${styles.more}`}
+        className={`GTM-202508_click_election_page ${styles.more}`}
         href={linkHref}
         target="_blank"
         rel="noreferrer noopener"
