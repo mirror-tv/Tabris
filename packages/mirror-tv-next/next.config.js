@@ -32,6 +32,16 @@ const nextConfig = {
         hostname: 'storage.googleapis.com',
         pathname: '**',
       },
+      {
+        protocol: 'https',
+        hostname: 'v3-statics.mirrormedia.mg',
+        pathname: '**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'v3-statics-dev.mirrormedia.mg',
+        pathname: '**',
+      },
     ],
   },
   output: 'standalone',

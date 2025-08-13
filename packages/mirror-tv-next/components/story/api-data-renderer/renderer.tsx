@@ -21,7 +21,7 @@ const ApiDataRenderer = ({ contentData }: ApiDataRendererPropsType) => {
   const parsedContentData: ApiData = JSON.parse(contentData)
 
   return (
-    <article className={styles.article}>
+    <article className={styles.apiDataArticle}>
       {parsedContentData.map((apiDataBlock) => {
         console.log('Processing block:', apiDataBlock.type, apiDataBlock)
 
