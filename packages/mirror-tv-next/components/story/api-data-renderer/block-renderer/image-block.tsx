@@ -66,6 +66,7 @@ export interface ApiImageBlock extends ApiDataBlockBase {
 }
 const ImageBlock = ({ data }: { data: ApiImageBlock }) => {
   const imageData = data.content[0]
+  console.log('imageData', imageData)
 
   return (
     <caption>
