@@ -38,19 +38,30 @@ export default function EmbedCodeBlock({ data }: { data: ApiDataEmbedCode }) {
       // and we could use DOM element built-in functions,
       // such as `querySelectorAll` method, to query '<script>' elements,
       // and other non '<script>' elements.
-      const parser = new DOMParser()
-      const ele = parser.parseFromString(
-        `<div id="draft-embed">${embeddedCode}</div>`,
-        'text/html'
-      )
-      const scripts = ele.querySelectorAll('script')
-      const nonScripts = ele.querySelectorAll('div#draft-embed > :not(script)')
-
       // 檢測是否包含 YouTube iframe
       const hasYouTubeIframe =
         embeddedCode.includes('youtube.com/embed') ||
         embeddedCode.includes('youtu.be') ||
         embeddedCode.includes('youtube.com/watch')
+
+      // 如果是 YouTube iframe，移除寬高屬性
+      let processedEmbeddedCode = embeddedCode
+      if (hasYouTubeIframe) {
+        // 移除 width 和 height 屬性
+        processedEmbeddedCode = embeddedCode
+          .replace(/width=["'][^"']*["']/g, '')
+          .replace(/height=["'][^"']*["']/g, '')
+          .replace(/\s+/g, ' ') // 清理多餘的空格
+          .trim()
+      }
+
+      const parser = new DOMParser()
+      const ele = parser.parseFromString(
+        `<div id="draft-embed">${processedEmbeddedCode}</div>`,
+        'text/html'
+      )
+      const scripts = ele.querySelectorAll('script')
+      const nonScripts = ele.querySelectorAll('div#draft-embed > :not(script)')
 
       nonScripts.forEach((ele) => {
         fragment.appendChild(ele)
