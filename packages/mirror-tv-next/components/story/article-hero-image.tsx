@@ -15,8 +15,8 @@ const ArticleHeroImage: React.FC<ArticleHeroImageProps> = (props) => {
   const formattedHeroImage = formateHeroImage(heroImage)
 
   return (
-    <div className={styles.heroImageWrapper}>
-      <figure>
+    <figure className={styles.heroCaptionWrapper}>
+      <div className={styles.heroImageWrapper}>
         <Image
           images={formattedHeroImage}
           alt={title}
@@ -30,9 +30,9 @@ const ArticleHeroImage: React.FC<ArticleHeroImageProps> = (props) => {
           }}
           priority
         />
-        {heroCaption && <figcaption>{heroCaption}</figcaption>}
-      </figure>
-    </div>
+      </div>
+      {heroCaption && <figcaption>{heroCaption}</figcaption>}
+    </figure>
   )
 }
 

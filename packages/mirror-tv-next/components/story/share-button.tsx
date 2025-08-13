@@ -52,7 +52,7 @@ const ShareButton = ({ type, url, className }: ShareButtonProps) => {
       case 'copy':
         return {
           href: '#',
-          icon: '/icons/icon-x.svg',
+          icon: '/icons/share-link.svg',
           alt: 'copy link',
           isLink: false,
         }
@@ -96,7 +96,7 @@ const ShareButton = ({ type, url, className }: ShareButtonProps) => {
     return (
       <a
         href={config.href}
-        className={`${styles.share} ${className || ''}`}
+        className={`${styles.share} ${styles[type]} ${className || ''}`}
         target="_blank"
         rel="noopener noreferrer"
       >
@@ -110,7 +110,7 @@ const ShareButton = ({ type, url, className }: ShareButtonProps) => {
   return (
     <button
       type="button"
-      className={`${styles.share} ${className || ''}`}
+      className={`${styles.share} ${styles[type]} ${className || ''}`}
       onClick={handleCopyClick}
     >
       <span>
