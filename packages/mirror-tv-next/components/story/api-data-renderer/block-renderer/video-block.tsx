@@ -25,6 +25,7 @@ const VideoBlock = ({ data }: { data: ApiDataVideo }) => {
     return null
   }
 
+  const videoUrl = videoContent.url || videoContent.youtubeUrl || ''
   return (
     <div className={styles.videoContainer}>
       <video
@@ -37,9 +38,9 @@ const VideoBlock = ({ data }: { data: ApiDataVideo }) => {
           ...data.style,
         }}
       >
-        <source src={videoContent.url} type="video/mp4" />
-        <source src={videoContent.url} type="video/webm" />
-        <source src={videoContent.url} type="video/ogg" />
+        <source src={videoUrl} type="video/mp4" />
+        <source src={videoUrl} type="video/webm" />
+        <source src={videoUrl} type="video/ogg" />
         Your browser does not support the video tag.
       </video>
       {videoContent.name && (
