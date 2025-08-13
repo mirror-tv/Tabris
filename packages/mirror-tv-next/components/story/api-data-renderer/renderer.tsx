@@ -19,9 +19,12 @@ type ApiDataRendererPropsType = {
 
 const ApiDataRenderer = ({ contentData }: ApiDataRendererPropsType) => {
   const parsedContentData: ApiData = JSON.parse(contentData)
+
   return (
     <article className={styles.article}>
       {parsedContentData.map((apiDataBlock) => {
+        console.log('Processing block:', apiDataBlock.type, apiDataBlock)
+
         switch (apiDataBlock.type) {
           case ApiDataBlockType.Unstyled:
             return <UnstyledBlock key={apiDataBlock.id} data={apiDataBlock} />
@@ -55,6 +58,7 @@ const ApiDataRenderer = ({ contentData }: ApiDataRendererPropsType) => {
           case ApiDataBlockType.Slideshow:
             return <SlideShowBlock key={apiDataBlock.id} data={apiDataBlock} />
           case ApiDataBlockType.Video:
+            console.log('Rendering VideoBlock with data:', apiDataBlock)
             return <VideoBlock key={apiDataBlock.id} data={apiDataBlock} />
           case ApiDataBlockType.Youtube:
             return <YoutubeBlock key={apiDataBlock.id} data={apiDataBlock} />
