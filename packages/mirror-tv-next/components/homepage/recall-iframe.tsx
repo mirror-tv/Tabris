@@ -13,7 +13,7 @@ export default async function RecallIframe() {
   return (
     <section className={styles.container}>
       <h2 id="special-event-title" className={styles.title}>
-        2025 鏡週刊立委罷免即時開票
+        2025 鏡電視立委罷免即時開票
       </h2>
       <iframe src={iframeSrc} className={styles.iframe}></iframe>
       <a
