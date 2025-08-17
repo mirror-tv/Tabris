@@ -15,19 +15,32 @@ import styles from './_styles/api-data-renderer.module.scss'
 import ImageBlock from './block-renderer/image-block'
 type ApiDataRendererPropsType = {
   contentData: string
+  isStoryBrief?: boolean
 }
 
-const ApiDataRenderer = ({ contentData }: ApiDataRendererPropsType) => {
+const ApiDataRenderer = ({
+  contentData,
+  isStoryBrief,
+}: ApiDataRendererPropsType) => {
   const parsedContentData: ApiData = JSON.parse(contentData)
 
   return (
     <article className={styles.apiDataArticle}>
       {parsedContentData.map((apiDataBlock) => {
-        console.log('Processing block:', apiDataBlock.type, apiDataBlock)
-
         switch (apiDataBlock.type) {
           case ApiDataBlockType.Unstyled:
-            return <UnstyledBlock key={apiDataBlock.id} data={apiDataBlock} />
+            return isStoryBrief ? (
+              <p
+                className={styles.brief}
+                key={apiDataBlock.id}
+                dangerouslySetInnerHTML={{ __html: apiDataBlock.content }}
+              />
+            ) : (
+              <p
+                key={apiDataBlock.id}
+                dangerouslySetInnerHTML={{ __html: apiDataBlock.content }}
+              />
+            )
           case ApiDataBlockType.HeaderOne:
           case ApiDataBlockType.HeaderTwo:
             return (
@@ -58,7 +71,6 @@ const ApiDataRenderer = ({ contentData }: ApiDataRendererPropsType) => {
           case ApiDataBlockType.Slideshow:
             return <SlideShowBlock key={apiDataBlock.id} data={apiDataBlock} />
           case ApiDataBlockType.Video:
-            console.log('Rendering VideoBlock with data:', apiDataBlock)
             return <VideoBlock key={apiDataBlock.id} data={apiDataBlock} />
           case ApiDataBlockType.Youtube:
             return <YoutubeBlock key={apiDataBlock.id} data={apiDataBlock} />

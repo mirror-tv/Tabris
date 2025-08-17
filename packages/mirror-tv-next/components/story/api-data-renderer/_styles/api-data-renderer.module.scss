@@ -1,4 +1,6 @@
 @import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
+
 .apiDataArticle {
   display: flex;
   flex-direction: column;
@@ -10,4 +12,9 @@
   > * + * {
     margin-top: 32px;
   }
+}
+
+.brief {
+  color: $color-blue;
+  font-weight: 500;
 }

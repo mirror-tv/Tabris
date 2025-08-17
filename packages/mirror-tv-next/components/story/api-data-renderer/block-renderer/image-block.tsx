@@ -165,12 +165,7 @@ const ImageBlock = ({ data }: { data: ApiImageBlock }) => {
 
   return (
     <caption>
-      <div
-        className={styles.imageCaption}
-        style={{
-          aspectRatio: `${normalizedData.width}/${normalizedData.height}`,
-        }}
-      >
+      <div className={styles.imageCaption}>
         <ResponsiveImage
           images={normalizedData.images}
           alt={normalizedData.alt}

@@ -8,6 +8,8 @@ import ApiDataRenderer from '~/components/story/api-data-renderer/renderer'
 import { formateDateAtTaipei } from '~/utils'
 import ArticleInfo from '~/components/story/article-info'
 import { notFound } from 'next/navigation'
+import ArticleBrief from '~/components/story/article-brief'
+import { doesHaveBrief } from '~/utils'
 
 type StoryPageTypes = {
   params: { slug: string }
@@ -35,12 +37,15 @@ const StoryPage = async (props: StoryPageTypes) => {
     engineers,
     vocals,
     otherbyline,
+    briefApiData,
   } = storyData
   const publishTimeTaipei = formateDateAtTaipei(
     new Date(publishTime),
     'YYYY.MM.DD HH:mm',
     '臺北時間'
   )
+
+  const hasBrief = doesHaveBrief(briefApiData)
 
   return (
     <section className={styles.article}>
@@ -61,7 +66,10 @@ const StoryPage = async (props: StoryPageTypes) => {
         vocals={vocals}
         otherbyline={otherbyline}
       />
-      <ApiDataRenderer contentData={contentApiData} />
+      {hasBrief && <ArticleBrief brief={JSON.parse(briefApiData || '[]')} />}
+      <article className={styles.contentWrapper}>
+        <ApiDataRenderer contentData={contentApiData} isStoryBrief={true} />
+      </article>
       <section className={styles.socialAndRelatedWrapper}>
         <ArticleSocialList />
         <ArticleRelatedPosts relatedPosts={relatedPosts} />
