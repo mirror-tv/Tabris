@@ -67,9 +67,9 @@ const StoryPage = async (props: StoryPageTypes) => {
         otherbyline={otherbyline}
       />
       {hasBrief && <ArticleBrief brief={JSON.parse(briefApiData || '[]')} />}
-      <article className={styles.contentWrapper}>
+      <section className={styles.contentWrapper}>
         <ApiDataRenderer contentData={contentApiData} isStoryBrief={true} />
-      </article>
+      </section>
       <section className={styles.socialAndRelatedWrapper}>
         <ArticleSocialList />
         <ArticleRelatedPosts relatedPosts={relatedPosts} />
