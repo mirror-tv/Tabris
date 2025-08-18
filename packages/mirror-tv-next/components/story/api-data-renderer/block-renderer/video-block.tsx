@@ -1,5 +1,7 @@
 import { type ApiDataBlockBase, ApiDataBlockType } from './type'
 import styles from './_styles/video-block.module.scss'
+import YoutubeBlock from './youtube-block'
+import { extractYoutubeId } from '../../../../utils'
 
 type VideoContent = {
   id: string
@@ -25,24 +27,45 @@ const VideoBlock = ({ data }: { data: ApiDataVideo }) => {
     return null
   }
 
-  const videoUrl = videoContent.url || videoContent.youtubeUrl || ''
+  const videoUrl = videoContent.url || ''
+  const youtubeId = videoContent.youtubeUrl
+    ? extractYoutubeId(videoContent.youtubeUrl)
+    : null
+
+  const youtubeData = {
+    type: ApiDataBlockType.Youtube,
+    id: youtubeId || '',
+    content: [
+      {
+        id: youtubeId || '',
+        description: videoContent.name || '',
+      },
+    ],
+    alignment: data.alignment,
+    styles: data.style,
+  } as any
   return (
     <div className={styles.videoContainer}>
-      <video
-        preload="metadata"
-        controls
-        playsInline
-        muted
-        style={{
-          textAlign: data.alignment === 'center' ? 'center' : 'left',
-          ...data.style,
-        }}
-      >
-        <source src={videoUrl} type="video/mp4" />
-        <source src={videoUrl} type="video/webm" />
-        <source src={videoUrl} type="video/ogg" />
-        Your browser does not support the video tag.
-      </video>
+      {videoContent.youtubeUrl ? (
+        <YoutubeBlock data={youtubeData} />
+      ) : (
+        <video
+          preload="metadata"
+          controls
+          playsInline
+          muted
+          style={{
+            textAlign: data.alignment === 'center' ? 'center' : 'left',
+            ...data.style,
+          }}
+        >
+          <source src={videoUrl} type="video/mp4" />
+          <source src={videoUrl} type="video/webm" />
+          <source src={videoUrl} type="video/ogg" />
+          Your browser does not support the video tag.
+        </video>
+      )}
+
       {videoContent.name && (
         <p
           style={{
