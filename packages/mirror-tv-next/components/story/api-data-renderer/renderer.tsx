@@ -29,14 +29,9 @@ const ApiDataRenderer = ({
       {parsedContentData.map((apiDataBlock) => {
         switch (apiDataBlock.type) {
           case ApiDataBlockType.Unstyled:
-            return isStoryBrief ? (
+            return (
               <p
-                className={styles.brief}
-                key={apiDataBlock.id}
-                dangerouslySetInnerHTML={{ __html: apiDataBlock.content }}
-              />
-            ) : (
-              <p
+                className={isStoryBrief ? styles.brief : ''}
                 key={apiDataBlock.id}
                 dangerouslySetInnerHTML={{ __html: apiDataBlock.content }}
               />

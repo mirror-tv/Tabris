@@ -16,6 +16,7 @@ export default function AudioPlayer({
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
+  const [isLoaded, setIsLoaded] = useState(false)
   const audioRef = useRef<HTMLAudioElement>(null)
   const progressRef = useRef<HTMLDivElement>(null)
 
@@ -32,17 +33,37 @@ export default function AudioPlayer({
       }
     }
 
-    const handleDurationChange = () => setDuration(audio.duration)
+    const handleLoadedMetadata = () => {
+      if (audio.duration && isFinite(audio.duration)) {
+        setDuration(audio.duration)
+        setIsLoaded(true)
+      }
+    }
+
+    const handleDurationChange = () => {
+      if (audio.duration && isFinite(audio.duration)) {
+        setDuration(audio.duration)
+      }
+    }
+
     const handleEnded = () => setIsPlaying(false)
 
     audio.addEventListener('timeupdate', handleTimeUpdate)
-    handleDurationChange()
-    handleEnded()
+    audio.addEventListener('loadedmetadata', handleLoadedMetadata)
+    audio.addEventListener('durationchange', handleDurationChange)
+    audio.addEventListener('ended', handleEnded)
+
+    if (audio.readyState >= 1) {
+      handleLoadedMetadata()
+    }
 
     setCurrentTime(audio.currentTime)
 
     return () => {
       audio.removeEventListener('timeupdate', handleTimeUpdate)
+      audio.removeEventListener('loadedmetadata', handleLoadedMetadata)
+      audio.removeEventListener('durationchange', handleDurationChange)
+      audio.removeEventListener('ended', handleEnded)
     }
   }, [audioRef])
 
@@ -116,7 +137,7 @@ export default function AudioPlayer({
           />
           <div className={styles['time']}>
             <p>{formatTime(currentTime)}</p>
-            <p> {duration ? formatTime(duration - currentTime) : '00:00'}</p>
+            <p>{isLoaded ? formatTime(duration - currentTime) : '載入中...'}</p>
           </div>
         </div>
         <audio ref={audioRef} src={src} preload="metadata" />
