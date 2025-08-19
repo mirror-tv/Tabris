@@ -10,6 +10,8 @@ import ArticleInfo from '~/components/story/article-info'
 import { notFound } from 'next/navigation'
 import ArticleBrief from '~/components/story/article-brief'
 import { doesHaveBrief } from '~/utils'
+import ArticleUpdateTime from '~/components/story/article-update-time'
+import ArticleTagList from '~/components/story/tags-list'
 
 type StoryPageTypes = {
   params: { slug: string }
@@ -40,12 +42,17 @@ const StoryPage = async (props: StoryPageTypes) => {
     briefApiData,
     style,
     heroVideo,
+    tags,
+    updatedAt,
   } = storyData
   const publishTimeTaipei = formateDateAtTaipei(
     new Date(publishTime),
     'YYYY.MM.DD HH:mm',
     '臺北時間'
   )
+  const updatedTime = updatedAt
+    ? formateDateAtTaipei(new Date(updatedAt), 'YYYY.MM.DD HH:mm', '臺北時間')
+    : ''
 
   const hasBrief = doesHaveBrief(briefApiData)
 
@@ -73,10 +80,12 @@ const StoryPage = async (props: StoryPageTypes) => {
       {hasBrief && <ArticleBrief brief={JSON.parse(briefApiData || '[]')} />}
       <section className={styles.contentWrapper}>
         <ApiDataRenderer contentData={contentApiData} isStoryBrief={false} />
+        {updatedTime && <ArticleUpdateTime updateTime={updatedTime} />}
+        {!!tags.length && <ArticleTagList tags={tags} />}
       </section>
       <section className={styles.socialAndRelatedWrapper}>
-        <ArticleSocialList />
         <ArticleRelatedPosts relatedPosts={relatedPosts} />
+        <ArticleSocialList />
       </section>
     </section>
   )

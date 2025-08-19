@@ -55,6 +55,12 @@
   @include media-breakpoint-up(xxl) {
     max-width: $max-width-xxl;
   }
+
+  a {
+    color: #014db8;
+    font-weight: 500;
+    text-decoration: underline;
+  }
 }
 
 .socialAndRelatedWrapper {
