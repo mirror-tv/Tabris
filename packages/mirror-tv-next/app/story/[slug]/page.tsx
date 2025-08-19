@@ -1,5 +1,8 @@
 import ArticleRelatedPosts from '~/components/story/article-related-posts'
 import ArticleSocialList from '~/components/story/article-social-list'
+import { Metadata } from 'next'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
 
 import styles from './_styles/story.module.scss'
 import { fetchStoryBySlug } from '~/utils/fetch-function'
@@ -12,10 +15,182 @@ import ArticleBrief from '~/components/story/article-brief'
 import { doesHaveBrief } from '~/utils'
 import ArticleUpdateTime from '~/components/story/article-update-time'
 import ArticleTagList from '~/components/story/tags-list'
+import JsonLd from '~/components/story/json-ld'
+import {
+  SITE_TITLE,
+  META_SITE_URL,
+  META_DESCRIPTION,
+} from '~/constants/constant'
+import type { SinglePost } from '~/graphql/query/story'
 
 type StoryPageTypes = {
   params: { slug: string }
 }
+
+function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
+  const category = storyData.categories?.[0]
+  const logoUrl = '/images/logo.png' // 需要確認實際的 logo 路徑
+
+  const jsonLdBreadcrumbList = {
+    '@context': 'http://schema.org/',
+    '@type': 'BreadcrumbList',
+    itemListElement: generateBreadcrumbList(storyData, pageUrl),
+  }
+
+  const jsonLdNewsArticle = {
+    '@context': 'https://schema.org/',
+    '@type': 'NewsArticle',
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': pageUrl,
+    },
+    headline: storyData.title,
+    image: storyData.heroImage?.urlDesktopSized,
+    datePublished: storyData.publishTime,
+    dateModified: storyData.updatedAt || storyData.publishTime,
+    author: {
+      '@type': storyData.writers?.length ? 'Person' : 'Organization',
+      name: storyData.writers?.[0]?.name || SITE_TITLE,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: SITE_TITLE,
+      logo: {
+        '@type': 'ImageObject',
+        url: logoUrl,
+      },
+    },
+    description: storyData.briefApiData
+      ? JSON.parse(storyData.briefApiData).join('')
+      : undefined,
+    url: pageUrl,
+    thumbnailUrl: storyData.heroImage?.urlDesktopSized,
+    articleSection: category ? category.title : undefined,
+  }
+
+  let jsonLdPerson
+  if (storyData.writers?.length) {
+    jsonLdPerson = {
+      '@context': 'http://schema.org/',
+      '@type': 'Person',
+      name: storyData.writers[0].name,
+      brand: {
+        '@type': 'Brand',
+        name: SITE_TITLE,
+        url: META_SITE_URL,
+        image: logoUrl,
+        logo: logoUrl,
+        description: META_DESCRIPTION,
+      },
+    }
+  }
+
+  return [
+    jsonLdNewsArticle,
+    jsonLdBreadcrumbList,
+    ...(jsonLdPerson ? [jsonLdPerson] : []),
+  ]
+}
+
+function generateBreadcrumbList(storyData: SinglePost, pageUrl: string) {
+  const category = storyData.categories?.[0]
+  const items = [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: SITE_TITLE,
+      item: META_SITE_URL,
+    },
+  ]
+
+  if (category && category.title && category.slug) {
+    items.push({
+      '@type': 'ListItem',
+      position: items.length + 1,
+      name: category.title,
+      item: `${META_SITE_URL}/category/${category.slug}`,
+    })
+  }
+
+  items.push({
+    '@type': 'ListItem',
+    position: items.length + 1,
+    name: storyData.title,
+    item: pageUrl,
+  })
+
+  return items
+}
+
+export async function generateMetadata({
+  params,
+}: StoryPageTypes): Promise<Metadata> {
+  const fetchStoryBySlugResponse = await fetchStoryBySlug(params.slug)
+  const [storyData] = fetchStoryBySlugResponse.allPosts
+
+  if (!storyData) {
+    return {
+      title: '頁面未找到',
+    }
+  }
+
+  const title = storyData.title
+  const brief = storyData.briefApiData
+    ? JSON.parse(storyData.briefApiData).join('')
+    : ''
+  const tags = storyData.tags?.map((tag) => tag.name).join(', ')
+  const image = storyData.heroImage?.urlDesktopSized
+  const dableImage = storyData.heroImage?.urlMobileSized
+  const pageUrl = `${META_SITE_URL}/story/${params.slug}`
+  const writer = storyData.writers?.[0]
+  const authorName = writer?.name || SITE_TITLE
+  const category = storyData.categories?.[0]
+  const publishTime = storyData.publishTime
+  const updateTime = storyData.updatedAt || storyData.publishTime
+
+  dayjs.extend(utc)
+  const publishedDateIso = dayjs(publishTime).utcOffset(8).toISOString()
+
+  return {
+    title,
+    description: brief,
+    openGraph: {
+      title,
+      description: brief,
+      url: pageUrl,
+      images: image ? [{ url: image }] : [],
+      type: 'article',
+      publishedTime: publishedDateIso,
+      modifiedTime: updateTime,
+      authors: writer ? [writer.name] : [],
+      section: category?.title,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description: brief,
+      images: image ? [image] : [],
+    },
+    keywords: tags,
+    authors: writer ? [{ name: writer.name }] : [],
+    category: category?.title,
+    alternates: {
+      canonical: pageUrl,
+      languages: {
+        'x-default': pageUrl,
+      },
+    },
+    other: {
+      'dable:item_id': params.slug,
+      'dable:author': authorName,
+      'dable:image': dableImage,
+      'article:section': category?.title,
+      'article:published_time': publishedDateIso,
+      'article:modified_time': updateTime,
+    },
+  }
+}
+
 const StoryPage = async (props: StoryPageTypes) => {
   const { params } = props
   const fetchStoryBySlugResponse = await fetchStoryBySlug(params.slug)
@@ -56,38 +231,44 @@ const StoryPage = async (props: StoryPageTypes) => {
 
   const hasBrief = doesHaveBrief(briefApiData)
 
+  const pageUrl = `${META_SITE_URL}/story/${params.slug}`
+  const jsonLdData = generateStoryJsonLds(storyData, pageUrl)
+
   return (
-    <section className={styles.article}>
-      <ArticleHeroImageAndVideo
-        heroImage={heroImage}
-        title={heroCaption}
-        heroCaption={heroCaption}
-        style={style}
-        heroVideo={heroVideo}
-      />
-      <ArticleInfo
-        title={title}
-        publishTime={publishTimeTaipei}
-        category={categories?.[0]}
-        writers={writers}
-        photographers={photographers}
-        cameraOperators={cameraOperators}
-        designers={designers}
-        engineers={engineers}
-        vocals={vocals}
-        otherbyline={otherbyline}
-      />
-      {hasBrief && <ArticleBrief brief={JSON.parse(briefApiData || '[]')} />}
-      <section className={styles.contentWrapper}>
-        <ApiDataRenderer contentData={contentApiData} isStoryBrief={false} />
-        {updatedTime && <ArticleUpdateTime updateTime={updatedTime} />}
-        {!!tags.length && <ArticleTagList tags={tags} />}
+    <>
+      <JsonLd data={jsonLdData} />
+      <section className={styles.article}>
+        <ArticleHeroImageAndVideo
+          heroImage={heroImage}
+          title={heroCaption}
+          heroCaption={heroCaption}
+          style={style}
+          heroVideo={heroVideo}
+        />
+        <ArticleInfo
+          title={title}
+          publishTime={publishTimeTaipei}
+          category={categories?.[0]}
+          writers={writers}
+          photographers={photographers}
+          cameraOperators={cameraOperators}
+          designers={designers}
+          engineers={engineers}
+          vocals={vocals}
+          otherbyline={otherbyline}
+        />
+        {hasBrief && <ArticleBrief brief={JSON.parse(briefApiData || '[]')} />}
+        <section className={styles.contentWrapper}>
+          <ApiDataRenderer contentData={contentApiData} isStoryBrief={false} />
+          {updatedTime && <ArticleUpdateTime updateTime={updatedTime} />}
+          {!!tags.length && <ArticleTagList tags={tags} />}
+        </section>
+        <section className={styles.socialAndRelatedWrapper}>
+          <ArticleRelatedPosts relatedPosts={relatedPosts} />
+          <ArticleSocialList />
+        </section>
       </section>
-      <section className={styles.socialAndRelatedWrapper}>
-        <ArticleRelatedPosts relatedPosts={relatedPosts} />
-        <ArticleSocialList />
-      </section>
-    </section>
+    </>
   )
 }
 
