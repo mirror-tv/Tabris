@@ -45,6 +45,46 @@ const nextConfig = {
     ],
   },
   output: 'standalone',
+  experimental: {
+    scriptLoader: {
+      '/story/:slug': [
+        {
+          innerHTML: `
+            (function(d,a,b,l,e,_) {
+              d[b] = d[b] || function () {
+                (d[b].q = d[b].q || []).push(arguments)
+              }
+              e = a.createElement(l)
+              e.async = 1
+              e.charset = 'utf-8'
+              e.src = '//static.dable.io/dist/plugin.min.js'
+              _ = a.getElementsByTagName(l)[0]
+              _.parentNode.insertBefore(e, _)
+            })(window, document, 'dable', 'script')
+            dable('setService', 'mnews.tw')
+            dable('renderWidgetByWidth', 'dablewidget_2Xnxwk7d_xXAWmB7G')
+          `,
+          strategy: 'afterInteractive',
+          id: 'dable',
+        },
+        {
+          innerHTML: `
+            (function() {
+              var pa = document.createElement('script')
+              pa.type = 'text/javascript'
+              pa.charset = 'utf-8'
+              pa.async = true
+              pa.src = window.location.protocol + '//api.popin.cc/searchbox/mnews.js'
+              var s = document.getElementsByTagName('script')[0]
+              s.parentNode.insertBefore(pa, s)
+            })()
+          `,
+          strategy: 'afterInteractive',
+          id: 'popinAd',
+        },
+      ],
+    },
+  },
   async headers() {
     return [
       {

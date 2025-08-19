@@ -20,6 +20,7 @@ import {
   SITE_TITLE,
   META_SITE_URL,
   META_DESCRIPTION,
+  FILTERED_SLUG,
 } from '~/constants/constant'
 import type { SinglePost } from '~/graphql/query/story'
 
@@ -195,6 +196,7 @@ const StoryPage = async (props: StoryPageTypes) => {
   const { params } = props
   const fetchStoryBySlugResponse = await fetchStoryBySlug(params.slug)
   const [storyData] = fetchStoryBySlugResponse.allPosts
+
   if (!storyData) {
     notFound()
   }
@@ -225,6 +227,12 @@ const StoryPage = async (props: StoryPageTypes) => {
     'YYYY.MM.DD HH:mm',
     '臺北時間'
   )
+
+  const shouldShowAds =
+    categories?.length === 1 &&
+    categories?.[0]?.slug === 'ombuds' &&
+    !FILTERED_SLUG.includes(params.slug)
+
   const updatedTime = updatedAt
     ? formateDateAtTaipei(new Date(updatedAt), 'YYYY.MM.DD HH:mm', '臺北時間')
     : ''
@@ -264,7 +272,10 @@ const StoryPage = async (props: StoryPageTypes) => {
           {!!tags.length && <ArticleTagList tags={tags} />}
         </section>
         <section className={styles.socialAndRelatedWrapper}>
-          <ArticleRelatedPosts relatedPosts={relatedPosts} />
+          <ArticleRelatedPosts
+            relatedPosts={relatedPosts}
+            shouldShowAds={shouldShowAds}
+          />
           <ArticleSocialList />
         </section>
       </section>
