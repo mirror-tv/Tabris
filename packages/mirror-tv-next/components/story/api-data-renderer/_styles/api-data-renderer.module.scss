@@ -1,10 +1,17 @@
 @import '/styles/theme/breakpoints';
-.article {
+@import '/styles/theme/variable';
+
+.apiDataArticle {
   display: flex;
   flex-direction: column;
-  width: calc(100vw - 3rem);
-  gap: 32px;
-  @include media-breakpoint-up(lg) {
-    width: 600px;
+  width: 100%;
+  line-height: 1.75;
+  > * + * {
+    margin-top: 32px;
   }
+}
+
+.brief {
+  color: $color-blue;
+  font-weight: 500;
 }

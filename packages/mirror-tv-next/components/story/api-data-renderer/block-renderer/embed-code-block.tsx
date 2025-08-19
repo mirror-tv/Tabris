@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useRef } from 'react'
 import { type ApiDataBlockBase, ApiDataBlockType } from './type'
+import styles from './_styles/embed-code-block.module.scss'
 
 type ContentEmbedCode = {
   caption: string
@@ -37,9 +38,26 @@ export default function EmbedCodeBlock({ data }: { data: ApiDataEmbedCode }) {
       // and we could use DOM element built-in functions,
       // such as `querySelectorAll` method, to query '<script>' elements,
       // and other non '<script>' elements.
+      // 檢測是否包含 YouTube iframe
+      const hasYouTubeIframe =
+        embeddedCode.includes('youtube.com/embed') ||
+        embeddedCode.includes('youtu.be') ||
+        embeddedCode.includes('youtube.com/watch')
+
+      // 如果是 YouTube iframe，移除寬高屬性
+      let processedEmbeddedCode = embeddedCode
+      if (hasYouTubeIframe) {
+        // 移除 width 和 height 屬性
+        processedEmbeddedCode = embeddedCode
+          .replace(/width=["'][^"']*["']/g, '')
+          .replace(/height=["'][^"']*["']/g, '')
+          .replace(/\s+/g, ' ') // 清理多餘的空格
+          .trim()
+      }
+
       const parser = new DOMParser()
       const ele = parser.parseFromString(
-        `<div id="draft-embed">${embeddedCode}</div>`,
+        `<div id="draft-embed">${processedEmbeddedCode}</div>`,
         'text/html'
       )
       const scripts = ele.querySelectorAll('script')
@@ -61,12 +79,17 @@ export default function EmbedCodeBlock({ data }: { data: ApiDataEmbedCode }) {
 
       node.appendChild(fragment)
 
+      // 如果包含 YouTube iframe，加上 youtube className
+      if (hasYouTubeIframe) {
+        node.classList.add(styles.youtube)
+      }
+
       run.current = true
     }
   }, [embeddedCode])
 
   return (
-    <section className="embed-code-block">
+    <section className={styles.container}>
       <div
         className={`embed ${isScrollVideo ? 'top-layer' : ''}`}
         ref={embedRef}

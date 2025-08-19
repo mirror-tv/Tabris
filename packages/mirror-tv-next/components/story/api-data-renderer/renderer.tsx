@@ -12,18 +12,30 @@ import SlideShowBlock from './block-renderer/slide-show-block'
 import VideoBlock from './block-renderer/video-block'
 import YoutubeBlock from './block-renderer/youtube-block'
 import styles from './_styles/api-data-renderer.module.scss'
+import ImageBlock from './block-renderer/image-block'
 type ApiDataRendererPropsType = {
   contentData: string
+  isStoryBrief?: boolean
 }
 
-const ApiDataRenderer = ({ contentData }: ApiDataRendererPropsType) => {
+const ApiDataRenderer = ({
+  contentData,
+  isStoryBrief,
+}: ApiDataRendererPropsType) => {
   const parsedContentData: ApiData = JSON.parse(contentData)
+
   return (
-    <article className={styles.article}>
+    <article className={styles.apiDataArticle}>
       {parsedContentData.map((apiDataBlock) => {
         switch (apiDataBlock.type) {
           case ApiDataBlockType.Unstyled:
-            return <UnstyledBlock key={apiDataBlock.id} data={apiDataBlock} />
+            return (
+              <p
+                className={isStoryBrief ? styles.brief : ''}
+                key={apiDataBlock.id}
+                dangerouslySetInnerHTML={{ __html: apiDataBlock.content }}
+              />
+            )
           case ApiDataBlockType.HeaderOne:
           case ApiDataBlockType.HeaderTwo:
             return (
@@ -33,6 +45,8 @@ const ApiDataRenderer = ({ contentData }: ApiDataRendererPropsType) => {
                 key={apiDataBlock.id}
               />
             )
+          case ApiDataBlockType.Image:
+            return <ImageBlock key={apiDataBlock.id} data={apiDataBlock} />
           case ApiDataBlockType.Blockquote:
             return <BlockquoteBlock key={apiDataBlock.id} data={apiDataBlock} />
           case ApiDataBlockType.OrderList:

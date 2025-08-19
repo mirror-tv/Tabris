@@ -1,5 +1,8 @@
 import { type ApiDataBlockBase, ApiDataBlockType } from './type'
 import styles from './_styles/video-block.module.scss'
+import YoutubeBlock from './youtube-block'
+import { extractYoutubeId } from '../../../../utils'
+
 type VideoContent = {
   id: string
   name: string
@@ -7,6 +10,7 @@ type VideoContent = {
   youtubeUrl: string | null
   coverPhoto: string | null
 }
+
 export interface ApiDataVideo extends ApiDataBlockBase {
   type: ApiDataBlockType.Video
   content: VideoContent[]
@@ -17,9 +21,63 @@ export interface ApiDataVideo extends ApiDataBlockBase {
 const VideoBlock = ({ data }: { data: ApiDataVideo }) => {
   const videoContent = data.content[0]
 
+  // 如果沒有 video 內容，不渲染
+  if (!videoContent || !videoContent.url) {
+    console.warn('Video block missing content or URL:', data)
+    return null
+  }
+
+  const videoUrl = videoContent.url || ''
+  const youtubeId = videoContent.youtubeUrl
+    ? extractYoutubeId(videoContent.youtubeUrl)
+    : null
+
+  const youtubeData = {
+    type: ApiDataBlockType.Youtube,
+    id: youtubeId || '',
+    content: [
+      {
+        id: youtubeId || '',
+        description: videoContent.name || '',
+      },
+    ],
+    alignment: data.alignment,
+    styles: data.style,
+  } as any
   return (
     <div className={styles.videoContainer}>
-      <video src={videoContent.url} controls />
+      {videoContent.youtubeUrl ? (
+        <YoutubeBlock data={youtubeData} />
+      ) : (
+        <video
+          preload="metadata"
+          controls
+          playsInline
+          muted
+          style={{
+            textAlign: data.alignment === 'center' ? 'center' : 'left',
+            ...data.style,
+          }}
+        >
+          <source src={videoUrl} type="video/mp4" />
+          <source src={videoUrl} type="video/webm" />
+          <source src={videoUrl} type="video/ogg" />
+          Your browser does not support the video tag.
+        </video>
+      )}
+
+      {videoContent.name && (
+        <p
+          style={{
+            marginTop: '8px',
+            fontSize: '14px',
+            color: '#666',
+            textAlign: data.alignment === 'center' ? 'center' : 'left',
+          }}
+        >
+          {videoContent.name}
+        </p>
+      )}
     </div>
   )
 }

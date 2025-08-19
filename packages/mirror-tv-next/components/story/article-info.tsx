@@ -1,6 +1,7 @@
 import { type SinglePost } from '~/graphql/query/story'
 import styles from './_styles/article-info.module.scss'
 import { CONTACT_MAPPING } from '~/constants/constant'
+import ShareButton from './share-button'
 
 type ArticleHeroImageProps = {
   title: string
@@ -68,6 +69,12 @@ export default function ArticleInfo({
           </li>
         </ul>
       )}
+      <div className={styles.share}>
+        <ShareButton type="facebook" />
+        <ShareButton type="line" />
+        <ShareButton type="twitter" />
+        <ShareButton type="copy" />
+      </div>
     </>
   )
 }

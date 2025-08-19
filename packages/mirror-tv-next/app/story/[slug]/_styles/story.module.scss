@@ -43,9 +43,9 @@
   flex-direction: column;
   margin: 0 auto 0 0;
   flex: 1;
-
   @include media-breakpoint-up(md) {
     max-width: 600px;
+    width: 600px;
     margin: 0;
   }
   @include media-breakpoint-up(xl) {
@@ -63,5 +63,14 @@
   gap: 40px;
   @include media-breakpoint-up(md) {
     gap: 48px;
+  }
+}
+
+.contentWrapper {
+  margin-top: 30px;
+  width: calc(100vw - 3rem);
+  @include media-breakpoint-up(lg) {
+    max-width: 600px;
+    width: 600px;
   }
 }
