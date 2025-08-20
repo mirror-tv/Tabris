@@ -66,7 +66,7 @@ function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
       : undefined,
     url: pageUrl,
     thumbnailUrl: storyData.heroImage?.urlDesktopSized,
-    articleSection: category ? category.title : undefined,
+    articleSection: category?.title || '',
   }
 
   let jsonLdPerson
@@ -90,7 +90,7 @@ function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
     jsonLdNewsArticle,
     jsonLdBreadcrumbList,
     ...(jsonLdPerson ? [jsonLdPerson] : []),
-  ]
+  ].filter(Boolean)
 }
 
 function generateBreadcrumbList(storyData: SinglePost, pageUrl: string) {

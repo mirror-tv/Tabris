@@ -3,7 +3,6 @@ import HeadersBlock from './block-renderer/headers-block'
 import OrderListBlock from './block-renderer/order-list-block'
 import { type ApiData, ApiDataBlockType } from './block-renderer/type'
 import UnorderListBlock from './block-renderer/unorder-list-block'
-import UnstyledBlock from './block-renderer/unstyled-block'
 import InfoBoxBlock from './block-renderer/info-box-block'
 import EmbedCodeBlock from './block-renderer/embed-code-block'
 import AudioBlock from './block-renderer/audio-block'
@@ -13,6 +12,8 @@ import VideoBlock from './block-renderer/video-block'
 import YoutubeBlock from './block-renderer/youtube-block'
 import styles from './_styles/api-data-renderer.module.scss'
 import ImageBlock from './block-renderer/image-block'
+import UnstyledBlock from './block-renderer/unstyled-block'
+
 type ApiDataRendererPropsType = {
   contentData: string
   isStoryBrief?: boolean
@@ -30,10 +31,10 @@ const ApiDataRenderer = ({
         switch (apiDataBlock.type) {
           case ApiDataBlockType.Unstyled:
             return (
-              <p
+              <UnstyledBlock
+                data={apiDataBlock}
                 className={isStoryBrief ? styles.brief : ''}
                 key={apiDataBlock.id}
-                dangerouslySetInnerHTML={{ __html: apiDataBlock.content }}
               />
             )
           case ApiDataBlockType.HeaderOne:

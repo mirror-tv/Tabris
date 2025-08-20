@@ -3,14 +3,14 @@ import React from 'react'
 type JsonLdData = {
   '@context': string
   '@type': string
-  [key: string]: any // 對於 JSON-LD 的動態屬性，保留 any
+  [key: string]: string | number | boolean | object | null
 }
 
 type JsonLdProps = {
   data: JsonLdData[]
 }
 
-const JsonLd: React.FC<JsonLdProps> = ({ data }) => {
+const JsonLd = ({ data }: JsonLdProps) => {
   return (
     <>
       {data.map((item, index) => (

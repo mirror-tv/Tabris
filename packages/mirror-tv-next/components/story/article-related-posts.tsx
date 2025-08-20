@@ -1,3 +1,4 @@
+'use client'
 import UiHeadingBordered from '../shared/ui-heading-bordered'
 import { SinglePost } from '~/graphql/query/story'
 import dynamic from 'next/dynamic'
