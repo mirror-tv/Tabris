@@ -21,7 +21,6 @@ export interface ApiDataVideo extends ApiDataBlockBase {
 const VideoBlock = ({ data }: { data: ApiDataVideo }) => {
   const videoContent = data.content[0]
 
-  // 如果沒有 video 內容，不渲染
   if (!videoContent || !videoContent.url) {
     console.warn('Video block missing content or URL:', data)
     return null

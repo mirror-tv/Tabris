@@ -6,9 +6,12 @@ import dynamic from 'next/dynamic'
 import styles from './_styles/article-related-posts.module.scss'
 import useWindowDimensions from '~/hooks/use-window-dimensions'
 
-const LazyRenderer = dynamic(() => import('~/components/story/lazy-renderer'), {
-  ssr: false,
-})
+const LazyRenderWrapper = dynamic(
+  () => import('~/components/shared/lazy-render-wrapper'),
+  {
+    ssr: false,
+  }
+)
 
 const ArticleRelatedPosts = ({
   relatedPosts,
@@ -30,16 +33,18 @@ const ArticleRelatedPosts = ({
 
       {shouldShowAds && (
         <>
-          <LazyRenderer id="_popIn_recommend_word" />
-          <div
-            className="avivid_textad avivid_ad_one"
-            data-web_id="mnewstext"
-          />
-          {width && width >= 768 ? (
-            <div id="compass-fit-4333664" />
-          ) : (
-            <div id="compass-fit-4333665" />
-          )}
+          <LazyRenderWrapper>
+            <div id="_popIn_recommend_word" />
+            <div
+              className="avivid_textad avivid_ad_one"
+              data-web_id="mnewstext"
+            />
+            {width && width >= 768 ? (
+              <div id="compass-fit-4333664" />
+            ) : (
+              <div id="compass-fit-4333665" />
+            )}
+          </LazyRenderWrapper>
         </>
       )}
     </div>

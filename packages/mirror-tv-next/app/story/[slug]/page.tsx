@@ -16,6 +16,7 @@ import { doesHaveBrief } from '~/utils'
 import ArticleUpdateTime from '~/components/story/article-update-time'
 import ArticleTagList from '~/components/story/tags-list'
 import JsonLd from '~/components/story/json-ld'
+import AdAfterStory from '~/components/story/ad-after-story'
 import {
   SITE_TITLE,
   META_SITE_URL,
@@ -229,8 +230,7 @@ const StoryPage = async (props: StoryPageTypes) => {
   )
 
   const shouldShowAds =
-    categories?.length === 1 &&
-    categories?.[0]?.slug === 'ombuds' &&
+    !(categories?.length === 1 && categories?.[0]?.slug === 'ombuds') &&
     !FILTERED_SLUG.includes(params.slug)
 
   const updatedTime = updatedAt
@@ -277,6 +277,7 @@ const StoryPage = async (props: StoryPageTypes) => {
             shouldShowAds={shouldShowAds}
           />
           <ArticleSocialList />
+          {shouldShowAds && <AdAfterStory />}
         </section>
       </section>
     </>
