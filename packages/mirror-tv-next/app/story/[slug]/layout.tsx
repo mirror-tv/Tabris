@@ -41,31 +41,69 @@ export default function StoryPageLayout({
         dangerouslySetInnerHTML={{
           __html: `
             (function() {
+              console.log('PopIn 腳本開始載入...')
+              
               var pa = document.createElement('script')
               pa.type = 'text/javascript'
               pa.charset = 'utf-8'
               pa.async = true
               pa.src = window.location.protocol + '//api.popin.cc/searchbox/mnews.js'
               pa.onload = function() {
+                console.log('PopIn 主要腳本載入完成')
+                console.log('window.popin:', window.popin)
                 // 初始化 PopIn 推薦廣告
                 if (window.popin && window.popin.init) {
+                  console.log('執行 window.popin.init()')
                   window.popin.init()
                 }
+              }
+              pa.onerror = function() {
+                console.error('PopIn 主要腳本載入失敗')
               }
               var s = document.getElementsByTagName('script')[0]
               s.parentNode.insertBefore(pa, s)
               
+              // 嘗試載入 PopIn 推薦廣告腳本
               var paRecommend = document.createElement('script')
               paRecommend.type = 'text/javascript'
               paRecommend.charset = 'utf-8'
               paRecommend.async = true
               paRecommend.src = window.location.protocol + '//api.popin.cc/recommend/mnews.js'
               paRecommend.onload = function() {
+                console.log('PopIn 推薦腳本載入完成')
+                console.log('window.popinRecommend:', window.popinRecommend)
+                // 初始化推薦廣告
                 if (window.popinRecommend && window.popinRecommend.init) {
+                  console.log('執行 window.popinRecommend.init()')
                   window.popinRecommend.init()
                 }
               }
+              paRecommend.onerror = function() {
+                console.error('PopIn 推薦腳本載入失敗')
+              }
               s.parentNode.insertBefore(paRecommend, s)
+              
+              // 嘗試載入 PopIn 通用腳本
+              var paGeneral = document.createElement('script')
+              paGeneral.type = 'text/javascript'
+              paGeneral.charset = 'utf-8'
+              paGeneral.async = true
+              paGeneral.src = window.location.protocol + '//api.popin.cc/mnews.js'
+              paGeneral.onload = function() {
+                console.log('PopIn 通用腳本載入完成')
+                console.log('window.popin:', window.popin)
+                // 嘗試初始化
+                if (window.popin && typeof window.popin === 'function') {
+                  console.log('window.popin 是函數，直接調用')
+                  window.popin()
+                }
+              }
+              paGeneral.onerror = function() {
+                console.error('PopIn 通用腳本載入失敗')
+              }
+              s.parentNode.insertBefore(paGeneral, s)
+              
+              console.log('PopIn 腳本載入完成')
             })()
           `,
         }}

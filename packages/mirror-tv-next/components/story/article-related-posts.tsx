@@ -27,18 +27,73 @@ const ArticleRelatedPosts = ({
   useEffect(() => {
     if (popinRef.current && shouldShowAds) {
       const initPopinAd = () => {
+        console.log('PopIn 初始化開始...')
+        console.log('window.popin:', window.popin)
+        console.log('window.popinRecommend:', window.popinRecommend)
+
+        // 嘗試多種初始化方法
         if (window.popin && window.popin.init) {
+          console.log('執行 window.popin.init()')
           window.popin.init()
         }
+
         if (window.popinRecommend && window.popinRecommend.init) {
+          console.log('執行 window.popinRecommend.init()')
           window.popinRecommend.init()
         }
+
         if (window.popin && window.popin.loadRecommend) {
+          console.log('執行 window.popin.loadRecommend()')
           window.popin.loadRecommend('_popIn_recommend_word')
         }
+
+        // 嘗試其他可能的初始化方法
+        if (window.popin && typeof window.popin === 'function') {
+          console.log('window.popin 是函數，直接調用')
+          window.popin()
+        }
+
+        // 檢查 DOM 元素
+        const popinElement = document.getElementById('_popIn_recommend_word')
+        console.log('PopIn 元素:', popinElement)
+
+        // 嘗試手動觸發事件
+        if (popinElement) {
+          console.log('手動觸發 PopIn 載入')
+          const event = new Event('load')
+          popinElement.dispatchEvent(event)
+
+          // 嘗試其他觸發方式
+          const clickEvent = new Event('click')
+          popinElement.dispatchEvent(clickEvent)
+
+          // 嘗試觸發 focus 事件
+          const focusEvent = new Event('focus')
+          popinElement.dispatchEvent(focusEvent)
+        }
+
+        // 嘗試直接調用 PopIn 函數
+        if (typeof window.popin === 'function') {
+          console.log('直接調用 window.popin()')
+          try {
+            window.popin()
+          } catch (error) {
+            console.error('調用 window.popin() 失敗:', error)
+          }
+        }
+
+        // 檢查是否有其他 PopIn 相關的全局變數
+        console.log('檢查 PopIn 相關變數:')
+        console.log('window.Popin:', window.Popin)
+        console.log('window.PopinWidget:', window.PopinWidget)
+        console.log('window.PopinRecommend:', window.PopinRecommend)
       }
 
+      // 多次嘗試初始化
+      setTimeout(initPopinAd, 500)
       setTimeout(initPopinAd, 1000)
+      setTimeout(initPopinAd, 2000)
+      setTimeout(initPopinAd, 5000)
     }
   }, [shouldShowAds])
 

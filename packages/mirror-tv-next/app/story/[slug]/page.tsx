@@ -254,9 +254,10 @@ const StoryPage = async (props: StoryPageTypes) => {
   return (
     <>
       <JsonLd data={jsonLdData} />
+      <GPTAd pageKey="all" adKey="PC_HD" />
+      <GPTAd pageKey="story" adKey="MB_M1" />
+      <GPTAd pageKey="fs" adKey="MB_NEWS" />
       <section className={styles.article}>
-        <GPTAd pageKey="all" adKey="PC_HD" />
-        <GPTAd pageKey="story" adKey="MB_M1" />
         <ContainerFullScreenAds adKey="MB_NEWS" />
         <ArticleHeroImageAndVideo
           heroImage={heroImage}
