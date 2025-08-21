@@ -28,6 +28,7 @@
   padding: 86px 16px 48px;
   flex: 1;
   padding-top: 12px;
+  position: relative;
   @include media-breakpoint-up(md) {
     min-height: calc(100dvh - 152px); // header height
     max-width: $story-max-width-md;

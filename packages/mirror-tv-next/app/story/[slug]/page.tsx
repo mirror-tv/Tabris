@@ -26,6 +26,7 @@ import {
 import type { SinglePost } from '~/graphql/query/story'
 
 import dynamic from 'next/dynamic'
+import MisoPageView from '~/components/shared/miso-pageview'
 
 const ContainerFullScreenAds = dynamic(
   () => import('~/components/ads/gpt/gpt-popup'),
@@ -252,6 +253,7 @@ const StoryPage = async (props: StoryPageTypes) => {
   return (
     <>
       <JsonLd data={jsonLdData} />
+      <MisoPageView productIds={`story_${params.slug}`} />
       <section className={styles.article}>
         <ContainerFullScreenAds adKey="MB_NEWS" />
         <ArticleHeroImageAndVideo
