@@ -12,7 +12,7 @@ export default function StoryPageLayout({
     <div className={styles.LayoutWrapper}>
       <Script
         id="dable"
-        strategy="afterInteractive"
+        strategy="lazyOnload"
         dangerouslySetInnerHTML={{
           __html: `
             (function(d,a,b,l,e,_) {
@@ -35,7 +35,7 @@ export default function StoryPageLayout({
       {/* Popin Script */}
       <Script
         id="popinAd"
-        strategy="afterInteractive"
+        strategy="lazyOnload"
         dangerouslySetInnerHTML={{
           __html: `
             (function() {
