@@ -70,6 +70,26 @@ const ArticleRelatedPosts = ({
           // 嘗試觸發 focus 事件
           const focusEvent = new Event('focus')
           popinElement.dispatchEvent(focusEvent)
+
+          // 嘗試手動創建 PopIn 廣告
+          console.log('嘗試手動創建 PopIn 廣告')
+          try {
+            // 創建 PopIn 推薦廣告的 iframe
+            const iframe = document.createElement('iframe')
+            iframe.src = 'https://api.popin.cc/recommend/mnews.html'
+            iframe.style.width = '100%'
+            iframe.style.height = '300px'
+            iframe.style.border = 'none'
+            iframe.style.overflow = 'hidden'
+
+            // 清空原有內容並插入 iframe
+            popinElement.innerHTML = ''
+            popinElement.appendChild(iframe)
+
+            console.log('手動創建 PopIn iframe 成功')
+          } catch (error) {
+            console.error('手動創建 PopIn 廣告失敗:', error)
+          }
         }
 
         // 嘗試直接調用 PopIn 函數

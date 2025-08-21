@@ -2,7 +2,8 @@
 import Aside from '~/components/story/aside'
 import styles from './_styles/story.module.scss'
 import Script from 'next/script'
-
+import dynamic from 'next/dynamic'
+const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 export default function StoryPageLayout({
   children,
 }: {
@@ -51,11 +52,15 @@ export default function StoryPageLayout({
               pa.onload = function() {
                 console.log('PopIn 主要腳本載入完成')
                 console.log('window.popin:', window.popin)
-                // 初始化 PopIn 推薦廣告
-                if (window.popin && window.popin.init) {
-                  console.log('執行 window.popin.init()')
-                  window.popin.init()
-                }
+                
+                // 等待一下再檢查，因為腳本可能需要時間初始化
+                setTimeout(function() {
+                  console.log('延遲檢查 window.popin:', window.popin)
+                  if (window.popin && window.popin.init) {
+                    console.log('執行 window.popin.init()')
+                    window.popin.init()
+                  }
+                }, 1000)
               }
               pa.onerror = function() {
                 console.error('PopIn 主要腳本載入失敗')
@@ -103,12 +108,39 @@ export default function StoryPageLayout({
               }
               s.parentNode.insertBefore(paGeneral, s)
               
+              // 嘗試載入 PopIn 官方推薦腳本
+              var paOfficial = document.createElement('script')
+              paOfficial.type = 'text/javascript'
+              paOfficial.charset = 'utf-8'
+              paOfficial.async = true
+              paOfficial.src = window.location.protocol + '//api.popin.cc/widget.js'
+              paOfficial.onload = function() {
+                console.log('PopIn 官方腳本載入完成')
+                console.log('window.Popin:', window.Popin)
+                console.log('window.PopinWidget:', window.PopinWidget)
+                // 嘗試初始化
+                if (window.Popin && window.Popin.init) {
+                  console.log('執行 window.Popin.init()')
+                  window.Popin.init()
+                }
+                if (window.PopinWidget && window.PopinWidget.init) {
+                  console.log('執行 window.PopinWidget.init()')
+                  window.PopinWidget.init()
+                }
+              }
+              paOfficial.onerror = function() {
+                console.error('PopIn 官方腳本載入失敗')
+              }
+              s.parentNode.insertBefore(paOfficial, s)
+              
               console.log('PopIn 腳本載入完成')
             })()
           `,
         }}
       />
-
+      <GPTAd pageKey="story" adKey="MB_M1" />
+      <GPTAd pageKey="fs" adKey="MB_NEWS" />
+      <GPTAd pageKey="all" adKey="PC_HD" />
       <section className={styles.story}>
         <main className={styles.article}>{children}</main>
         <Aside />

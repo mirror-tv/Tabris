@@ -26,7 +26,7 @@ import {
 import type { SinglePost } from '~/graphql/query/story'
 
 import dynamic from 'next/dynamic'
-const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
+
 const ContainerFullScreenAds = dynamic(
   () => import('~/components/ads/gpt/gpt-popup'),
   {
@@ -254,9 +254,6 @@ const StoryPage = async (props: StoryPageTypes) => {
   return (
     <>
       <JsonLd data={jsonLdData} />
-      <GPTAd pageKey="all" adKey="PC_HD" />
-      <GPTAd pageKey="story" adKey="MB_M1" />
-      <GPTAd pageKey="fs" adKey="MB_NEWS" />
       <section className={styles.article}>
         <ContainerFullScreenAds adKey="MB_NEWS" />
         <ArticleHeroImageAndVideo
