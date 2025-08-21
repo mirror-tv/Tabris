@@ -31,7 +31,7 @@ const ApiDataRenderer = ({
 }: ApiDataRendererPropsType) => {
   const parsedContentData: ApiData = JSON.parse(contentData)
 
-  if (parsedContentData.length >= 4) {
+  if (parsedContentData.length >= 4 && !isStoryBrief) {
     const newObject: ApiDataBlock = {
       id: 'inserted-object-' + Date.now(),
       type: ApiDataBlockType.GptAd,
