@@ -41,6 +41,11 @@ interface ApiDataBlockBase {
   textAlign?: 'center' | 'left'
 }
 
+interface GptAd extends ApiDataBlockBase {
+  type: ApiDataBlockType.GptAd
+  content: string
+}
+
 export type ApiDataBlock =
   | ApiDataUnorderListBlock
   | ApiDataInfoBox
