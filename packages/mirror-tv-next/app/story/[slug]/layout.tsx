@@ -41,13 +41,34 @@ export default function StoryPageLayout({
         dangerouslySetInnerHTML={{
           __html: `
             (function() {
+              // 載入主要的 PopIn 腳本
               var pa = document.createElement('script')
               pa.type = 'text/javascript'
               pa.charset = 'utf-8'
               pa.async = true
               pa.src = window.location.protocol + '//api.popin.cc/searchbox/mnews.js'
+              pa.onload = function() {
+                // 初始化 PopIn 推薦廣告
+                if (window.popin && window.popin.init) {
+                  window.popin.init()
+                }
+              }
               var s = document.getElementsByTagName('script')[0]
               s.parentNode.insertBefore(pa, s)
+              
+              // 載入 PopIn 推薦廣告腳本
+              var paRecommend = document.createElement('script')
+              paRecommend.type = 'text/javascript'
+              paRecommend.charset = 'utf-8'
+              paRecommend.async = true
+              paRecommend.src = window.location.protocol + '//api.popin.cc/recommend/mnews.js'
+              paRecommend.onload = function() {
+                // 初始化推薦廣告
+                if (window.popinRecommend && window.popinRecommend.init) {
+                  window.popinRecommend.init()
+                }
+              }
+              s.parentNode.insertBefore(paRecommend, s)
             })()
           `,
         }}
