@@ -18,12 +18,14 @@
     padding: 0;
     background-color: #f4f5f6;
   }
+
   .asideWrapper {
     margin: 0 auto;
     @include media-breakpoint-up(md) {
       display: flex;
       flex: 1;
       flex-direction: column;
+      padding-top: 24px;
     }
   }
 }
