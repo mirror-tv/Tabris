@@ -16,6 +16,13 @@
   }
 }
 
+.ads {
+  margin-top: 45px;
+  @include media-breakpoint-up(md) {
+    margin-top: 28px;
+  }
+}
+
 .story {
   min-height: calc(100dvh - 50px); // header height
   padding: 86px 16px 48px;
