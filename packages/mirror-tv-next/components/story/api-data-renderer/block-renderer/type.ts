@@ -28,6 +28,7 @@ enum ApiDataBlockType {
   Youtube = 'youtube',
   QuoteBy = 'quoteby',
   Image = 'image',
+  GptAd = 'gpt-ad',
 }
 type OrderListData = string[][]
 
@@ -54,6 +55,7 @@ export type ApiDataBlock =
   | ApiDataVideo
   | ApiDataYoutube
   | ApiImageBlock
+  | GptAd
 export type ApiData = ApiDataBlock[]
 
 export { type ApiDataBlockBase, ApiDataBlockType, type OrderListData }

@@ -140,9 +140,7 @@ export async function generateMetadata({
   const [storyData] = fetchStoryBySlugResponse.allPosts
 
   if (!storyData) {
-    return {
-      title: '頁面未找到',
-    }
+    return notFound()
   }
 
   const title = storyData.title
