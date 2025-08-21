@@ -16,9 +16,6 @@
     flex-direction: column;
     width: 384px;
     padding: 0;
-    margin-top: 60px;
-  }
-  @include media-breakpoint-up(xxl) {
     background-color: #f4f5f6;
   }
   .asideWrapper {
@@ -26,8 +23,6 @@
     @include media-breakpoint-up(md) {
       display: flex;
       flex: 1;
-    }
-    @include media-breakpoint-up(xxl) {
       flex-direction: column;
     }
   }
@@ -37,7 +32,7 @@
   @include media-breakpoint-up(md) {
     margin: 48px 0;
   }
-  @include media-breakpoint-up(md) {
+  @include media-breakpoint-up(xl) {
     margin: 0;
     padding: 0 24px;
   }
