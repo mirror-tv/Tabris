@@ -2,6 +2,7 @@
 import UiHeadingBordered from '../shared/ui-heading-bordered'
 import { SinglePost } from '~/graphql/query/story'
 import dynamic from 'next/dynamic'
+import { useEffect, useRef } from 'react'
 
 import styles from './_styles/article-related-posts.module.scss'
 import useWindowDimensions from '~/hooks/use-window-dimensions'
@@ -21,6 +22,25 @@ const ArticleRelatedPosts = ({
   shouldShowAds: boolean
 }) => {
   const { width } = useWindowDimensions()
+  const popinRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (popinRef.current && shouldShowAds) {
+      const initPopinAd = () => {
+        if (window.popin && window.popin.init) {
+          window.popin.init()
+        }
+        if (window.popinRecommend && window.popinRecommend.init) {
+          window.popinRecommend.init()
+        }
+        if (window.popin && window.popin.loadRecommend) {
+          window.popin.loadRecommend('_popIn_recommend_word')
+        }
+      }
+
+      setTimeout(initPopinAd, 1000)
+    }
+  }, [shouldShowAds])
 
   return (
     <div className={styles.container}>
@@ -34,7 +54,7 @@ const ArticleRelatedPosts = ({
       {shouldShowAds && (
         <>
           <LazyRenderWrapper>
-            <div id="_popIn_recommend_word" />
+            <div id="_popIn_recommend_word" ref={popinRef} />
             <div
               className="avivid_textad avivid_ad_one"
               data-web_id="mnewstext"
