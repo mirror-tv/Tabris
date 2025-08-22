@@ -6,6 +6,7 @@ import { useEffect, useRef } from 'react'
 
 import styles from './_styles/article-related-posts.module.scss'
 import useWindowDimensions from '~/hooks/use-window-dimensions'
+import Script from 'next/script'
 
 const LazyRenderWrapper = dynamic(
   () => import('~/components/shared/lazy-render-wrapper'),
@@ -22,27 +23,39 @@ const ArticleRelatedPosts = ({
   shouldShowAds: boolean
 }) => {
   const { width } = useWindowDimensions()
-  const popinRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (popinRef.current && shouldShowAds) {
-      console.log('PopIn 廣告區域已載入')
-    }
-  }, [shouldShowAds])
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} list-wrapper post__related`}>
       <UiHeadingBordered title={'更多新聞'} className={styles.listTitle} />
       <ul>
         {relatedPosts.map((item, idx) => (
-          <li key={item.slug + idx}>{item.name}</li>
+          <li key={item.slug + idx} className="ga-article-related">
+            {item.name}
+          </li>
         ))}
       </ul>
 
       {shouldShowAds && (
         <>
+          <div id="_popIn_recommend_word" />
+          <Script
+            id="popinAd"
+            strategy="beforeInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
+            (function() {
+              var pa = document.createElement('script')
+              pa.type = 'text/javascript'
+              pa.charset = 'utf-8'
+              pa.async = true
+              pa.src = window.location.protocol + '//api.popin.cc/searchbox/mnews.js'
+              var s = document.getElementsByTagName('script')[0]
+              s.parentNode.insertBefore(pa, s)
+            })()
+          `,
+            }}
+          />
           <LazyRenderWrapper>
-            <div id="_popIn_recommend_word" ref={popinRef} />
             <div
               className="avivid_textad avivid_ad_one"
               data-web_id="mnewstext"

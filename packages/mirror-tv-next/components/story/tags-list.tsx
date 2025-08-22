@@ -13,7 +13,7 @@ const TagsList: React.FC<TagsListProps> = ({ tags }) => {
       {tags.map((tag) => (
         <Link
           href={`/tag/${tag.name}`}
-          className={styles.tag}
+          className={`${styles.tag} post__tag`}
           target="_blank"
           rel="noreferrer noopener"
           key={tag.name}

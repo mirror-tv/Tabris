@@ -37,7 +37,7 @@ const Aside: React.FC = () => {
           listTitle="即時新聞"
           page={asideCategory}
           listData={formattedLatestPosts}
-          className={`aside__list-latest ${styles.asideItem}`}
+          className={`aside__list-latest ${styles.asideItem} list-wrapper`}
         />
         <div className={styles.microId}>
           <MicroAd

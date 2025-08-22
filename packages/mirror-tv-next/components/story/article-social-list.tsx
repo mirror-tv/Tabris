@@ -4,7 +4,7 @@ import { socialMediaConfig, socialMediaOrder } from '~/constants/social-medial'
 
 const ArticleSocialList = () => {
   return (
-    <div className={styles.followUsWrapper}>
+    <div className={`${styles.followUsWrapper} social-list__list`}>
       <p className={styles.followUs}>追蹤我們</p>
       <br className={styles.desktopOnly} />
       <ul className={styles.socialMediaList}>

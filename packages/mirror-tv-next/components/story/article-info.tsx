@@ -69,7 +69,7 @@ export default function ArticleInfo({
           </li>
         </ul>
       )}
-      <div className={styles.share}>
+      <div className={`${styles.share} post__social-media-share`}>
         <ShareButton type="facebook" />
         <ShareButton type="line" />
         <ShareButton type="twitter" />
