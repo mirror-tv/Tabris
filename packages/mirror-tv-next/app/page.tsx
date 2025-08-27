@@ -6,7 +6,7 @@ import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
 import GptPopup from '~/components/ads/gpt/gpt-popup'
 import {
   GLOBAL_CACHE_SETTING,
-  HOMEPAGE_SON_URL,
+  HOMEPAGE_JSON_URL,
   ENV,
 } from '~/constants/environment-variables'
 import PopularPostsList from '~/components/homepage/popular-posts-list'
@@ -35,7 +35,7 @@ export default async function Home() {
   let IS_SHOW_RECALL_2025 = false
 
   try {
-    homepageJsonData = await fetch(HOMEPAGE_SON_URL, {
+    homepageJsonData = await fetch(HOMEPAGE_JSON_URL, {
       next: { revalidate: GLOBAL_CACHE_SETTING },
     }).then((res) => res.json())
 
