@@ -7,7 +7,6 @@ import GptPopup from '~/components/ads/gpt/gpt-popup'
 import {
   GLOBAL_CACHE_SETTING,
   HOMEPAGE_JSON_URL,
-  ENV,
 } from '~/constants/environment-variables'
 import PopularPostsList from '~/components/homepage/popular-posts-list'
 import TopicList from '~/components/homepage/topic-list'
@@ -15,8 +14,6 @@ import LiveCamList from '~/components/homepage/live-cam-list'
 import ShowList from '~/components/homepage/show-list-init'
 import LatestAndEditorchoicesWithLive from '~/components/homepage/latest-and-editor-choices-with-live'
 import errors from '@twreporter/errors'
-import RecallIframe from '~/components/homepage/recall-iframe'
-import { RECALL_DISPLAY_JSON_URL } from '~/constants/constant'
 
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 const PromotionVideoList = dynamic(
@@ -32,24 +29,10 @@ export default async function Home() {
     allPromotionVideos: [],
   }
 
-  let IS_SHOW_RECALL_2025 = false
-
   try {
     homepageJsonData = await fetch(HOMEPAGE_JSON_URL, {
       next: { revalidate: GLOBAL_CACHE_SETTING },
     }).then((res) => res.json())
-
-    const recallDisplayJsonData = await fetch(RECALL_DISPLAY_JSON_URL, {
-      next: { revalidate: GLOBAL_CACHE_SETTING },
-    })
-      .then((res) => res.json())
-      .catch((err) => {
-        console.error(err)
-      })
-    IS_SHOW_RECALL_2025 =
-      recallDisplayJsonData?.[
-        ENV === 'local' ? `display_iframe_dev` : `display_iframe_${ENV}`
-      ] === 'TRUE'
   } catch (err) {
     const annotatingError = errors.helpers.wrap(
       err,
@@ -84,7 +67,6 @@ export default async function Home() {
       <div className={styles.mobFlashNewsWrapper}>
         <MainFlashNews />
       </div>
-      {IS_SHOW_RECALL_2025 && <RecallIframe />}
       <LatestAndEditorchoicesWithLive
         latestListTitle="即時新聞"
         liveData={homepageJsonData.allVideos?.[0]}

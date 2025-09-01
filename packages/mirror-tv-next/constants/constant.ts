@@ -38,9 +38,6 @@ const CONTACT_MAPPING = {
   vocals: '主播',
 }
 
-const RECALL_DISPLAY_JSON_URL =
-  'https://storage.googleapis.com/whoareyou-gcs.readr.tw/json/202507_recall_homepage_display.json'
-
 export {
   HEADER_BOTTOM_LINKS,
   META_DESCRIPTION,
@@ -50,6 +47,5 @@ export {
   HOMEPAGE_POSTS_PAGE_SIZE,
   SALES_LABEL_NAME,
   CONTACT_MAPPING,
-  RECALL_DISPLAY_JSON_URL,
   META_SITE_URL,
 }
