@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 const fetchFeatureCategories = gql`
-  query {
+  query fetchFeatureCategories {
     allCategories(
       where: { isFeatured: true }
       sortBy: [sortOrder_ASC, id_DESC]

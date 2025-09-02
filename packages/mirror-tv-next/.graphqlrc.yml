@@ -1,0 +1,3 @@
+# For VSCode extension (https://marketplace.visualstudio.com/items?itemName=GraphQL.vscode-graphql&ssr=false#overview)
+schema: './introspection.json'
+documents: './graphql/**/*.{ts,tsx}'
