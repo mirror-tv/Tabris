@@ -2,7 +2,6 @@
 import UiHeadingBordered from '../shared/ui-heading-bordered'
 import { SinglePost } from '~/graphql/query/story'
 import dynamic from 'next/dynamic'
-import { useEffect, useRef } from 'react'
 
 import styles from './_styles/article-related-posts.module.scss'
 import useWindowDimensions from '~/hooks/use-window-dimensions'

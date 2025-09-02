@@ -5,7 +5,6 @@ import { FormattedPostCard, formatArticleCard } from '~/utils'
 import { HOMEPAGE_POSTS_PAGE_SIZE } from '~/constants/constant'
 import UiPostCardHomepage from './ui-post-card-hompage'
 import { getLatestPostsAndEditorChoices } from '~/app/_actions/homepage/latest-posts-and-editor-choices'
-import { useState } from 'react'
 
 type LatestPostListHandlerProps = {
   initPosts: FormattedPostCard[]
