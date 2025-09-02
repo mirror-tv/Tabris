@@ -286,7 +286,7 @@ async function getLatestPostsAndEditorChoices({
             ...post,
             heroVideo: post.heroVideo
               ? {
-                  coverPhoto: post.heroVideo.coverPhoto || {
+                  coverPhoto: post.heroVideo?.coverPhoto || {
                     urlOriginal: '',
                     urlDesktopSized: '',
                     urlTabletSized: '',
@@ -340,7 +340,7 @@ async function getLatestPostsAndEditorChoices({
         ...post,
         heroVideo: post.heroVideo
           ? {
-              coverPhoto: post.heroVideo.coverPhoto || {
+              coverPhoto: post.heroVideo?.coverPhoto || {
                 urlOriginal: '',
                 urlDesktopSized: '',
                 urlTabletSized: '',
