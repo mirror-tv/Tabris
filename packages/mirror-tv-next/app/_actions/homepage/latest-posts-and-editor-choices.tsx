@@ -12,6 +12,7 @@ import {
 } from '~/graphql/query/editor-choices'
 
 import { createDataFetchingChain } from '~/utils/fetch-function'
+import { ENV } from '~/constants/environment-variables'
 
 const HeroImageSchema = z.object({
   urlDesktopSized: z.string().optional(),
@@ -50,7 +51,7 @@ const StaticLatestPostSchema = z.object({
   categories: z
     .array(
       z.object({
-        slug: z.string(),
+        slug: z.string().optional(),
         name: z.string(),
       })
     )
@@ -128,13 +129,21 @@ type GetLatestPostsServerActionType = {
 
 async function fetchLatestPostsAndEditorChoices({ page }: { page: number }) {
   const resp = await fetch(
-    `https://storage.googleapis.com/static-mnews-tw-dev/files/json/latest_posts0${page}.json`
+    `https://storage.googleapis.com/static-mnews-tw-${ENV}/files/json/latest_posts0${page}.json`
   )
   if (!resp.ok) {
     throw new Error(`HTTP error! status: ${resp.status}`)
   }
   const jsonData = await resp.json()
-  return StaticHomepageResponseSchema.parse(jsonData)
+  const result = StaticHomepageResponseSchema.safeParse(jsonData)
+
+  if (!result.success) {
+    throw new Error(
+      `Zod validation failed: ${JSON.stringify(result.error.issues)}`
+    )
+  }
+
+  return result.data
 }
 
 async function getLatestPostsAndEditorChoices({
@@ -183,7 +192,7 @@ async function getLatestPostsAndEditorChoices({
       source: 'json' | 'graphql'
     }>(
       errorLogger,
-      { latest: [], choices: [], source: 'json' as const },
+      { latest: [], choices: [], source: 'graphql' as const },
       async () => {
         const validatedData = await fetchLatestPostsAndEditorChoices({
           page: jsonPage,
@@ -226,7 +235,10 @@ async function getLatestPostsAndEditorChoices({
               ? { urlOriginal: post.heroImage }
               : post.heroImage,
           publishTime: new Date(post.publishTime),
-          categories: post.categories || [],
+          categories: (post.categories || []).map((category) => ({
+            slug: category.slug || category.name?.toLowerCase() || 'unknown',
+            name: category.name,
+          })),
           heroVideo: {
             coverPhoto: post.heroVideo?.coverPhoto || {
               urlOriginal: '',
@@ -270,12 +282,28 @@ async function getLatestPostsAndEditorChoices({
           }),
         ])
 
-        const validatedEditorChoices = GraphQLEditorChoicesResponseSchema.parse(
-          editorChoicesResult.data
-        )
-        const validatedLatestPosts = GraphQLLatestPostsResponseSchema.parse(
-          latestPostsResult.data
-        )
+        const editorChoicesValidation =
+          GraphQLEditorChoicesResponseSchema.safeParse(editorChoicesResult.data)
+        const latestPostsValidation =
+          GraphQLLatestPostsResponseSchema.safeParse(latestPostsResult.data)
+
+        if (!editorChoicesValidation.success) {
+          throw new Error(
+            `GraphQL EditorChoices validation failed: ${JSON.stringify(
+              editorChoicesValidation.error.issues
+            )}`
+          )
+        }
+        if (!latestPostsValidation.success) {
+          throw new Error(
+            `GraphQL LatestPosts validation failed: ${JSON.stringify(
+              latestPostsValidation.error.issues
+            )}`
+          )
+        }
+
+        const validatedEditorChoices = editorChoicesValidation.data
+        const validatedLatestPosts = latestPostsValidation.data
 
         // Transform GraphQL data to ensure heroImage is never null
         const transformedGraphQLChoices =
@@ -342,9 +370,18 @@ async function getLatestPostsAndEditorChoices({
       },
     })
 
-    const validatedLatestPosts = GraphQLLatestPostsResponseSchema.parse(
-      latestPostsResult.data
-    )
+    const latestPostsValidationResult =
+      GraphQLLatestPostsResponseSchema.safeParse(latestPostsResult.data)
+
+    if (!latestPostsValidationResult.success) {
+      throw new Error(
+        `GraphQL LatestPosts validation failed: ${JSON.stringify(
+          latestPostsValidationResult.error.issues
+        )}`
+      )
+    }
+
+    const validatedLatestPosts = latestPostsValidationResult.data
 
     // Transform GraphQL data to ensure heroVideo is never null
     const transformedGraphQLPosts = validatedLatestPosts.allPosts.map(

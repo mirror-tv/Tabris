@@ -71,8 +71,6 @@ export default async function LatestAndEditorChoicesWithLive({
 
   let formattedLatestPosts = latestPosts?.map((post) => formatArticleCard(post))
 
-  console.log('latestPosts', formattedLatestPosts.length, 'source', source)
-
   if (!salesPosts?.length) {
     initRenderedPosts = formattedLatestPosts
   } else {
