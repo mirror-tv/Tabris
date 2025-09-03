@@ -32,6 +32,7 @@ type FormatArticleCardInput = {
   images?: PostImage | null
   style?: string
   categories?: { name: string }[]
+  partner?: { name: string; slug: string }
   __typename?: string
 }
 
@@ -49,6 +50,7 @@ const formatArticleCard = (
     images: 'images' in post ? post.images : null,
     style: 'style' in post ? post.style : undefined,
     categories: 'categories' in post ? post.categories : undefined,
+    partner: 'partner' in post ? post.partner : undefined,
     __typename:
       '__typename' in post ? String(post['__typename'] ?? '') : undefined,
   }
@@ -66,7 +68,8 @@ const formatArticleCard = (
 
   return {
     href:
-      postFormatArticleCardInput.__typename === 'External'
+      postFormatArticleCardInput.__typename === 'External' ||
+      postFormatArticleCardInput.partner?.slug === 'external'
         ? `/external/${post.slug}`
         : `/story/${post.slug}`,
     slug: postFormatArticleCardInput.slug,

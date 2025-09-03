@@ -230,6 +230,7 @@ async function getLatestPostsAndEditorChoices({
           slug: post.slug,
           style: post.style,
           name: post.name,
+          partner: post.partner,
           heroImage:
             typeof post.heroImage === 'string'
               ? { urlOriginal: post.heroImage }
