@@ -24,12 +24,13 @@ const HeroImageSchema = z.object({
 const StaticEditorChoiceSchema = z.object({
   name: z.string(),
   slug: z.string(),
-  heroImage: HeroImageSchema.nullable(),
+  heroImage: z.union([z.string(), HeroImageSchema, z.null()]),
   heroVideo: z
     .object({
       coverPhoto: HeroImageSchema.nullable(),
     })
-    .nullable(),
+    .nullable()
+    .optional(),
   source: z.string(),
 })
 
@@ -193,14 +194,25 @@ async function getLatestPostsAndEditorChoices({
             choice: {
               name: choice.name,
               slug: choice.slug,
-              heroImage: choice.heroImage || {
-                urlOriginal: '',
-                urlDesktopSized: '',
-                urlTabletSized: '',
-                urlMobileSized: '',
-                urlTinySized: '',
+              heroImage:
+                typeof choice.heroImage === 'string'
+                  ? { urlOriginal: choice.heroImage }
+                  : choice.heroImage || {
+                      urlOriginal: '',
+                      urlDesktopSized: '',
+                      urlTabletSized: '',
+                      urlMobileSized: '',
+                      urlTinySized: '',
+                    },
+              heroVideo: choice.heroVideo || {
+                coverPhoto: {
+                  urlOriginal: '',
+                  urlDesktopSized: '',
+                  urlTabletSized: '',
+                  urlMobileSized: '',
+                  urlTinySized: '',
+                },
               },
-              heroVideo: choice.heroVideo,
             },
           })
         )
