@@ -1,0 +1,25 @@
+@import '/styles/theme/breakpoints';
+.updateTime {
+  font-size: 14px;
+  line-height: 22px;
+  color: #9b9b9b;
+  margin: 16px 0;
+  @include media-breakpoint-up(md) {
+    margin: 16px 0 24px;
+  }
+
+  &Title {
+    position: relative;
+    padding: 0 16px 0 0;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      bottom: 1px;
+      right: 6px;
+      width: 1px;
+      background-color: #9b9b9b;
+    }
+  }
+}

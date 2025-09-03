@@ -32,12 +32,12 @@ const Aside: React.FC = () => {
   return (
     <aside className={styles.aside}>
       <div className={styles.asideWrapper}>
-        <GPTAd pageKey={asideCategory} adKey="PC_R2" />
+        <GPTAd pageKey={asideCategory} adKey="PC_R1" />
         <UiListPostsAside
           listTitle="即時新聞"
           page={asideCategory}
           listData={formattedLatestPosts}
-          className={`aside__list-latest ${styles.asideItem}`}
+          className={`aside__list-latest ${styles.asideItem} list-wrapper`}
         />
         <div className={styles.microId}>
           <MicroAd
@@ -47,7 +47,7 @@ const Aside: React.FC = () => {
             condition="!isTablet"
           />
         </div>
-        <GPTAd pageKey={asideCategory} adKey="PC_R1" />
+        <GPTAd pageKey={asideCategory} adKey="PC_R2" />
         {!!formattedPopularPosts.length && (
           <UiListPostsAside
             listTitle="熱門新聞"
@@ -56,6 +56,7 @@ const Aside: React.FC = () => {
             className={`aside__list-popular ${styles.asideItem}`}
           />
         )}
+        <GPTAd pageKey={asideCategory} adKey="PC_R3" />
       </div>
     </aside>
   )

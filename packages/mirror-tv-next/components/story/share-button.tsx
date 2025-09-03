@@ -30,6 +30,7 @@ const ShareButton = ({ type, url, className }: ShareButtonProps) => {
           icon: '/images/social-media/fb-round.svg',
           alt: 'share to facebook',
           isLink: true,
+          className: 'ga-facebook-share',
         }
       case 'line':
         return {
@@ -39,6 +40,7 @@ const ShareButton = ({ type, url, className }: ShareButtonProps) => {
           icon: '/images/social-media/line-word.svg',
           alt: 'share to line',
           isLink: true,
+          className: 'ga-line-share',
         }
       case 'twitter':
         return {
@@ -48,6 +50,7 @@ const ShareButton = ({ type, url, className }: ShareButtonProps) => {
           icon: '/images/social-media/twitter-round.svg',
           alt: 'share to twitter',
           isLink: true,
+          className: 'ga-twitter-share',
         }
       case 'copy':
         return {
@@ -94,23 +97,27 @@ const ShareButton = ({ type, url, className }: ShareButtonProps) => {
 
   if (config.isLink) {
     return (
-      <a
-        href={config.href}
-        className={`${styles.share} ${styles[type]} ${className || ''}`}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <span>
-          <img src={config.icon} alt={config.alt} loading="lazy" />
-        </span>
-      </a>
+      <div className={config.className}>
+        <a
+          href={config.href}
+          className={`${styles.share} ${styles[type]} ${className || ''}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span>
+            <img src={config.icon} alt={config.alt} loading="lazy" />
+          </span>
+        </a>
+      </div>
     )
   }
 
   return (
     <button
       type="button"
-      className={`${styles.share} ${styles[type]} ${className || ''}`}
+      className={`${styles.share} ${styles[type]} ${
+        className || ''
+      } ga-copy-share`}
       onClick={handleCopyClick}
     >
       <span>

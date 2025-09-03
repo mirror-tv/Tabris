@@ -1,6 +1,6 @@
 import { type ApiDataBlockBase, ApiDataBlockType } from './type'
 import styles from './_styles/video-block.module.scss'
-import YoutubeBlock from './youtube-block'
+import YoutubeBlock, { type ApiDataYoutube } from './youtube-block'
 import { extractYoutubeId } from '../../../../utils'
 
 type VideoContent = {
@@ -21,7 +21,6 @@ export interface ApiDataVideo extends ApiDataBlockBase {
 const VideoBlock = ({ data }: { data: ApiDataVideo }) => {
   const videoContent = data.content[0]
 
-  // 如果沒有 video 內容，不渲染
   if (!videoContent || !videoContent.url) {
     console.warn('Video block missing content or URL:', data)
     return null
@@ -43,7 +42,7 @@ const VideoBlock = ({ data }: { data: ApiDataVideo }) => {
     ],
     alignment: data.alignment,
     styles: data.style,
-  } as any
+  } as ApiDataYoutube
   return (
     <div className={styles.videoContainer}>
       {videoContent.youtubeUrl ? (
