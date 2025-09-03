@@ -21,25 +21,25 @@ const CompassFit: React.FC = () => {
     const script = document.createElement('script')
 
     if (isMobile) {
-      div.id = 'compass-fit-4307122'
+      div.id = 'compass-fit-4333665'
       script.innerHTML = `
         (function(){
         var _lgy_lw = document.createElement("script");
         _lgy_lw.type = "text/javascript";
         _lgy_lw.charset = "UTF-8";
         _lgy_lw.async = true;
-        _lgy_lw.src= "https://nt.compass-fit.jp/lift_widget.js?adspot_id=4307122"; var _lgy_lw_0 = document.getElementsByTagName("script")[0]; _lgy_lw_0.parentNode.insertBefore(_lgy_lw, _lgy_lw_0);
+        _lgy_lw.src= "https://nt.compass-fit.jp/lift_widget.js?adspot_id=4333665"; var _lgy_lw_0 = document.getElementsByTagName("script")[0]; _lgy_lw_0.parentNode.insertBefore(_lgy_lw, _lgy_lw_0);
         })();
       `
     } else {
-      div.id = 'compass-fit-4306870'
+      div.id = 'compass-fit-4333664'
       script.innerHTML = `
         (function(){
           var _lgy_lw = document.createElement("script");
           _lgy_lw.type = "text/javascript";
           _lgy_lw.charset = "UTF-8";
           _lgy_lw.async = true;
-          _lgy_lw.src= "https://nt.compass-fit.jp/lift_widget.js?adspot_id=4306870"; var _lgy_lw_0 = document.getElementsByTagName("script")[0]; _lgy_lw_0.parentNode.insertBefore(_lgy_lw, _lgy_lw_0);
+          _lgy_lw.src= "https://nt.compass-fit.jp/lift_widget.js?adspot_id=4333664"; var _lgy_lw_0 = document.getElementsByTagName("script")[0]; _lgy_lw_0.parentNode.insertBefore(_lgy_lw, _lgy_lw_0);
           })();
       `
     }

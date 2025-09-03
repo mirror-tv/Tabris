@@ -1,6 +1,7 @@
 import { formateHeroImage } from './image-handler'
 import type { PostImage } from '~/utils/image-handler'
 import { type HeroImage } from '~/types/common'
+import type { ApiData } from '~/types/api-data'
 
 export type FormattedPostCard = {
   href: string
@@ -98,4 +99,25 @@ const combineAndSortedByPublishedTime = (list: FormatArticleCardInput[]) => {
   return uniqueList
 }
 
-export { formatArticleCard, combineAndSortedByPublishedTime }
+function doesHaveBrief(brief: ApiData[] | string = '') {
+  if (typeof brief === 'string') {
+    try {
+      const parsed = JSON.parse(brief)
+      brief = Array.isArray(parsed) ? parsed : []
+    } catch {
+      return false
+    }
+  }
+
+  const validateArray = brief?.map((briefContent) => {
+    return (
+      briefContent?.content?.length > 1 || briefContent?.content[0]?.length > 0
+    )
+  })
+
+  return validateArray.find((item) => {
+    return item
+  })
+}
+
+export { formatArticleCard, combineAndSortedByPublishedTime, doesHaveBrief }

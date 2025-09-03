@@ -15,7 +15,9 @@ export interface SinglePost {
   title: string
   style: string
   publishTime: string
+  updatedAt: string
   contentApiData: string
+  briefApiData: string
   relatedPosts: SingleRelatedPost[]
   heroVideo: {
     youtubeUrl: string
@@ -41,6 +43,9 @@ export interface SinglePost {
   engineers: SinglePersonInfo[]
   vocals: SinglePersonInfo[]
   otherbyline: string
+  tags: {
+    name: string
+  }[]
   __typename: string
 }
 
@@ -51,6 +56,7 @@ const fetchStoryBySlug = gql`
       title: name
       style
       publishTime
+      updatedAt
       heroVideo {
         youtubeUrl
       }
@@ -64,6 +70,7 @@ const fetchStoryBySlug = gql`
         urlTinySized
       }
       heroCaption
+      briefApiData
       contentApiData
       categories {
         slug
@@ -96,6 +103,9 @@ const fetchStoryBySlug = gql`
       otherbyline
       relatedPosts(where: { state: published }) {
         slug
+        name
+      }
+      tags {
         name
       }
     }

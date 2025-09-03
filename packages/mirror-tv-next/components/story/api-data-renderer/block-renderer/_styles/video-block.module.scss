@@ -1,3 +1,16 @@
+@import '/styles/theme/breakpoints';
 .videoContainer {
-    margin-top: 30px;
+  width: 100%;
+  margin: 16px 0;
+
+  video {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    border-radius: 4px;
+
+    @include media-breakpoint-up(md) {
+      border-radius: 2px;
+    }
+  }
 }

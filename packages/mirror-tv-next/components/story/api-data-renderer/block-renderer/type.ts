@@ -10,6 +10,7 @@ import { type ApiDataUnorderListBlock } from './unorder-list-block'
 import { type ApiDataUnstyled } from './unstyled-block'
 import { type ApiDataVideo } from './video-block'
 import { type ApiDataYoutube } from './youtube-block'
+import { type ApiImageBlock } from './image-block'
 
 enum ApiDataBlockType {
   Unstyled = 'unstyled',
@@ -26,6 +27,8 @@ enum ApiDataBlockType {
   EmbedCode = 'embeddedcode',
   Youtube = 'youtube',
   QuoteBy = 'quoteby',
+  Image = 'image',
+  GptAd = 'gpt-ad',
 }
 type OrderListData = string[][]
 
@@ -36,6 +39,11 @@ interface ApiDataBlockBase {
   content: unknown[] | string
   alignment: 'center' | 'left' | 'right'
   textAlign?: 'center' | 'left'
+}
+
+interface GptAd extends ApiDataBlockBase {
+  type: ApiDataBlockType.GptAd
+  content: string
 }
 
 export type ApiDataBlock =
@@ -51,6 +59,8 @@ export type ApiDataBlock =
   | ApiDataSlideshow
   | ApiDataVideo
   | ApiDataYoutube
+  | ApiImageBlock
+  | GptAd
 export type ApiData = ApiDataBlock[]
 
 export { type ApiDataBlockBase, ApiDataBlockType, type OrderListData }

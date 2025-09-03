@@ -6,10 +6,16 @@ export interface ApiDataUnstyled extends ApiDataBlockBase {
   content: string
   alignment: 'center'
 }
-const UnstyledBlock = ({ data }: { data: ApiDataUnstyled }) => {
+const UnstyledBlock = ({
+  data,
+  className,
+}: {
+  data: ApiDataUnstyled
+  className?: string
+}) => {
   return (
     <p
-      className={styles.textBlock}
+      className={`${styles.textBlock} ${className}`}
       dangerouslySetInnerHTML={{ __html: data.content }}
     />
   )

@@ -8,7 +8,11 @@ import {
   FetchError,
 } from './common'
 import { formateDateAtTaipei } from './date-handler'
-import type { FormattedPostCard, FormattedPostCardJson } from './post-handler'
+import {
+  FormattedPostCard,
+  FormattedPostCardJson,
+  doesHaveBrief,
+} from './post-handler'
 import { formatArticleCard } from './post-handler'
 import { formateYoutubeListRes, fetchYoutubeData } from './youtube'
 
@@ -24,5 +28,6 @@ export {
   formateYoutubeListRes,
   fetchYoutubeData,
   FetchError,
+  doesHaveBrief,
 }
 export type { FormattedPostCard, PostImage, FormattedPostCardJson }
