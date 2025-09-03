@@ -77,7 +77,11 @@ export default function EditorChoicesSwiper({
                 >
                   <a
                     className={styles.imageContainer}
-                    href={`/story/${choice.slug}`}
+                    href={
+                      choice.source === 'externalChoice'
+                        ? `/external/${choice.slug}`
+                        : `/story/${choice.slug}`
+                    }
                     target="_blank"
                     rel="noreferrer noopener"
                   >
@@ -97,7 +101,11 @@ export default function EditorChoicesSwiper({
                   </a>
                   <a
                     className={styles.nameWrapper}
-                    href={`/story/${choice.slug}`}
+                    href={
+                      choice.source === 'externalChoice'
+                        ? `/external/${choice.slug}`
+                        : `/story/${choice.slug}`
+                    }
                     target="_blank"
                     rel="noreferrer noopener"
                   >

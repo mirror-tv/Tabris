@@ -203,6 +203,7 @@ async function getLatestPostsAndEditorChoices({
             choice: {
               name: choice.name,
               slug: choice.slug,
+              source: choice.source,
               heroImage:
                 typeof choice.heroImage === 'string'
                   ? { urlOriginal: choice.heroImage }
@@ -230,6 +231,7 @@ async function getLatestPostsAndEditorChoices({
           slug: post.slug,
           style: post.style,
           name: post.name,
+          partner: post.partner,
           heroImage:
             typeof post.heroImage === 'string'
               ? { urlOriginal: post.heroImage }
