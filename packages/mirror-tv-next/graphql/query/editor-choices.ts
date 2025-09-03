@@ -5,6 +5,7 @@ export type EditorChoices = {
   choice: {
     name: string
     slug: string
+    source?: string
     heroImage: HeroImage
     heroVideo: { coverPhoto: HeroImage | null } | null
   }
