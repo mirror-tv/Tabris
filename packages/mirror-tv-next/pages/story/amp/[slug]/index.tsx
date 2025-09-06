@@ -63,6 +63,18 @@ const HeroImageAndVideo = styled.section`
   }
 `
 
+const BriefWrapper = styled.section`
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.8;
+  color: #014db8;
+  text-align: justify;
+  a {
+    color: #014db8;
+    text-decoration: none;
+  }
+`
+
 export default function AmpPage({
   storyData,
   popularPostsList = [],
@@ -87,6 +99,7 @@ export default function AmpPage({
     style = 'article',
     heroVideo = { youtubeUrl: '' },
     contentApiData,
+    briefApiData,
   } = storyData
   const heroImgSrc =
     getHeroImageOfAmp(formateHeroImage(heroImage)) ||
@@ -124,6 +137,13 @@ export default function AmpPage({
           vocals={vocals}
           otherbyline={otherbyline}
         />
+        <BriefWrapper>
+          <AmpApiDataRenderer
+            contentData={briefApiData}
+            isStoryBrief={true}
+            currentUrl={`/story/amp/${slug}`}
+          />
+        </BriefWrapper>
         <AmpApiDataRenderer
           contentData={contentApiData}
           isStoryBrief={false}

@@ -45,7 +45,6 @@ const AmpApiDataRenderer = ({
     }
     parsedContentData.splice(4, 0, newObject)
   }
-  console.log('parsedContentData', parsedContentData)
 
   return (
     <ArticleWrapper>
