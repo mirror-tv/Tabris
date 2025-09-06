@@ -13,17 +13,33 @@ export interface ApiDataYoutube extends ApiDataBlockBase {
   styles: Record<string, string>
 }
 
-const YoutubeBlock = ({ data }: { data: ApiDataYoutube }) => {
+const YoutubeBlock = ({
+  data,
+  isAmp,
+}: {
+  data: ApiDataYoutube
+  isAmp?: boolean
+}) => {
   const youtubeData = data.content[0]
   const youtubeId = youtubeData.id
   const youtubeDescription = youtubeData.description
   return (
     <div className={styles.youtubeContainer}>
-      <iframe
-        src={`https://www.youtube.com/embed/${youtubeId}?si=${youtubeDescription}`}
-        title={youtubeDescription}
-        className={styles.youtubeIframe}
-      />
+      {isAmp ? (
+        <amp-youtube
+          data-videoid={youtubeId}
+          width="480"
+          height="270"
+          layout="responsive"
+          className={styles.youtubeIframe}
+        ></amp-youtube>
+      ) : (
+        <iframe
+          src={`https://www.youtube.com/embed/${youtubeId}?si=${youtubeDescription}`}
+          title={youtubeDescription}
+          className={styles.youtubeIframe}
+        />
+      )}
     </div>
   )
 }

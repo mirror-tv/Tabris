@@ -25,6 +25,7 @@ import { PostCardItem } from '~/graphql/query/posts'
 import RelatedPostList from '~/components/story/amp/related-post-list'
 import { getLatestPostsFunction } from '~/utils/fetch-function'
 import HeroInfo from '~/components/story/amp/hero-info'
+import AmpApiDataRenderer from '~/components/story/amp/amp-renderer'
 
 export const config = { amp: true }
 
@@ -66,6 +67,7 @@ export default function AmpPage({
   storyData,
   popularPostsList = [],
   latestPostsList,
+  slug,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   if (!storyData) return null
   const {
@@ -84,8 +86,11 @@ export default function AmpPage({
     otherbyline,
     style = 'article',
     heroVideo = { youtubeUrl: '' },
+    contentApiData,
   } = storyData
-  const heroImgSrc = getHeroImageOfAmp(formateHeroImage(heroImage))
+  const heroImgSrc =
+    getHeroImageOfAmp(formateHeroImage(heroImage)) ||
+    '/images/image-default.jpg'
   const heroVideoId = extractYoutubeId(heroVideo?.youtubeUrl) ?? ''
 
   return (
@@ -102,7 +107,7 @@ export default function AmpPage({
             ></amp-youtube>
           ) : (
             <ImageWrapper>
-              <amp-img src={heroImgSrc} layout="fill" />
+              <amp-img src={heroImgSrc} layout="fill" alt={heroCaption} />
             </ImageWrapper>
           )}
           {heroCaption && <HeroImhCaption>{heroCaption}</HeroImhCaption>}
@@ -118,6 +123,11 @@ export default function AmpPage({
           engineers={engineers}
           vocals={vocals}
           otherbyline={otherbyline}
+        />
+        <AmpApiDataRenderer
+          contentData={contentApiData}
+          isStoryBrief={false}
+          currentUrl={`/story/amp/${slug}`}
         />
       </Main>
       {!!relatedPosts.length && (
@@ -137,6 +147,7 @@ export const getServerSideProps: GetServerSideProps<{
   storyData: SinglePost | undefined
   popularPostsList: FormattedPostCardJson[]
   latestPostsList: FormattedPostCardJson[]
+  slug: string
 }> = async (context: GetServerSidePropsContext) => {
   const { params, res } = context
   if (ENV === 'prod') {
@@ -213,6 +224,7 @@ export const getServerSideProps: GetServerSideProps<{
       storyData,
       popularPostsList,
       latestPostsList,
+      slug,
     },
   }
 }

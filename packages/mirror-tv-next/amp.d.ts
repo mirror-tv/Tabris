@@ -32,5 +32,16 @@ declare namespace JSX {
       React.HTMLAttributes<HTMLElement>,
       HTMLElement
     >
+    'amp-iframe': {
+      width?: string | number
+      height?: string | number
+      src: string
+      layout?: string
+      sandbox?: string
+      frameborder?: string | number
+      title?: string
+      children?: React.ReactNode
+      [key: string]: any
+    }
   }
 }
