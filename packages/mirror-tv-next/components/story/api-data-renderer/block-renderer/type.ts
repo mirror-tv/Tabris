@@ -63,4 +63,101 @@ export type ApiDataBlock =
   | GptAd
 export type ApiData = ApiDataBlock[]
 
-export { type ApiDataBlockBase, ApiDataBlockType, type OrderListData }
+type ImageDataFormatNew = {
+  id: string
+  desc: string
+  name: string
+  resized: {
+    w480: string
+    w800: string
+    w1200: string
+    w1600: string
+    w2400: string
+    original: string
+    __typename: string
+  }
+  imageFile: {
+    url: string
+    width: number
+    height: number
+    __typename: string
+  }
+  __typename: string
+  resizedWebp: {
+    w480: string
+    w800: string
+    w1200: string
+    w1600: string
+    w2400: string
+    original: string
+    __typename: string
+  }
+  title: string
+  description: string
+  url: string
+  original: {
+    height: number
+    width: number
+    url: string
+  }
+  desktop: {
+    height: number
+    width: number
+    url: string
+  }
+  tablet: {
+    height: number
+    width: number
+    url: string
+  }
+  mobile: {
+    height: number
+    width: number
+    url: string
+  }
+  tiny: {
+    height: number
+    width: number
+    url: string
+  }
+}
+
+type ImageDataFormatOld = {
+  url: string
+  original: {
+    url: string
+    width: number
+    height: number
+  }
+  desktop: {
+    url: string
+    width: number
+    height: number
+  }
+  tablet: {
+    url: string
+    width: number
+    height: number
+  }
+  mobile: {
+    url: string
+    width: number
+    height: number
+  }
+  tiny: {
+    url: string
+    width: number
+    height: number
+  }
+  id: string
+  name: string
+  title: string
+}
+
+export {
+  type ApiDataBlockBase,
+  ApiDataBlockType,
+  type OrderListData,
+  type ImageDataFormatNew,
+  type ImageDataFormatOld,
+}

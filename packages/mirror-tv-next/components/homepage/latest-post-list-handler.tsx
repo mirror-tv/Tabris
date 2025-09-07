@@ -1,4 +1,5 @@
 'use client'
+import { useState } from 'react'
 import styles from './_styles/latest-post-list-handler.module.scss'
 import InfiniteScrollList from '@readr-media/react-infinite-scroll-list'
 import { FormattedPostCard, formatArticleCard } from '~/utils'
@@ -21,6 +22,7 @@ export default function LatestPostListHandler({
   filteredSlug,
   source,
 }: LatestPostListHandlerProps) {
+  const [jsonPosts, setJsonPosts] = useState<FormattedPostCard[]>(initPosts)
   const fetchMorePosts = async (page: number) => {
     if (source === 'json') {
       const postsResponse = await getLatestPostsAndEditorChoices({
@@ -36,7 +38,14 @@ export default function LatestPostListHandler({
         []
 
       if (additionalPosts.length > 0) {
-        return additionalPosts
+        const existingSlugs = new Set(jsonPosts.map((post) => post.slug))
+        const newPosts = additionalPosts.filter(
+          (post) => !existingSlugs.has(post.slug)
+        )
+        setJsonPosts((prevPosts) => {
+          return [...newPosts, ...prevPosts]
+        })
+        return newPosts
       }
 
       return []

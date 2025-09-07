@@ -18,7 +18,13 @@ export interface ApiDataVideo extends ApiDataBlockBase {
   style: Record<string, string>
 }
 
-const VideoBlock = ({ data }: { data: ApiDataVideo }) => {
+const VideoBlock = ({
+  data,
+  isAmp,
+}: {
+  data: ApiDataVideo
+  isAmp?: boolean
+}) => {
   const videoContent = data.content[0]
 
   if (!videoContent || !videoContent.url) {
@@ -46,7 +52,19 @@ const VideoBlock = ({ data }: { data: ApiDataVideo }) => {
   return (
     <div className={styles.videoContainer}>
       {videoContent.youtubeUrl ? (
-        <YoutubeBlock data={youtubeData} />
+        <YoutubeBlock isAmp={isAmp} data={youtubeData} />
+      ) : isAmp ? (
+        <amp-video
+          src={videoUrl}
+          width="640"
+          height="360"
+          layout="responsive"
+          {...({} as any)}
+        >
+          <source src={videoUrl} type="video/mp4" />
+          <source src={videoUrl} type="video/webm" />
+          <source src={videoUrl} type="video/ogg" />
+        </amp-video>
       ) : (
         <video
           preload="metadata"
