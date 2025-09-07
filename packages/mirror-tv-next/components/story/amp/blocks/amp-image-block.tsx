@@ -1,13 +1,11 @@
-import styles from './_styles/image-block.module.scss'
 import {
   ApiDataBlockType,
   type ApiDataBlockBase,
   type ImageDataFormatNew,
   type ImageDataFormatOld,
-} from './type'
-import ResponsiveImage from '~/components/shared/responsive-image'
+} from '../../api-data-renderer/block-renderer/type'
+import styled from 'styled-components'
 
-// 聯合類型
 type ImageData = ImageDataFormatNew | ImageDataFormatOld
 
 export interface ApiImageBlock extends ApiDataBlockBase {
@@ -15,6 +13,24 @@ export interface ApiImageBlock extends ApiDataBlockBase {
   content: ImageData[]
   alignment: 'center'
 }
+
+const ImageContainer = styled.div`
+  position: relative;
+  width: 100%;
+  height: calc((100vw - 32px) * 0.66);
+  overflow: hidden;
+  img {
+    object-fit: contain;
+  }
+`
+
+const ImageDescription = styled.figcaption`
+  font-size: 14px;
+  line-height: 1.5;
+  color: #666;
+  margin-top: 8px;
+  text-align: center;
+`
 
 const isFormatNew = (data: ImageData): data is ImageDataFormatNew => {
   return 'resized' in data
@@ -66,7 +82,7 @@ const normalizeImageData = (imageData: ImageData) => {
   }
 }
 
-const ImageBlock = ({ data }: { data: ApiImageBlock }) => {
+const AmpImageBlock = ({ data }: { data: ApiImageBlock }) => {
   const imageData = data.content[0]
 
   if (!imageData) {
@@ -75,25 +91,30 @@ const ImageBlock = ({ data }: { data: ApiImageBlock }) => {
   }
 
   const normalizedData = normalizeImageData(imageData)
+  const imageSrc =
+    ('w2400' in normalizedData.images ? normalizedData.images.w2400 : null) ||
+    ('w1600' in normalizedData.images ? normalizedData.images.w1600 : null) ||
+    ('w1200' in normalizedData.images ? normalizedData.images.w1200 : null) ||
+    ('w800' in normalizedData.images ? normalizedData.images.w800 : null) ||
+    ('w480' in normalizedData.images ? normalizedData.images.w480 : null) ||
+    normalizedData.images?.original ||
+    '/images/image-default.jpg'
 
   return (
     <caption>
-      <div className={styles.imageCaption}>
-        <ResponsiveImage
-          images={normalizedData.images}
+      <ImageContainer>
+        <amp-img
+          src={imageSrc}
           alt={normalizedData.alt}
-          rwd={{ mobile: '800px', tablet: '1200px', desktop: '1200px' }}
-          priority={false}
-          imgClassName={styles.image}
+          layout="fill"
+          className="amp-image-contain"
         />
-      </div>
+      </ImageContainer>
       {normalizedData.description && (
-        <figcaption className={styles.imageDescription}>
-          {normalizedData.description}
-        </figcaption>
+        <ImageDescription>{normalizedData.description}</ImageDescription>
       )}
     </caption>
   )
 }
 
-export default ImageBlock
+export default AmpImageBlock

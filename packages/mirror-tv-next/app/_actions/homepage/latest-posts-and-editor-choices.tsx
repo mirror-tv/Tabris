@@ -128,8 +128,11 @@ type GetLatestPostsServerActionType = {
 }
 
 async function fetchLatestPostsAndEditorChoices({ page }: { page: number }) {
+  const timestamp = Date.now()
   const resp = await fetch(
-    `https://storage.googleapis.com/static-mnews-tw-${ENV}/files/json/latest_posts0${page}.json`
+    `https://storage.googleapis.com/static-mnews-tw-${ENV}/files/json/latest_posts0${page}.json?timestamp=${
+      timestamp / 100
+    }`
   )
   if (!resp.ok) {
     throw new Error(`HTTP error! status: ${resp.status}`)

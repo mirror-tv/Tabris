@@ -60,7 +60,8 @@ export default function PostList({ title, list }: PostListProps) {
       <SectionTitle>{title}</SectionTitle>
       <ul className="amp-card-list">
         {list?.map((item) => {
-          const heroSrc = getHeroImageOfAmp(item.images)
+          const heroSrc =
+            getHeroImageOfAmp(item.images) || '/images/image-default.jpg'
           return (
             <CardItem
               key={`list-article-${item.slug}`}

@@ -50,6 +50,27 @@ export default function AMPLayout({ children }: { children: React.ReactNode }) {
     <html lang="zh-Hant" className={`${noto_sans.variable} layout-wrapper`}>
       <Head>
         <script async src="https://cdn.ampproject.org/v0.js"></script>
+        <style jsx global>{`
+          .amp-image-contain img,
+          .amp-image-contain .i-amphtml-fill-content,
+          .amp-image-contain [class*='i-amphtml'] {
+            object-fit: contain !important;
+          }
+          /* 更強力的選擇器 */
+          amp-img.amp-image-contain img,
+          amp-img.amp-image-contain .i-amphtml-fill-content {
+            object-fit: contain !important;
+          }
+          /* 針對所有 amp-img 內部的 img */
+          amp-img img {
+            object-fit: contain !important;
+          }
+          /* 使用 CSS 變數 */
+          amp-img[style*='--object-fit'] img,
+          amp-img[style*='--object-fit'] .i-amphtml-fill-content {
+            object-fit: var(--object-fit, contain) !important;
+          }
+        `}</style>
       </Head>
       <StyledBody>
         <amp-analytics

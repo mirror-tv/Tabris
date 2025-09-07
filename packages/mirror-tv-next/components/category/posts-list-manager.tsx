@@ -87,13 +87,6 @@ export default function PostsListManager({
       newPosts = postRes.allPosts ?? []
     }
     if (isNeedFetchExternal) {
-      console.log('fetch external:', fetched.externals, postsListWithSales, {
-        skip: fetched.externals + (newestPostType === 'external' ? 1 : 0),
-        categorySlug,
-        pageSize,
-        isWithCount: false,
-        filteredSlug,
-      })
       const externalRes = await fetchExternalsByCategory({
         skip: fetched.externals + (newestPostType === 'external' ? 1 : 0),
         categorySlug,
