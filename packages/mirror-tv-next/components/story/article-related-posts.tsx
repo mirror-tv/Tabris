@@ -28,9 +28,12 @@ const ArticleRelatedPosts = ({
   return (
     <div className={`${styles.container} list-wrapper post__related`}>
       <UiHeadingBordered title={'更多新聞'} className={styles.listTitle} />
-      <ul>
+      <ul className={styles.list}>
         {relatedPosts.map((item, idx) => (
-          <li key={item.slug + idx} className="ga-article-related">
+          <li
+            key={item.slug + idx}
+            className={`ga-article-related ${styles.item}`}
+          >
             {item.name}
           </li>
         ))}
