@@ -10,9 +10,27 @@ import { API_ENDPOINT } from './constants/config'
 let client: ApolloClient<any> | null = null
 
 export const getClient = () => {
-  // creat a new client if there's no existing one
-  // or if we are running on the server.
-  if (!client || isServer()) {
+  // Always create a new client for server-side rendering to avoid $$id conflicts
+  if (isServer()) {
+    return new ApolloClient({
+      link: new HttpLink({
+        uri: API_ENDPOINT,
+      }),
+      cache: new InMemoryCache({
+        // Disable cache normalization to avoid $$id conflicts
+        dataIdFromObject: () => null,
+      }),
+      defaultOptions: {
+        query: {
+          fetchPolicy: 'no-cache',
+          errorPolicy: 'all',
+        },
+      },
+    })
+  }
+
+  // For client-side, reuse the existing client
+  if (!client) {
     client = new ApolloClient({
       link: new HttpLink({
         uri: API_ENDPOINT,

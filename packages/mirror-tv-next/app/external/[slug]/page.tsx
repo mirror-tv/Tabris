@@ -4,14 +4,13 @@ import { Metadata } from 'next'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 
-import styles from './_styles/story.module.scss'
-import { fetchStoryBySlug } from '~/app/_actions/story/story-by-slug'
+import styles from './_styles/external.module.scss'
+import { fetchExternalBySlug } from '~/app/_actions/external/external-by-slug'
+import { cache } from 'react'
 import ArticleHeroImageAndVideo from '~/components/story/article-hero-image-and-video'
-import ApiDataRenderer from '~/components/story/api-data-renderer/renderer'
 import { formateDateAtTaipei } from '~/utils'
 import ArticleInfo from '~/components/story/article-info'
 import { notFound } from 'next/navigation'
-import ArticleBrief from '~/components/story/article-brief'
 import { doesHaveBrief } from '~/utils'
 import ArticleUpdateTime from '~/components/story/article-update-time'
 import ArticleTagList from '~/components/story/tags-list'
@@ -23,7 +22,7 @@ import {
   META_DESCRIPTION,
   FILTERED_SLUG,
 } from '~/constants/constant'
-import type { SinglePost } from '~/graphql/query/story'
+import type { SingleExternalPost } from '~/graphql/query/external'
 
 import dynamic from 'next/dynamic'
 import MisoPageView from '~/components/shared/miso-pageview'
@@ -35,18 +34,21 @@ const ContainerFullScreenAds = dynamic(
   }
 )
 
-type StoryPageTypes = {
+type ExternalPageTypes = {
   params: { slug: string }
 }
 
-function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
-  const category = storyData.categories?.[0]
+function generateExternalJsonLds(
+  externalData: SingleExternalPost,
+  pageUrl: string
+) {
+  const category = externalData.categories?.[0]
   const logoUrl = '/images/logo.png' // 需要確認實際的 logo 路徑
 
   const jsonLdBreadcrumbList = {
     '@context': 'http://schema.org/',
     '@type': 'BreadcrumbList',
-    itemListElement: generateBreadcrumbList(storyData, pageUrl),
+    itemListElement: generateBreadcrumbList(externalData, pageUrl),
   }
 
   const jsonLdNewsArticle = {
@@ -56,13 +58,13 @@ function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
       '@type': 'WebPage',
       '@id': pageUrl,
     },
-    headline: storyData.title,
-    image: storyData.heroImage?.urlDesktopSized,
-    datePublished: storyData.publishTime,
-    dateModified: storyData.updatedAt || storyData.publishTime,
+    headline: externalData.name,
+    image: externalData.thumbnail || '',
+    datePublished: externalData.publishTime,
+    dateModified: externalData.updatedAt || externalData.publishTime,
     author: {
-      '@type': storyData.writers?.length ? 'Person' : 'Organization',
-      name: storyData.writers?.[0]?.name || SITE_TITLE,
+      '@type': externalData.byline ? 'Person' : 'Organization',
+      name: externalData.byline || SITE_TITLE,
     },
     publisher: {
       '@type': 'Organization',
@@ -72,20 +74,18 @@ function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
         url: logoUrl,
       },
     },
-    description: storyData.briefApiData
-      ? JSON.parse(storyData.briefApiData).join('')
-      : undefined,
+    description: externalData.brief || externalData.brief_original || '',
     url: pageUrl,
-    thumbnailUrl: storyData.heroImage?.urlDesktopSized,
-    articleSection: category?.title || '',
+    thumbnailUrl: externalData.thumbnail || null,
+    articleSection: category?.name || '',
   }
 
   let jsonLdPerson
-  if (storyData.writers?.length) {
+  if (externalData.byline) {
     jsonLdPerson = {
       '@context': 'http://schema.org/',
       '@type': 'Person',
-      name: storyData.writers[0].name,
+      name: externalData.byline,
       brand: {
         '@type': 'Brand',
         name: SITE_TITLE,
@@ -104,8 +104,11 @@ function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
   ].filter(Boolean)
 }
 
-function generateBreadcrumbList(storyData: SinglePost, pageUrl: string) {
-  const category = storyData.categories?.[0]
+function generateBreadcrumbList(
+  externalData: SingleExternalPost,
+  pageUrl: string
+) {
+  const category = externalData.categories?.[0]
   const items = [
     {
       '@type': 'ListItem',
@@ -115,11 +118,11 @@ function generateBreadcrumbList(storyData: SinglePost, pageUrl: string) {
     },
   ]
 
-  if (category && category.title && category.slug) {
+  if (category && category.name && category.slug) {
     items.push({
       '@type': 'ListItem',
       position: items.length + 1,
-      name: category.title,
+      name: category.name,
       item: `${META_SITE_URL}/category/${category.slug}`,
     })
   }
@@ -127,36 +130,40 @@ function generateBreadcrumbList(storyData: SinglePost, pageUrl: string) {
   items.push({
     '@type': 'ListItem',
     position: items.length + 1,
-    name: storyData.title,
+    name: externalData.name,
     item: pageUrl,
   })
 
   return items
 }
 
+const getExternalData = cache(async (slug: string) => {
+  const response = await fetchExternalBySlug(slug)
+  return response.allExternals[0]
+})
+
 export async function generateMetadata({
   params,
-}: StoryPageTypes): Promise<Metadata> {
-  const fetchStoryBySlugResponse = await fetchStoryBySlug(params.slug)
-  const [storyData] = fetchStoryBySlugResponse.allPosts
+}: ExternalPageTypes): Promise<Metadata> {
+  const externalData = await getExternalData(params.slug)
 
-  if (!storyData) {
+  if (!externalData) {
     return notFound()
   }
 
-  const title = storyData.title
-  const brief = storyData.briefApiData
-    ? JSON.parse(storyData.briefApiData).join('')
-    : ''
-  const tags = storyData.tags?.map((tag) => tag.name).join(', ')
-  const image = storyData.heroImage?.urlDesktopSized
-  const dableImage = storyData.heroImage?.urlMobileSized
-  const pageUrl = `${META_SITE_URL}/story/${params.slug}`
-  const writer = storyData.writers?.[0]
-  const authorName = writer?.name || SITE_TITLE
-  const category = storyData.categories?.[0]
-  const publishTime = storyData.publishTime
-  const updateTime = storyData.updatedAt || storyData.publishTime
+  const title = externalData.name
+  const brief = externalData.brief || externalData.brief_original || ''
+  const tags = externalData.tags
+    ?.map((tag: { name: string }) => tag.name)
+    .join(', ')
+  const image = externalData.thumbnail
+  const dableImage = externalData.thumbnail
+  const pageUrl = `${META_SITE_URL}/external/${params.slug}`
+  const writer = externalData.byline
+  const authorName = writer || SITE_TITLE
+  const category = externalData.categories?.[0]
+  const publishTime = externalData.publishTime
+  const updateTime = externalData.updatedAt || externalData.publishTime
 
   dayjs.extend(utc)
   const publishedDateIso = dayjs(publishTime).utcOffset(8).toISOString()
@@ -172,8 +179,8 @@ export async function generateMetadata({
       type: 'article',
       publishedTime: publishedDateIso,
       modifiedTime: updateTime,
-      authors: writer ? [writer.name] : [],
-      section: category?.title,
+      authors: writer ? [writer] : [],
+      section: category?.name,
     },
     twitter: {
       card: 'summary_large_image',
@@ -182,8 +189,8 @@ export async function generateMetadata({
       images: image ? [image] : [],
     },
     keywords: tags,
-    authors: writer ? [{ name: writer.name }] : [],
-    category: category?.title,
+    authors: writer ? [{ name: writer }] : [],
+    category: category?.name,
     alternates: {
       canonical: pageUrl,
       languages: {
@@ -193,44 +200,34 @@ export async function generateMetadata({
     other: {
       'dable:item_id': params.slug,
       'dable:author': authorName,
-      'dable:image': dableImage,
-      'article:section': category?.title,
+      'dable:image': dableImage || '',
+      'article:section': category?.name || '',
       'article:published_time': publishedDateIso,
       'article:modified_time': updateTime,
     },
   }
 }
 
-const StoryPage = async (props: StoryPageTypes) => {
+const ExternalPage = async (props: ExternalPageTypes) => {
   const { params } = props
-  const fetchStoryBySlugResponse = await fetchStoryBySlug(params.slug)
-  const [storyData] = fetchStoryBySlugResponse.allPosts
+  const externalData = await getExternalData(params.slug)
 
-  if (!storyData) {
+  if (!externalData) {
     notFound()
   }
 
   const {
-    contentApiData,
-    relatedPosts,
-    heroImage,
+    content_original,
     heroCaption,
     categories,
-    title,
+    name: title,
     publishTime,
-    writers,
-    photographers,
-    cameraOperators,
-    designers,
-    engineers,
-    vocals,
-    otherbyline,
-    briefApiData,
-    style,
-    heroVideo,
+    byline,
+    thumbnail,
+    partner,
     tags,
     updatedAt,
-  } = storyData
+  } = externalData
   const publishTimeTaipei = formateDateAtTaipei(
     new Date(publishTime),
     'YYYY.MM.DD HH:mm',
@@ -245,10 +242,8 @@ const StoryPage = async (props: StoryPageTypes) => {
     ? formateDateAtTaipei(new Date(updatedAt), 'YYYY.MM.DD HH:mm', '臺北時間')
     : ''
 
-  const hasBrief = doesHaveBrief(briefApiData)
-
-  const pageUrl = `${META_SITE_URL}/story/${params.slug}`
-  const jsonLdData = generateStoryJsonLds(storyData, pageUrl)
+  const pageUrl = `${META_SITE_URL}/external/${params.slug}`
+  const jsonLdData = generateExternalJsonLds(externalData, pageUrl)
 
   return (
     <>
@@ -256,34 +251,52 @@ const StoryPage = async (props: StoryPageTypes) => {
       <MisoPageView productIds={`story_${params.slug}`} />
       <section className={styles.article}>
         <ContainerFullScreenAds adKey="MB_NEWS" />
-        <ArticleHeroImageAndVideo
-          heroImage={heroImage}
-          title={heroCaption}
-          heroCaption={heroCaption}
-          style={style}
-          heroVideo={heroVideo}
-        />
+        {thumbnail && (
+          <ArticleHeroImageAndVideo
+            heroImage={{
+              id: '',
+              name: '',
+              urlOriginal: thumbnail,
+              urlDesktopSized: thumbnail,
+              urlTabletSized: thumbnail,
+              urlMobileSized: thumbnail,
+              urlTinySized: thumbnail,
+            }}
+            title={title}
+            heroCaption={heroCaption}
+            style=""
+            heroVideo={undefined}
+          />
+        )}
         <ArticleInfo
           title={title}
           publishTime={publishTimeTaipei}
-          category={categories?.[0]}
-          writers={writers}
-          photographers={photographers}
-          cameraOperators={cameraOperators}
-          designers={designers}
-          engineers={engineers}
-          vocals={vocals}
-          otherbyline={otherbyline}
+          category={
+            categories?.[0]
+              ? { slug: categories[0].slug, title: categories[0].name }
+              : { slug: '', title: '' }
+          }
+          writers={
+            partner?.name ? [{ name: partner?.name || '', slug: '' }] : []
+          }
+          photographers={[]}
+          cameraOperators={[]}
+          designers={[]}
+          engineers={[]}
+          vocals={[]}
+          otherbyline={''}
         />
-        {hasBrief && <ArticleBrief brief={JSON.parse(briefApiData || '[]')} />}
         <section className={styles.contentWrapper}>
-          <ApiDataRenderer contentData={contentApiData} isStoryBrief={false} />
+          <div
+            className={styles.externalContent}
+            dangerouslySetInnerHTML={{ __html: content_original ?? '' }}
+          />
           {updatedTime && <ArticleUpdateTime updateTime={updatedTime} />}
           {!!tags.length && <ArticleTagList tags={tags} />}
         </section>
         <section className={styles.socialAndRelatedWrapper}>
           <ArticleRelatedPosts
-            relatedPosts={relatedPosts}
+            relatedPosts={[]}
             shouldShowAds={shouldShowAds}
           />
           <ArticleSocialList />
@@ -294,4 +307,4 @@ const StoryPage = async (props: StoryPageTypes) => {
   )
 }
 
-export default StoryPage
+export default ExternalPage

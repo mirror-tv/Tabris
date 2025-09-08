@@ -4,7 +4,7 @@ import {
   GLOBAL_CACHE_SETTING,
   POPULAR_POSTS_URL,
 } from '~/constants/environment-variables'
-import { fetchStoryBySlug } from '~/utils/fetch-function'
+import { fetchStoryBySlug } from '~/app/_actions/story/story-by-slug'
 import { type SinglePost } from '~/graphql/query/story'
 import type {
   InferGetServerSidePropsType,
@@ -23,7 +23,7 @@ import {
 import { type RawPopularPost } from '~/types/popular-post'
 import { PostCardItem } from '~/graphql/query/posts'
 import RelatedPostList from '~/components/story/amp/related-post-list'
-import { getLatestPostsFunction } from '~/utils/fetch-function'
+import { getLatestPostsFunction } from '~/app/_actions/homepage/latest-posts-and-editor-choices'
 import HeroInfo from '~/components/story/amp/hero-info'
 import AmpApiDataRenderer from '~/components/story/amp/amp-renderer'
 

@@ -5,6 +5,8 @@ import { getClient } from '~/apollo-client'
 import {
   type PostWithCategory,
   getPostsWithCategory,
+  getLatestPosts,
+  type PostCardItem,
 } from '~/graphql/query/posts'
 import {
   EditorChoices,
@@ -425,4 +427,27 @@ async function getLatestPostsAndEditorChoices({
   return { data }
 }
 
-export { getLatestPostsAndEditorChoices }
+// For aside section in category page
+type QueryType = {
+  allPosts: PostCardItem[]
+}
+
+const client = getClient()
+const firstNItems = 5
+const filteredSlugList: string[] = []
+const queryArgs = {
+  query: getLatestPosts,
+  variables: {
+    first: firstNItems,
+    filteredSlug: filteredSlugList,
+  },
+}
+
+/**
+ * Fetches the latest 5 posts to be displayed in the aside section in category page.
+ */
+const getLatestPostsFunction = () => {
+  return client.query<QueryType>(queryArgs)
+}
+
+export { getLatestPostsAndEditorChoices, getLatestPostsFunction }
