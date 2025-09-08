@@ -17,9 +17,11 @@ const LazyRenderWrapper = dynamic(
 const ArticleRelatedPosts = ({
   relatedPosts,
   shouldShowAds,
+  page,
 }: {
   relatedPosts: SinglePost['relatedPosts']
   shouldShowAds: boolean
+  page: 'story' | 'external'
 }) => {
   const { width } = useWindowDimensions()
 
@@ -39,7 +41,7 @@ const ArticleRelatedPosts = ({
           <div id="_popIn_recommend_word" />
           <Script
             id="popinAd"
-            strategy="beforeInteractive"
+            strategy="lazyOnload"
             dangerouslySetInnerHTML={{
               __html: `
             (function() {
@@ -54,17 +56,19 @@ const ArticleRelatedPosts = ({
           `,
             }}
           />
-          <LazyRenderWrapper>
-            <div
-              className="avivid_textad avivid_ad_one"
-              data-web_id="mnewstext"
-            />
-            {width && width >= 768 ? (
-              <div id="compass-fit-4333664" />
-            ) : (
-              <div id="compass-fit-4333665" />
-            )}
-          </LazyRenderWrapper>
+          {page === 'story' && (
+            <LazyRenderWrapper>
+              <div
+                className="avivid_textad avivid_ad_one"
+                data-web_id="mnewstext"
+              />
+              {width && width >= 768 ? (
+                <div id="compass-fit-4333664" />
+              ) : (
+                <div id="compass-fit-4333665" />
+              )}
+            </LazyRenderWrapper>
+          )}
         </>
       )}
     </div>

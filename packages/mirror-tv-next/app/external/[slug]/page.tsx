@@ -11,7 +11,6 @@ import ArticleHeroImageAndVideo from '~/components/story/article-hero-image-and-
 import { formateDateAtTaipei } from '~/utils'
 import ArticleInfo from '~/components/story/article-info'
 import { notFound } from 'next/navigation'
-import { doesHaveBrief } from '~/utils'
 import ArticleUpdateTime from '~/components/story/article-update-time'
 import ArticleTagList from '~/components/story/tags-list'
 import JsonLd from '~/components/story/json-ld'
@@ -222,7 +221,6 @@ const ExternalPage = async (props: ExternalPageTypes) => {
     categories,
     name: title,
     publishTime,
-    byline,
     thumbnail,
     partner,
     tags,
@@ -298,6 +296,7 @@ const ExternalPage = async (props: ExternalPageTypes) => {
           <ArticleRelatedPosts
             relatedPosts={[]}
             shouldShowAds={shouldShowAds}
+            page="external"
           />
           <ArticleSocialList />
           {shouldShowAds && <AdAfterStory />}

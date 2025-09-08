@@ -79,7 +79,7 @@
 
 .contentWrapper {
   width: calc(100vw - 3rem);
-  @include media-breakpoint-up(lg) {
+  @include media-breakpoint-up(md) {
     max-width: 600px;
     width: 600px;
   }
@@ -91,6 +91,7 @@
   line-height: 1.75;
   text-align: justify;
   word-wrap: break-word;
+  max-width: 100%;
   h2,
   h3 {
     margin-top: 30px;

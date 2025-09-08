@@ -285,6 +285,7 @@ const StoryPage = async (props: StoryPageTypes) => {
           <ArticleRelatedPosts
             relatedPosts={relatedPosts}
             shouldShowAds={shouldShowAds}
+            page="story"
           />
           <ArticleSocialList />
           {shouldShowAds && <AdAfterStory />}
