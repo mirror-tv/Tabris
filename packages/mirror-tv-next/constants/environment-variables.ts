@@ -13,7 +13,6 @@ let FEATURE_POSTS_URL: string
 let HOMEPAGE_JSON_URL: string =
   'https://storage.googleapis.com/static-mnews-tw-dev/files/json/topic_video.json'
 let GA4_ID: string
-let URL_STATIC_EDITOR_CHOICES: string
 
 switch (ENV) {
   case 'prod':
@@ -49,8 +48,6 @@ switch (ENV) {
     HOMEPAGE_JSON_URL =
       'https://storage.googleapis.com/static-mnews-tw-staging/files/json/topic_video.json'
     GA4_ID = 'G-8Q9RVB3K0E'
-    URL_STATIC_EDITOR_CHOICES =
-      'https://storage.googleapis.com/static-mnews-tw-staging/json/editor_choices.json'
     break
 
   case 'dev':
@@ -66,8 +63,6 @@ switch (ENV) {
       'https://mnews.tw/json/popular-videonews-list.json'
     FEATURE_POSTS_URL = 'https://dev.mnews.tw/api/gcs/featured_categories_post'
     GA4_ID = 'G-YZ07T9YJ6T'
-    URL_STATIC_EDITOR_CHOICES =
-      'https://storage.googleapis.com/static-mnews-tw-dev/json/editor_choices.json'
     break
 
   default:
@@ -83,8 +78,6 @@ switch (ENV) {
       'https://mnews.tw/json/popular-videonews-list.json'
     FEATURE_POSTS_URL = 'https://dev.mnews.tw/api/gcs/featured_categories_post'
     GA4_ID = 'G-YZ07T9YJ6T'
-    URL_STATIC_EDITOR_CHOICES =
-      'https://storage.googleapis.com/static-mnews-tw-dev/json/editor_choices.json'
     break
 }
 
@@ -102,5 +95,4 @@ export {
   FEATURE_POSTS_URL,
   HOMEPAGE_JSON_URL,
   GA4_ID,
-  URL_STATIC_EDITOR_CHOICES,
 }
