@@ -31,8 +31,6 @@ switch (ENV) {
     HOMEPAGE_JSON_URL =
       'https://storage.googleapis.com/static-mnews-tw-prod/files/json/topic_video.json'
     GA4_ID = 'G-SZR4JRJ0G2'
-    URL_STATIC_EDITOR_CHOICES =
-      'https://storage.googleapis.com/static-mnews-tw-prod/json/editor_choices.json'
     break
 
   case 'staging':
