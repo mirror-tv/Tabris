@@ -12,6 +12,7 @@ export type FormattedPostCard = {
   publishTime: Date
   label?: string
   __typename?: string
+  exclusive?: boolean | null
 }
 
 export type FormattedPostCardJson = Omit<
@@ -34,6 +35,7 @@ type FormatArticleCardInput = {
   categories?: { name: string }[]
   partner?: { name: string; slug: string }
   __typename?: string
+  exclusive?: boolean | null
 }
 
 const formatArticleCard = (
@@ -53,6 +55,7 @@ const formatArticleCard = (
     partner: 'partner' in post ? post.partner : undefined,
     __typename:
       '__typename' in post ? String(post['__typename'] ?? '') : undefined,
+    exclusive: 'exclusive' in post ? post.exclusive ?? false : false,
   }
   const imageObj: PostImage =
     postFormatArticleCardInput.images ??
@@ -79,6 +82,7 @@ const formatArticleCard = (
     publishTime: new Date(postFormatArticleCardInput.publishTime),
     label: options?.label || postFormatArticleCardInput.categories?.[0]?.name,
     __typename: postFormatArticleCardInput.__typename ?? '',
+    exclusive: postFormatArticleCardInput.exclusive,
   }
 }
 

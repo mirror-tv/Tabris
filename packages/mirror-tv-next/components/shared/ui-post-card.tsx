@@ -1,6 +1,7 @@
 import styles from './_styles/ui-post-card.module.scss'
 import { formateDateAtTaipei, PostImage } from '~/utils'
 import ResponsiveImage from './responsive-image'
+import UiExclusiveMark from './ui-exclusive-mark'
 
 export type UiPostCardProps = {
   title: string
@@ -9,6 +10,7 @@ export type UiPostCardProps = {
   postStyle: string | undefined
   images: PostImage
   label?: string
+  exclusive?: boolean
 
   // Differentiate two usages in / and /category/:name pages
   mobileLayoutDirection: 'row' | 'column'
@@ -24,6 +26,7 @@ export default function UiPostCard({
   mobileLayoutDirection = 'column',
   postTitleHighlightText,
   label = '',
+  exclusive = false,
 }: UiPostCardProps) {
   const isVideoNews = postStyle === 'videoNews'
 
@@ -65,6 +68,7 @@ export default function UiPostCard({
             priority={false}
           />
           {isVideoNews && <span className={styles.videoIcon}></span>}
+          {exclusive && <UiExclusiveMark />}
         </figure>
         <div className={styles.info}>
           <span

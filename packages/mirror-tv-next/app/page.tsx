@@ -21,7 +21,6 @@ export const revalidate = GLOBAL_CACHE_SETTING
 
 export default async function Home() {
   const { data: homepageData } = await getTopicVideo()
-  console.log('homepageData', homepageData)
   return (
     <main className={styles.main}>
       <GptPopup adKey="MB_HOME" />

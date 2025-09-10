@@ -20,6 +20,7 @@ import Image from '@readr-media/react-image'
 import { formateHeroImage } from '~/utils'
 import { useRef } from 'react'
 import { PaginationOptions } from 'swiper/types'
+import UiExclusiveMark from '../shared/ui-exclusive-mark'
 
 type EditorChoicesSwiperProps = {
   editorChoices: EditorChoices[]
@@ -85,6 +86,7 @@ export default function EditorChoicesSwiper({
                     target="_blank"
                     rel="noreferrer noopener"
                   >
+                    {choice.exclusive && <UiExclusiveMark />}
                     <Image
                       loadingImage="/images/loading.svg"
                       defaultImage="/images/image-default.jpg"

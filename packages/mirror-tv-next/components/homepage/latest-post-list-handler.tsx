@@ -89,6 +89,7 @@ export default function LatestPostListHandler({
                 date={postItem.publishTime}
                 postStyle={postItem.style}
                 label={postItem.label}
+                exclusive={postItem.exclusive ?? false}
               />
             </ol>
           ))}
