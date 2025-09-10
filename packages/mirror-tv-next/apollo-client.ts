@@ -18,7 +18,7 @@ export const getClient = () => {
       }),
       cache: new InMemoryCache({
         // Disable cache normalization to avoid $$id conflicts
-        dataIdFromObject: () => null,
+        dataIdFromObject: () => undefined,
       }),
       defaultOptions: {
         query: {
