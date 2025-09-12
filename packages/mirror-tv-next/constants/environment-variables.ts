@@ -25,7 +25,7 @@ switch (ENV) {
     SCHEDULE_JSON_URL = `${SITE_URL}/json/tv-schedule.json`
     POPULAR_POSTS_URL = `${SITE_URL}/json/popularlist.json`
     POPULAR_VIDEOS_JSON_URL = `${SITE_URL}/json/popular-videonews-list.json`
-    FEATURE_POSTS_URL = `${SITE_URL}/json/featured_categories_post.json`
+    FEATURE_POSTS_URL = `${SITE_URL}/json/category_features_news.json`
     HOMEPAGE_JSON_URL =
       'https://storage.googleapis.com/static-mnews-tw-prod/files/json/topic_video.json'
     GA4_ID = 'G-SZR4JRJ0G2'
@@ -57,7 +57,7 @@ switch (ENV) {
     SCHEDULE_JSON_URL = `${SITE_URL}/json/tv-schedule.json`
     POPULAR_POSTS_URL = `${SITE_URL}/json/popularlist.json`
     POPULAR_VIDEOS_JSON_URL = `${SITE_URL}/json/popular-videonews-list.json`
-    FEATURE_POSTS_URL = `${SITE_URL}/json/featured_categories_post.json`
+    FEATURE_POSTS_URL = `${SITE_URL}/json/category_features_news.json`
     HOMEPAGE_JSON_URL =
       'https://storage.googleapis.com/static-mnews-tw-dev/files/json/topic_video.json'
     GA4_ID = 'G-YZ07T9YJ6T'
@@ -73,7 +73,7 @@ switch (ENV) {
     SCHEDULE_JSON_URL = `${SITE_URL}/json/tv-schedule.json`
     POPULAR_POSTS_URL = `${SITE_URL}/json/popularlist.json`
     POPULAR_VIDEOS_JSON_URL = `${SITE_URL}/json/popular-videonews-list.json`
-    FEATURE_POSTS_URL = `${SITE_URL}/json/featured_categories_post.json`
+    FEATURE_POSTS_URL = `${SITE_URL}/json/category_features_news.json`
     HOMEPAGE_JSON_URL =
       'https://storage.googleapis.com/static-mnews-tw-dev/files/json/topic_video.json'
     GA4_ID = 'G-YZ07T9YJ6T'
