@@ -47,6 +47,7 @@ export default function UiListPostsAside({
                 page={page}
                 postStyle={item.style ?? ''}
                 date={item.publishTime}
+                exclusive={item.exclusive ?? false}
               />
             </li>
           )

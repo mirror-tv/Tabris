@@ -156,6 +156,7 @@ export default function PostsListManager({
                       postStyle={postItem.style}
                       label={postItem.label ?? ''}
                       mobileLayoutDirection="row"
+                      exclusive={postItem.exclusive ?? false}
                     />
                   </li>
                 )
