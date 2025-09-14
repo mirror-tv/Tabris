@@ -139,6 +139,7 @@ export async function generateMetadata({
 }: StoryPageTypes): Promise<Metadata> {
   const fetchStoryBySlugResponse = await fetchStoryBySlug(params.slug)
   const [storyData] = fetchStoryBySlugResponse.allPosts
+  console.log({ storyData })
 
   if (!storyData) {
     return notFound()
@@ -157,6 +158,7 @@ export async function generateMetadata({
   const category = storyData.categories?.[0]
   const publishTime = storyData.publishTime
   const updateTime = storyData.updatedAt || storyData.publishTime
+  const isExclusive = storyData.exclusive ?? false
 
   dayjs.extend(utc)
   const publishedDateIso = dayjs(publishTime).utcOffset(8).toISOString()
@@ -197,6 +199,7 @@ export async function generateMetadata({
       'article:section': category?.title,
       'article:published_time': publishedDateIso,
       'article:modified_time': updateTime,
+      isExclusive,
     },
   }
 }

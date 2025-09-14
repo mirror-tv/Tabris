@@ -74,6 +74,8 @@ export default function VideoPostsList({
   const nextButtonRef = useRef<HTMLDivElement>(null)
   const prevButtonRef = useRef<HTMLDivElement>(null)
 
+  console.log(postsList)
+
   return (
     <div className={styles.list}>
       <a
@@ -136,6 +138,7 @@ export default function VideoPostsList({
                   title={post.name}
                   imageUrls={post.images}
                   href={post.href}
+                  exclusive={post.exclusive ?? false}
                 />
               </SwiperSlide>
             )

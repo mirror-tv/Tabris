@@ -57,6 +57,7 @@ const fetchStoryBySlug = gql`
       style
       publishTime
       updatedAt
+      exclusive
       heroVideo {
         youtubeUrl
       }

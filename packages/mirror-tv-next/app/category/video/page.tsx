@@ -205,9 +205,10 @@ export default async function VideoCategoryPage() {
             videoPostsData?.categorySlug ?? ''
           ),
           posts:
-            videoPostsData?.data?.allPosts?.map((post) =>
-              formatArticleCard(post)
-            ) ?? [],
+            videoPostsData?.data?.allPosts?.map((post) => {
+              console.log({ post })
+              return formatArticleCard(post)
+            }) ?? [],
           count: videoPostsData?.data?._allPostsMeta?.count ?? 0,
         }
       },
