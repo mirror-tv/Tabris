@@ -16,6 +16,7 @@ export interface SinglePost {
   style: string
   publishTime: string
   updatedAt: string
+  exclusive: boolean
   contentApiData: string
   briefApiData: string
   relatedPosts: SingleRelatedPost[]

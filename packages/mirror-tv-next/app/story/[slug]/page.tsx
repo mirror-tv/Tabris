@@ -159,6 +159,7 @@ export async function generateMetadata({
   const publishTime = storyData.publishTime
   const updateTime = storyData.updatedAt || storyData.publishTime
   const isExclusive = storyData.exclusive ?? false
+  const isVideoNews = storyData.style === 'videoNews'
 
   dayjs.extend(utc)
   const publishedDateIso = dayjs(publishTime).utcOffset(8).toISOString()
@@ -199,7 +200,8 @@ export async function generateMetadata({
       'article:section': category?.title,
       'article:published_time': publishedDateIso,
       'article:modified_time': updateTime,
-      isExclusive,
+      isExclusive: isExclusive.toString(),
+      isVideoNews: isVideoNews.toString(),
     },
   }
 }
