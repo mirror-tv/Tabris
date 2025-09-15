@@ -133,7 +133,6 @@ export default function MisoSearch() {
       function insertElement(html: string) {
         html = html.replace(
           '<miso-facets></miso-facets>',
-          // eslint-disable-next-line tailwindcss/no-custom-classname
           `
           <div class="miso-hybrid-search-combo__search-results-filters__right">
             <div class="miso-hybrid-search-combo__search-results-filters__sort-header">排序依</div>
@@ -257,9 +256,12 @@ export default function MisoSearch() {
         workflow.query({ q: keyword })
       }, 1000)
 
-      workflow.answer.on('request', ({ payload: { q } }) => {
-        router.push(`/search/${q}`)
-      })
+      workflow.answer.on(
+        'request',
+        ({ payload: { q } }: { payload: { q: string } }) => {
+          router.push(`/search/${q}`)
+        }
+      )
     })
   }, [keyword])
   return (
