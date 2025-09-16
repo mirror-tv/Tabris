@@ -308,6 +308,7 @@
     position: relative !important;
     transform: translateY(0) !important;
     margin-bottom: 60px !important;
+    margin-top: 20px !important;
   }
   .miso-hybrid-search-combo__answer-box-toggle {
     color: #68666d !important;
@@ -325,6 +326,7 @@
     font-weight: 500 !important;
     line-height: 28px;
     letter-spacing: 0.5px;
+    cursor: pointer;
   }
 
   /* result 上方 */
