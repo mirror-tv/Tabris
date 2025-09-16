@@ -198,8 +198,8 @@
 
   /* source 文章 */
   .miso-hybrid-search-combo__sources-container {
-    padding: 24px 22px;
-    margin-top: 20px;
+    padding: 24px 22px !important;
+    margin-top: 20px !important;
     max-height: 400px;
     border-top: 1px solid #000;
     border-bottom: 1px solid #000;
@@ -208,7 +208,7 @@
   }
   @media (min-width: 768px) {
     .miso-hybrid-search-combo__sources-container {
-      margin-top: 24px;
+      margin-top: 24px !important;
       max-height: 200px;
     }
   }
@@ -228,7 +228,7 @@
     }
   }
   .miso-hybrid-search-combo__sources-container .miso-list__item {
-    border: 0;
+    border: 0 !important;
     display: flex;
   }
   .miso-hybrid-search-combo__sources-container
@@ -250,7 +250,7 @@
     display: none;
   }
   .miso-hybrid-search-combo__sources-container .miso-list__item-body {
-    display: flex;
+    display: flex !important;
     flex-direction: row-reverse;
     gap: 8px !important;
   }
@@ -275,13 +275,13 @@
     flex-direction: column-reverse;
     flex: 1;
     width: 132px;
-    margin-right: 4px;
+    margin-right: 4px !important;
     justify-content: flex-end;
   }
   @media (min-width: 768px) {
     .miso-hybrid-search-combo__sources-container
       .miso-list__item-info-container {
-      margin-right: 2px;
+      margin-right: 2px !important;
     }
   }
   .miso-hybrid-search-combo__sources-container .miso-list__item-date {
@@ -290,37 +290,37 @@
     font-size: 14px;
     font-weight: 400;
     line-height: 14px;
-    margin-bottom: 8px;
-    margin-top: 4px;
+    margin-bottom: 8px !important;
+    margin-top: 4px !important;
   }
   .miso-hybrid-search-combo__sources-container .miso-list__item-title {
     color: #000;
     font-feature-settings: 'liga' off, 'clig' off;
     font-family: 'PingFang TC';
-    font-size: 16px;
+    font-size: 16px !important;
     -webkit-line-clamp: 5;
-    padding: 0;
-    margin: 0;
+    padding: 0 !important;
+    margin: 0 !important;
   }
   .miso-hybrid-search-combo__sources-container .miso-list__item-snippet {
     display: none;
   }
   .miso-hybrid-search-combo__answer-box-toggle {
     content: '展開更多';
-    color: #68666d;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: fit-content;
-    height: 40px;
-    width: 114px;
-    border-radius: 8px;
-    border: 1px solid #68666d;
-    text-align: center;
+    color: #68666d !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: fit-content !important;
+    height: 40px !important;
+    width: 114px !important;
+    border-radius: 8px !important;
+    border: 1px solid #68666d !important;
+    text-align: center !important;
     font-feature-settings: 'liga' off, 'clig' off;
     font-family: 'Noto Sans TC';
-    font-size: 16px;
-    font-weight: 700;
+    font-size: 16px !important;
+    font-weight: 700 !important;
     line-height: 28px;
     letter-spacing: 0.5px;
   }
