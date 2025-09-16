@@ -304,10 +304,7 @@
   .miso-hybrid-search-combo__sources-container .miso-list__item-snippet {
     display: none;
   }
-  miso-hybrid-search-combo
-    .miso-hybrid-search-combo__answer-box-toggle-container,
-  .miso-hybrid-search-combo
-    .miso-hybrid-search-combo__answer-box-toggle-container {
+  .miso-hybrid-search-combo__answer-box-toggle-container {
     position: relative !important;
     transform: translateY(0) !important;
     margin-bottom: 60px !important;
