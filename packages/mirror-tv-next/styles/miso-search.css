@@ -304,21 +304,26 @@
   .miso-hybrid-search-combo__sources-container .miso-list__item-snippet {
     display: none;
   }
+  miso-hybrid-search-combo
+    .miso-hybrid-search-combo__answer-box-toggle-container,
+  .miso-hybrid-search-combo
+    .miso-hybrid-search-combo__answer-box-toggle-container {
+    position: relative !important;
+    transform: translateY(0) !important;
+    margin-bottom: 60px !important;
+  }
   .miso-hybrid-search-combo__answer-box-toggle {
-    content: '展開更多';
     color: #68666d !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    width: fit-content !important;
     height: 40px !important;
-    width: 114px !important;
-    border-radius: 8px !important;
+    width: 168px !important;
     border: 1px solid #68666d !important;
     text-align: center !important;
     font-feature-settings: 'liga' off, 'clig' off;
     font-family: 'Noto Sans TC';
-    font-size: 16px !important;
+    font-size: 20px !important;
     font-weight: 700 !important;
     line-height: 28px;
     letter-spacing: 0.5px;
