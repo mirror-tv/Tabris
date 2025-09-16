@@ -316,12 +316,13 @@
     justify-content: center !important;
     height: 40px !important;
     width: 168px !important;
-    border: 1px solid #68666d !important;
+    border: 1px solid #d8d8d8 !important;
+    border-radius: 0 !important;
     text-align: center !important;
     font-feature-settings: 'liga' off, 'clig' off;
     font-family: 'Noto Sans TC';
     font-size: 20px !important;
-    font-weight: 700 !important;
+    font-weight: 500 !important;
     line-height: 28px;
     letter-spacing: 0.5px;
   }
