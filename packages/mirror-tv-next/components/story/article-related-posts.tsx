@@ -41,24 +41,9 @@ const ArticleRelatedPosts = ({
 
       {shouldShowAds && (
         <>
-          <div id="_popIn_recommend_word" />
-          <Script
-            id="popinAd"
-            strategy="lazyOnload"
-            dangerouslySetInnerHTML={{
-              __html: `
-            (function() {
-              var pa = document.createElement('script')
-              pa.type = 'text/javascript'
-              pa.charset = 'utf-8'
-              pa.async = true
-              pa.src = window.location.protocol + '//api.popin.cc/searchbox/mnews.js'
-              var s = document.getElementsByTagName('script')[0]
-              s.parentNode.insertBefore(pa, s)
-            })()
-          `,
-            }}
-          />
+          {width && width >= 768 && (
+            <div id="_popIn_recommend_word" className="_popIn_recommend" />
+          )}
           {page === 'story' && (
             <LazyRenderWrapper>
               <div
