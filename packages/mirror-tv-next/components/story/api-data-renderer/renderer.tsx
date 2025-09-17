@@ -31,19 +31,19 @@ const ApiDataRenderer = ({
 }: ApiDataRendererPropsType) => {
   const parsedContentData: ApiData = JSON.parse(contentData)
 
-  if (parsedContentData.length >= 4 && !isStoryBrief) {
+  if (parsedContentData?.length >= 4 && !isStoryBrief) {
     const newObject: ApiDataBlock = {
       id: 'inserted-object-' + Date.now(),
       type: ApiDataBlockType.GptAd,
       content: '',
       alignment: 'center',
     }
-    parsedContentData.splice(4, 0, newObject)
+    parsedContentData?.splice(4, 0, newObject)
   }
 
   return (
     <article className={styles.apiDataArticle}>
-      {parsedContentData.map((apiDataBlock) => {
+      {parsedContentData?.map((apiDataBlock) => {
         switch (apiDataBlock.type) {
           case ApiDataBlockType.Unstyled:
             return (

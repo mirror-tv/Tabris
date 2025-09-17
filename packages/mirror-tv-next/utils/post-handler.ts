@@ -122,9 +122,11 @@ function doesHaveBrief(brief: ApiData[] | string = '') {
     )
   })
 
-  return validateArray.find((item) => {
-    return item
-  })
+  return (
+    validateArray?.find((item) => {
+      return item
+    }) || false
+  )
 }
 
 export { formatArticleCard, combineAndSortedByPublishedTime, doesHaveBrief }

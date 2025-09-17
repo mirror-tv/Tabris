@@ -139,7 +139,6 @@ export async function generateMetadata({
 }: StoryPageTypes): Promise<Metadata> {
   const fetchStoryBySlugResponse = await fetchStoryBySlug(params.slug)
   const [storyData] = fetchStoryBySlugResponse.allPosts
-  console.log({ storyData })
 
   if (!storyData) {
     return notFound()
