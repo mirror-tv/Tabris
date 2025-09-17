@@ -13,7 +13,7 @@ export default function StoryPageLayout({
     <div className={styles.LayoutWrapper}>
       <Script
         id="dable"
-        strategy="beforeInteractive"
+        strategy="afterInteractive"
         dangerouslySetInnerHTML={{
           __html: `
             (function(d,a,b,l,e,_) {
@@ -23,10 +23,6 @@ export default function StoryPageLayout({
               e = a.createElement(l)
               e.async = 1
               e.charset = 'utf-8'
-              e.onload = function() {
-                dable('setService', 'mnews.tw')
-                dable('renderWidgetByWidth', 'dablewidget_2Xnxwk7d_xXAWmB7G')
-              }
               e.src = '//static.dable.io/dist/plugin.min.js'
               _ = a.getElementsByTagName(l)[0]
               _.parentNode.insertBefore(e, _)

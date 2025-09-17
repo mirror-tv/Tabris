@@ -2,20 +2,20 @@ import React from 'react'
 import styled from 'styled-components'
 
 const LinkToStory = styled.a`
-  display: 'flex';
-  flexdirection: 'column';
-  justifycontent: 'center';
-  alignitems: 'center';
-  width: '100%';
-  height: '210px';
-  boxshadow: '1px 1px 2px 2px rgba(0, 0, 0, 0.15) inset';
-  color: '#888';
-  fontfamily: 'PingFang TC';
-  fontsize: '16px';
-  fontstyle: 'normal';
-  fontweight: '300';
-  lineheight: '180%';
-  textdecoration: 'none';
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 210px;
+  box-shadow: 1px 1px 2px 2px rgba(0, 0, 0, 0.15) inset;
+  color: #888;
+  font-family: 'PingFang TC';
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: 180%;
+  text-decoration: none;
 `
 
 type AmpUnsupportedBlockProps = {

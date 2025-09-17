@@ -103,6 +103,8 @@ const AmpApiDataRenderer = ({
                 isAmp={true}
               />
             )
+          case ApiDataBlockType.GptAd:
+            return null
           default: {
             const exhaustiveCheck = apiDataBlock
             console.error('unhandled apiData type of amp', exhaustiveCheck.type)
