@@ -1,6 +1,7 @@
 import styles from './_styles/ui-post-card-aside.module.scss'
 import { formateDateAtTaipei, PostImage } from '~/utils'
 import ResponsiveImage from './responsive-image'
+import UiExclusiveMark from './ui-exclusive-mark'
 
 type UiPostCardAsideProps = {
   title: string
@@ -9,6 +10,7 @@ type UiPostCardAsideProps = {
   postStyle: string
   page: 'category' | 'story'
   images: PostImage
+  exclusive: boolean
 }
 
 export default function UiPostCardAside({
@@ -18,6 +20,7 @@ export default function UiPostCardAside({
   images,
   postStyle = 'post',
   page = 'category',
+  exclusive = false,
 }: UiPostCardAsideProps) {
   const isVideoNews = postStyle === 'videoNews'
   const isCategoryPage = (type: string) => type === 'category'
@@ -42,6 +45,7 @@ export default function UiPostCardAside({
           priority={false}
         />
         {isVideoNews && <span className={styles.videoIcon}></span>}
+        {exclusive && <UiExclusiveMark />}
       </figure>
       <div className={styles.info}>
         <span className={styles.title}>{title}</span>

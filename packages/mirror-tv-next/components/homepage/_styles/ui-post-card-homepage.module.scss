@@ -50,14 +50,13 @@
 
 .label {
   position: absolute;
-  z-index: $Z_INDEX-coverContent;
+  z-index: $Z_INDEX-header;
   padding: 4px 8px;
   position: absolute;
   top: 4px;
   left: 4px;
   height: auto;
   border-radius: 12px;
-  z-index: 20;
   line-height: 1;
   white-space: nowrap;
   overflow: hidden;

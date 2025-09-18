@@ -619,3 +619,6 @@ video {
 }
 
 /*# sourceMappingURL=base.css.map */
+
+/* Import Miso Search Styles */
+@import './miso-search.css';

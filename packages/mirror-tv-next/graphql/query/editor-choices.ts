@@ -8,6 +8,7 @@ export type EditorChoices = {
     source?: string
     heroImage: HeroImage
     heroVideo: { coverPhoto: HeroImage | null } | null
+    exclusive: boolean
   }
 }
 
@@ -36,6 +37,7 @@ const fetchEditorChoices = gql`
             urlTinySized
           }
         }
+        exclusive
       }
     }
   }

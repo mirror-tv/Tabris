@@ -143,6 +143,7 @@ export default function PostsListManager({
                     date={postItem.publishTime}
                     postStyle={postItem.style}
                     mobileLayoutDirection="column"
+                    exclusive={postItem.exclusive ?? false}
                   />
                 </li>
               ))}

@@ -1,0 +1,19 @@
+@import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
+@import '/styles/theme/z-index';
+
+.exclusiveMark {
+  position: absolute;
+  top: 5%;
+  left: 2.22%; /* 相對於容器高度的 5% (66.66% × 5% ÷ 3 × 2) */
+  height: 30%;
+  aspect-ratio: 1.5;
+  z-index: $Z_INDEX-coverContent;
+  min-width: 36px;
+  min-height: 24px;
+}
+
+.image {
+  object-fit: contain;
+  object-position: center;
+}

@@ -106,11 +106,11 @@
 
 .secondMoreBtn {
   background: #004dbc;
-  color: #fff;
+  color: #fff !important;
   border-radius: 12px;
   &:hover {
-    background: #004dbc;
-    color: #e7e7e7;
+    background: #004dbc !important;
+    color: #e7e7e7 !important;
   }
   @include media-breakpoint-up(xl) {
     display: none;

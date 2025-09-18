@@ -4,8 +4,11 @@ import {
   GLOBAL_CACHE_SETTING,
   POPULAR_POSTS_URL,
 } from '~/constants/environment-variables'
-import { fetchStoryBySlug } from '~/utils/fetch-function'
-import { type SinglePost } from '~/graphql/query/story'
+import { getClient } from '~/apollo-client'
+import {
+  fetchStoryBySlug as fetchStoryBySlugDocument,
+  SinglePost,
+} from '~/graphql/query/story'
 import type {
   InferGetServerSidePropsType,
   GetServerSideProps,
@@ -23,7 +26,7 @@ import {
 import { type RawPopularPost } from '~/types/popular-post'
 import { PostCardItem } from '~/graphql/query/posts'
 import RelatedPostList from '~/components/story/amp/related-post-list'
-import { getLatestPostsFunction } from '~/utils/fetch-function'
+// import { getLatestPostsFunction } from '~/app/_actions/homepage/latest-posts-and-editor-choices'
 import HeroInfo from '~/components/story/amp/hero-info'
 import AmpApiDataRenderer from '~/components/story/amp/amp-renderer'
 
@@ -150,13 +153,13 @@ export default function AmpPage({
           currentUrl={`/story/amp/${slug}`}
         />
       </Main>
-      {!!relatedPosts.length && (
+      {!!relatedPosts?.length && (
         <RelatedPostList title="相關新聞" list={relatedPosts} />
       )}
-      {!!popularPostsList.length && (
+      {!!popularPostsList?.length && (
         <PostList title="熱門新聞" list={popularPostsList} />
       )}
-      {!!latestPostsList.length && (
+      {!!latestPostsList?.length && (
         <PostList title="即時新聞" list={latestPostsList} />
       )}
     </AMPLayout>
@@ -178,7 +181,23 @@ export const getServerSideProps: GetServerSideProps<{
 
   const { slug = '' } = params as { slug: string }
 
-  const fetchStoryDataFunction = () => fetchStoryBySlug(slug)
+  const fetchStoryDataFunction = async () => {
+    const client = getClient()
+    try {
+      const { data } = await client.query<{
+        allPosts: SinglePost[]
+      }>({
+        query: fetchStoryBySlugDocument,
+        variables: {
+          slug,
+        },
+      })
+      return data ?? { allPosts: [] }
+    } catch (err) {
+      console.error(`Error fetching story data for slug: ${slug}`, err)
+      return { allPosts: [] }
+    }
+  }
 
   const fetchPopularList = () =>
     fetch(POPULAR_POSTS_URL, {
@@ -190,7 +209,7 @@ export const getServerSideProps: GetServerSideProps<{
   const responses = await Promise.allSettled([
     fetchStoryDataFunction(),
     fetchPopularList(),
-    getLatestPostsFunction(),
+    // getLatestPostsFunction(),
   ])
 
   const storyData: SinglePost | undefined = handleResponse(
@@ -203,7 +222,7 @@ export const getServerSideProps: GetServerSideProps<{
     `Error occurs while fetching story data in story amp page (${slug}: slug)`
   )
 
-  if (!storyData || !Object.keys(storyData).length) {
+  if (!storyData || !Object.keys(storyData)?.length) {
     return { notFound: true }
   }
 
@@ -229,15 +248,16 @@ export const getServerSideProps: GetServerSideProps<{
     `Error occurs while fetching popular data in story amp page (slug: ${slug})`
   )
 
-  const latestPostsList = handleResponse(
-    responses[2],
-    (
-      response: Awaited<ReturnType<typeof getLatestPostsFunction>> | undefined
-    ) => {
-      return response?.data?.allPosts?.map(formatPostAsJson) ?? []
-    },
-    `Error occurs while fetching latest data in story amp page (slug: ${slug})`
-  )
+  const latestPostsList: FormattedPostCardJson[] = []
+  // const latestPostsList = handleResponse(
+  //   responses[2],
+  //   (
+  //     response: Awaited<ReturnType<typeof getLatestPostsFunction>> | undefined
+  //   ) => {
+  //     return response?.data?.allPosts?.map(formatPostAsJson) ?? []
+  //   },
+  //   `Error occurs while fetching latest data in story amp page (slug: ${slug})`
+  // )
 
   return {
     props: {

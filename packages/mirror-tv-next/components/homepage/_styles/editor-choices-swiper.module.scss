@@ -64,13 +64,13 @@
 
 .nav {
   position: absolute;
-  top: 0;
+  top: 6.25vw !important;
   z-index: $Z_INDEX-coverContent;
   padding: 12px;
   height: calc(100% - 84px) !important;
   display: flex;
   align-items: center;
-  width: fit-content;
+  width: 40px !important;
   outline: 0 !important;
   color: #fff;
   margin-top: 0;
@@ -80,11 +80,11 @@
   }
   @include media-breakpoint-up(md) {
     align-items: flex-end;
-    height: calc(100% - 15px) !important;
+    height: 100% !important;
     color: #2c585e;
-  }
-  @include media-breakpoint-up(xl) {
-    height: calc(100% - 12px);
+    width: 60px !important;
+    align-items: flex-end !important;
+    top: 18px !important;
   }
 
   &:after {
@@ -104,6 +104,7 @@
       height: 24px;
       border-left: 3.84px solid #2c585e !important;
       border-bottom: 3.84px solid #2c585e !important;
+      margin-bottom: 10px !important;
     }
   }
 
@@ -113,21 +114,21 @@
 }
 
 .pagination {
-  position: absolute;
-  left: auto;
-  right: 0;
-  bottom: 84px;
-  width: fit-content;
+  position: absolute !important;
+  left: auto !important;
+  right: 0 !important;
+  bottom: 84px !important;
+  width: fit-content !important;
   padding: 12px;
   display: flex;
   font-weight: 700;
-  font-size: 16px;
-  line-height: 18px;
-  color: white;
+  font-size: 16px !important;
+  line-height: 18px !important;
+  color: #fff !important;
   @include media-breakpoint-up(md) {
     bottom: auto;
-    top: 380px;
-    transform: translate(0, -100%);
+    top: 360px !important;
+    transform: translate(0, -100%) !important;
   }
   :global {
     .swiper-pagination-current {

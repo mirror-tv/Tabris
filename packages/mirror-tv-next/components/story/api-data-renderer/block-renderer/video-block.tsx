@@ -58,8 +58,7 @@ const VideoBlock = ({
           src={videoUrl}
           width="640"
           height="360"
-          layout="responsive"
-          {...({} as any)}
+          {...({} as Record<string, unknown>)}
         >
           <source src={videoUrl} type="video/mp4" />
           <source src={videoUrl} type="video/webm" />
