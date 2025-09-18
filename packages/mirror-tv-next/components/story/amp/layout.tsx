@@ -47,7 +47,11 @@ export default function AMPLayout({ children }: { children: React.ReactNode }) {
   })
 
   return (
-    <html lang="zh-Hant" className={`${noto_sans.variable} layout-wrapper`}>
+    <html
+      lang="zh-Hant"
+      amp=""
+      className={`${noto_sans.variable} layout-wrapper`}
+    >
       <Head>
         <script async src="https://cdn.ampproject.org/v0.js"></script>
         <style jsx global>{`
