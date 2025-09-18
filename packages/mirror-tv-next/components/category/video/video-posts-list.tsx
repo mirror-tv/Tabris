@@ -74,8 +74,6 @@ export default function VideoPostsList({
   const nextButtonRef = useRef<HTMLDivElement>(null)
   const prevButtonRef = useRef<HTMLDivElement>(null)
 
-  console.log(postsList)
-
   return (
     <div className={styles.list}>
       <a

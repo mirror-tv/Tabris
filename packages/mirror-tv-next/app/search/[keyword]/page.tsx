@@ -16,7 +16,6 @@ export default function MisoSearch() {
   ]
   useEffect(() => {
     if (!keyword) return
-    console.log({ keyword })
 
     const misocmd = window.misocmd || (window.misocmd = [])
     misocmd.push(async () => {

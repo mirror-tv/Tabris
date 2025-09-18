@@ -206,7 +206,6 @@ export default async function VideoCategoryPage() {
           ),
           posts:
             videoPostsData?.data?.allPosts?.map((post) => {
-              console.log({ post })
               return formatArticleCard(post)
             }) ?? [],
           count: videoPostsData?.data?._allPostsMeta?.count ?? 0,
