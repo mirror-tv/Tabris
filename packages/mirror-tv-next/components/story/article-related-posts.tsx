@@ -5,7 +5,6 @@ import dynamic from 'next/dynamic'
 
 import styles from './_styles/article-related-posts.module.scss'
 import useWindowDimensions from '~/hooks/use-window-dimensions'
-import Script from 'next/script'
 
 const LazyRenderWrapper = dynamic(
   () => import('~/components/shared/lazy-render-wrapper'),

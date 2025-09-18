@@ -1,6 +1,5 @@
 'use client'
 import useWindowDimensions from '~/hooks/use-window-dimensions'
-import { useEffect, useRef } from 'react'
 
 import dynamic from 'next/dynamic'
 const LazyRenderWrapper = dynamic(
@@ -18,12 +17,13 @@ const AdAfterStory = () => {
       <LazyRenderWrapper
         callbackFn={() => {
           const initDable = () => {
-            const dableFunction = (window as any).dable
+            const dableFunction = (window as unknown as { dable?: unknown })
+              .dable
             const isDableReady =
               typeof dableFunction === 'function' ||
               (typeof dableFunction === 'object' &&
                 dableFunction &&
-                dableFunction.q)
+                'q' in dableFunction)
 
             if (isDableReady) {
               try {
@@ -34,8 +34,11 @@ const AdAfterStory = () => {
                     'dablewidget_2Xnxwk7d_xXAWmB7G'
                   )
                 } else {
-                  dableFunction.q.push(['setService', 'mnews.tw'])
-                  dableFunction.q.push([
+                  ;(dableFunction as { q: unknown[] }).q.push([
+                    'setService',
+                    'mnews.tw',
+                  ])
+                  ;(dableFunction as { q: unknown[] }).q.push([
                     'renderWidgetByWidth',
                     'dablewidget_2Xnxwk7d_xXAWmB7G',
                   ])
