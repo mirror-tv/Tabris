@@ -1,17 +1,15 @@
 'use client'
 import styles from './_styles/header-search-bar.module.scss'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
 import { FormEvent, useState } from 'react'
 
 const HeaderSearchBar = () => {
   const [keyword, setKeyword] = useState('')
-  const router = useRouter()
 
   const handleSearch = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (keyword.trim()) {
-      router.push(`/search/${keyword}`)
+      window.location.assign(`/search/${encodeURIComponent(keyword)}`)
     }
   }
   return (

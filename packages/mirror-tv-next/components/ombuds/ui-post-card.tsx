@@ -4,6 +4,7 @@ import { formateHeroImage } from '~/utils'
 import type { Post } from '~/graphql/query/ombuds'
 import styles from './_styles/ui-post-card.module.scss'
 import dayjs from 'dayjs'
+import UiExclusiveMark from '../shared/ui-exclusive-mark'
 
 type Props = {
   item: Post
@@ -15,6 +16,7 @@ export default function UiPostCard({ item }: Props) {
   }
 
   const formattedHeroImage = formateHeroImage(item.heroImage ?? {})
+
   return (
     <Link
       href={`/story/${item.slug}`}
@@ -36,6 +38,7 @@ export default function UiPostCard({ item }: Props) {
             default: '500px',
           }}
         />
+        {item.exclusive && <UiExclusiveMark />}
       </div>
       <span className={styles.infoWrapper}>
         <span className={styles.title}>{item.name}</span>

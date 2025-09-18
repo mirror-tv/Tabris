@@ -136,6 +136,7 @@ export default function VideoPostsList({
                   title={post.name}
                   imageUrls={post.images}
                   href={post.href}
+                  exclusive={post.exclusive ?? false}
                 />
               </SwiperSlide>
             )

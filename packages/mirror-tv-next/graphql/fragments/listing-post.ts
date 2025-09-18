@@ -6,6 +6,7 @@ export type ListingPost = {
   style?: string
   name: string
   heroImage: HeroImage | null
+  exclusive: boolean | null
 }
 
 const listingPost = gql`
@@ -20,6 +21,7 @@ const listingPost = gql`
       urlMobileSized
       urlTinySized
     }
+    exclusive
   }
 `
 

@@ -5,6 +5,8 @@ import { getClient } from '~/apollo-client'
 import {
   type PostWithCategory,
   getPostsWithCategory,
+  getLatestPosts,
+  type PostCardItem,
 } from '~/graphql/query/posts'
 import {
   EditorChoices,
@@ -22,10 +24,12 @@ const HeroImageSchema = z.object({
   urlOriginal: z.string().optional(),
 })
 
+const FlexibleHeroImageSchema = z.union([z.string(), HeroImageSchema, z.null()])
+
 const StaticEditorChoiceSchema = z.object({
   name: z.string(),
   slug: z.string(),
-  heroImage: z.union([z.string(), HeroImageSchema, z.null()]),
+  heroImage: FlexibleHeroImageSchema,
   heroVideo: z
     .object({
       coverPhoto: HeroImageSchema.nullable(),
@@ -33,6 +37,16 @@ const StaticEditorChoiceSchema = z.object({
     .nullable()
     .optional(),
   source: z.string(),
+  exclusive: z
+    .any()
+    .transform((val) => {
+      if (val === null || val === undefined) return null
+      if (typeof val === 'boolean') return val
+      if (val === 'true' || val === true) return true
+      if (val === 'false' || val === false) return false
+      return null
+    })
+    .nullable(),
 })
 
 const StaticLatestPostSchema = z.object({
@@ -47,7 +61,7 @@ const StaticLatestPostSchema = z.object({
     })
     .optional(),
   publishTime: z.string(),
-  heroImage: z.union([z.string(), HeroImageSchema, z.null()]),
+  heroImage: FlexibleHeroImageSchema,
   categories: z
     .array(
       z.object({
@@ -62,6 +76,16 @@ const StaticLatestPostSchema = z.object({
     })
     .nullable()
     .optional(),
+  exclusive: z
+    .any()
+    .transform((val) => {
+      if (val === null || val === undefined) return null
+      if (typeof val === 'boolean') return val
+      if (val === 'true' || val === true) return true
+      if (val === 'false' || val === false) return false
+      return null
+    })
+    .nullable(),
 })
 
 const StaticHomepageResponseSchema = z.object({
@@ -76,6 +100,16 @@ const ListingPostSchema = z.object({
   style: z.string().optional(),
   name: z.string(),
   heroImage: HeroImageSchema.nullable(),
+  exclusive: z
+    .any()
+    .transform((val) => {
+      if (val === null || val === undefined) return null
+      if (typeof val === 'boolean') return val
+      if (val === 'true' || val === true) return true
+      if (val === 'false' || val === false) return false
+      return null
+    })
+    .nullable(),
 })
 
 const PostWithCategorySchema = ListingPostSchema.extend({
@@ -103,6 +137,16 @@ const GraphQLEditorChoicesResponseSchema = z.object({
         heroVideo: z
           .object({
             coverPhoto: HeroImageSchema.nullable(),
+          })
+          .nullable(),
+        exclusive: z
+          .any()
+          .transform((val) => {
+            if (val === null || val === undefined) return null
+            if (typeof val === 'boolean') return val
+            if (val === 'true' || val === true) return true
+            if (val === 'false' || val === false) return false
+            return null
           })
           .nullable(),
       }),
@@ -226,6 +270,7 @@ async function getLatestPostsAndEditorChoices({
                   urlTinySized: '',
                 },
               },
+              exclusive: choice.exclusive ?? false,
             },
           })
         )
@@ -253,6 +298,7 @@ async function getLatestPostsAndEditorChoices({
               urlTinySized: '',
             },
           },
+          exclusive: post.exclusive,
         }))
 
         const transformedData = {
@@ -353,7 +399,7 @@ async function getLatestPostsAndEditorChoices({
 
         return {
           latest: transformedGraphQLPosts,
-          choices: transformedGraphQLChoices,
+          choices: transformedGraphQLChoices as EditorChoices[],
           _allPostsMeta: validatedLatestPosts._allPostsMeta,
           source: 'graphql' as const,
         }
@@ -416,7 +462,7 @@ async function getLatestPostsAndEditorChoices({
 
     data = {
       latest: transformedGraphQLPosts,
-      choices: [], // 不抓取 editor choices
+      choices: [] as EditorChoices[], // 不抓取 editor choices
       _allPostsMeta: validatedLatestPosts._allPostsMeta,
       source: 'graphql' as const,
     }
@@ -425,4 +471,27 @@ async function getLatestPostsAndEditorChoices({
   return { data }
 }
 
-export { getLatestPostsAndEditorChoices }
+// For aside section in category page
+type QueryType = {
+  allPosts: PostCardItem[]
+}
+
+const client = getClient()
+const firstNItems = 5
+const filteredSlugList: string[] = []
+const queryArgs = {
+  query: getLatestPosts,
+  variables: {
+    first: firstNItems,
+    filteredSlug: filteredSlugList,
+  },
+}
+
+/**
+ * Fetches the latest 5 posts to be displayed in the aside section in category page.
+ */
+const getLatestPostsFunction = () => {
+  return client.query<QueryType>(queryArgs)
+}
+
+export { getLatestPostsAndEditorChoices, getLatestPostsFunction }

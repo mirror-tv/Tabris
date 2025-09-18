@@ -26,17 +26,13 @@ export default function UiListPostsAside({
     >
       <UiHeadingBordered title={listTitle} className={styles.listTitle} />
       <ol
-        className={
-          [
-            styles.list,
-            page === 'category' ? styles.listBordered : '',
-            'list',
-          ].join(' ') +
-            listTitle ===
-          '熱門新聞'
-            ? ' aside__list-popular'
+        className={`${styles.list} ${
+          page === 'category' ? styles.listBordered : ''
+        } ${
+          listTitle === '熱門新聞'
+            ? 'aside__list-popular'
             : ' aside__list-latest'
-        }
+        }`}
       >
         {listData?.map((item) => {
           return (
@@ -51,6 +47,7 @@ export default function UiListPostsAside({
                 page={page}
                 postStyle={item.style ?? ''}
                 date={item.publishTime}
+                exclusive={item.exclusive ?? false}
               />
             </li>
           )

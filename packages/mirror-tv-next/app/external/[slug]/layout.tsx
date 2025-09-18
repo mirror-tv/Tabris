@@ -1,6 +1,6 @@
 'use client'
 import Aside from '~/components/story/aside'
-import styles from './_styles/story.module.scss'
+import styles from './_styles/external.module.scss'
 import Script from 'next/script'
 import dynamic from 'next/dynamic'
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))

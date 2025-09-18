@@ -5,7 +5,6 @@ import dynamic from 'next/dynamic'
 
 import styles from './_styles/article-related-posts.module.scss'
 import useWindowDimensions from '~/hooks/use-window-dimensions'
-import Script from 'next/script'
 
 const LazyRenderWrapper = dynamic(
   () => import('~/components/shared/lazy-render-wrapper'),
@@ -17,18 +16,23 @@ const LazyRenderWrapper = dynamic(
 const ArticleRelatedPosts = ({
   relatedPosts,
   shouldShowAds,
+  page,
 }: {
   relatedPosts: SinglePost['relatedPosts']
   shouldShowAds: boolean
+  page: 'story' | 'external'
 }) => {
   const { width } = useWindowDimensions()
 
   return (
     <div className={`${styles.container} list-wrapper post__related`}>
       <UiHeadingBordered title={'更多新聞'} className={styles.listTitle} />
-      <ul>
+      <ul className={styles.list}>
         {relatedPosts.map((item, idx) => (
-          <li key={item.slug + idx} className="ga-article-related">
+          <li
+            key={item.slug + idx}
+            className={`ga-article-related ${styles.item}`}
+          >
             {item.name}
           </li>
         ))}
@@ -36,35 +40,22 @@ const ArticleRelatedPosts = ({
 
       {shouldShowAds && (
         <>
-          <div id="_popIn_recommend_word" />
-          <Script
-            id="popinAd"
-            strategy="beforeInteractive"
-            dangerouslySetInnerHTML={{
-              __html: `
-            (function() {
-              var pa = document.createElement('script')
-              pa.type = 'text/javascript'
-              pa.charset = 'utf-8'
-              pa.async = true
-              pa.src = window.location.protocol + '//api.popin.cc/searchbox/mnews.js'
-              var s = document.getElementsByTagName('script')[0]
-              s.parentNode.insertBefore(pa, s)
-            })()
-          `,
-            }}
-          />
-          <LazyRenderWrapper>
-            <div
-              className="avivid_textad avivid_ad_one"
-              data-web_id="mnewstext"
-            />
-            {width && width >= 768 ? (
-              <div id="compass-fit-4333664" />
-            ) : (
-              <div id="compass-fit-4333665" />
-            )}
-          </LazyRenderWrapper>
+          {width && width >= 768 && (
+            <div id="_popIn_recommend_word" className="_popIn_recommend" />
+          )}
+          {page === 'story' && (
+            <LazyRenderWrapper>
+              <div
+                className="avivid_textad avivid_ad_one"
+                data-web_id="mnewstext"
+              />
+              {width && width >= 768 ? (
+                <div id="compass-fit-4333664" />
+              ) : (
+                <div id="compass-fit-4333665" />
+              )}
+            </LazyRenderWrapper>
+          )}
         </>
       )}
     </div>

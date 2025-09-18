@@ -7,7 +7,6 @@ import {
   ApiDataBlockType,
 } from '../api-data-renderer/block-renderer/type'
 import UnorderListBlock from '../api-data-renderer/block-renderer/unorder-list-block'
-// import InfoBoxBlock from '../api-data-renderer/block-renderer/info-box-block'
 import AudioBlock from '../api-data-renderer/block-renderer/audio-block'
 import VideoBlock from '../api-data-renderer/block-renderer/video-block'
 import YoutubeBlock from '../api-data-renderer/block-renderer/youtube-block'
@@ -15,6 +14,7 @@ import AmpImageBlock from './blocks/amp-image-block'
 import UnstyledBlock from '../api-data-renderer/block-renderer/unstyled-block'
 import styled from 'styled-components'
 import AmpEmbedded from './blocks/amp-embedded'
+import AmpUnsupportedBlock from './blocks/amp-unsupported-block'
 
 const ArticleWrapper = styled.article`
   display: flex;
@@ -36,14 +36,18 @@ const AmpApiDataRenderer = ({
 }: AmpApiDataRendererPropsType) => {
   const parsedContentData: ApiData = JSON.parse(contentData)
 
-  if (parsedContentData.length >= 4 && !isStoryBrief) {
+  if (parsedContentData?.length >= 4 && !isStoryBrief) {
     const newObject: ApiDataBlock = {
-      id: 'inserted-object-' + Date.now(),
+      id: 'inserted-gpt-ad',
       type: ApiDataBlockType.GptAd,
       content: '',
       alignment: 'center',
     }
     parsedContentData.splice(4, 0, newObject)
+  }
+
+  if (!parsedContentData?.length) {
+    return null
   }
 
   return (
@@ -99,10 +103,17 @@ const AmpApiDataRenderer = ({
                 isAmp={true}
               />
             )
+          case ApiDataBlockType.GptAd:
+            return null
           default: {
             const exhaustiveCheck = apiDataBlock
             console.error('unhandled apiData type of amp', exhaustiveCheck.type)
-            return null
+            return (
+              <AmpUnsupportedBlock
+                key={apiDataBlock.id}
+                currentUrl={currentUrl}
+              />
+            )
           }
         }
       })}

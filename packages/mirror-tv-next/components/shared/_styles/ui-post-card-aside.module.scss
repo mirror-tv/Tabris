@@ -1,4 +1,4 @@
-@import "/styles/theme/breakpoints";
+@import '/styles/theme/breakpoints';
 
 .card {
   display: flex;
@@ -58,6 +58,8 @@
   justify-content: space-between;
   overflow: hidden;
   height: 86px;
+  z-index: 100;
+  position: relative;
   @include media-breakpoint-up(md) {
     height: 95px;
   }

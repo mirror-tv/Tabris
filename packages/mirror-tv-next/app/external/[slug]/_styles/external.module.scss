@@ -1,0 +1,122 @@
+@import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
+
+.LayoutWrapper {
+  display: flex;
+  flex-direction: column;
+  @include media-breakpoint-up(md) {
+    margin: 0 auto;
+    max-width: $story-wrapper-max-width-md;
+  }
+  @include media-breakpoint-up(xl) {
+    max-width: $story-max-width-xl;
+  }
+  @include media-breakpoint-up(xxl) {
+    max-width: $story-max-width-xl;
+  }
+}
+
+.ads {
+  margin-top: 45px;
+  @include media-breakpoint-up(md) {
+    margin-top: 28px;
+  }
+}
+
+.story {
+  min-height: calc(100dvh - 50px); // header height
+  padding: 86px 16px 48px;
+  flex: 1;
+  padding-top: 12px;
+  position: relative;
+  @include media-breakpoint-up(md) {
+    min-height: calc(100dvh - 152px); // header height
+    max-width: $story-max-width-md;
+    padding: 28px 0 50px;
+    display: flex;
+    flex-direction: column;
+    padding-top: 60px;
+  }
+  @include media-breakpoint-up(xl) {
+    max-width: $max-width-xxl;
+    display: flex;
+    flex-direction: row;
+    gap: 96px;
+  }
+}
+
+.article {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto 0 0;
+  flex: 1;
+
+  @include media-breakpoint-up(md) {
+    max-width: 600px;
+    width: 600px;
+    margin: 0;
+  }
+  @include media-breakpoint-up(xl) {
+    max-width: $max-width-xl;
+    display: flex;
+  }
+
+  a {
+    color: #014db8;
+    font-weight: 500;
+    text-decoration: underline;
+  }
+}
+
+.socialAndRelatedWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  @include media-breakpoint-up(md) {
+    gap: 48px;
+  }
+}
+
+.contentWrapper {
+  width: calc(100vw - 3rem);
+  @include media-breakpoint-up(md) {
+    max-width: 600px;
+    width: 600px;
+  }
+}
+
+.externalContent {
+  color: #000;
+  font-size: 16px;
+  line-height: 1.75;
+  text-align: justify;
+  word-wrap: break-word;
+  max-width: 100%;
+  h2,
+  h3 {
+    margin-top: 30px;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.4;
+    word-wrap: break-word;
+  }
+
+  p,
+  img {
+    margin-top: 30px;
+  }
+
+  a {
+    color: #014db8;
+    font-weight: 500;
+    text-decoration: underline;
+  }
+
+  .content__youtube {
+    width: 100%;
+    height: calc((100vw - 32px) * 0.5625);
+    @include media-breakpoint-up(md) {
+      height: calc(600px * 0.5625);
+    }
+  }
+}

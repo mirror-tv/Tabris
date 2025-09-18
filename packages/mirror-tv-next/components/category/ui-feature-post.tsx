@@ -2,13 +2,15 @@ import styles from './_styles/ui-feature-post.module.scss'
 import { formateDateAtTaipei } from '~/utils/date-handler'
 import ResponsiveImage from '~/components/shared/responsive-image'
 import { FormattedPostCard } from '~/utils'
+import UiExclusiveMark from '../shared/ui-exclusive-mark'
 
 type UiFeaturePostProps = {
   post: FormattedPostCard
 }
 
 export default function UiFeaturePost({ post }: UiFeaturePostProps) {
-  const { href, style, name, images, publishTime } = post
+  const { href, style, name, images, publishTime, exclusive } = post
+
   return (
     <a
       href={href}
@@ -27,6 +29,7 @@ export default function UiFeaturePost({ post }: UiFeaturePostProps) {
           priority={false}
           imgClassName="article-img"
         />
+        {exclusive && <UiExclusiveMark />}
         {style === 'videoNews' && <span className={styles.videoIcon}></span>}
       </span>
       <span
