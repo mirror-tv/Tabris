@@ -11,7 +11,7 @@ const HeaderSearchBar = () => {
   const handleSearch = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (keyword.trim()) {
-      router.push(`/search/${keyword}`)
+      router.push(`/search/${encodeURIComponent(keyword)}`)
     }
   }
   return (

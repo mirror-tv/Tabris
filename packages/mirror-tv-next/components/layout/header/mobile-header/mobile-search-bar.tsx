@@ -56,7 +56,10 @@ const MobileSearchBar = () => {
                   height={16}
                 />
               </button>
-              <Link href={`/search/${keyword}`} onClick={handleSearch}>
+              <a
+                href={`/search/${encodeURIComponent(keyword)}`}
+                onClick={handleSearch}
+              >
                 <div
                   className={`${styles.searchIcon} ${
                     isSearching && styles.isSearchingIcon
@@ -64,7 +67,7 @@ const MobileSearchBar = () => {
                 >
                   GO
                 </div>
-              </Link>
+              </a>
             </div>
           </div>
           {!isSearching && <div className={styles.modalOverlay} />}

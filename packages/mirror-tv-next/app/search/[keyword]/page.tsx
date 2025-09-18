@@ -9,7 +9,7 @@ import GptAd from '~/components/ads/gpt/gpt-ad'
 export default function MisoSearch() {
   const params = useParams()
   const router = useRouter()
-  const keyword = (params?.keyword as string) || ''
+  const keyword = decodeURIComponent((params?.keyword as string) || '')
   console.log({ keyword })
   const sortOptions = [
     { field: 'relevance', text: '關聯性', default: true },
@@ -79,10 +79,9 @@ export default function MisoSearch() {
       function highlightKeyword(text: string, keyword: string): string {
         if (!keyword || !text) return text
 
-        const regex = new RegExp(
-          `(${keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`,
-          'gi'
-        )
+        const escapedKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+        const regex = new RegExp(`(${escapedKeyword})`, 'giu')
 
         return text.replace(regex, '<span class="keyword">$1</span>')
       }
@@ -259,7 +258,7 @@ export default function MisoSearch() {
       workflow.answer.on(
         'request',
         ({ payload: { q } }: { payload: { q: string } }) => {
-          router.push(`/search/${q}`)
+          router.push(`/search/${encodeURIComponent(q)}`)
         }
       )
     })
