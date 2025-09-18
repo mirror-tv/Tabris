@@ -10,7 +10,6 @@ export default function MisoSearch() {
   const params = useParams()
   const router = useRouter()
   const keyword = decodeURIComponent((params?.keyword as string) || '')
-  console.log({ keyword })
   const sortOptions = [
     { field: 'relevance', text: '關聯性', default: true },
     { field: 'published_at', text: '由新到舊' },
@@ -258,7 +257,7 @@ export default function MisoSearch() {
       workflow.answer.on(
         'request',
         ({ payload: { q } }: { payload: { q: string } }) => {
-          router.push(`/search/${encodeURIComponent(q)}`)
+          router.push(`/search/${encodeURIComponent(q)}`, { scroll: false })
         }
       )
     })
