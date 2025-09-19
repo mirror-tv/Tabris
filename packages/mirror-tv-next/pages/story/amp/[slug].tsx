@@ -25,9 +25,8 @@ import {
   extractYoutubeId,
 } from '~/utils'
 import { type RawPopularPost } from '~/types/popular-post'
-import { PostCardItem } from '~/graphql/query/posts'
+import { getLatestPosts, PostCardItem } from '~/graphql/query/posts'
 import RelatedPostList from '~/components/story/amp/related-post-list'
-// import { getLatestPostsFunction } from '~/app/_actions/homepage/latest-posts-and-editor-choices'
 import HeroInfo from '~/components/story/amp/hero-info'
 import AmpApiDataRenderer from '~/components/story/amp/amp-renderer'
 import { SITE_TITLE, META_SITE_URL } from '~/constants/constant'
@@ -221,19 +220,16 @@ export default function AmpPage({
     '/images/image-default.jpg'
   const heroVideoId = extractYoutubeId(heroVideo?.youtubeUrl) ?? ''
 
-  // 生成 metadata
   const brief = briefApiData ? JSON.parse(briefApiData).join('') : ''
   const tags = storyData.tags?.map((tag) => tag.name).join(', ')
   const image = storyData.heroImage?.urlDesktopSized
   const pageUrl = `${META_SITE_URL}/story/${slug}`
   const writer = storyData.writers?.[0]
-  const authorName = writer?.name || SITE_TITLE
   const category = storyData.categories?.[0]
   const publishedDateIso = dayjs(publishTime).utcOffset(8).toISOString()
   const updateTime = storyData.updatedAt || storyData.publishTime
   const updateDateIso = dayjs(updateTime).utcOffset(8).toISOString()
 
-  // 生成 JSON-LD
   const jsonLds = generateStoryJsonLds(storyData, pageUrl)
 
   return (
@@ -363,10 +359,23 @@ export const getServerSideProps: GetServerSideProps<{
       return res.json() as unknown as { report: RawPopularPost[] }
     })
 
+  const client = getClient()
+
+  const getLatestPostsFn = () => {
+    return client.query<{
+      allPosts: PostCardItem[]
+    }>({
+      query: getLatestPosts,
+      variables: {
+        first: 5,
+      },
+    })
+  }
+
   const responses = await Promise.allSettled([
     fetchStoryDataFunction(),
     fetchPopularList(),
-    // getLatestPostsFunction(),
+    getLatestPostsFn(),
   ])
 
   const storyData: SinglePost | undefined = handleResponse(
@@ -405,16 +414,13 @@ export const getServerSideProps: GetServerSideProps<{
     `Error occurs while fetching popular data in story amp page (slug: ${slug})`
   )
 
-  const latestPostsList: FormattedPostCardJson[] = []
-  // const latestPostsList = handleResponse(
-  //   responses[2],
-  //   (
-  //     response: Awaited<ReturnType<typeof getLatestPostsFunction>> | undefined
-  //   ) => {
-  //     return response?.data?.allPosts?.map(formatPostAsJson) ?? []
-  //   },
-  //   `Error occurs while fetching latest data in story amp page (slug: ${slug})`
-  // )
+  const latestPostsList = handleResponse(
+    responses[2],
+    (response: Awaited<ReturnType<typeof getLatestPostsFn>> | undefined) => {
+      return response?.data?.allPosts?.map(formatPostAsJson) ?? []
+    },
+    `Error occurs while fetching latest data in story amp page (slug: ${slug})`
+  )
 
   return {
     props: {

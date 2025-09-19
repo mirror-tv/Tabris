@@ -356,7 +356,6 @@ async function getLatestPostsAndEditorChoices({
         const validatedEditorChoices = editorChoicesValidation.data
         const validatedLatestPosts = latestPostsValidation.data
 
-        // Transform GraphQL data to ensure heroImage is never null
         const transformedGraphQLChoices =
           validatedEditorChoices.allEditorChoices.map((choice) => ({
             choice: {
@@ -371,7 +370,6 @@ async function getLatestPostsAndEditorChoices({
             },
           }))
 
-        // Transform GraphQL data to ensure heroVideo is never null
         const transformedGraphQLPosts = validatedLatestPosts.allPosts.map(
           (post) => ({
             ...post,
@@ -434,7 +432,6 @@ async function getLatestPostsAndEditorChoices({
 
     const validatedLatestPosts = latestPostsValidationResult.data
 
-    // Transform GraphQL data to ensure heroVideo is never null
     const transformedGraphQLPosts = validatedLatestPosts.allPosts.map(
       (post) => ({
         ...post,
@@ -462,7 +459,7 @@ async function getLatestPostsAndEditorChoices({
 
     data = {
       latest: transformedGraphQLPosts,
-      choices: [] as EditorChoices[], // 不抓取 editor choices
+      choices: [] as EditorChoices[],
       _allPostsMeta: validatedLatestPosts._allPostsMeta,
       source: 'graphql' as const,
     }
