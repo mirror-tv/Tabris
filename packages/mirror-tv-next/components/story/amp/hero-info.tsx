@@ -93,16 +93,16 @@ export default function HeroInfo({
     <>
       <CategoryAndPublishTime className='class="amp__main__category-publishTime"'>
         <Category className="amp-pub-cat-category">
-          {categories?.[0]?.title}
+          {!!categories?.[0]?.title && categories?.[0]?.title}
         </Category>
-        {publishTime && (
+        {!!publishTime && (
           <PublishTime className="amp-pub-cat-publishTime">
             {publishTimeTaipei}
           </PublishTime>
         )}
       </CategoryAndPublishTime>
       <StyledTitle>{title}</StyledTitle>
-      {creditList.length && (
+      {!!creditList.length && (
         <CreditsWrapper>
           {creditList.map((item) => {
             return (

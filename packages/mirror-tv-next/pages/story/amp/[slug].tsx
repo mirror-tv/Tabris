@@ -284,7 +284,7 @@ export default function AmpPage({
               <amp-img src={heroImgSrc} layout="fill" alt={heroCaption} />
             </ImageWrapper>
           )}
-          {heroCaption && <HeroImhCaption>{heroCaption}</HeroImhCaption>}
+          {!!heroCaption && <HeroImhCaption>{heroCaption}</HeroImhCaption>}
         </HeroImageAndVideo>
         <HeroInfo
           title={title}
