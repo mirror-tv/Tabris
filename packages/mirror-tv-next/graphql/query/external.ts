@@ -38,7 +38,7 @@ export interface SingleExternalPost {
   content_original?: string
   brief?: string
   // content: string
-  // source?: string
+  source?: string
   updatedAt: string
 }
 
@@ -72,7 +72,7 @@ const fetchExternalBySlug = gql`
       content_original
       brief # 待定
       # content
-      # source # 待定
+      source
       updatedAt
     }
   }

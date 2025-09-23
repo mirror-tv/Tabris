@@ -27,6 +27,7 @@ import type { SinglePost } from '~/graphql/query/story'
 
 import dynamic from 'next/dynamic'
 import MisoPageView from '~/components/shared/miso-pageview'
+import GA4SourceTracking from '~/components/story/ga4-source-tracking'
 
 const ContainerFullScreenAds = dynamic(
   () => import('~/components/ads/gpt/gpt-popup'),
@@ -234,6 +235,7 @@ const StoryPage = async (props: StoryPageTypes) => {
     heroVideo,
     tags,
     updatedAt,
+    source,
   } = storyData
   const publishTimeTaipei = formateDateAtTaipei(
     new Date(publishTime),
@@ -258,6 +260,7 @@ const StoryPage = async (props: StoryPageTypes) => {
     <>
       <JsonLd data={jsonLdData} />
       <MisoPageView productIds={`story_${params.slug}`} />
+      <GA4SourceTracking source={source} />
       <section className={styles.article}>
         <ContainerFullScreenAds adKey="MB_NEWS" />
         <ArticleHeroImageAndVideo

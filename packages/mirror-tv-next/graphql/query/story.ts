@@ -19,6 +19,7 @@ export interface SinglePost {
   exclusive: boolean
   contentApiData: string
   briefApiData: string
+  source?: string
   relatedPosts: SingleRelatedPost[]
   heroVideo: {
     youtubeUrl: string
@@ -74,6 +75,7 @@ const fetchStoryBySlug = gql`
       heroCaption
       briefApiData
       contentApiData
+      source
       categories {
         slug
         title: name
