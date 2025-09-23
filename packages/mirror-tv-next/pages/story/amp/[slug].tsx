@@ -189,6 +189,13 @@ const BriefWrapper = styled.section`
   }
 `
 
+const AdContainer = styled.div`
+  margin: 0 16px;
+  width: 100%;
+  height: calc((100vw - 32px) * 0.641);
+  position: relative;
+`
+
 export default function AmpPage({
   storyData,
   popularPostsList = [],
@@ -233,7 +240,7 @@ export default function AmpPage({
   const jsonLds = generateStoryJsonLds(storyData, pageUrl)
 
   return (
-    <>
+    <AMPLayout>
       <Head>
         <title>{title}</title>
         <meta name="description" content={brief} />
@@ -262,60 +269,68 @@ export default function AmpPage({
           />
         ))}
       </Head>
-      <AMPLayout>
-        <Main>
-          <HeroImageAndVideo>
-            {style === 'videoNews' && heroVideoId ? (
-              <amp-youtube
-                data-videoid={heroVideoId}
-                width="480"
-                height="270"
-                layout="responsive"
-                className="hero-video"
-              ></amp-youtube>
-            ) : (
-              <ImageWrapper>
-                <amp-img src={heroImgSrc} layout="fill" alt={heroCaption} />
-              </ImageWrapper>
-            )}
-            {heroCaption && <HeroImhCaption>{heroCaption}</HeroImhCaption>}
-          </HeroImageAndVideo>
-          <HeroInfo
-            title={title}
-            publishTime={publishTime}
-            categories={categories}
-            writers={writers}
-            photographers={photographers}
-            cameraOperators={cameraOperators}
-            designers={designers}
-            engineers={engineers}
-            vocals={vocals}
-            otherbyline={otherbyline}
-          />
-          <BriefWrapper>
-            <AmpApiDataRenderer
-              contentData={briefApiData}
-              isStoryBrief={true}
-              currentUrl={`/story/amp/${slug}`}
-            />
-          </BriefWrapper>
+      <Main>
+        <HeroImageAndVideo>
+          {style === 'videoNews' && heroVideoId ? (
+            <amp-youtube
+              data-videoid={heroVideoId}
+              width="480"
+              height="270"
+              layout="responsive"
+              className="hero-video"
+            ></amp-youtube>
+          ) : (
+            <ImageWrapper>
+              <amp-img src={heroImgSrc} layout="fill" alt={heroCaption} />
+            </ImageWrapper>
+          )}
+          {heroCaption && <HeroImhCaption>{heroCaption}</HeroImhCaption>}
+        </HeroImageAndVideo>
+        <HeroInfo
+          title={title}
+          publishTime={publishTime}
+          categories={categories}
+          writers={writers}
+          photographers={photographers}
+          cameraOperators={cameraOperators}
+          designers={designers}
+          engineers={engineers}
+          vocals={vocals}
+          otherbyline={otherbyline}
+        />
+        <BriefWrapper>
           <AmpApiDataRenderer
-            contentData={contentApiData}
-            isStoryBrief={false}
+            contentData={briefApiData}
+            isStoryBrief={true}
             currentUrl={`/story/amp/${slug}`}
           />
-        </Main>
-        {!!relatedPosts?.length && (
-          <RelatedPostList title="相關新聞" list={relatedPosts} />
-        )}
-        {!!popularPostsList?.length && (
-          <PostList title="熱門新聞" list={popularPostsList} />
-        )}
-        {!!latestPostsList?.length && (
-          <PostList title="即時新聞" list={latestPostsList} />
-        )}
-      </AMPLayout>
-    </>
+        </BriefWrapper>
+        <AmpApiDataRenderer
+          contentData={contentApiData}
+          isStoryBrief={false}
+          currentUrl={`/story/amp/${slug}`}
+        />
+      </Main>
+      {!!relatedPosts?.length && (
+        <RelatedPostList title="相關新聞" list={relatedPosts} />
+      )}
+      {!!popularPostsList?.length && (
+        <PostList title="熱門新聞" list={popularPostsList} />
+      )}
+      <AdContainer>
+        <amp-ad
+          type="logly"
+          layout="fill"
+          data-adspotid="4304723"
+          width="343"
+          height="641"
+        />
+      </AdContainer>
+
+      {!!latestPostsList?.length && (
+        <PostList title="即時新聞" list={latestPostsList} />
+      )}
+    </AMPLayout>
   )
 }
 
