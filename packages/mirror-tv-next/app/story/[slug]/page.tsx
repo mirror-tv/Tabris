@@ -28,6 +28,7 @@ import type { SinglePost } from '~/graphql/query/story'
 import dynamic from 'next/dynamic'
 import MisoPageView from '~/components/shared/miso-pageview'
 import GA4SourceTracking from '~/components/story/ga4-source-tracking'
+import UiDownload from '~/components/shared/ui-download'
 
 const ContainerFullScreenAds = dynamic(
   () => import('~/components/ads/gpt/gpt-popup'),
@@ -236,6 +237,7 @@ const StoryPage = async (props: StoryPageTypes) => {
     tags,
     updatedAt,
     source,
+    download,
   } = storyData
   const publishTimeTaipei = formateDateAtTaipei(
     new Date(publishTime),
@@ -285,6 +287,7 @@ const StoryPage = async (props: StoryPageTypes) => {
         {hasBrief && <ArticleBrief brief={JSON.parse(briefApiData || '[]')} />}
         <section className={styles.contentWrapper}>
           <ApiDataRenderer contentData={contentApiData} isStoryBrief={false} />
+          {!!download?.length && <UiDownload downloads={download} />}
           {updatedTime && <ArticleUpdateTime updateTime={updatedTime} />}
           {!!tags.length && <ArticleTagList tags={tags} />}
         </section>

@@ -48,6 +48,11 @@ export interface SinglePost {
   tags: {
     name: string
   }[]
+  download: {
+    id: string
+    name: string
+    url: string
+  }[]
   __typename: string
 }
 
@@ -105,6 +110,11 @@ const fetchStoryBySlug = gql`
         slug
       }
       otherbyline
+      download {
+        id
+        name
+        url
+      }
       relatedPosts(where: { state: published }) {
         slug
         name
