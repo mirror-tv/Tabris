@@ -39,7 +39,6 @@ export interface SingleExternalPost {
   brief?: string
   // content: string
   source?: string
-  isAdult: boolean
   updatedAt: string
 }
 
@@ -74,7 +73,6 @@ const fetchExternalBySlug = gql`
       brief # 待定
       # content
       source
-      isAdult
       updatedAt
     }
   }
