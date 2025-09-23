@@ -40,7 +40,7 @@ export default function UiListPostsAside({
               key={`list-article-aside-${item.slug}`}
               className={['list__list-item', styles.item].join(' ')}
             >
-              <li>
+              <li style={{ listStyle: 'none' }}>
                 <UiPostCardAside
                   href={item.href}
                   images={item.images}
