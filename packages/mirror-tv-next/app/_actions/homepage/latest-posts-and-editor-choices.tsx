@@ -60,7 +60,13 @@ const StaticLatestPostSchema = z.object({
       slug: z.string(),
     })
     .optional(),
-  publishTime: z.string(),
+  publishTime: z.any().transform((val) => {
+    if (val instanceof Date) return val.toISOString()
+    if (typeof val === 'string') return val
+    if (typeof val === 'number') return new Date(val).toISOString()
+    if (val === null || val === undefined) return new Date().toISOString()
+    return String(val)
+  }),
   heroImage: FlexibleHeroImageSchema,
   categories: z
     .array(
@@ -113,7 +119,13 @@ const ListingPostSchema = z.object({
 })
 
 const PostWithCategorySchema = ListingPostSchema.extend({
-  publishTime: z.string().transform((val) => new Date(val)),
+  publishTime: z.any().transform((val) => {
+    if (val instanceof Date) return val
+    if (typeof val === 'string') return new Date(val)
+    if (typeof val === 'number') return new Date(val)
+    if (val === null || val === undefined) return new Date()
+    return new Date(String(val))
+  }),
   categories: z.array(
     z.object({
       slug: z.string(),
