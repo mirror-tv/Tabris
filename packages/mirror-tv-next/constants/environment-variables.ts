@@ -55,7 +55,7 @@ switch (ENV) {
     HEADER_JSON_URL = `${SITE_URL}/json/header_v2-1.json`
     FLASH_NEWS_JSON_URL = `${SITE_URL}/json/flash_news.json`
     SCHEDULE_JSON_URL = `${SITE_URL}/json/tv-schedule.json`
-    POPULAR_POSTS_URL = `${SITE_URL}/json/popularlist.json`
+    POPULAR_POSTS_URL = `https://mnews.tw/json/popularlist.json`
     POPULAR_VIDEOS_JSON_URL = `${SITE_URL}/json/popular-videonews-list.json`
     FEATURE_POSTS_URL = `${SITE_URL}/json/category_features_news.json`
     HOMEPAGE_JSON_URL =
