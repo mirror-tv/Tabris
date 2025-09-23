@@ -1,6 +1,7 @@
 .container {
   display: flex;
   flex-direction: column;
+
   .listTitle {
     max-width: fit-content;
   }
@@ -14,6 +15,15 @@
       font-size: 16px;
       word-wrap: break-word;
       line-height: 1.5;
+      text-decoration: none;
+      display: block;
+      font-weight: 400;
+      transition: 1s;
+      &:hover {
+        text-decoration: underline;
+        text-underline-offset: 4px;
+        text-decoration-thickness: 1px;
+      }
       &:before {
         content: '';
         position: absolute;

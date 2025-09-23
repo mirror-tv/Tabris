@@ -47,7 +47,7 @@ export default function CategoryPageLayoutAside() {
         listTitle="即時新聞"
         page="category"
         listData={formattedLatestPosts}
-        className={`aside__list-latest ${styles.asideItem}`}
+        className={`aside__list-latest ${styles.asideItem} list-wrapper`}
       />
     </aside>
   )
