@@ -29,6 +29,7 @@ import dynamic from 'next/dynamic'
 import MisoPageView from '~/components/shared/miso-pageview'
 import GA4SourceTracking from '~/components/story/ga4-source-tracking'
 import UiDownload from '~/components/shared/ui-download'
+import Article18Warning from '~/components/shared/article-18-warning'
 
 const ContainerFullScreenAds = dynamic(
   () => import('~/components/ads/gpt/gpt-popup'),
@@ -238,6 +239,7 @@ const StoryPage = async (props: StoryPageTypes) => {
     updatedAt,
     source,
     download,
+    isAdult,
   } = storyData
   const publishTimeTaipei = formateDateAtTaipei(
     new Date(publishTime),
@@ -263,6 +265,7 @@ const StoryPage = async (props: StoryPageTypes) => {
       <JsonLd data={jsonLdData} />
       <MisoPageView productIds={`story_${params.slug}`} />
       <GA4SourceTracking source={source} />
+      <Article18Warning isAdult={isAdult} />
       <section className={styles.article}>
         <ContainerFullScreenAds adKey="MB_NEWS" />
         <ArticleHeroImageAndVideo

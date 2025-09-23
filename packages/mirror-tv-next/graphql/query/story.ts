@@ -17,6 +17,7 @@ export interface SinglePost {
   publishTime: string
   updatedAt: string
   exclusive: boolean
+  isAdult: boolean
   contentApiData: string
   briefApiData: string
   source?: string
@@ -65,6 +66,7 @@ const fetchStoryBySlug = gql`
       publishTime
       updatedAt
       exclusive
+      isAdult
       heroVideo {
         youtubeUrl
       }

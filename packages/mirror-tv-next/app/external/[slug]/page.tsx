@@ -26,6 +26,7 @@ import type { SingleExternalPost } from '~/graphql/query/external'
 import dynamic from 'next/dynamic'
 import MisoPageView from '~/components/shared/miso-pageview'
 import GA4SourceTracking from '~/components/story/ga4-source-tracking'
+import Article18Warning from '~/components/shared/article-18-warning'
 
 const ContainerFullScreenAds = dynamic(
   () => import('~/components/ads/gpt/gpt-popup'),
@@ -227,6 +228,7 @@ const ExternalPage = async (props: ExternalPageTypes) => {
     tags,
     updatedAt,
     source,
+    isAdult,
   } = externalData
   const publishTimeTaipei = formateDateAtTaipei(
     new Date(publishTime),
@@ -250,6 +252,7 @@ const ExternalPage = async (props: ExternalPageTypes) => {
       <JsonLd data={jsonLdData} />
       <MisoPageView productIds={`story_${params.slug}`} />
       <GA4SourceTracking source={source} />
+      <Article18Warning isAdult={isAdult} />
       <section className={styles.article}>
         <ContainerFullScreenAds adKey="MB_NEWS" />
         {thumbnail && (
