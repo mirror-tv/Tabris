@@ -15,6 +15,10 @@ import {
 } from './post-handler'
 import { formatArticleCard } from './post-handler'
 import { formateYoutubeListRes, fetchYoutubeData } from './youtube'
+import {
+  addMaxWidthToFigureWithStyle,
+  removeDuplicateFirstParagraph,
+} from './content-handler'
 
 export {
   extractYoutubeId,
@@ -29,5 +33,7 @@ export {
   fetchYoutubeData,
   FetchError,
   doesHaveBrief,
+  addMaxWidthToFigureWithStyle,
+  removeDuplicateFirstParagraph,
 }
 export type { FormattedPostCard, PostImage, FormattedPostCardJson }

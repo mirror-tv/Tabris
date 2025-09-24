@@ -8,7 +8,11 @@ import styles from './_styles/external.module.scss'
 import { fetchExternalBySlug } from '~/app/_actions/external/external-by-slug'
 import { cache } from 'react'
 import ArticleHeroImageAndVideo from '~/components/story/article-hero-image-and-video'
-import { formateDateAtTaipei } from '~/utils'
+import {
+  formateDateAtTaipei,
+  addMaxWidthToFigureWithStyle,
+  removeDuplicateFirstParagraph,
+} from '~/utils'
 import ArticleInfo from '~/components/story/article-info'
 import { notFound } from 'next/navigation'
 import ArticleUpdateTime from '~/components/story/article-update-time'
@@ -242,6 +246,15 @@ const ExternalPage = async (props: ExternalPageTypes) => {
     ? formateDateAtTaipei(new Date(updatedAt), 'YYYY.MM.DD HH:mm', '臺北時間')
     : ''
 
+  // 處理 content_original
+  // 1. 先移除與 heroCaption 重複的第一段
+  const contentWithoutDuplicate = removeDuplicateFirstParagraph(
+    content_original,
+    heroCaption
+  )
+  // 2. 再為有 style 屬性的 figure 添加 max-width: 100%
+  const processedContent = addMaxWidthToFigureWithStyle(contentWithoutDuplicate)
+
   const pageUrl = `${META_SITE_URL}/external/${params.slug}`
   const jsonLdData = generateExternalJsonLds(externalData, pageUrl)
 
@@ -290,7 +303,7 @@ const ExternalPage = async (props: ExternalPageTypes) => {
         <section className={styles.contentWrapper}>
           <div
             className={styles.externalContent}
-            dangerouslySetInnerHTML={{ __html: content_original ?? '' }}
+            dangerouslySetInnerHTML={{ __html: processedContent ?? '' }}
           />
           {updatedTime && <ArticleUpdateTime updateTime={updatedTime} />}
           {!!tags.length && <ArticleTagList tags={tags} />}
