@@ -1,22 +1,4 @@
 import React from 'react'
-import styled from 'styled-components'
-
-const LinkToStory = styled.a`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 210px;
-  box-shadow: 1px 1px 2px 2px rgba(0, 0, 0, 0.15) inset;
-  color: #888;
-  font-family: 'PingFang TC';
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 300;
-  line-height: 180%;
-  text-decoration: none;
-`
 
 type AmpUnsupportedBlockProps = {
   currentUrl?: string
@@ -31,8 +13,8 @@ const AmpUnsupportedBlock: React.FC<AmpUnsupportedBlockProps> = ({
 }) => {
   const linkUrl = currentUrl ? currentUrl.replace('/amp', '') : ''
   return (
-    <LinkToStory
-      className={className || 'link-to-story'}
+    <a
+      className={`amp-unsupported-link ${className || 'link-to-story'}`}
       href={linkUrl}
       style={{
         ...style,
@@ -54,7 +36,7 @@ const AmpUnsupportedBlock: React.FC<AmpUnsupportedBlockProps> = ({
           fill="#9D9D9D"
         />
       </svg>
-    </LinkToStory>
+    </a>
   )
 }
 
