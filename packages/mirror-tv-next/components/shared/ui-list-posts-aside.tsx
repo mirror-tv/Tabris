@@ -25,34 +25,36 @@ export default function UiListPostsAside({
       ].join(' ')}
     >
       <UiHeadingBordered title={listTitle} className={styles.listTitle} />
-      <ol
+      <div
         className={`${styles.list} ${
           page === 'category' ? styles.listBordered : ''
         } ${
           listTitle === '熱門新聞'
             ? 'aside__list-popular'
-            : ' aside__list-latest'
-        }`}
+            : 'aside__list-latest'
+        } list-wrapper`}
       >
         {listData?.map((item) => {
           return (
-            <li
+            <div
               key={`list-article-aside-${item.slug}`}
               className={['list__list-item', styles.item].join(' ')}
             >
-              <UiPostCardAside
-                href={item.href}
-                images={item.images}
-                title={item.name}
-                page={page}
-                postStyle={item.style ?? ''}
-                date={item.publishTime}
-                exclusive={item.exclusive ?? false}
-              />
-            </li>
+              <li style={{ listStyle: 'none' }}>
+                <UiPostCardAside
+                  href={item.href}
+                  images={item.images}
+                  title={item.name}
+                  page={page}
+                  postStyle={item.style ?? ''}
+                  date={item.publishTime}
+                  exclusive={item.exclusive ?? false}
+                />
+              </li>
+            </div>
           )
         })}
-      </ol>
+      </div>
     </div>
   )
 }

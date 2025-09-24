@@ -47,7 +47,11 @@ export default function AMPLayout({ children }: { children: React.ReactNode }) {
   })
 
   return (
-    <html lang="zh-Hant" className={`${noto_sans.variable} layout-wrapper`}>
+    <html
+      lang="zh-Hant"
+      amp=""
+      className={`${noto_sans.variable} layout-wrapper`}
+    >
       <Head>
         <script async src="https://cdn.ampproject.org/v0.js"></script>
         <style jsx global>{`
@@ -71,8 +75,6 @@ export default function AMPLayout({ children }: { children: React.ReactNode }) {
             object-fit: var(--object-fit, contain) !important;
           }
         `}</style>
-      </Head>
-      <StyledBody>
         <amp-analytics
           type="googleanalytics"
           config="https://amp.analytics-debugger.com/ga4.json"
@@ -84,6 +86,8 @@ export default function AMPLayout({ children }: { children: React.ReactNode }) {
             dangerouslySetInnerHTML={{ __html: googleAnalytics4Json }}
           ></Script>
         </amp-analytics>
+      </Head>
+      <StyledBody>
         <StyledHeader>
           <a href="/">
             <amp-img

@@ -100,7 +100,9 @@ const ShareButton = ({ type, url, className }: ShareButtonProps) => {
       <div className={config.className}>
         <a
           href={config.href}
-          className={`${styles.share} ${styles[type]} ${className || ''}`}
+          className={`${styles.share} ${styles[type]} ${
+            config.className || ''
+          }`}
           target="_blank"
           rel="noopener noreferrer"
         >

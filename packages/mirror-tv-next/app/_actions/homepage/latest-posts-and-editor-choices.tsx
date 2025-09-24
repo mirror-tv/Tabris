@@ -60,7 +60,13 @@ const StaticLatestPostSchema = z.object({
       slug: z.string(),
     })
     .optional(),
-  publishTime: z.string(),
+  publishTime: z.any().transform((val) => {
+    if (val instanceof Date) return val.toISOString()
+    if (typeof val === 'string') return val
+    if (typeof val === 'number') return new Date(val).toISOString()
+    if (val === null || val === undefined) return new Date().toISOString()
+    return String(val)
+  }),
   heroImage: FlexibleHeroImageSchema,
   categories: z
     .array(
@@ -113,7 +119,13 @@ const ListingPostSchema = z.object({
 })
 
 const PostWithCategorySchema = ListingPostSchema.extend({
-  publishTime: z.string().transform((val) => new Date(val)),
+  publishTime: z.any().transform((val) => {
+    if (val instanceof Date) return val
+    if (typeof val === 'string') return new Date(val)
+    if (typeof val === 'number') return new Date(val)
+    if (val === null || val === undefined) return new Date()
+    return new Date(String(val))
+  }),
   categories: z.array(
     z.object({
       slug: z.string(),
@@ -356,7 +368,6 @@ async function getLatestPostsAndEditorChoices({
         const validatedEditorChoices = editorChoicesValidation.data
         const validatedLatestPosts = latestPostsValidation.data
 
-        // Transform GraphQL data to ensure heroImage is never null
         const transformedGraphQLChoices =
           validatedEditorChoices.allEditorChoices.map((choice) => ({
             choice: {
@@ -371,7 +382,6 @@ async function getLatestPostsAndEditorChoices({
             },
           }))
 
-        // Transform GraphQL data to ensure heroVideo is never null
         const transformedGraphQLPosts = validatedLatestPosts.allPosts.map(
           (post) => ({
             ...post,
@@ -434,7 +444,6 @@ async function getLatestPostsAndEditorChoices({
 
     const validatedLatestPosts = latestPostsValidationResult.data
 
-    // Transform GraphQL data to ensure heroVideo is never null
     const transformedGraphQLPosts = validatedLatestPosts.allPosts.map(
       (post) => ({
         ...post,
@@ -462,7 +471,7 @@ async function getLatestPostsAndEditorChoices({
 
     data = {
       latest: transformedGraphQLPosts,
-      choices: [] as EditorChoices[], // 不抓取 editor choices
+      choices: [] as EditorChoices[],
       _allPostsMeta: validatedLatestPosts._allPostsMeta,
       source: 'graphql' as const,
     }
