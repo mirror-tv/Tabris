@@ -80,4 +80,25 @@ const fetchContactsByHost = gql`
   }
 `
 
-export { fetchContactBySlug, fetchContactsByAnchorPerson, fetchContactsByHost }
+const fetchContactsByInternational = gql`
+  query fetchContactsByInternational {
+    allContacts(
+      where: { international: true, isResigned_not: true }
+      sortBy: [sortOrder_ASC, updatedAt_DESC]
+    ) {
+      name
+      slug
+      anchorImg {
+        urlTabletSized
+        urlMobileSized
+      }
+    }
+  }
+`
+
+export {
+  fetchContactBySlug,
+  fetchContactsByAnchorPerson,
+  fetchContactsByHost,
+  fetchContactsByInternational,
+}
