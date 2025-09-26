@@ -18,16 +18,6 @@ export interface ApiDataEmbedCode extends ApiDataBlockBase {
   alignment: 'center'
 }
 
-const AmpEmbeddedWrapper = styled.div`
-  width: calc(100% + 32px);
-  height: calc(100% + 32px);
-  transform: translate(-16px, -16px);
-  overflow: hidden;
-  iframe {
-    margin: 0 auto;
-  }
-`
-
 export default function AmpEmbedded({
   data,
   currentUrl,
@@ -39,7 +29,8 @@ export default function AmpEmbedded({
 
   return (
     <section>
-      <AmpEmbeddedWrapper
+      <div
+        className="amp-embedded-wrapper"
         dangerouslySetInnerHTML={{
           __html: convertEmbeddedToAmp(
             data.content[0]?.embeddedCode ?? '',

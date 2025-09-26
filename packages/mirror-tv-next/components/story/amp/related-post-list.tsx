@@ -1,65 +1,40 @@
-import styled from 'styled-components'
 import { SingleRelatedPost } from '~/graphql/query/story'
-
-const Wrapper = styled.section`
-  padding: 0 16px;
-  margin-bottom: 48px;
-`
-
-const SectionTitle = styled.h3`
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 1.4;
-  letter-spacing: 0.5px;
-  color: #014db8;
-  margin-bottom: 20px;
-`
-
-const CardItem = styled.li`
-  margin-top: 20px;
-  display: block;
-  margin-left: -40px;
-`
-
-const CardLink = styled.a`
-  display: flex;
-  text-decoration: none;
-`
-
-const CardTitle = styled.span`
-  font-size: 16px;
-  color: #4a4a4a;
-  text-align: left;
-  line-height: 22px;
-`
 
 type PostListProps = {
   title: string
   list: SingleRelatedPost[]
+  className: string
 }
 
-export default function RelatedPostList({ title, list }: PostListProps) {
+export default function RelatedPostList({
+  title,
+  list,
+  className,
+}: PostListProps) {
   return (
-    <Wrapper>
-      <SectionTitle>{title}</SectionTitle>
+    <div className={`amp-related-list-wrapper ${className}`}>
+      <h3 className="amp-related-list-title">{title}</h3>
       <ul className="amp-card-list">
         {list?.map((item) => {
           return (
-            <CardItem
+            <li
               key={`list-article-${item.slug}`}
-              className="amp-card-list-item"
+              className="amp-related-list-item amp-card-list-item"
             >
-              <CardLink
+              <a
                 href={`/story/amp/${item.slug}`}
                 target="_blank"
                 rel="noreferrer noopener"
+                className="amp-related-list-link"
               >
-                <CardTitle>{item.name}</CardTitle>
-              </CardLink>
-            </CardItem>
+                <span className="amp-related-list-title-text amp_ga-article-related">
+                  {item.name}
+                </span>
+              </a>
+            </li>
           )
         })}
       </ul>
-    </Wrapper>
+    </div>
   )
 }

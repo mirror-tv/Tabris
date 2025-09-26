@@ -14,24 +14,6 @@ export interface ApiImageBlock extends ApiDataBlockBase {
   alignment: 'center'
 }
 
-const ImageContainer = styled.div`
-  position: relative;
-  width: 100%;
-  height: calc((100vw - 32px) * 0.66);
-  overflow: hidden;
-  img {
-    object-fit: contain;
-  }
-`
-
-const ImageDescription = styled.figcaption`
-  font-size: 14px;
-  line-height: 1.5;
-  color: #666;
-  margin-top: 8px;
-  text-align: center;
-`
-
 const isFormatNew = (data: ImageData): data is ImageDataFormatNew => {
   return 'resized' in data
 }
@@ -102,16 +84,18 @@ const AmpImageBlock = ({ data }: { data: ApiImageBlock }) => {
 
   return (
     <caption>
-      <ImageContainer>
+      <div className="amp-image-container">
         <amp-img
           src={imageSrc}
           alt={normalizedData.alt}
           layout="fill"
           className="amp-image-contain"
         />
-      </ImageContainer>
+      </div>
       {normalizedData.description && (
-        <ImageDescription>{normalizedData.description}</ImageDescription>
+        <figcaption className="amp-image-description">
+          {normalizedData.description}
+        </figcaption>
       )}
     </caption>
   )

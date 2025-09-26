@@ -12,16 +12,8 @@ import VideoBlock from '../api-data-renderer/block-renderer/video-block'
 import YoutubeBlock from '../api-data-renderer/block-renderer/youtube-block'
 import AmpImageBlock from './blocks/amp-image-block'
 import UnstyledBlock from '../api-data-renderer/block-renderer/unstyled-block'
-import styled from 'styled-components'
 import AmpEmbedded from './blocks/amp-embedded'
 import AmpUnsupportedBlock from './blocks/amp-unsupported-block'
-
-const ArticleWrapper = styled.article`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  line-height: 1.75;
-`
 
 type AmpApiDataRendererPropsType = {
   contentData: string
@@ -51,7 +43,7 @@ const AmpApiDataRenderer = ({
   }
 
   return (
-    <ArticleWrapper>
+    <article className="amp-article-wrapper">
       {parsedContentData.map((apiDataBlock) => {
         switch (apiDataBlock.type) {
           case ApiDataBlockType.Unstyled:
@@ -117,7 +109,7 @@ const AmpApiDataRenderer = ({
           }
         }
       })}
-    </ArticleWrapper>
+    </article>
   )
 }
 
