@@ -43,7 +43,9 @@ const ArticleRelatedPosts = ({
 
       {shouldShowAds && (
         <>
-          <div id="_popIn_recommend_word" className="_popIn_recommend" />
+          <LazyRenderWrapper>
+            <div id="_popIn_recommend_word" className="_popIn_recommend" />
+          </LazyRenderWrapper>
           {page === 'story' && (
             <LazyRenderWrapper>
               <div
