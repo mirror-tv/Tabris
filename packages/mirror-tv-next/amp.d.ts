@@ -43,5 +43,14 @@ declare namespace JSX {
       children?: React.ReactNode
       [key: string]: any
     }
+    'amp-ad': {
+      width?: string | number
+      height?: string | number
+      type?: string
+      layout?: string
+      'data-adspotid'?: string
+      className?: string
+      [key: string]: any
+    }
   }
 }

@@ -54,16 +54,15 @@ const VideoBlock = ({
       {videoContent.youtubeUrl ? (
         <YoutubeBlock isAmp={isAmp} data={youtubeData} />
       ) : isAmp ? (
-        <amp-video
-          src={videoUrl}
-          width="640"
-          height="360"
-          {...({} as Record<string, unknown>)}
+        <div
+          style={{ width: '100%', aspectRatio: '16/9', position: 'relative' }}
         >
-          <source src={videoUrl} type="video/mp4" />
-          <source src={videoUrl} type="video/webm" />
-          <source src={videoUrl} type="video/ogg" />
-        </amp-video>
+          <amp-video src={videoUrl} layout="fill" {...({} as any)}>
+            <source src={videoUrl} type="video/mp4" />
+            <source src={videoUrl} type="video/webm" />
+            <source src={videoUrl} type="video/ogg" />
+          </amp-video>
+        </div>
       ) : (
         <video
           preload="metadata"

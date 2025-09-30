@@ -27,7 +27,7 @@ const fetchContactBySlug = gql`
     $slug: String!
     $shouldFetchRelatedShows: Boolean = false
   ) {
-    allContacts(where: { slug: $slug }) {
+    allContacts(where: { slug: $slug, isResigned_not: true }) {
       name
       facebook
       instagram
@@ -50,7 +50,7 @@ const fetchContactBySlug = gql`
 const fetchContactsByAnchorPerson = gql`
   query fetchContactsByAnchorPerson {
     allContacts(
-      where: { anchorperson: true }
+      where: { anchorperson: true, isResigned_not: true }
       sortBy: [sortOrder_ASC, updatedAt_DESC]
     ) {
       name
@@ -67,7 +67,7 @@ const fetchContactsByAnchorPerson = gql`
 const fetchContactsByHost = gql`
   query fetchContactsByHost {
     allContacts(
-      where: { host: true }
+      where: { host: true, isResigned_not: true }
       sortBy: [sortOrder_ASC, updatedAt_DESC]
     ) {
       name
@@ -80,4 +80,25 @@ const fetchContactsByHost = gql`
   }
 `
 
-export { fetchContactBySlug, fetchContactsByAnchorPerson, fetchContactsByHost }
+const fetchContactsByInternational = gql`
+  query fetchContactsByInternational {
+    allContacts(
+      where: { international: true, isResigned_not: true }
+      sortBy: [sortOrder_ASC, updatedAt_DESC]
+    ) {
+      name
+      slug
+      anchorImg {
+        urlTabletSized
+        urlMobileSized
+      }
+    }
+  }
+`
+
+export {
+  fetchContactBySlug,
+  fetchContactsByAnchorPerson,
+  fetchContactsByHost,
+  fetchContactsByInternational,
+}

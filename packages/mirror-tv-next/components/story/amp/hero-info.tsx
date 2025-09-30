@@ -1,48 +1,6 @@
-import styled from 'styled-components'
 import { CONTACT_MAPPING } from '~/constants/constant'
 import { type SinglePost } from '~/graphql/query/story'
 import { formateDateAtTaipei } from '~/utils'
-
-const CategoryAndPublishTime = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 0 0 8px;
-`
-
-const Category = styled.span`
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 1.4;
-  color: #014db8;
-`
-
-const PublishTime = styled.span`
-  font-size: 14px;
-  line-height: 1.5;
-  color: #000;
-`
-
-const StyledTitle = styled.h1`
-  font-size: 20px;
-  font-weight: 500;
-  line-height: 1.4;
-  color: #000;
-  margin: 0 0 8px;
-`
-
-const CreditsWrapper = styled.ul`
-  margin: 0 0 24px;
-  list-style-type: none;
-  padding: 0;
-`
-
-const CreditItem = styled.li`
-  display: inline-block;
-  font-size: 14px;
-  line-height: 1.4;
-  margin: 0 12px 0 0;
-`
 
 type HeroInfoProps = {
   title: string
@@ -91,31 +49,33 @@ export default function HeroInfo({
 
   return (
     <>
-      <CategoryAndPublishTime className='class="amp__main__category-publishTime"'>
-        <Category className="amp-pub-cat-category">
-          {categories?.[0]?.title}
-        </Category>
-        {publishTime && (
-          <PublishTime className="amp-pub-cat-publishTime">
+      <div className="amp-hero-category-time amp__main__category-publishTime">
+        <span className="amp-hero-category amp-pub-cat-category">
+          {!!categories?.[0]?.title && categories?.[0]?.title}
+        </span>
+        {!!publishTime && (
+          <span className="amp-hero-publish-time amp-pub-cat-publishTime">
             {publishTimeTaipei}
-          </PublishTime>
+          </span>
         )}
-      </CategoryAndPublishTime>
-      <StyledTitle>{title}</StyledTitle>
-      {creditList.length && (
-        <CreditsWrapper>
+      </div>
+      <h1 className="amp-hero-title">{title}</h1>
+      {!!creditList.length && (
+        <ul className="amp-hero-credits">
           {creditList.map((item) => {
             return (
-              <CreditItem key={item.title}>
+              <li key={item.title} className="amp-hero-credit-item">
                 {item.title}｜
                 {item.list?.map(
                   (person, key) => `${key ? '、' : ''}${person.name}`
                 )}
-              </CreditItem>
+              </li>
             )
           })}
-          <CreditItem key="other">{otherbyline}</CreditItem>
-        </CreditsWrapper>
+          <li key="other" className="amp-hero-credit-item">
+            {otherbyline}
+          </li>
+        </ul>
       )}
     </>
   )

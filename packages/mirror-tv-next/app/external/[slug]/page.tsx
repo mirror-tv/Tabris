@@ -8,7 +8,11 @@ import styles from './_styles/external.module.scss'
 import { fetchExternalBySlug } from '~/app/_actions/external/external-by-slug'
 import { cache } from 'react'
 import ArticleHeroImageAndVideo from '~/components/story/article-hero-image-and-video'
-import { formateDateAtTaipei } from '~/utils'
+import {
+  formateDateAtTaipei,
+  addMaxWidthToFigureWithStyle,
+  removeDuplicateFirstParagraph,
+} from '~/utils'
 import ArticleInfo from '~/components/story/article-info'
 import { notFound } from 'next/navigation'
 import ArticleUpdateTime from '~/components/story/article-update-time'
@@ -25,6 +29,7 @@ import type { SingleExternalPost } from '~/graphql/query/external'
 
 import dynamic from 'next/dynamic'
 import MisoPageView from '~/components/shared/miso-pageview'
+import GA4SourceTracking from '~/components/story/ga4-source-tracking'
 
 const ContainerFullScreenAds = dynamic(
   () => import('~/components/ads/gpt/gpt-popup'),
@@ -225,6 +230,7 @@ const ExternalPage = async (props: ExternalPageTypes) => {
     partner,
     tags,
     updatedAt,
+    source,
   } = externalData
   const publishTimeTaipei = formateDateAtTaipei(
     new Date(publishTime),
@@ -240,13 +246,23 @@ const ExternalPage = async (props: ExternalPageTypes) => {
     ? formateDateAtTaipei(new Date(updatedAt), 'YYYY.MM.DD HH:mm', '臺北時間')
     : ''
 
+  // 處理 content_original
+  // 1. 先移除與 heroCaption 重複的第一段
+  const contentWithoutDuplicate = removeDuplicateFirstParagraph(
+    content_original,
+    heroCaption
+  )
+  // 2. 再為有 style 屬性的 figure 添加 max-width: 100%
+  const processedContent = addMaxWidthToFigureWithStyle(contentWithoutDuplicate)
+
   const pageUrl = `${META_SITE_URL}/external/${params.slug}`
   const jsonLdData = generateExternalJsonLds(externalData, pageUrl)
 
   return (
     <>
       <JsonLd data={jsonLdData} />
-      <MisoPageView productIds={`story_${params.slug}`} />
+      <MisoPageView productIds={`external_${params.slug}`} />
+      <GA4SourceTracking source={source} />
       <section className={styles.article}>
         <ContainerFullScreenAds adKey="MB_NEWS" />
         {thumbnail && (
@@ -287,7 +303,7 @@ const ExternalPage = async (props: ExternalPageTypes) => {
         <section className={styles.contentWrapper}>
           <div
             className={styles.externalContent}
-            dangerouslySetInnerHTML={{ __html: content_original ?? '' }}
+            dangerouslySetInnerHTML={{ __html: processedContent ?? '' }}
           />
           {updatedTime && <ArticleUpdateTime updateTime={updatedTime} />}
           {!!tags.length && <ArticleTagList tags={tags} />}

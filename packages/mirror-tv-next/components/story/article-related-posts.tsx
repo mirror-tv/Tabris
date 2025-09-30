@@ -29,12 +29,15 @@ const ArticleRelatedPosts = ({
       <UiHeadingBordered title={'更多新聞'} className={styles.listTitle} />
       <ul className={styles.list}>
         {relatedPosts.map((item, idx) => (
-          <li
+          <a
             key={item.slug + idx}
             className={`ga-article-related ${styles.item}`}
+            href={`/story/${item.slug}`}
+            target="_blank"
+            rel="noreferrer noopener"
           >
             {item.name}
-          </li>
+          </a>
         ))}
       </ul>
 

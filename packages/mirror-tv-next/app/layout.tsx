@@ -150,6 +150,7 @@ export default async function RootLayout({
         strategy="beforeInteractive"
         src="https://cdn.jsdelivr.net/npm/@miso.ai/client-sdk@1.11.4/dist/umd/miso.min.js"
       />
+      <CompassFit />
       <body>
         <DataProvider
           initialPopularPosts={initialPopularPosts}
@@ -160,7 +161,6 @@ export default async function RootLayout({
           <TagManagerWrapper />
           {children}
           <Footer />
-          <CompassFit />
         </DataProvider>
       </body>
     </html>

@@ -17,8 +17,10 @@ export interface SinglePost {
   publishTime: string
   updatedAt: string
   exclusive: boolean
+  isAdult: boolean
   contentApiData: string
   briefApiData: string
+  source?: string
   relatedPosts: SingleRelatedPost[]
   heroVideo: {
     youtubeUrl: string
@@ -47,6 +49,11 @@ export interface SinglePost {
   tags: {
     name: string
   }[]
+  download: {
+    id: string
+    name: string
+    url: string
+  }[]
   __typename: string
 }
 
@@ -59,6 +66,7 @@ const fetchStoryBySlug = gql`
       publishTime
       updatedAt
       exclusive
+      isAdult
       heroVideo {
         youtubeUrl
       }
@@ -74,6 +82,7 @@ const fetchStoryBySlug = gql`
       heroCaption
       briefApiData
       contentApiData
+      source
       categories {
         slug
         title: name
@@ -103,6 +112,11 @@ const fetchStoryBySlug = gql`
         slug
       }
       otherbyline
+      download {
+        id
+        name
+        url
+      }
       relatedPosts(where: { state: published }) {
         slug
         name

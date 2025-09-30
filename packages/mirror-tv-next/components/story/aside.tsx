@@ -58,6 +58,14 @@ const Aside: React.FC = () => {
         )}
         <GPTAd pageKey={asideCategory} adKey="PC_R3" />
       </div>
+      <div className={`${styles.microId}`}>
+        <MicroAd
+          unitIdMobile="4300420"
+          unitIdDesktop="4300419"
+          className={styles.microAd}
+          condition="isTablet"
+        />
+      </div>
     </aside>
   )
 }

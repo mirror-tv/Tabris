@@ -9,6 +9,7 @@ import type { Contact } from '~/graphql/query/contact'
 import {
   fetchContactsByAnchorPerson,
   fetchContactsByHost,
+  fetchContactsByInternational,
 } from '~/graphql/query/contact'
 import styles from '~/styles/pages/anchorperson-page.module.scss'
 import dynamic from 'next/dynamic'
@@ -33,11 +34,17 @@ export default async function Anchorperson() {
   const client = getClient()
   let anchorData: Contact[] = []
   let hostData: Contact[] = []
-
+  let internationalData: Contact[] = []
   const fetchAnchorPerson = () =>
     client.query({ query: fetchContactsByAnchorPerson })
   const fetchHost = () => client.query({ query: fetchContactsByHost })
-  const responses = await Promise.allSettled([fetchAnchorPerson(), fetchHost()])
+  const fetchInternational = () =>
+    client.query({ query: fetchContactsByInternational })
+  const responses = await Promise.allSettled([
+    fetchAnchorPerson(),
+    fetchHost(),
+    fetchInternational(),
+  ])
 
   anchorData = handleResponse(
     responses[0],
@@ -53,6 +60,14 @@ export default async function Anchorperson() {
       return response?.data?.allContacts ?? []
     },
     'Error occurs while fetching hostData'
+  )
+
+  internationalData = handleResponse(
+    responses[2],
+    (response: Awaited<ReturnType<typeof fetchInternational>> | undefined) => {
+      return response?.data?.allContacts ?? []
+    },
+    'Error occurs while fetching internationalData'
   )
 
   type SectionProps = {
@@ -83,6 +98,7 @@ export default async function Anchorperson() {
       <main className={styles.main}>
         <Section title="鏡主播" data={anchorData} />
         <Section title="鏡主持" data={hostData} />
+        <Section title="鏡國際" data={internationalData} />
       </main>
     </>
   )

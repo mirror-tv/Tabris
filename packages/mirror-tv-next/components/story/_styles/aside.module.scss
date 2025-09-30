@@ -9,7 +9,7 @@
   @include media-breakpoint-up(md) {
     flex-direction: row;
     width: 100%;
-    display: flex;
+    flex-direction: column;
     align-items: stretch;
     justify-content: space-between;
     gap: 16px;
@@ -28,6 +28,11 @@
   .asideWrapper {
     margin: 0 auto;
     @include media-breakpoint-up(md) {
+      display: flex;
+      flex-direction: flex;
+      padding-top: 24px;
+    }
+    @include media-breakpoint-up(xl) {
       display: flex;
       flex-direction: column;
       padding-top: 24px;

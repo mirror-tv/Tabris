@@ -1,0 +1,82 @@
+@import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
+
+.download {
+  margin: 24px 0;
+  @include media-breakpoint-up(md) {
+    margin: 32px 0;
+  }
+  h3 {
+    font-size: 16px;
+    line-height: 1.4;
+    color: $color-blue;
+    margin: 0 0 12px;
+  }
+
+  &__list {
+    width: 100%;
+    display: block;
+
+    @include media-breakpoint-up(md) {
+      max-width: 500px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    @include media-breakpoint-up(xl) {
+      max-width: 660px;
+    }
+
+    a {
+      width: 100%;
+      height: auto;
+      max-width: 240px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #fff;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 2px;
+      padding: 12px 24px;
+      margin: 0 0 12px;
+      text-decoration: none;
+
+      @include media-breakpoint-up(xl) {
+        max-width: 290px;
+        padding: 20px 32px;
+      }
+    }
+  }
+}
+
+.title {
+  font-size: 16px;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+  text-align: left;
+  color: rgba(0, 0, 0, 0.87);
+  word-wrap: break-word;
+  -webkit-line-clamp: 2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+
+  @include media-breakpoint-up(xl) {
+    width: 172px;
+    font-size: 18px;
+  }
+}
+
+.btn {
+  display: block;
+  min-width: 30px;
+  max-width: 30px;
+  height: 38px;
+  margin-left: 24px;
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
