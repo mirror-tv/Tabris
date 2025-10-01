@@ -40,10 +40,40 @@ const ArticleRelatedPosts = ({
           </a>
         ))}
       </ul>
-
       {shouldShowAds && (
         <>
-          <LazyRenderWrapper>
+          <LazyRenderWrapper
+            callbackFn={() => {
+              const initPopIn = () => {
+                const popinFunction = (window as unknown as { popin?: unknown })
+                  .popin
+                const isPopinReady =
+                  typeof popinFunction === 'function' ||
+                  (typeof popinFunction === 'object' &&
+                    popinFunction &&
+                    'q' in popinFunction)
+
+                if (isPopinReady) {
+                  try {
+                    if (typeof popinFunction === 'function') {
+                      popinFunction('loadRecommend', '_popIn_recommend_word')
+                    } else {
+                      ;(popinFunction as { q: unknown[] }).q.push([
+                        'loadRecommend',
+                        '_popIn_recommend_word',
+                      ])
+                    }
+                  } catch (error) {
+                    console.error('popin initialization failed:', error)
+                  }
+                } else {
+                  setTimeout(initPopIn, 1000)
+                }
+              }
+
+              setTimeout(initPopIn, 2000)
+            }}
+          >
             <div id="_popIn_recommend_word" className="_popIn_recommend" />
           </LazyRenderWrapper>
           {page === 'story' && (

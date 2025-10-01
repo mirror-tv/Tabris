@@ -622,3 +622,6 @@ video {
 
 /* Import Miso Search Styles */
 @import './miso-search.css';
+
+/* Import PopIn Ad Styles */
+@import './popin-ad.css';

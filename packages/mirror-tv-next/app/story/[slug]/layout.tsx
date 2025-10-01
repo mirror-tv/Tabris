@@ -33,7 +33,8 @@ export default function StoryPageLayout({
 
       <Script
         id="popinAd"
-        strategy="beforeInteractive"
+        strategy="afterInteractive"
+        async
         dangerouslySetInnerHTML={{
           __html: `
             (function() {
@@ -44,6 +45,7 @@ export default function StoryPageLayout({
               pa.src = window.location.protocol + '//api.popin.cc/searchbox/mnews.js'
               var s = document.getElementsByTagName('script')[0]
               s.parentNode.insertBefore(pa, s)
+              console.log('target', pa.src)
             })()
           `,
         }}
