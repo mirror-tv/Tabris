@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic'
 
 import styles from './_styles/article-related-posts.module.scss'
 import useWindowDimensions from '~/hooks/use-window-dimensions'
+import { usePopinInitialization } from '~/hooks/use-popin-initialization'
 
 const LazyRenderWrapper = dynamic(
   () => import('~/components/shared/lazy-render-wrapper'),
@@ -24,6 +25,13 @@ const ArticleRelatedPosts = ({
 }) => {
   const { width } = useWindowDimensions()
 
+  // 使用 PopIn 初始化 hook
+  usePopinInitialization({
+    elementId: '_popIn_recommend_word',
+    delay: 1000,
+    maxRetries: 10,
+  })
+
   return (
     <div className={`${styles.container} list-wrapper post__related`}>
       <UiHeadingBordered title={'更多新聞'} className={styles.listTitle} />
@@ -42,39 +50,8 @@ const ArticleRelatedPosts = ({
       </ul>
       {shouldShowAds && (
         <>
-          <LazyRenderWrapper
-            callbackFn={() => {
-              const initPopIn = () => {
-                const popinFunction = (window as unknown as { popin?: unknown })
-                  .popin
-                const isPopinReady =
-                  typeof popinFunction === 'function' ||
-                  (typeof popinFunction === 'object' &&
-                    popinFunction &&
-                    'q' in popinFunction)
-
-                if (isPopinReady) {
-                  try {
-                    if (typeof popinFunction === 'function') {
-                      popinFunction('loadRecommend', '_popIn_recommend_word')
-                    } else {
-                      ;(popinFunction as { q: unknown[] }).q.push([
-                        'loadRecommend',
-                        '_popIn_recommend_word',
-                      ])
-                    }
-                  } catch (error) {
-                    console.error('popin initialization failed:', error)
-                  }
-                } else {
-                  setTimeout(initPopIn, 1000)
-                }
-              }
-
-              setTimeout(initPopIn, 2000)
-            }}
-          >
-            <div id="_popIn_recommend_word" className="_popIn_recommend" />
+          <LazyRenderWrapper>
+            <div id="_popIn_recommend_word" className={styles.popinAd} />
           </LazyRenderWrapper>
           {page === 'story' && (
             <LazyRenderWrapper>

@@ -33,17 +33,31 @@ export default function StoryPageLayout({
 
       <Script
         id="popinAd"
-        strategy="beforeInteractive"
+        strategy="afterInteractive"
         dangerouslySetInnerHTML={{
           __html: `
             (function() {
-              var pa = document.createElement('script')
-              pa.type = 'text/javascript'
-              pa.charset = 'utf-8'
-              pa.async = true
-              pa.src = window.location.protocol + '//api.popin.cc/searchbox/mnews.js'
-              var s = document.getElementsByTagName('script')[0]
-              s.parentNode.insertBefore(pa, s)
+              // 簡化的設備欺騙：讓 PopIn 認為這是移動設備
+              var originalWidth = window.innerWidth
+              Object.defineProperty(window, 'innerWidth', {
+                get: () => 375,
+                configurable: true
+              })
+              
+              var script = document.createElement('script')
+              script.src = window.location.protocol + '//api.popin.cc/searchbox/mnews.js'
+              script.async = true
+              
+              script.onload = () => {
+                // 恢復原始寬度
+                Object.defineProperty(window, 'innerWidth', {
+                  get: () => originalWidth,
+                  configurable: true
+                })
+                console.log('PopIn loaded with mobile spoofing')
+              }
+              
+              document.body.appendChild(script)
             })()
           `,
         }}

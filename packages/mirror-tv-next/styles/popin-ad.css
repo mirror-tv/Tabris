@@ -3,6 +3,9 @@
 
 #_popIn_recommend_word {
   position: relative;
+  a {
+    text-decoration-color: none;
+  }
 }
 
 #_popIn_recommend_word ._popIn_recommend_container {
