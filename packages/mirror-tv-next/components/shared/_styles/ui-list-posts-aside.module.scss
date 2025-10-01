@@ -28,6 +28,14 @@
 
 .listTitle {
   width: max-content;
+  border-image: linear-gradient(
+      to bottom,
+      #153047 35%,
+      transparent 35%,
+      transparent 65%,
+      #153047 65%
+    )
+    5 !important;
   p {
     color: #4a4a4a;
   }
