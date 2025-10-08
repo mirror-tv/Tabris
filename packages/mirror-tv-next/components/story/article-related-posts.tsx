@@ -5,7 +5,6 @@ import dynamic from 'next/dynamic'
 
 import styles from './_styles/article-related-posts.module.scss'
 import useWindowDimensions from '~/hooks/use-window-dimensions'
-import { usePopinInitialization } from '~/hooks/use-popin-initialization'
 
 const LazyRenderWrapper = dynamic(
   () => import('~/components/shared/lazy-render-wrapper'),
@@ -24,13 +23,6 @@ const ArticleRelatedPosts = ({
   page: 'story' | 'external'
 }) => {
   const { width } = useWindowDimensions()
-
-  // 使用 PopIn 初始化 hook
-  usePopinInitialization({
-    elementId: '_popIn_recommend_word',
-    delay: 1000,
-    maxRetries: 10,
-  })
 
   return (
     <div className={`${styles.container} list-wrapper post__related`}>
