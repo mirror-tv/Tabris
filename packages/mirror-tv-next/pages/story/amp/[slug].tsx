@@ -41,7 +41,9 @@ function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
   const logoUrl = '/images/logo.png'
   const title = storyData.title
   const brief = storyData.briefApiData
-    ? JSON.parse(storyData.briefApiData).join('')
+    ? JSON.parse(storyData.briefApiData)
+        .map((item: any) => item.content?.join('') || '')
+        .join('')
     : ''
   const image = storyData.heroImage?.urlDesktopSized
   const writer = storyData.writers?.[0]
@@ -172,7 +174,11 @@ export default function AmpPage({
     '/images/image-default.jpg'
   const heroVideoId = extractYoutubeId(heroVideo?.youtubeUrl) ?? ''
 
-  const brief = briefApiData ? JSON.parse(briefApiData).join('') : ''
+  const brief = briefApiData
+    ? JSON.parse(briefApiData)
+        .map((item: any) => item.content?.join('') || '')
+        .join('')
+    : ''
   const tags = storyData.tags?.map((tag) => tag.name).join(', ')
   const image = storyData.heroImage?.urlDesktopSized
   const pageUrl = `${META_SITE_URL}/story/${slug}`
