@@ -52,9 +52,9 @@ const ArticleRelatedPosts = ({
                 data-web_id="mnewstext"
               />
               {width && width >= 768 ? (
-                <div id="compass-fit-4333664" />
+                <div id="compass-fit-4333664" className="compass-fit" />
               ) : (
-                <div id="compass-fit-4333665" />
+                <div id="compass-fit-4333665" className="compass-fit" />
               )}
             </LazyRenderWrapper>
           )}

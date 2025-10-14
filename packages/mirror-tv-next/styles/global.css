@@ -46,6 +46,19 @@ p {
   word-wrap: break-word;
 }
 
+/* SEO 優化：隱藏第三方廣告中的 h1 標籤，確保頁面只有一個 h1 */
+/* Compass Fit 廣告 */
+.compass-fit-heading,
+[class*='compass-fit'] h1,
+.mic-ad h1,
+.compass-fit h1 {
+  display: none !important;
+}
+
+.popin_recommend h1 {
+  display: none !important;
+}
+
 /*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
 
 /* Document
