@@ -42,10 +42,9 @@
 
 .microAd {
   @include media-breakpoint-up(md) {
-    margin: 48px 0;
+    margin-bottom: 48px;
   }
   @include media-breakpoint-up(xl) {
-    margin: 0;
     padding: 0 24px;
   }
 }
@@ -56,5 +55,12 @@
   }
   @include media-breakpoint-up(xl) {
     width: inherit;
+  }
+}
+
+.compassFitHeading {
+  color: #014db8;
+  @include media-breakpoint-up(xl) {
+    padding-left: 24px;
   }
 }

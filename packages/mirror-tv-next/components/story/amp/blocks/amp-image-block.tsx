@@ -4,7 +4,7 @@ import {
   type ImageDataFormatNew,
   type ImageDataFormatOld,
 } from '../../api-data-renderer/block-renderer/type'
-import styled from 'styled-components'
+// import styled from 'styled-components'
 
 type ImageData = ImageDataFormatNew | ImageDataFormatOld
 

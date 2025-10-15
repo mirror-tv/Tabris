@@ -6,7 +6,7 @@ import Document, {
   NextScript,
 } from 'next/document'
 import { ServerStyleSheet } from 'styled-components'
-import Script from 'next/script'
+// import Script from 'next/script'
 import { GTM_ID } from '~/constants/environment-variables'
 
 export default class MyDocument extends Document {

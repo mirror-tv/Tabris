@@ -21,6 +21,7 @@ import { getLatestPostsAside } from '~/app/_actions/share/get-latest-posts'
 import { type PostCardItem } from '~/graphql/query/posts'
 import type { HeaderData } from '~/types/header'
 import { handleResponse } from '~/utils'
+import styles from '../styles/pages/layout.module.scss'
 
 export const revalidate = GLOBAL_CACHE_SETTING
 
@@ -159,7 +160,7 @@ export default async function RootLayout({
         >
           <MainHeader />
           <TagManagerWrapper />
-          {children}
+          <div className={styles.main}>{children}</div>
           <Footer />
         </DataProvider>
       </body>

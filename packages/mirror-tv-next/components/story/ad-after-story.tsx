@@ -2,6 +2,7 @@
 import useWindowDimensions from '~/hooks/use-window-dimensions'
 
 import dynamic from 'next/dynamic'
+import UiHeadingBordered from '../shared/ui-heading-bordered'
 const LazyRenderWrapper = dynamic(
   () => import('~/components/shared/lazy-render-wrapper'),
   {
@@ -61,7 +62,10 @@ const AdAfterStory = () => {
           className="dable-widget-last"
         />
         {width && width >= 768 && (
-          <div id="_popIn_recommend" className="popin_recommend" />
+          <>
+            <UiHeadingBordered title="每日精選" />
+            <div id="_popIn_recommend" className="popin_recommend" />
+          </>
         )}
       </LazyRenderWrapper>
     </>

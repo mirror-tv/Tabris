@@ -2,7 +2,7 @@ import {
   type ApiDataBlockBase,
   ApiDataBlockType,
 } from '../../api-data-renderer/block-renderer/type'
-import styled from 'styled-components'
+// import styled from 'styled-components'
 import { convertEmbeddedToAmp } from '../../../../utils/amp'
 
 type ContentEmbedCode = {

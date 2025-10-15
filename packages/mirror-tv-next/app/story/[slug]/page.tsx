@@ -46,6 +46,11 @@ function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
   const category = storyData.categories?.[0]
   const logoUrl = '/images/logo.png' // 需要確認實際的 logo 路徑
 
+  const publishTime = storyData.publishTime
+  const updateTime = storyData.updatedAt || storyData.publishTime
+  const publishedDateIso = dayjs(publishTime).utcOffset(8).format()
+  const modifiedDateIso = dayjs(updateTime).utcOffset(8).format()
+
   const jsonLdBreadcrumbList = {
     '@context': 'http://schema.org/',
     '@type': 'BreadcrumbList',
@@ -61,8 +66,8 @@ function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
     },
     headline: storyData.title,
     image: storyData.heroImage?.urlDesktopSized,
-    datePublished: storyData.publishTime,
-    dateModified: storyData.updatedAt || storyData.publishTime,
+    datePublished: publishedDateIso,
+    dateModified: modifiedDateIso,
     author: {
       '@type': storyData.writers?.length ? 'Person' : 'Organization',
       name: storyData.writers?.[0]?.name || SITE_TITLE,
@@ -76,7 +81,9 @@ function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
       },
     },
     description: storyData.briefApiData
-      ? JSON.parse(storyData.briefApiData).join('')
+      ? JSON.parse(storyData.briefApiData)
+          .map((item: { content?: string[] }) => item.content?.join('') || '')
+          .join('')
       : undefined,
     url: pageUrl,
     thumbnailUrl: storyData.heroImage?.urlDesktopSized,
@@ -149,7 +156,9 @@ export async function generateMetadata({
 
   const title = storyData.title
   const brief = storyData.briefApiData
-    ? JSON.parse(storyData.briefApiData).join('')
+    ? JSON.parse(storyData.briefApiData)
+        .map((item: { content?: string[] }) => item.content?.join('') || '')
+        .join('')
     : ''
   const tags = storyData.tags?.map((tag) => tag.name).join(', ')
   const image = storyData.heroImage?.urlDesktopSized
@@ -164,7 +173,8 @@ export async function generateMetadata({
   const isVideoNews = storyData.style === 'videoNews'
 
   dayjs.extend(utc)
-  const publishedDateIso = dayjs(publishTime).utcOffset(8).toISOString()
+  const publishedDateIso = dayjs(publishTime).utcOffset(8).format()
+  const modifiedDateIso = dayjs(updateTime).utcOffset(8).format()
 
   return {
     title,
@@ -176,7 +186,7 @@ export async function generateMetadata({
       images: image ? [{ url: image }] : [],
       type: 'article',
       publishedTime: publishedDateIso,
-      modifiedTime: updateTime,
+      modifiedTime: modifiedDateIso,
       authors: writer ? [writer.name] : [],
       section: category?.title,
     },
@@ -201,9 +211,11 @@ export async function generateMetadata({
       'dable:image': dableImage,
       'article:section': category?.title,
       'article:published_time': publishedDateIso,
-      'article:modified_time': updateTime,
+      'article:modified_time': modifiedDateIso,
       isExclusive: isExclusive.toString(),
       isVideoNews: isVideoNews.toString(),
+      robots: 'INDEX,max-image-preview:large',
+      image: image || '/images/image-default.jpg',
     },
   }
 }
@@ -295,12 +307,12 @@ const StoryPage = async (props: StoryPageTypes) => {
           {!!tags.length && <ArticleTagList tags={tags} />}
         </section>
         <section className={styles.socialAndRelatedWrapper}>
+          <ArticleSocialList />
           <ArticleRelatedPosts
             relatedPosts={relatedPosts}
             shouldShowAds={shouldShowAds}
             page="story"
           />
-          <ArticleSocialList />
           {shouldShowAds && <AdAfterStory />}
         </section>
       </section>

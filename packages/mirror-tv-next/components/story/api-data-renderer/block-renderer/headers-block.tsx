@@ -18,7 +18,8 @@ const HeadersBlock = ({
   const renderHeader = () => {
     switch (blockType) {
       case ApiDataBlockType.HeaderOne:
-        return <h1 dangerouslySetInnerHTML={{ __html: blockContentData }} />
+        // 為了 SEO 優化，將文章內容中的 h1 改為 h2，避免與文章標題的 h1 衝突
+        return <h2 dangerouslySetInnerHTML={{ __html: blockContentData }} />
       case ApiDataBlockType.HeaderTwo:
         return <h2 dangerouslySetInnerHTML={{ __html: blockContentData }} />
       default:

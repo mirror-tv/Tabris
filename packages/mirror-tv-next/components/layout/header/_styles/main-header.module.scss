@@ -1,5 +1,9 @@
 @import '/styles/theme/breakpoints';
 
+.header {
+  overflow-x: hidden;
+}
+
 .pcHeaderWrapper {
   display: none;
 
