@@ -12,7 +12,10 @@ declare global {
     gtag?: (
       command: string,
       targetId: string,
-      config?: Record<string, string | number | boolean>
+      config?: Record<
+        string,
+        string | number | boolean | Record<string, string>
+      >
     ) => void
   }
 }
