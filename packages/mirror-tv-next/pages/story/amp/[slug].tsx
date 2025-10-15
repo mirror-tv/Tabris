@@ -42,7 +42,7 @@ function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
   const title = storyData.title
   const brief = storyData.briefApiData
     ? JSON.parse(storyData.briefApiData)
-        .map((item: any) => item.content?.join('') || '')
+        .map((item: { content?: string[] }) => item.content?.join('') || '')
         .join('')
     : ''
   const image = storyData.heroImage?.urlDesktopSized
@@ -176,13 +176,12 @@ export default function AmpPage({
 
   const brief = briefApiData
     ? JSON.parse(briefApiData)
-        .map((item: any) => item.content?.join('') || '')
+        .map((item: { content?: string[] }) => item.content?.join('') || '')
         .join('')
     : ''
   const tags = storyData.tags?.map((tag) => tag.name).join(', ')
   const image = storyData.heroImage?.urlDesktopSized
   const pageUrl = `${META_SITE_URL}/story/${slug}`
-  const writer = storyData.writers?.[0]
   const category = storyData.categories?.[0]
   const publishedDateIso = dayjs(publishTime).utcOffset(8).toISOString()
   const updateTime = storyData.updatedAt || storyData.publishTime

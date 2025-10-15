@@ -82,7 +82,7 @@ function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
     },
     description: storyData.briefApiData
       ? JSON.parse(storyData.briefApiData)
-          .map((item: any) => item.content?.join('') || '')
+          .map((item: { content?: string[] }) => item.content?.join('') || '')
           .join('')
       : undefined,
     url: pageUrl,
@@ -157,7 +157,7 @@ export async function generateMetadata({
   const title = storyData.title
   const brief = storyData.briefApiData
     ? JSON.parse(storyData.briefApiData)
-        .map((item: any) => item.content?.join('') || '')
+        .map((item: { content?: string[] }) => item.content?.join('') || '')
         .join('')
     : ''
   const tags = storyData.tags?.map((tag) => tag.name).join(', ')

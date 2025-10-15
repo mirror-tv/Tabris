@@ -3,6 +3,22 @@ import styles from './_styles/video-block.module.scss'
 import YoutubeBlock, { type ApiDataYoutube } from './youtube-block'
 import { extractYoutubeId } from '../../../../utils'
 
+// AMP 元素類型定義
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      'amp-video': {
+        src?: string
+        layout?: string
+        width?: string | number
+        height?: string | number
+        children?: React.ReactNode
+        [key: string]: string | number | boolean | undefined
+      }
+    }
+  }
+}
+
 type VideoContent = {
   id: string
   name: string
@@ -57,7 +73,7 @@ const VideoBlock = ({
         <div
           style={{ width: '100%', aspectRatio: '16/9', position: 'relative' }}
         >
-          <amp-video src={videoUrl} layout="fill" {...({} as any)}>
+          <amp-video src={videoUrl} layout="fill">
             <source src={videoUrl} type="video/mp4" />
             <source src={videoUrl} type="video/webm" />
             <source src={videoUrl} type="video/ogg" />
