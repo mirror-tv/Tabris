@@ -80,7 +80,7 @@
 .contentWrapper {
   margin-top: 30px;
   width: calc(100vw - 3rem);
-  @include media-breakpoint-up(lg) {
+  @include media-breakpoint-up(md) {
     max-width: 600px;
     width: 600px;
   }
