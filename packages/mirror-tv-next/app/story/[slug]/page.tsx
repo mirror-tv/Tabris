@@ -307,12 +307,12 @@ const StoryPage = async (props: StoryPageTypes) => {
           {!!tags.length && <ArticleTagList tags={tags} />}
         </section>
         <section className={styles.socialAndRelatedWrapper}>
+          <ArticleSocialList />
           <ArticleRelatedPosts
             relatedPosts={relatedPosts}
             shouldShowAds={shouldShowAds}
             page="story"
           />
-          <ArticleSocialList />
           {shouldShowAds && <AdAfterStory />}
         </section>
       </section>

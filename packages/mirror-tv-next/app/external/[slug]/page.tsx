@@ -318,12 +318,12 @@ const ExternalPage = async (props: ExternalPageTypes) => {
           {!!tags.length && <ArticleTagList tags={tags} />}
         </section>
         <section className={styles.socialAndRelatedWrapper}>
+          <ArticleSocialList />
           <ArticleRelatedPosts
             relatedPosts={[]}
             shouldShowAds={shouldShowAds}
             page="external"
           />
-          <ArticleSocialList />
           {shouldShowAds && <AdAfterStory />}
         </section>
       </section>
