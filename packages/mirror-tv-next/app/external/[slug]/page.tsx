@@ -49,6 +49,12 @@ function generateExternalJsonLds(
   const category = externalData.categories?.[0]
   const logoUrl = '/images/logo.png' // 需要確認實際的 logo 路徑
 
+  // 將時間轉換為台北時區
+  const publishTime = externalData.publishTime
+  const updateTime = externalData.updatedAt || externalData.publishTime
+  const publishedDateIso = dayjs(publishTime).utcOffset(8).format()
+  const modifiedDateIso = dayjs(updateTime).utcOffset(8).format()
+
   const jsonLdBreadcrumbList = {
     '@context': 'http://schema.org/',
     '@type': 'BreadcrumbList',
@@ -64,8 +70,8 @@ function generateExternalJsonLds(
     },
     headline: externalData.name,
     image: externalData.thumbnail || '',
-    datePublished: externalData.publishTime,
-    dateModified: externalData.updatedAt || externalData.publishTime,
+    datePublished: publishedDateIso,
+    dateModified: modifiedDateIso,
     author: {
       '@type': externalData.byline ? 'Person' : 'Organization',
       name: externalData.byline || SITE_TITLE,
@@ -170,7 +176,8 @@ export async function generateMetadata({
   const updateTime = externalData.updatedAt || externalData.publishTime
 
   dayjs.extend(utc)
-  const publishedDateIso = dayjs(publishTime).utcOffset(8).toISOString()
+  const publishedDateIso = dayjs(publishTime).utcOffset(8).format()
+  const modifiedDateIso = dayjs(updateTime).utcOffset(8).format()
 
   return {
     title,
@@ -182,7 +189,7 @@ export async function generateMetadata({
       images: image ? [{ url: image }] : [],
       type: 'article',
       publishedTime: publishedDateIso,
-      modifiedTime: updateTime,
+      modifiedTime: modifiedDateIso,
       authors: writer ? [writer] : [],
       section: category?.name,
     },
@@ -207,7 +214,9 @@ export async function generateMetadata({
       'dable:image': dableImage || '',
       'article:section': category?.name || '',
       'article:published_time': publishedDateIso,
-      'article:modified_time': updateTime,
+      'article:modified_time': modifiedDateIso,
+      robots: 'INDEX,max-image-preview:large',
+      image: image || '/images/image-default.jpg',
     },
   }
 }
@@ -309,12 +318,12 @@ const ExternalPage = async (props: ExternalPageTypes) => {
           {!!tags.length && <ArticleTagList tags={tags} />}
         </section>
         <section className={styles.socialAndRelatedWrapper}>
+          <ArticleSocialList />
           <ArticleRelatedPosts
             relatedPosts={[]}
             shouldShowAds={shouldShowAds}
             page="external"
           />
-          <ArticleSocialList />
           {shouldShowAds && <AdAfterStory />}
         </section>
       </section>

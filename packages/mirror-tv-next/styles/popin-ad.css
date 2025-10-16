@@ -1,0 +1,13 @@
+/* PopIn Ad Styles for mirror-tv-next - Desktop display only */
+/* Minimal styles to ensure _popIn_recommend_word displays on desktop */
+
+#_popIn_recommend_word {
+  position: relative;
+  a {
+    text-decoration-color: none;
+  }
+}
+
+#_popIn_recommend_word ._popIn_recommend_container {
+  padding-bottom: 0;
+}

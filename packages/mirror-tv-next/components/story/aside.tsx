@@ -9,6 +9,8 @@ import { formatArticleCard, type FormattedPostCard } from '~/utils'
 import { type PostCardItem } from '~/graphql/query/posts'
 import MicroAd from '../ads/micro-ad'
 import dynamic from 'next/dynamic'
+import UiHeadingBordered from '../shared/ui-heading-bordered'
+import useWindowDimensions from '~/hooks/use-window-dimensions'
 
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 
@@ -18,6 +20,9 @@ export const revalidate = GLOBAL_CACHE_SETTING
 const Aside: React.FC = () => {
   const asideCategory = 'story'
   const { popularPosts, latestPosts } = useData()
+  const { width } = useWindowDimensions()
+
+  const isTablet = width && width < 1200 && width >= 768
 
   const ensureArray = (data: unknown) => (Array.isArray(data) ? data : [])
   const addStyle = (data: PostCardItem[]): FormattedPostCard[] =>
@@ -39,14 +44,22 @@ const Aside: React.FC = () => {
           listData={formattedLatestPosts}
           className={`aside__list-latest ${styles.asideItem} list-wrapper`}
         />
-        <div className={styles.microId}>
-          <MicroAd
-            unitIdMobile="4300420"
-            unitIdDesktop="4300419"
-            className={styles.microAd}
-            condition="!isTablet"
-          />
-        </div>
+        {!isTablet && (
+          <div className={styles.microId}>
+            <div style={{ paddingLeft: width && width >= 1200 ? '24px' : '' }}>
+              <UiHeadingBordered
+                title="網友排行榜"
+                className={styles.compassFitHeading}
+              />
+            </div>
+            <MicroAd
+              unitIdMobile="4300420"
+              unitIdDesktop="4300419"
+              className={styles.microAd}
+              condition="!isTablet"
+            />
+          </div>
+        )}
         <GPTAd pageKey={asideCategory} adKey="PC_R2" />
         {!!formattedPopularPosts.length && (
           <UiListPostsAside
@@ -58,14 +71,21 @@ const Aside: React.FC = () => {
         )}
         <GPTAd pageKey={asideCategory} adKey="PC_R3" />
       </div>
-      <div className={`${styles.microId}`}>
-        <MicroAd
-          unitIdMobile="4300420"
-          unitIdDesktop="4300419"
-          className={styles.microAd}
-          condition="isTablet"
-        />
-      </div>
+      {isTablet && (
+        <div className={`${styles.microId}`}>
+          <UiHeadingBordered
+            title="網友排行榜"
+            className={styles.compassFitHeading}
+          />
+
+          <MicroAd
+            unitIdMobile="4300420"
+            unitIdDesktop="4300419"
+            className={styles.microAd}
+            condition="isTablet"
+          />
+        </div>
+      )}
     </aside>
   )
 }

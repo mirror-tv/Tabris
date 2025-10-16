@@ -17,6 +17,10 @@ const CompassFit: React.FC = () => {
         isMobile = true
     })(navigator.userAgent || navigator.vendor || window.opera)
 
+    if (!window.location.pathname.includes('/story/')) {
+      return
+    }
+
     const div = document.createElement('div')
     const script = document.createElement('script')
 

@@ -4,6 +4,17 @@
 
   .listTitle {
     max-width: fit-content;
+    border-image: linear-gradient(
+        to bottom,
+        #153047 35%,
+        transparent 35%,
+        transparent 65%,
+        #153047 65%
+      )
+      5;
+    p {
+      color: #153047;
+    }
   }
   .list {
     margin-top: 24px;

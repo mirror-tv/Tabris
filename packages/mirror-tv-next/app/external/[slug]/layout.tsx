@@ -3,6 +3,7 @@ import Aside from '~/components/story/aside'
 import styles from './_styles/external.module.scss'
 import Script from 'next/script'
 import dynamic from 'next/dynamic'
+import AdH1Remover from '~/components/shared/ad-h1-remover'
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 export default function StoryPageLayout({
   children,
@@ -11,6 +12,7 @@ export default function StoryPageLayout({
 }) {
   return (
     <div className={styles.LayoutWrapper}>
+      <AdH1Remover />
       <Script
         id="dable"
         strategy="afterInteractive"
@@ -33,17 +35,14 @@ export default function StoryPageLayout({
 
       <Script
         id="popinAd"
-        strategy="beforeInteractive"
+        strategy="afterInteractive"
         dangerouslySetInnerHTML={{
           __html: `
             (function() {
-              var pa = document.createElement('script')
-              pa.type = 'text/javascript'
-              pa.charset = 'utf-8'
-              pa.async = true
-              pa.src = window.location.protocol + '//api.popin.cc/searchbox/mnews.js'
-              var s = document.getElementsByTagName('script')[0]
-              s.parentNode.insertBefore(pa, s)
+              var script = document.createElement('script')
+              script.src = window.location.protocol + '//api.popin.cc/searchbox/mnews.js'
+              script.async = true
+              document.body.appendChild(script)
             })()
           `,
         }}

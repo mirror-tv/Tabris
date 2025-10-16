@@ -57,11 +57,11 @@ const VideoBlock = ({
         <div
           style={{ width: '100%', aspectRatio: '16/9', position: 'relative' }}
         >
-          <amp-video src={videoUrl} layout="fill" {...({} as any)}>
+          {/* <amp-video src={videoUrl} layout="fill">
             <source src={videoUrl} type="video/mp4" />
             <source src={videoUrl} type="video/webm" />
             <source src={videoUrl} type="video/ogg" />
-          </amp-video>
+          </amp-video> */}
         </div>
       ) : (
         <video
