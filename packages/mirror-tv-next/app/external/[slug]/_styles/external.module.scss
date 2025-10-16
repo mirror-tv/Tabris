@@ -35,13 +35,13 @@
     padding: 28px 0 50px;
     display: flex;
     flex-direction: column;
-    padding-top: 60px;
   }
   @include media-breakpoint-up(xl) {
     max-width: $max-width-xxl;
     display: flex;
     flex-direction: row;
     gap: 96px;
+    padding-top: 60px;
   }
 }
 

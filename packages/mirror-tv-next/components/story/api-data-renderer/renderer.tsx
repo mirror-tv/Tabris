@@ -46,6 +46,9 @@ const ApiDataRenderer = ({
       {parsedContentData?.map((apiDataBlock) => {
         switch (apiDataBlock.type) {
           case ApiDataBlockType.Unstyled:
+            if (!apiDataBlock.content?.[0]) {
+              return null
+            }
             return (
               <UnstyledBlock
                 data={apiDataBlock}
