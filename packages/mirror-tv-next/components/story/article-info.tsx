@@ -52,9 +52,9 @@ export default function ArticleInfo({
         )}
       </section>
       <h1 className={styles.title}>{title}</h1>
-      {!!creditList.length && (
-        <ul className={styles.credit}>
-          {creditList.map((item) => {
+      <ul className={styles.credit}>
+        {!!creditList.length &&
+          creditList.map((item) => {
             return (
               <li key={item.title} className={styles.creditItem}>
                 {item.title}｜
@@ -64,11 +64,10 @@ export default function ArticleInfo({
               </li>
             )
           })}
-          <li key="other" className={styles.creditItem}>
-            {otherbyline}
-          </li>
-        </ul>
-      )}
+        <li key="other" className={styles.creditItem}>
+          {otherbyline}
+        </li>
+      </ul>
       <div className={`${styles.share} post__social-media-share`}>
         <ShareButton type="facebook" />
         <ShareButton type="line" />
