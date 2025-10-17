@@ -45,15 +45,12 @@ export function removeDuplicateFirstParagraph(
   contentOriginal: string | null | undefined,
   heroCaption: string | null | undefined
 ): string {
-  // 如果任一參數為空，直接返回原始內容
   if (!contentOriginal || !heroCaption) {
     return contentOriginal || ''
   }
 
-  // 清理 heroCaption，移除多餘的空白字符
   const cleanHeroCaption = heroCaption.trim()
 
-  // 如果 heroCaption 為空，直接返回原始內容
   if (!cleanHeroCaption) {
     return contentOriginal
   }
@@ -65,7 +62,6 @@ export function removeDuplicateFirstParagraph(
   const match = contentOriginal.match(firstBlockRegex)
 
   if (!match) {
-    // 如果沒有找到塊級元素，嘗試匹配純文字的第一段
     const firstTextRegex = /^(\s*[^<\n]+(?:\n[^<\n]+)*)/m
     const textMatch = contentOriginal.match(firstTextRegex)
 
@@ -75,7 +71,6 @@ export function removeDuplicateFirstParagraph(
         firstText === cleanHeroCaption ||
         firstText.startsWith(cleanHeroCaption)
       ) {
-        // 移除第一段文字
         return contentOriginal.replace(firstTextRegex, '').trim()
       }
     }
@@ -89,6 +84,13 @@ export function removeDuplicateFirstParagraph(
     .replace(/<[^>]*>/g, '') // 移除所有 HTML 標籤
     .replace(/\s+/g, ' ') // 將多個空白字符替換為單個空格
     .trim()
+
+  // 如果第一段是空的（沒有文字內容），則跳過它，尋找下一個有內容的段落
+  if (!textContent) {
+    // 移除空的段落，然後遞歸調用自己來處理剩餘內容
+    const remainingContent = contentOriginal.replace(firstBlockRegex, '').trim()
+    return removeDuplicateFirstParagraph(remainingContent, heroCaption)
+  }
 
   // 比較純文字內容與 heroCaption
   // 檢查第一段是否包含或開始於 heroCaption
