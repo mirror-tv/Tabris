@@ -39,7 +39,7 @@ export default function NavItems({ categories }: NavItemProps) {
   }
 
   const resetRenderedCategory = () => {
-    const isViewportWidthUpXl = width && width >= 1200
+    const isViewportWidthUpXl = width && width >= 1000
 
     // Desktop/Tablet view - calculate available space
     const maxWidth = isViewportWidthUpXl ? 800 : 450
