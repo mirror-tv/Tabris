@@ -36,7 +36,61 @@ export function addMaxWidthToFigureWithStyle(
 }
 
 /**
- * 移除 content_original 中與 heroCaption 重複的第一段
+ * 移除純文字格式化的 HTML 標籤，保留有意義的內容標籤
+ * @param content - HTML 字符串
+ * @returns 清理後的 HTML 字符串
+ */
+export function removeTextFormattingTags(content: string): string {
+  if (!content) {
+    return ''
+  }
+
+  // 定義需要移除的純文字格式化標籤
+  const formattingTags = [
+    'p',
+    'br',
+    'em',
+    'i',
+    'strong',
+    'b',
+    'u',
+    's',
+    'strike',
+    'del',
+    'span',
+    'font',
+    'small',
+    'big',
+    'sub',
+    'sup',
+    'mark',
+    'ins',
+  ]
+
+  let result = content
+
+  // 移除這些標籤的開始和結束標籤，但保留內容
+  formattingTags.forEach((tag) => {
+    // 移除自閉合標籤如 <br>, <br/>
+    const selfClosingRegex = new RegExp(`<${tag}\\s*[^>]*?/?>`, 'gi')
+    result = result.replace(selfClosingRegex, '')
+
+    // 移除成對標籤如 <p>...</p>
+    const pairedRegex = new RegExp(`<${tag}\\s*[^>]*?>(.*?)<\\/${tag}>`, 'gi')
+    result = result.replace(pairedRegex, '$1')
+  })
+
+  // 清理多餘的空白字符
+  result = result
+    .replace(/\s+/g, ' ') // 將多個空白字符替換為單個空格
+    .replace(/>\s+</g, '><') // 移除標籤之間的空白
+    .trim()
+
+  return result
+}
+
+/**
+ * 移除 content_original 中與 heroCaption 重複的第一段，並清理文字格式化標籤
  * @param contentOriginal - 原始內容 HTML 字符串
  * @param heroCaption - 英雄圖片說明文字
  * @returns 處理後的內容 HTML 字符串
@@ -71,10 +125,13 @@ export function removeDuplicateFirstParagraph(
         firstText === cleanHeroCaption ||
         firstText.startsWith(cleanHeroCaption)
       ) {
-        return contentOriginal.replace(firstTextRegex, '').trim()
+        const remainingContent = contentOriginal
+          .replace(firstTextRegex, '')
+          .trim()
+        return removeTextFormattingTags(remainingContent)
       }
     }
-    return contentOriginal
+    return removeTextFormattingTags(contentOriginal)
   }
 
   const firstBlock = match[1]
@@ -99,8 +156,9 @@ export function removeDuplicateFirstParagraph(
     textContent.startsWith(cleanHeroCaption)
   ) {
     // 移除第一個段落
-    return contentOriginal.replace(firstBlockRegex, '').trim()
+    const remainingContent = contentOriginal.replace(firstBlockRegex, '').trim()
+    return removeTextFormattingTags(remainingContent)
   }
 
-  return contentOriginal
+  return removeTextFormattingTags(contentOriginal)
 }
