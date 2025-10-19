@@ -1,4 +1,4 @@
-import { env } from '@/config/env'
+import { env } from '@/constants/environment-variables'
 
 export default function LocalPreview() {
   return (
