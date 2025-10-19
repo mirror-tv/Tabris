@@ -8,7 +8,7 @@ import { OrderStatus as OrderStatusComponent } from '@/components/order/order-st
 import { TestModal } from '@/components/order/test-modal'
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
-import { env } from '@/config/env'
+import { env } from '@/constants/environment-variables'
 import { ORDER_STATUS_CONFIG, ORDER_STYLES } from '@/constants'
 import { mockOrderData } from '@/mocks/mockData'
 

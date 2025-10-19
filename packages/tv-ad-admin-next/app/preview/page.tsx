@@ -1,4 +1,4 @@
-import { env } from '@/lib/env'
+import { env } from '@/constants/environment-variables'
 
 export default function PreviewPage() {
   return (
