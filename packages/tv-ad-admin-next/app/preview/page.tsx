@@ -1,6 +1,8 @@
 import { env } from '@/constants/environment-variables'
 
 export default function PreviewPage() {
+  const isLocalOrDev = ['local', 'dev'].includes(env.ENV)
+  if (!isLocalOrDev) return null
   return (
     <main className="flex h-screen flex-col items-center justify-center bg-gray-100 text-gray-800">
       <h1 className="mb-4">👋 Welcome Developer</h1>

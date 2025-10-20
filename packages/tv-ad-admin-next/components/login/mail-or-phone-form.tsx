@@ -109,13 +109,7 @@ export default function MailOrPhoneForm({
           />
         </p>
 
-        <Button
-          type="submit"
-          disabled={isLoading}
-          variant="blue"
-          size="lg"
-          className="w-full"
-        >
+        <Button type="submit" disabled={isLoading} size="lg" className="w-full">
           {isLoading ? '發送中...' : '發送驗證碼'}
         </Button>
       </form>
