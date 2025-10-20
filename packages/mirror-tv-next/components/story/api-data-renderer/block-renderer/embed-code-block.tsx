@@ -23,6 +23,7 @@ export default function EmbedCodeBlock({ data }: { data: ApiDataEmbedCode }) {
 
   const isScrollVideo = caption === 'reporter-scroll-video'
   const showCaption = caption && !isScrollVideo
+  console.log('embeddedCode', embeddedCode)
 
   useEffect(() => {
     if (embedRef.current && !run.current) {
