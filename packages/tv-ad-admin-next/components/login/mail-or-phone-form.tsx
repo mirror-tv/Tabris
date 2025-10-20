@@ -1,6 +1,6 @@
-import arrowSvg from '@/assets/icons/arrow.svg?react'
-import mailSvg from '@/assets/icons/mail.svg?react'
-import phoneSvg from '@/assets/icons/phone.svg?react'
+import arrowSvg from '@/assets/icons/arrow.svg'
+import mailSvg from '@/assets/icons/mail.svg'
+import phoneSvg from '@/assets/icons/phone.svg'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 

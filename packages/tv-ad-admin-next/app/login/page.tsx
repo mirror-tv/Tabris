@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 
 import { useRouter } from 'next/navigation'
 
-// import logo from '@/assets/icons/mnews-logo.svg?react'
+// import logo from '@/assets/icons/mnews-logo.svg'
 import MailOrPhoneForm from '@/components/login/mail-or-phone-form'
 import OptForm from '@/components/login/opt-form'
 import PageHeader from '@/components/shared/page-header'

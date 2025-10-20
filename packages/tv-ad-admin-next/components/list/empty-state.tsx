@@ -1,4 +1,4 @@
-import FileIcon from '@/assets/icons/file.svg?react'
+import FileIcon from '@/assets/icons/file.svg'
 import { type OrderStatus } from '@/constants'
 import { OrderStatusUtils } from '@/utils'
 

@@ -5,9 +5,9 @@ import { useRouter } from 'next/navigation'
 
 import { Button } from '../ui/button'
 
-import ArrowBackIcon from '@/assets/icons/arrow-back.svg?react'
-import LogoutIcon from '@/assets/icons/log-out.svg?react'
-import LogoIcon from '@/assets/icons/mnews-logo.svg?react'
+import ArrowBackIcon from '@/assets/icons/arrow-back.svg'
+import LogoutIcon from '@/assets/icons/log-out.svg'
+import LogoIcon from '@/assets/icons/mnews-logo.svg'
 import { layout } from '@/constants'
 import { cn } from '@/utils'
 

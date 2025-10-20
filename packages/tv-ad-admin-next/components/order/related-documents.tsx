@@ -1,5 +1,5 @@
-import DetailIcon from '@/assets/icons/detail.svg?react'
-import DocumentIcon from '@/assets/icons/document.svg?react'
+import DetailIcon from '@/assets/icons/detail.svg'
+import DocumentIcon from '@/assets/icons/document.svg'
 import { Button } from '@/components/ui/button'
 
 type RelatedDocumentsProps = {

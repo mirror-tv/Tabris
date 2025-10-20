@@ -1,5 +1,5 @@
-import ArrowRightDownIcon from '@/assets/icons/arrow-right-sown.svg?react'
-import DetailIcon from '@/assets/icons/detail.svg?react'
+import ArrowRightDownIcon from '@/assets/icons/arrow-right-sown.svg'
+import DetailIcon from '@/assets/icons/detail.svg'
 import { Button } from '@/components/ui/button'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { type OrderRecord } from '@/mocks/mockData'

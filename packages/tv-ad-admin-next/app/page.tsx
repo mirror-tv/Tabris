@@ -1,111 +1,157 @@
 'use client'
 
-import { useState } from 'react'
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
 
-import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
-import FileIcon from '@/assets/icons/file.svg?react'
-import UploadIcon from '@/assets/icons/upload.svg?react'
-import StatusCard from '@/components/dashboard/status-card'
+import MailOrPhoneForm from '@/components/login/mail-or-phone-form'
+import OptForm from '@/components/login/opt-form'
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from '@/components/ui/card'
-import { OrderStatusMap } from '@/constants'
-import { mockOrderData } from '@/mocks/mockData'
-
-type StatusStats = { status: string; count: number }
 
 export default function HomePage() {
-  const [statusStats, setStatusStats] = useState<StatusStats[]>([])
+  const router = useRouter()
+  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
+  const [status, setStatus] = useState<'email' | 'phone' | 'OPT'>('email')
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [countdown, setCountdown] = useState(0)
+  const [canResend, setCanResend] = useState(true)
 
-  const getStatusStats = () => {
-    const statusOrder: { status: string; count: number }[] = []
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+    setIsLoading(true)
 
-    mockOrderData.forEach((order) => {
-      const existing = statusOrder.find((item) => item.status === order.status)
-      if (!existing) {
-        statusOrder.push({ status: order.status, count: 1 })
-      } else {
-        existing.count++
-      }
-    })
-
-    return statusOrder
-  }
-
-  const fetchOrdersStatusStats = () => {
     try {
-      setStatusStats(getStatusStats())
-    } catch (error) {
-      console.error(error)
+      if (status === 'email') {
+        if (!email.trim()) {
+          setError('請輸入電子信箱')
+          return
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailRegex.test(email)) {
+          setError('請輸入有效的電子信箱格式')
+          return
+        }
+      }
+
+      if (status === 'phone') {
+        if (!phone.trim()) {
+          setError('請輸入手機號碼')
+          return
+        }
+        const phoneRegex = /^09\d{8}$/
+        if (!phoneRegex.test(phone.replace(/\s/g, ''))) {
+          setError('請輸入有效的手機號碼格式 (例：0922119187)')
+          return
+        }
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+
+      setStatus('OPT')
+      setCountdown(60)
+      setCanResend(false)
+      console.log('驗證碼已發送到:', status === 'email' ? email : phone)
+    } catch (err) {
+      console.error(err)
+      setError('發送驗證碼失敗，請稍後再試')
+    } finally {
+      setIsLoading(false)
     }
   }
 
+  // 倒數計時效果
   useEffect(() => {
-    fetchOrdersStatusStats()
-  }, [])
+    let timer: ReturnType<typeof setTimeout>
+    if (countdown > 0) {
+      timer = setTimeout(() => {
+        setCountdown(countdown - 1)
+      }, 1000)
+    } else {
+      setCanResend(true)
+    }
+    return () => clearTimeout(timer)
+  }, [countdown])
+
+  // 驗證碼驗證
+  const handleOtpSubmit = async (value?: string) => {
+    setError('')
+    setIsLoading(true)
+
+    try {
+      const otpValue = value
+      if (!otpValue?.trim()) {
+        setError('請輸入驗證碼')
+        return
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+
+      console.log('驗證碼驗證成功:', otpValue)
+      router.push('/dashboard')
+    } catch (err) {
+      console.error(err)
+      setError('驗證碼錯誤，請重新輸入')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleResendOtp = async () => {
+    if (!canResend) return
+
+    setError('')
+    setIsLoading(true)
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+      setCountdown(60)
+      setCanResend(false)
+      console.log('重新發送驗證碼到:', status === 'email' ? email : phone)
+    } catch (err) {
+      console.error(err)
+      setError('重新發送失敗，請稍後再試')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <>
-      <PageHeader variant="spread" title="鏡新聞個人廣告系統" />
-      <PageMain className="grid grid-rows-[auto_1fr] gap-4 py-5 md:gap-10 md:py-10">
-        {/* --- Top two cards --- */}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
-          {/* Upload Card */}
-          <Link href="/upload">
-            <Card className="cursor-pointer items-center justify-center gap-3 hover:shadow-[0_4px_8px_0_rgba(0,0,0,0.10)]">
-              <UploadIcon className="text-blue-7" />
-              <CardTitle className="flex flex-col items-center gap-1">
-                <span>上傳廣告素材</span>
-                <CardDescription>上傳後即可進入製作流程</CardDescription>
-              </CardTitle>
-            </Card>
-          </Link>
+      <PageHeader variant="centered" />
+      <PageMain className="flex justify-center py-5 md:my-auto">
+        <div className="flex h-fit max-w-[288px] flex-col items-center rounded-xl border border-border-default bg-surface-primary p-4 shadow-lg md:max-w-[448px] md:min-w-[448px] md:p-6">
+          {status !== 'OPT' && (
+            <MailOrPhoneForm
+              status={status}
+              email={email}
+              phone={phone}
+              setEmail={setEmail}
+              setPhone={setPhone}
+              setStatus={setStatus}
+              handleSubmit={handleSubmit}
+              isLoading={isLoading}
+              error={error}
+            />
+          )}
 
-          {/* history Card */}
-          <Link href="/list">
-            <Card className="cursor-pointer items-center justify-center gap-3 hover:shadow-[0_4px_8px_0_rgba(0,0,0,0.10)]">
-              <FileIcon className="text-blue-7" />
-              <CardTitle className="flex flex-col items-center gap-1">
-                <span>訂單紀錄</span>
-                <CardDescription>查看與管理所有訂單</CardDescription>
-              </CardTitle>
-            </Card>
-          </Link>
+          {status === 'OPT' && (
+            <OptForm
+              email={email}
+              phone={phone}
+              error={error}
+              isLoading={isLoading}
+              countdown={countdown}
+              canResend={canResend}
+              handleOtpSubmit={handleOtpSubmit}
+              handleResendOtp={handleResendOtp}
+            />
+          )}
         </div>
-
-        {/* --- Bottom: Order status overview --- */}
-        <Card>
-          <CardHeader>
-            <CardTitle>訂單狀態總覽</CardTitle>
-          </CardHeader>
-
-          <CardContent className="grid grid-cols-1 gap-2 md:grid-cols-4 md:gap-4 xl:grid-cols-6">
-            {statusStats.map(({ status, count }) => {
-              const config =
-                OrderStatusMap[status as keyof typeof OrderStatusMap]
-              if (!config) return null
-
-              return (
-                <Link key={status} href={`/list?status=${status}`}>
-                  <StatusCard
-                    count={count}
-                    text={config.label}
-                    color={config.colors.text}
-                    bgColor={config.colors.bg}
-                  />
-                </Link>
-              )
-            })}
-          </CardContent>
-        </Card>
       </PageMain>
     </>
   )

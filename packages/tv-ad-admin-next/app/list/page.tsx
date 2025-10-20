@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
+import { Suspense, useState, useMemo, useEffect } from 'react'
 
 import { useRouter, useSearchParams } from 'next/navigation'
 
@@ -12,7 +12,7 @@ import PageMain from '@/components/shared/page-main'
 import { mockOrderData } from '@/mocks/mockData'
 import { filterOrders } from '@/utils'
 
-export default function ListPage() {
+function ListContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const status = searchParams.get('status')
@@ -60,5 +60,13 @@ export default function ListPage() {
         </div>
       </PageMain>
     </>
+  )
+}
+
+export default function ListPage() {
+  return (
+    <Suspense fallback={<div>載入中...</div>}>
+      <ListContent />
+    </Suspense>
   )
 }

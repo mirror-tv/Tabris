@@ -1,4 +1,4 @@
-import DoneIcon from '@/assets/icons/done.svg?react'
+import DoneIcon from '@/assets/icons/done.svg'
 import {
   OrderStatusMap,
   PROGRESS_COLOR_RULES,

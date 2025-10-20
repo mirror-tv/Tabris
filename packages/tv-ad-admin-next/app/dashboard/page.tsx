@@ -1,10 +1,13 @@
-import { useState } from 'react'
-import { useEffect } from 'react'
+'use client'
+
+// import { useState, useEffect } from 'react'
 
 import Link from 'next/link'
 
-import FileIcon from '@/assets/icons/file.svg?react'
-import UploadIcon from '@/assets/icons/upload.svg?react'
+import Image from 'next/image'
+
+import fileIcon from '@/assets/icons/file.svg'
+import uploadIcon from '@/assets/icons/upload.svg'
 import StatusCard from '@/components/dashboard/status-card'
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
@@ -16,39 +19,46 @@ import {
   CardContent,
 } from '@/components/ui/card'
 import { OrderStatusMap } from '@/constants'
-import { mockOrderData } from '@/mocks/mockData'
+// import { mockOrderData } from '@/mocks/mockData'
 
-type StatusStats = { status: string; count: number }
+// type StatusStats = { status: string; count: number }
 
-export default function Dashboard() {
-  const [statusStats, setStatusStats] = useState<StatusStats[]>([])
+export default function DashboardPage() {
+  const statusStats = [
+    { status: 'pending', count: 10 },
+    { status: 'approved', count: 5 },
+    { status: 'rejected', count: 3 },
+    { status: 'cancelled', count: 2 },
+  ]
+  // const [statusStats, setStatusStats] = useState<StatusStats[]>([])
 
-  const getStatusStats = () => {
-    const statusOrder: { status: string; count: number }[] = []
+  // const getStatusStats = () => {
+  //   const statusOrder: { status: string; count: number }[] = []
 
-    mockOrderData.forEach((order) => {
-      const existing = statusOrder.find((item) => item.status === order.status)
-      if (!existing) {
-        statusOrder.push({ status: order.status, count: 1 })
-      } else {
-        existing.count++
-      }
-    })
+  //   mockOrderData.forEach((order) => {
+  //     const existing = statusOrder.find((item) => item.status === order.status)
+  //     if (!existing) {
+  //       statusOrder.push({ status: order.status, count: 1 })
+  //     } else {
+  //       existing.count++
+  //     }
+  //   })
 
-    return statusOrder
-  }
+  //   return statusOrder
+  // }
 
-  const fetchOrdersStatusStats = () => {
-    try {
-      setStatusStats(getStatusStats())
-    } catch (error) {
-      console.error(error)
-    }
-  }
+  // const fetchOrdersStatusStats = () => {
+  //   try {
+  //     setStatusStats(getStatusStats())
+  //   } catch (error) {
+  //     console.error(error)
+  //   }
+  // }
 
-  useEffect(() => {
-    fetchOrdersStatusStats()
-  }, [])
+  // useEffect(() => {
+  //   fetchOrdersStatusStats()
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [])
 
   return (
     <>
@@ -59,7 +69,13 @@ export default function Dashboard() {
           {/* Upload Card */}
           <Link href="/upload">
             <Card className="cursor-pointer items-center justify-center gap-3 hover:shadow-[0_4px_8px_0_rgba(0,0,0,0.10)]">
-              <UploadIcon className="text-blue-7" />
+              <Image
+                src={uploadIcon}
+                alt="upload"
+                width={40}
+                height={40}
+                className="text-blue-7"
+              />
               <CardTitle className="flex flex-col items-center gap-1">
                 <span>上傳廣告素材</span>
                 <CardDescription>上傳後即可進入製作流程</CardDescription>
@@ -70,7 +86,13 @@ export default function Dashboard() {
           {/* history Card */}
           <Link href="/list">
             <Card className="cursor-pointer items-center justify-center gap-3 hover:shadow-[0_4px_8px_0_rgba(0,0,0,0.10)]">
-              <FileIcon className="text-blue-7" />
+              <Image
+                src={fileIcon}
+                alt="file"
+                width={40}
+                height={40}
+                className="text-blue-7"
+              />
               <CardTitle className="flex flex-col items-center gap-1">
                 <span>訂單紀錄</span>
                 <CardDescription>查看與管理所有訂單</CardDescription>

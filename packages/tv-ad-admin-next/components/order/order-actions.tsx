@@ -2,9 +2,9 @@ import { useState } from 'react'
 
 import Link from 'next/link'
 
-import DoneWithCircleIcon from '@/assets/icons/done-with-circle.svg?react'
-import EditIcon from '@/assets/icons/edit.svg?react'
-import UploadIcon from '@/assets/icons/upload.svg?react'
+import DoneWithCircleIcon from '@/assets/icons/done-with-circle.svg'
+import EditIcon from '@/assets/icons/edit.svg'
+import UploadIcon from '@/assets/icons/upload.svg'
 import { Button } from '@/components/ui/button'
 import { ORDER_STATUS } from '@/constants'
 import { type OrderRecord } from '@/mocks/mockData'
