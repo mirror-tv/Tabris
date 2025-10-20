@@ -10,7 +10,9 @@ const LazyRenderWrapper = dynamic(
   }
 )
 
-const AdAfterStory = () => {
+type AdAfterStoryProps = { page: 'story' | 'external' }
+
+const AdAfterStory: React.FC<AdAfterStoryProps> = ({ page }) => {
   const { width } = useWindowDimensions()
 
   return (
@@ -61,7 +63,7 @@ const AdAfterStory = () => {
           data-widget_id-mo="xXAWmB7G"
           className="dable-widget-last"
         />
-        {width && width >= 1200 && (
+        {width && width >= 1200 && page !== 'story' && (
           <>
             <UiHeadingBordered title="每日精選" />
             <div id="_popIn_recommend" className="popin_recommend" />
