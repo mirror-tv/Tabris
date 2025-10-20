@@ -313,7 +313,7 @@ const StoryPage = async (props: StoryPageTypes) => {
             page="story"
           />
           <ArticleSocialList />
-          {shouldShowAds && <AdAfterStory />}
+          {shouldShowAds && <AdAfterStory page="story" />}
         </section>
       </section>
     </>
