@@ -12,6 +12,7 @@
 .li {
   padding: 0 10px;
   position: relative;
+  min-width: fit-content;
 }
 
 .li::after {
@@ -109,6 +110,12 @@
   font-size: 14px;
   font-weight: 400;
   line-height: normal;
+  overflow: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
   @include media-breakpoint-up(md) {
     padding: 0 $header-padding-md;
@@ -126,6 +133,7 @@
 .liRest {
   padding: 0 10px;
   position: relative;
+  min-width: fit-content;
 
   @include media-breakpoint-up(md) {
     color: #a6a6a6;
