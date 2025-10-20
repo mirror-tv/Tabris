@@ -1,5 +1,6 @@
 'use client'
 import useWindowDimensions from '~/hooks/use-window-dimensions'
+import styles from './_styles/ad-after-story.module.scss'
 
 import dynamic from 'next/dynamic'
 import UiHeadingBordered from '../shared/ui-heading-bordered'
@@ -65,7 +66,10 @@ const AdAfterStory: React.FC<AdAfterStoryProps> = ({ page }) => {
         />
         {width && width >= 1200 && page !== 'story' && (
           <>
-            <UiHeadingBordered title="每日精選" />
+            <UiHeadingBordered
+              title="每日精選"
+              className={styles.dailySelection}
+            />
             <div id="_popIn_recommend" className="popin_recommend" />
           </>
         )}
