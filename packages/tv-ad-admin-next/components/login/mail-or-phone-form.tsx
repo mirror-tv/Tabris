@@ -1,8 +1,6 @@
-import arrowSvg from '@/assets/icons/arrow.svg'
-import mailSvg from '@/assets/icons/mail.svg'
-import phoneSvg from '@/assets/icons/phone.svg'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import Image from 'next/image'
 
 type MailOrPhoneFormProps = {
   status: 'email' | 'phone' | 'OPT'
@@ -53,11 +51,11 @@ export default function MailOrPhoneForm({
               error={error.includes('電子信箱') ? 'error' : undefined}
               errorMessage={error.includes('電子信箱') ? error : ''}
               icon={
-                <img
-                  src={mailSvg as unknown as string}
+                <Image
+                  src="/assets/icons/mail.svg"
                   alt="mail"
-                  width="16"
-                  height="16"
+                  width={16}
+                  height={16}
                 />
               }
             />
@@ -82,11 +80,11 @@ export default function MailOrPhoneForm({
               error={error.includes('手機號碼') ? 'error' : undefined}
               errorMessage={error.includes('手機號碼') ? error : ''}
               icon={
-                <img
-                  src={phoneSvg as unknown as string}
+                <Image
+                  src="/assets/icons/phone.svg"
                   alt="phone"
-                  width="16"
-                  height="16"
+                  width={16}
+                  height={16}
                 />
               }
             />
@@ -100,11 +98,11 @@ export default function MailOrPhoneForm({
           className="flex cursor-pointer items-center text-sm leading-normal font-medium text-brand-primary hover:cursor-pointer"
         >
           使用{status === 'email' ? '手機號碼' : '電子信箱'}登入
-          <img
-            src={arrowSvg as unknown as string}
+          <Image
+            src="/assets/icons/arrow.svg"
             alt="arrow"
-            width="16"
-            height="17"
+            width={16}
+            height={17}
             className="inline"
           />
         </p>
