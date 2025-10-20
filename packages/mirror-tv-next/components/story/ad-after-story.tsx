@@ -61,7 +61,7 @@ const AdAfterStory = () => {
           data-widget_id-mo="xXAWmB7G"
           className="dable-widget-last"
         />
-        {width && width >= 768 && (
+        {width && width >= 1200 && (
           <>
             <UiHeadingBordered title="每日精選" />
             <div id="_popIn_recommend" className="popin_recommend" />
