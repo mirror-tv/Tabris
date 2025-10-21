@@ -38,12 +38,7 @@ export function OrderRow({
         {order.lastUpdated}
       </td>
       <td className="px-2 py-3 text-sm whitespace-nowrap text-text-primary">
-        <Button
-          onClick={() => onViewOrder(order.id)}
-          variant="ghost"
-          size="sm"
-          className="gap-1"
-        >
+        <Button onClick={() => onViewOrder(order.id)} variant="outline">
           <DetailIcon className="h-4 w-4" />
           查看
         </Button>

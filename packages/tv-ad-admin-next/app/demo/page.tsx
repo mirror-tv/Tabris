@@ -1,10 +1,10 @@
 'use client'
-
 import { useState } from 'react'
 
 import { DialogClose } from '@radix-ui/react-dialog'
 import { format } from 'date-fns'
 
+import UploadIcon from '@/assets/icons/upload.svg'
 import { Badge, badgeVariants } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -39,13 +39,63 @@ import {
 } from '@/components/ui/table'
 import { type OrderStatus, ORDER_STATUS } from '@/constants'
 import { cn, OrderStatusUtils } from '@/utils'
+import { useResponsive } from '@/hooks/useResponsive'
 
-export default function DemoPage() {
+export default function Demo() {
   const [date, setDate] = useState<Date | undefined>(new Date())
+  const { isMobile, isTablet, isDesktop } = useResponsive()
 
   return (
     <div className="min-h-screen space-y-8 bg-surface-secondary p-8">
       <h2 className="text-text-primary">Shadcn UI Showcase</h2>
+
+      <div className="w-full text-white bg-green-7 text-center py-2">
+        {isMobile && 'Mobile view'}
+        {isTablet && 'Tablet view'}
+        {isDesktop && 'Desktop view'}
+      </div>
+
+      {/* button */}
+      <div className="flex flex-wrap gap-2">
+        {/* ───────────────────────────── */}
+        {/* fill (Primary / Secondary) */}
+        {/* ───────────────────────────── */}
+        <Button>fill (Primary)</Button>
+        <Button intent="secondary">fill (Secondary)</Button>
+
+        {/* ───────────────────────────── */}
+        {/* Outline (Primary / Secondary) */}
+        {/* ───────────────────────────── */}
+        <Button variant="outline">Outline (Primary)</Button>
+        <Button variant="outline" intent="secondary">
+          Outline (Secondary)
+        </Button>
+
+        {/* ───────────────────────────── */}
+        {/* Icon buttons */}
+        {/* ───────────────────────────── */}
+        <Button variant="ghost" size="icon">
+          <UploadIcon />
+        </Button>
+        <Button variant="outline" size="icon" intent="secondary">
+          <UploadIcon />
+        </Button>
+
+        {/* ───────────────────────────── */}
+        {/* Ghost / Link / Disabled */}
+        {/* ───────────────────────────── */}
+        <Button variant="ghost">Ghost</Button>
+        <Button variant="link">Link</Button>
+        <Button disabled>
+          <UploadIcon />
+          Disabled
+        </Button>
+
+        {/* ───────────────────────────── */}
+        {/* Large button */}
+        {/* ───────────────────────────── */}
+        <Button size="lg">Large Fill (Primary)</Button>
+      </div>
 
       {/* Search & Filter */}
       <div className="flex items-center gap-4">
@@ -73,6 +123,7 @@ export default function DemoPage() {
           <PopoverTrigger asChild>
             <Button
               variant="outline"
+              intent="secondary"
               className={cn(
                 'w-[260px] justify-start text-left font-normal',
                 !date && 'text-muted-foreground'
@@ -115,9 +166,7 @@ export default function DemoPage() {
                 </Badge>
               </TableCell>
               <TableCell>
-                <Button variant="outline" size="sm">
-                  View
-                </Button>
+                <Button variant="outline">View</Button>
               </TableCell>
             </TableRow>
             <TableRow>
@@ -129,9 +178,7 @@ export default function DemoPage() {
                 </Badge>
               </TableCell>
               <TableCell>
-                <Button variant="outline" size="sm">
-                  View
-                </Button>
+                <Button variant="outline">View</Button>
               </TableCell>
             </TableRow>
           </TableBody>
@@ -176,7 +223,7 @@ export default function DemoPage() {
       <div>
         <Dialog>
           <DialogTrigger asChild>
-            <Button variant="default">Upload Material</Button>
+            <Button>Upload Material</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
@@ -189,9 +236,9 @@ export default function DemoPage() {
             </p>
             <DialogFooter className="flex space-x-2">
               <DialogClose asChild>
-                <Button variant="secondary">Cancel</Button>
+                <Button variant="outline">Cancel</Button>
               </DialogClose>
-              <Button variant="blue">Confirm Upload</Button>
+              <Button>Confirm Upload</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
