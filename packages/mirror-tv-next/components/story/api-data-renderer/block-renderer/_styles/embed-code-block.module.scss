@@ -4,6 +4,7 @@
 
   iframe {
     width: 100%;
+    margin: 0 auto;
     // height: 100%;
   }
 
@@ -14,6 +15,40 @@
       width: 100%;
       height: 100%;
       border: none;
+    }
+  }
+
+  .facebook {
+    min-height: 200px;
+
+    iframe {
+      width: 100%;
+      min-height: 200px;
+      border: none;
+    }
+
+    // Fallback styles for blocked Facebook embeds
+    .facebook-fallback {
+      padding: 20px;
+      border: 1px solid #ddd;
+      background: #f9f9f9;
+      text-align: center;
+      border-radius: 8px;
+
+      p {
+        margin: 10px 0;
+        color: #666;
+      }
+
+      a {
+        color: #1877f2;
+        text-decoration: none;
+        font-weight: 500;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
     }
   }
 }

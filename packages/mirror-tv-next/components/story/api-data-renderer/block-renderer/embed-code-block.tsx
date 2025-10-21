@@ -16,6 +16,21 @@ export interface ApiDataEmbedCode extends ApiDataBlockBase {
   alignment: 'center'
 }
 
+// Helper function to extract Facebook URL from embedded code
+function extractFacebookUrl(embeddedCode: string): string {
+  const urlMatch = embeddedCode.match(/href=([^&"\s]+)/i)
+  if (urlMatch) {
+    return decodeURIComponent(urlMatch[1])
+  }
+
+  const srcMatch = embeddedCode.match(/src=["']([^"']*facebook[^"']*)["']/i)
+  if (srcMatch) {
+    return srcMatch[1]
+  }
+
+  return 'https://www.facebook.com/'
+}
+
 export default function EmbedCodeBlock({ data }: { data: ApiDataEmbedCode }) {
   const { caption, embeddedCode } = data.content[0]
   const embedRef = useRef<HTMLDivElement>(null)
@@ -45,6 +60,12 @@ export default function EmbedCodeBlock({ data }: { data: ApiDataEmbedCode }) {
         embeddedCode.includes('youtu.be') ||
         embeddedCode.includes('youtube.com/watch')
 
+      // 檢測是否包含 Facebook embed
+      const hasFacebookEmbed =
+        embeddedCode.includes('facebook.com/plugins') ||
+        embeddedCode.includes('facebook.com/') ||
+        embeddedCode.includes('fb.com/')
+
       // 如果是 YouTube iframe，移除寬高屬性
       let processedEmbeddedCode = embeddedCode
       if (hasYouTubeIframe) {
@@ -54,6 +75,21 @@ export default function EmbedCodeBlock({ data }: { data: ApiDataEmbedCode }) {
           .replace(/height=["'][^"']*["']/g, '')
           .replace(/\s+/g, ' ') // 清理多餘的空格
           .trim()
+      }
+
+      // 如果是 Facebook embed，添加錯誤處理
+      if (hasFacebookEmbed) {
+        // 為 Facebook iframe 添加錯誤處理
+        processedEmbeddedCode = processedEmbeddedCode.replace(
+          /<iframe([^>]*src=["'][^"']*facebook[^"']*["'][^>]*)>/gi,
+          (match, attributes) => {
+            return `<iframe${attributes} onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"></iframe><div class="${
+              styles.facebookFallback
+            }" style="display:none;"><p>此 Facebook 內容無法在此瀏覽器中顯示</p><p>請點擊 <a href="${extractFacebookUrl(
+              embeddedCode
+            )}" target="_blank" rel="noopener">這裡</a> 前往 Facebook 查看</p></div>`
+          }
+        )
       }
 
       const parser = new DOMParser()
@@ -83,6 +119,11 @@ export default function EmbedCodeBlock({ data }: { data: ApiDataEmbedCode }) {
       // 如果包含 YouTube iframe，加上 youtube className
       if (hasYouTubeIframe) {
         node.classList.add(styles.youtube)
+      }
+
+      // 如果包含 Facebook embed，加上 facebook className
+      if (hasFacebookEmbed) {
+        node.classList.add(styles.facebook)
       }
 
       run.current = true
