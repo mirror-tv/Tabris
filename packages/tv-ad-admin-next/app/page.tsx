@@ -254,7 +254,7 @@ export default function HomePage() {
   return (
     <>
       <PageHeader variant="centered" />
-      <PageMain className="flex justify-center py-5 md:my-auto py-24">
+      <PageMain className="flex justify-center py-5 md:py-10">
         <div className="flex h-fit max-w-[288px] flex-col items-center rounded-xl border border-border-default bg-surface-primary p-4 shadow-lg md:max-w-[448px] md:min-w-[448px] md:p-6">
           {status !== 'OPT' && (
             <MailOrPhoneForm

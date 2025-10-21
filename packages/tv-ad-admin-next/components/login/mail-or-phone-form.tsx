@@ -170,6 +170,7 @@ export default function MailOrPhoneForm({
           className="w-full"
         >
           {isLoading ? loadingMessage || '發送中...' : '發送驗證碼'}
+        </Button>
       </form>
     </>
   )
