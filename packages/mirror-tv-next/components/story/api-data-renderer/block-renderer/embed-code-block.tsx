@@ -38,7 +38,6 @@ export default function EmbedCodeBlock({ data }: { data: ApiDataEmbedCode }) {
 
   const isScrollVideo = caption === 'reporter-scroll-video'
   const showCaption = caption && !isScrollVideo
-  console.log('embeddedCode', embeddedCode)
 
   useEffect(() => {
     if (embedRef.current && !run.current) {
@@ -77,17 +76,28 @@ export default function EmbedCodeBlock({ data }: { data: ApiDataEmbedCode }) {
           .trim()
       }
 
-      // 如果是 Facebook embed，添加錯誤處理
+      // 如果是 Facebook embed，強制移除高度限制
       if (hasFacebookEmbed) {
-        // 為 Facebook iframe 添加錯誤處理
+        // 強制移除 Facebook iframe 的所有尺寸相關屬性
+        processedEmbeddedCode = processedEmbeddedCode
+          .replace(/width=["'][^"']*["']/g, '')
+          .replace(/height=["'][^"']*["']/g, '')
+          .replace(/style="[^"]*width[^"]*"/g, '')
+          .replace(/style="[^"]*height[^"]*"/g, '')
+          .replace(/style="[^"]*overflow[^"]*"/g, '')
+          .replace(/\s+/g, ' ')
+          .trim()
+
+        // 為 Facebook iframe 添加錯誤處理和 Safari 特殊處理
         processedEmbeddedCode = processedEmbeddedCode.replace(
           /<iframe([^>]*src=["'][^"']*facebook[^"']*["'][^>]*)>/gi,
           (match, attributes) => {
-            return `<iframe${attributes} onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"></iframe><div class="${
+            const result = `<iframe${attributes} style="width: 100% !important; height: 474px !important;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"></iframe><div class="${
               styles.facebookFallback
             }" style="display:none;"><p>此 Facebook 內容無法在此瀏覽器中顯示</p><p>請點擊 <a href="${extractFacebookUrl(
               embeddedCode
             )}" target="_blank" rel="noopener">這裡</a> 前往 Facebook 查看</p></div>`
+            return result
           }
         )
       }

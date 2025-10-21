@@ -13,18 +13,26 @@
 
     iframe {
       width: 100%;
-      height: 100%;
+      // height: 100%;
       border: none;
     }
   }
 
   .facebook {
-    min-height: 200px;
+    // 使用 aspect-ratio 實現響應式高度
+    // Facebook embed 原始比例: 500x474，所以比例約為 1.055
+    aspect-ratio: 500 / 474;
+
+    // Safari 特殊處理：設定最小高度確保內容不被切掉
+    min-height: 474px;
 
     iframe {
       width: 100%;
-      min-height: 200px;
+      height: 100%;
       border: none;
+
+      // Safari 特殊處理：確保 iframe 有足夠的高度
+      min-height: 474px;
     }
 
     // Fallback styles for blocked Facebook embeds
