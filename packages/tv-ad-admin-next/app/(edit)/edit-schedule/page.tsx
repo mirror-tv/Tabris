@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-import { format } from 'date-fns'
+import { addDays, format, startOfToday } from 'date-fns'
 import { zhTW } from 'date-fns/locale/zh-TW'
 
 import type { DateRange } from 'react-day-picker'
@@ -22,12 +22,15 @@ import {
 } from '@/components/ui/popover'
 import { cn } from '@/utils'
 
-const PAGE_TITLE = '  設定排播日期'
+const PAGE_TITLE = '設定排播日期'
 
 export default function EditSchedule() {
   const [range, setRange] = useState<DateRange | undefined>(undefined)
+  const [error, setError] = useState<string | null>(null)
   const [submitStatus, setSubmitStatus] = useState<SubmitStatus>('idle')
 
+  const today = startOfToday()
+  const minDate = addDays(today, 14)
   const dateFormat = 'yyyy/M/d'
 
   const CalendarText =
@@ -49,7 +52,7 @@ export default function EditSchedule() {
     e.preventDefault()
 
     if (!range?.from || !range?.to) {
-      alert('請選擇完整的排播起訖日期')
+      setError('請選擇完整的排播起訖日期')
       return
     }
 
@@ -97,9 +100,16 @@ export default function EditSchedule() {
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0">
-            <Calendar mode="range" selected={range} onSelect={setRange} />
+            <Calendar
+              mode="range"
+              selected={range}
+              onSelect={setRange}
+              disabled={{ before: minDate }}
+              defaultMonth={minDate}
+            />
           </PopoverContent>
         </Popover>
+        {error && <p className="text-destructive text-sm">{error}</p>}
       </div>
       <Instructions
         title="重要提醒"
