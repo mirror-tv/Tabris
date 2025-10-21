@@ -39,13 +39,21 @@ import {
 } from '@/components/ui/table'
 import { type OrderStatus, ORDER_STATUS } from '@/constants'
 import { cn, OrderStatusUtils } from '@/utils'
+import { useResponsive } from '@/hooks/useResponsive'
 
 export default function Demo() {
   const [date, setDate] = useState<Date | undefined>(new Date())
+  const { isMobile, isTablet, isDesktop } = useResponsive()
 
   return (
     <div className="min-h-screen space-y-8 bg-surface-secondary p-8">
       <h2 className="text-text-primary">Shadcn UI Showcase</h2>
+
+      <div className="w-full text-white bg-green-7 text-center py-2">
+        {isMobile && 'Mobile view'}
+        {isTablet && 'Tablet view'}
+        {isDesktop && 'Desktop view'}
+      </div>
 
       {/* button */}
       <div className="flex flex-wrap gap-2">

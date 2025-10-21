@@ -1,40 +1,37 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useResponsiveStore } from '@/store'
+import { useEffect, useRef } from 'react'
 
 export function useResponsive() {
-  const [screen, setScreen] = useState({
-    isMobile: false,
-    isTablet: false,
-    isDesktop: false,
-  })
+  const { isMobile, isTablet, isDesktop, updateResponsive } =
+    useResponsiveStore()
+
+  // A ref to ensure listeners are registered only once
+  const hasInitialized = useRef(false)
 
   useEffect(() => {
+    if (hasInitialized.current) return
+    hasInitialized.current = true
+
     const mobileQuery = window.matchMedia('(max-width: 767px)')
     const tabletQuery = window.matchMedia(
       '(min-width: 768px) and (max-width: 1199px)'
     )
     const desktopQuery = window.matchMedia('(min-width: 1200px)')
 
-    const update = () => {
-      setScreen({
-        isMobile: mobileQuery.matches,
-        isTablet: tabletQuery.matches,
-        isDesktop: desktopQuery.matches,
-      })
-    }
+    updateResponsive() // initialize state once
 
-    update()
-    mobileQuery.addEventListener('change', update)
-    tabletQuery.addEventListener('change', update)
-    desktopQuery.addEventListener('change', update)
+    mobileQuery.addEventListener('change', updateResponsive)
+    tabletQuery.addEventListener('change', updateResponsive)
+    desktopQuery.addEventListener('change', updateResponsive)
 
     return () => {
-      mobileQuery.removeEventListener('change', update)
-      tabletQuery.removeEventListener('change', update)
-      desktopQuery.removeEventListener('change', update)
+      mobileQuery.removeEventListener('change', updateResponsive)
+      tabletQuery.removeEventListener('change', updateResponsive)
+      desktopQuery.removeEventListener('change', updateResponsive)
     }
-  }, [])
+  }, [updateResponsive])
 
-  return screen
+  return { isMobile, isTablet, isDesktop }
 }
