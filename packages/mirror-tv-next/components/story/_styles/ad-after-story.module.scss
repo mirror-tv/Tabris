@@ -1,0 +1,14 @@
+.dailySelection {
+  border-image: linear-gradient(
+      180deg,
+      #153047 35%,
+      transparent 0,
+      transparent 65%,
+      #153047 0
+    )
+    5 !important;
+
+  p {
+    color: #153047 !important;
+  }
+}

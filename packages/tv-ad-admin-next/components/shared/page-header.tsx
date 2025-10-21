@@ -76,6 +76,7 @@ export default function PageHeader({
             <Title>{title}</Title>
             <Button
               variant="outline"
+              intent="secondary"
               onClick={handleLogout}
               disabled={isLoggingOut}
             >

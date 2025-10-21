@@ -27,8 +27,8 @@ export function RelatedDocuments({ className = '' }: RelatedDocumentsProps) {
           </div>
           <Button
             onClick={() => window.open('https://www.google.com', '_blank')}
-            variant="white"
-            size="sm"
+            variant="outline"
+            intent="secondary"
             className="gap-1"
           >
             <DetailIcon className="h-4 w-4" />

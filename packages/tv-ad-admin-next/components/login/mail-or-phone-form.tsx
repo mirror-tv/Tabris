@@ -166,12 +166,10 @@ export default function MailOrPhoneForm({
         <Button
           type="submit"
           disabled={isLoading || !canSubmit}
-          variant="blue"
           size="lg"
           className="w-full"
         >
           {isLoading ? loadingMessage || '發送中...' : '發送驗證碼'}
-        </Button>
       </form>
     </>
   )
