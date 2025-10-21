@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { type OrderRecord } from '@/mocks/mockData'
 
-interface OrderRowProps {
+type OrderRowProps = {
   order: OrderRecord
   onViewOrder: (orderId: string) => void
   isRelated?: boolean

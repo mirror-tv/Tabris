@@ -1,4 +1,7 @@
+'use client'
+
 import type { ReactNode } from 'react'
+import { useState } from 'react'
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -20,9 +23,26 @@ export default function PageHeader({
   title,
   variant = 'default',
 }: PageHeaderProps) {
+  const router = useRouter()
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
+
   const isDefault = variant === 'default'
   const isCentered = variant === 'centered'
   const isSpread = variant === 'spread'
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true)
+    try {
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      })
+      router.push('/')
+    } catch (error) {
+      console.error('登出失敗:', error)
+      setIsLoggingOut(false)
+    }
+  }
 
   return (
     <header
@@ -54,9 +74,13 @@ export default function PageHeader({
           <>
             <Logo className="hidden md:block" />
             <Title>{title}</Title>
-            <Button variant="outline">
+            <Button
+              variant="outline"
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+            >
               <LogoutIcon className="size-4" />
-              登出
+              {isLoggingOut ? '登出中...' : '登出'}
             </Button>
           </>
         )}

@@ -1,6 +1,9 @@
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import Image from 'next/image'
+import { validateEmail, validatePhone } from '@/utils/validation'
+import { useDebounce } from '@/hooks/useDebounce'
 
 type MailOrPhoneFormProps = {
   status: 'email' | 'phone' | 'OPT'
@@ -11,6 +14,7 @@ type MailOrPhoneFormProps = {
   setStatus: React.Dispatch<React.SetStateAction<'email' | 'phone' | 'OPT'>>
   handleSubmit: (e: React.FormEvent) => void
   isLoading: boolean
+  loadingMessage?: string
   error: string
 }
 
@@ -23,8 +27,48 @@ export default function MailOrPhoneForm({
   setStatus,
   handleSubmit,
   isLoading,
+  loadingMessage,
   error,
 }: MailOrPhoneFormProps) {
+  // 即時驗證狀態
+  const [emailError, setEmailError] = useState('')
+  const [phoneError, setPhoneError] = useState('')
+  const [isEmailValid, setIsEmailValid] = useState(false)
+  const [isPhoneValid, setIsPhoneValid] = useState(false)
+
+  // 防抖值
+  const debouncedEmail = useDebounce(email, 500)
+  const debouncedPhone = useDebounce(phone, 500)
+
+  // 即時驗證 Email
+  useEffect(() => {
+    if (!debouncedEmail) {
+      setEmailError('')
+      setIsEmailValid(false)
+      return
+    }
+
+    const validation = validateEmail(debouncedEmail)
+    setEmailError(validation.error || '')
+    setIsEmailValid(validation.isValid)
+  }, [debouncedEmail])
+
+  // 即時驗證手機號碼
+  useEffect(() => {
+    if (!debouncedPhone) {
+      setPhoneError('')
+      setIsPhoneValid(false)
+      return
+    }
+
+    const validation = validatePhone(debouncedPhone)
+    setPhoneError(validation.error || '')
+    setIsPhoneValid(validation.isValid)
+  }, [debouncedPhone])
+
+  // 判斷是否可以提交
+  const canSubmit = status === 'email' ? isEmailValid : isPhoneValid
+
   return (
     <>
       <h3 className="text-center text-text-primary">鏡新聞個人廣告系統</h3>
@@ -48,8 +92,18 @@ export default function MailOrPhoneForm({
               onChange={(e) => setEmail(e.target.value)}
               placeholder="sample@gmail.com"
               className="h-[45px] rounded-lg"
-              error={error.includes('電子信箱') ? 'error' : undefined}
-              errorMessage={error.includes('電子信箱') ? error : ''}
+              error={
+                error.includes('電子信箱') ||
+                error.includes('信箱') ||
+                emailError
+                  ? 'error'
+                  : undefined
+              }
+              errorMessage={
+                error.includes('電子信箱') || error.includes('信箱')
+                  ? error
+                  : emailError
+              }
               icon={
                 <Image
                   src="/assets/icons/mail.svg"
@@ -77,8 +131,10 @@ export default function MailOrPhoneForm({
               onChange={(e) => setPhone(e.target.value)}
               placeholder="範例：0922119187"
               className="rounded-lg"
-              error={error.includes('手機號碼') ? 'error' : undefined}
-              errorMessage={error.includes('手機號碼') ? error : ''}
+              error={
+                error.includes('手機號碼') || phoneError ? 'error' : undefined
+              }
+              errorMessage={error.includes('手機號碼') ? error : phoneError}
               icon={
                 <Image
                   src="/assets/icons/phone.svg"
@@ -109,12 +165,12 @@ export default function MailOrPhoneForm({
 
         <Button
           type="submit"
-          disabled={isLoading}
+          disabled={isLoading || !canSubmit}
           variant="blue"
           size="lg"
           className="w-full"
         >
-          {isLoading ? '發送中...' : '發送驗證碼'}
+          {isLoading ? loadingMessage || '發送中...' : '發送驗證碼'}
         </Button>
       </form>
     </>

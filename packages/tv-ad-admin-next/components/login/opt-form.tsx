@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import RadixInspiredOTP from '@/components/ui/radix-inspired-otp'
+import Link from 'next/link'
 
 type OptFormProps = {
   email: string
@@ -8,6 +10,8 @@ type OptFormProps = {
   isLoading: boolean
   countdown: number
   canResend: boolean
+  failedAttempts: number
+  maxAttempts: number
   handleOtpSubmit: (value?: string) => void
   handleResendOtp: () => void
 }
@@ -19,9 +23,14 @@ export default function OptForm({
   isLoading,
   countdown,
   canResend,
+  failedAttempts,
+  maxAttempts,
   handleOtpSubmit,
   handleResendOtp,
 }: OptFormProps) {
+  const [otpValue, setOtpValue] = useState('')
+  const isLocked = failedAttempts >= maxAttempts
+
   return (
     <>
       <h3 className="text-center text-text-primary">輸入驗證碼</h3>
@@ -39,6 +48,8 @@ export default function OptForm({
             validationType="numeric"
             className="gap-1"
             name="otp"
+            value={otpValue}
+            onValueChange={setOtpValue}
             error={error}
             errorMessage={error}
           />
@@ -46,13 +57,13 @@ export default function OptForm({
 
         <Button
           type="button"
-          onClick={() => handleOtpSubmit()}
-          disabled={isLoading}
+          onClick={() => handleOtpSubmit(otpValue)}
+          disabled={isLoading || isLocked}
           variant="blue"
           size="lg"
           className="w-full"
         >
-          {isLoading ? '驗證中...' : '登入'}
+          {isLoading ? '驗證中...' : isLocked ? '已鎖定' : '登入'}
         </Button>
 
         <div className="flex items-center justify-center text-sm">
@@ -73,6 +84,12 @@ export default function OptForm({
             重新發送{canResend ? '' : `(${countdown}s)`}
           </Button>
         </div>
+        <Link
+          href={`/`}
+          className="text-sm text-brand-primary text-center font-medium leading-normal hover:font-bold mt-[-8px]"
+        >
+          重新填寫{email ? '電子信箱' : '手機號碼'}
+        </Link>
       </div>
     </>
   )

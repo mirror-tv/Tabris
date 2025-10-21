@@ -2,65 +2,120 @@
 
 import { useState, useEffect } from 'react'
 
-import { useRouter } from 'next/navigation'
-
 import MailOrPhoneForm from '@/components/login/mail-or-phone-form'
 import OptForm from '@/components/login/opt-form'
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
+import { validateEmail, validatePhone } from '@/utils/validation'
+import { AUTH_MESSAGES, LOADING_MESSAGES } from '@/constants/messages'
+import type { SendOtpResponse } from '@/types/api'
 
 export default function HomePage() {
-  const router = useRouter()
+  // 從 localStorage 讀取上次登入方式
+  const [status, setStatus] = useState<'email' | 'phone' | 'OPT'>(() => {
+    if (typeof window !== 'undefined') {
+      const lastLoginType = localStorage.getItem('lastLoginType')
+      return (lastLoginType === 'phone' ? 'phone' : 'email') as
+        | 'email'
+        | 'phone'
+    }
+    return 'email'
+  })
+
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
-  const [status, setStatus] = useState<'email' | 'phone' | 'OPT'>('email')
+  const [loginType, setLoginType] = useState<'email' | 'phone'>('email') // 保存原始登入類型
   const [isLoading, setIsLoading] = useState(false)
+  const [loadingMessage, setLoadingMessage] = useState('')
   const [error, setError] = useState('')
   const [countdown, setCountdown] = useState(0)
   const [canResend, setCanResend] = useState(true)
+  const [failedAttempts, setFailedAttempts] = useState(0)
+  const maxAttempts = 3 // 與後端一致
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     setIsLoading(true)
+    setLoadingMessage(LOADING_MESSAGES.CHECKING_MEMBER)
 
     try {
+      // 驗證輸入
       if (status === 'email') {
-        if (!email.trim()) {
-          setError('請輸入電子信箱')
-          return
-        }
-
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        if (!emailRegex.test(email)) {
-          setError('請輸入有效的電子信箱格式')
+        const validation = validateEmail(email)
+        if (!validation.isValid) {
+          setError(validation.error || AUTH_MESSAGES.EMAIL_INVALID)
           return
         }
       }
 
       if (status === 'phone') {
-        if (!phone.trim()) {
-          setError('請輸入手機號碼')
-          return
-        }
-        const phoneRegex = /^09\d{8}$/
-        if (!phoneRegex.test(phone.replace(/\s/g, ''))) {
-          setError('請輸入有效的手機號碼格式 (例：0922119187)')
+        const validation = validatePhone(phone)
+        if (!validation.isValid) {
+          setError(validation.error || AUTH_MESSAGES.PHONE_INVALID)
           return
         }
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      // 保存登入方式到 localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('lastLoginType', status)
+      }
 
+      // 呼叫真實的 API 發送 OTP
+      const response = await fetch('/api/auth/send-otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: status,
+          email: status === 'email' ? email : undefined,
+          phone: status === 'phone' ? phone : undefined,
+        }),
+      })
+
+      const data: SendOtpResponse = await response.json()
+
+      if (!data.success) {
+        setError(data.message || AUTH_MESSAGES.SEND_OTP_FAILED)
+        return
+      }
+
+      // 會員驗證通過，開始發送 OTP
+      setLoadingMessage(LOADING_MESSAGES.SENDING_OTP)
+
+      // 開發環境：在瀏覽器 Console 顯示驗證碼（帶顏色）
+      if (data.data?.otp) {
+        console.log(
+          '%c🔐 ========== OTP 驗證碼 ==========',
+          'color: #10b981; font-size: 14px; font-weight: bold;'
+        )
+        console.log(
+          `%c📧 ${status === 'email' ? email : phone}`,
+          'color: #3b82f6; font-size: 12px;'
+        )
+        console.log(
+          `%c🔢 驗證碼: ${data.data.otp}`,
+          'color: #ef4444; font-size: 16px; font-weight: bold;'
+        )
+        console.log('%c⏰ 有效期: 5 分鐘', 'color: #f59e0b; font-size: 12px;')
+        console.log(
+          '%c=====================================',
+          'color: #10b981; font-size: 14px;'
+        )
+      }
+
+      setLoginType(status as 'email' | 'phone') // 保存原始登入類型
       setStatus('OPT')
       setCountdown(60)
       setCanResend(false)
-      console.log('驗證碼已發送到:', status === 'email' ? email : phone)
     } catch (err) {
       console.error(err)
-      setError('發送驗證碼失敗，請稍後再試')
+      setError(AUTH_MESSAGES.NETWORK_ERROR)
     } finally {
       setIsLoading(false)
+      setLoadingMessage('')
     }
   }
 
@@ -83,19 +138,50 @@ export default function HomePage() {
     setIsLoading(true)
 
     try {
+      // 驗證 OTP 格式
       const otpValue = value
       if (!otpValue?.trim()) {
-        setError('請輸入驗證碼')
+        setError(AUTH_MESSAGES.OTP_REQUIRED)
         return
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      // 呼叫真實的 API 驗證 OTP
+      const response = await fetch('/api/auth/verify-otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // 重要：包含 cookies
+        body: JSON.stringify({
+          type: loginType,
+          email: loginType === 'email' ? email : undefined,
+          phone: loginType === 'phone' ? phone : undefined,
+          otp: otpValue,
+        }),
+      })
 
-      console.log('驗證碼驗證成功:', otpValue)
-      router.push('/dashboard')
+      const data = await response.json()
+
+      if (!data.success) {
+        const newFailedAttempts = failedAttempts + 1
+        setFailedAttempts(newFailedAttempts)
+
+        if (newFailedAttempts >= maxAttempts) {
+          setError(AUTH_MESSAGES.OTP_TOO_MANY_ATTEMPTS)
+        } else {
+          setError(data.message || AUTH_MESSAGES.OTP_INCORRECT)
+        }
+        return
+      }
+
+      // 等待確保 cookie 已設定
+      await new Promise((resolve) => setTimeout(resolve, 300))
+
+      // 登入成功，強制跳轉
+      window.location.href = '/dashboard'
     } catch (err) {
       console.error(err)
-      setError('驗證碼錯誤，請重新輸入')
+      setError(AUTH_MESSAGES.NETWORK_ERROR)
     } finally {
       setIsLoading(false)
     }
@@ -105,18 +191,63 @@ export default function HomePage() {
     if (!canResend) return
 
     setError('')
+    setFailedAttempts(0) // 重置失敗次數
     setIsLoading(true)
+    setLoadingMessage(LOADING_MESSAGES.CHECKING_MEMBER)
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      // 呼叫真實的 API 重新發送 OTP
+      const response = await fetch('/api/auth/send-otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: loginType,
+          email: loginType === 'email' ? email : undefined,
+          phone: loginType === 'phone' ? phone : undefined,
+        }),
+      })
+
+      const data: SendOtpResponse = await response.json()
+
+      if (!data.success) {
+        setError(data.message || AUTH_MESSAGES.RESEND_OTP_FAILED)
+        return
+      }
+
+      // 會員驗證通過，開始發送 OTP
+      setLoadingMessage(LOADING_MESSAGES.SENDING_OTP)
+
+      // 開發環境：在瀏覽器 Console 顯示驗證碼（帶顏色）
+      if (data.data?.otp) {
+        console.log(
+          '%c🔐 ========== 重新發送 OTP ==========',
+          'color: #10b981; font-size: 14px; font-weight: bold;'
+        )
+        console.log(
+          `%c📧 ${loginType === 'email' ? email : phone}`,
+          'color: #3b82f6; font-size: 12px;'
+        )
+        console.log(
+          `%c🔢 驗證碼: ${data.data.otp}`,
+          'color: #ef4444; font-size: 16px; font-weight: bold;'
+        )
+        console.log('%c⏰ 有效期: 5 分鐘', 'color: #f59e0b; font-size: 12px;')
+        console.log(
+          '%c=====================================',
+          'color: #10b981; font-size: 14px;'
+        )
+      }
+
       setCountdown(60)
       setCanResend(false)
-      console.log('重新發送驗證碼到:', status === 'email' ? email : phone)
     } catch (err) {
       console.error(err)
-      setError('重新發送失敗，請稍後再試')
+      setError(AUTH_MESSAGES.NETWORK_ERROR)
     } finally {
       setIsLoading(false)
+      setLoadingMessage('')
     }
   }
 
@@ -135,6 +266,7 @@ export default function HomePage() {
               setStatus={setStatus}
               handleSubmit={handleSubmit}
               isLoading={isLoading}
+              loadingMessage={loadingMessage}
               error={error}
             />
           )}
@@ -147,6 +279,8 @@ export default function HomePage() {
               isLoading={isLoading}
               countdown={countdown}
               canResend={canResend}
+              failedAttempts={failedAttempts}
+              maxAttempts={maxAttempts}
               handleOtpSubmit={handleOtpSubmit}
               handleResendOtp={handleResendOtp}
             />
