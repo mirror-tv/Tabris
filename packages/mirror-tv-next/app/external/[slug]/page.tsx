@@ -324,7 +324,7 @@ const ExternalPage = async (props: ExternalPageTypes) => {
             page="external"
           />
           <ArticleSocialList />
-          {shouldShowAds && <AdAfterStory page="external" />}
+          {shouldShowAds && <AdAfterStory />}
         </section>
       </section>
     </>
