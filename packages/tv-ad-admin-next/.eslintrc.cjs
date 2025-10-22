@@ -19,7 +19,6 @@ module.exports = {
   plugins: ['@typescript-eslint', 'react-refresh', 'import', 'prettier'],
   rules: {
     'react/react-in-jsx-scope': 'off', // Not needed with React 17+
-    'react-refresh/only-export-components': 'warn', // for Vite + React Refresh
     // 'prettier/prettier': 'error', // Disabled — avoids VSCode or Next.js lint failing due to Prettier format issues; formatting will instead be handled automatically by Prettier on save via the VSCode extension or lint-staged.
     'no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars': 'error',
