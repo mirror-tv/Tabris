@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import Link from 'next/link'
 
-import DoneWithCircleIcon from '@/assets/icons/done-with-circle.svg'
+import DoneCircleIcon from '@/assets/icons/done-circle.svg'
 import EditIcon from '@/assets/icons/edit.svg'
 import UploadIcon from '@/assets/icons/upload.svg'
 import { Button } from '@/components/ui/button'
@@ -17,7 +17,7 @@ type OrderActionsProps = {
 const styles = {
   container: 'rounded-lg border border-gray-3 bg-white p-6',
   title: 'typography-h4 mb-4 font-semibold text-text-primary',
-  buttonContainer: 'space-y-3',
+  buttonContainer: 'space-y-3 space-x-2',
   primaryButton: 'bg-blue-6 text-white hover:bg-blue-7',
   secondaryButton: 'border-gray-3 text-text-secondary hover:bg-gray-1',
   statusMessage:
@@ -94,7 +94,7 @@ const ACTION_MAP: Record<string, ActionConfig> = {
   },
   [ORDER_STATUS.PENDING_CONFIRMATION]: {
     buttonText: '確認',
-    buttonIcon: <DoneWithCircleIcon />,
+    buttonIcon: <DoneCircleIcon />,
     buttonClassName: styles.primaryButton,
     helpText: '需要協助？',
     helpLinkText: '申請退款',
@@ -196,9 +196,6 @@ export function OrderActions({ order, className = '' }: OrderActionsProps) {
       <div className={styles.buttonContainer}>
         {actionContent.buttonText && (
           <Button
-            size="sm"
-            className={actionContent.buttonClassName}
-            variant="blue"
             onClick={
               actionContent.buttonText === '上傳素材'
                 ? handleUploadClick
@@ -220,9 +217,7 @@ export function OrderActions({ order, className = '' }: OrderActionsProps) {
         )}
         {actionContent.secondaryButton && (
           <Button
-            size="sm"
             variant="outline"
-            className={`${actionContent.secondaryButton.className} ml-2`}
             onClick={
               actionContent.secondaryButton.text === '提出修改'
                 ? handleModifyClick
