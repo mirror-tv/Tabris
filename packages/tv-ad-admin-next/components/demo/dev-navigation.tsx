@@ -1,7 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+
 import Link from 'next/link'
+
 import { Button } from '@/components/ui/button'
 import { env } from '@/constants/environment-variables'
 
@@ -18,9 +20,6 @@ export default function DevNavigation() {
       </span>
 
       <div className="flex w-full flex-wrap items-center justify-center gap-2">
-        <Link href="/preview" className="hover:text-blue-400">
-          Preview
-        </Link>
         <Link href="/demo" className="hover:text-green-400">
           Demo
         </Link>
