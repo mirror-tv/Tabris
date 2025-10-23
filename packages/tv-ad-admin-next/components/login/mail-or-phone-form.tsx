@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react'
+
+import { CustomInput } from '@/components/custom-ui/input'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import Image from 'next/image'
-import { validateEmail, validatePhone } from '@/utils/validation'
 import { useDebounce } from '@/hooks/useDebounce'
+import ArrowRightIcon from '@/public/icons/arrow-right.svg'
+import MailIcon from '@/public/icons/mail.svg'
+import PhoneIcon from '@/public/icons/phone.svg'
+import { validateEmail, validatePhone } from '@/utils/validation'
 
 type MailOrPhoneFormProps = {
   status: 'email' | 'phone' | 'OPT'
@@ -85,7 +88,7 @@ export default function MailOrPhoneForm({
             >
               電子信箱
             </label>
-            <Input
+            <CustomInput
               id="email"
               type="email"
               value={email}
@@ -104,14 +107,7 @@ export default function MailOrPhoneForm({
                   ? error
                   : emailError
               }
-              icon={
-                <Image
-                  src="/assets/icons/mail.svg"
-                  alt="mail"
-                  width={16}
-                  height={16}
-                />
-              }
+              icon={<MailIcon />}
             />
           </div>
         )}
@@ -124,7 +120,7 @@ export default function MailOrPhoneForm({
             >
               手機號碼
             </label>
-            <Input
+            <CustomInput
               id="phone"
               type="tel"
               value={phone}
@@ -135,14 +131,7 @@ export default function MailOrPhoneForm({
                 error.includes('手機號碼') || phoneError ? 'error' : undefined
               }
               errorMessage={error.includes('手機號碼') ? error : phoneError}
-              icon={
-                <Image
-                  src="/assets/icons/phone.svg"
-                  alt="phone"
-                  width={16}
-                  height={16}
-                />
-              }
+              icon={<PhoneIcon />}
             />
           </div>
         )}
@@ -154,13 +143,7 @@ export default function MailOrPhoneForm({
           className="flex cursor-pointer items-center text-sm leading-normal font-medium text-brand-primary hover:cursor-pointer"
         >
           使用{status === 'email' ? '手機號碼' : '電子信箱'}登入
-          <Image
-            src="/assets/icons/arrow.svg"
-            alt="arrow"
-            width={16}
-            height={17}
-            className="inline"
-          />
+          <ArrowRightIcon />
         </p>
 
         <Button
