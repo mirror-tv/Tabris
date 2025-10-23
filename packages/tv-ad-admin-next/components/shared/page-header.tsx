@@ -13,6 +13,7 @@ import LogoutIcon from '@/assets/icons/log-out.svg'
 import LogoIcon from '@/assets/icons/mnews-logo.svg'
 import { layout } from '@/constants'
 import { cn } from '@/utils'
+import { apiCall } from '@/utils/api'
 
 type PageHeaderProps =
   | { variant?: 'default'; title?: string }
@@ -33,9 +34,10 @@ export default function PageHeader({
   const handleLogout = async () => {
     setIsLoggingOut(true)
     try {
-      await fetch('/api/auth/logout', {
+      await apiCall({
+        endpoint: '/api/auth/logout',
         method: 'POST',
-        credentials: 'include',
+        includeCredentials: true,
       })
       router.push('/')
     } catch (error) {

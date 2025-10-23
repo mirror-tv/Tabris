@@ -2,13 +2,15 @@
 
 import { useState, useEffect } from 'react'
 
+import type { SendOtpResponse } from '@/types/api'
+
 import MailOrPhoneForm from '@/components/login/mail-or-phone-form'
 import OptForm from '@/components/login/opt-form'
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
-import { validateEmail, validatePhone } from '@/utils/validation'
 import { AUTH_MESSAGES, LOADING_MESSAGES } from '@/constants/messages'
-import type { SendOtpResponse } from '@/types/api'
+import { apiCall } from '@/utils/api'
+import { validateEmail, validatePhone } from '@/utils/validation'
 
 export default function HomePage() {
   // 從 localStorage 讀取上次登入方式
@@ -63,19 +65,15 @@ export default function HomePage() {
       }
 
       // 呼叫真實的 API 發送 OTP
-      const response = await fetch('/api/auth/send-otp', {
+      const data = await apiCall<SendOtpResponse['data']>({
+        endpoint: '/api/auth/send-otp',
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+        jsonBody: {
           type: status,
           email: status === 'email' ? email : undefined,
           phone: status === 'phone' ? phone : undefined,
-        }),
+        },
       })
-
-      const data: SendOtpResponse = await response.json()
 
       if (!data.success) {
         setError(data.message || AUTH_MESSAGES.SEND_OTP_FAILED)
@@ -146,21 +144,17 @@ export default function HomePage() {
       }
 
       // 呼叫真實的 API 驗證 OTP
-      const response = await fetch('/api/auth/verify-otp', {
+      const data = await apiCall({
+        endpoint: '/api/auth/verify-otp',
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', // 重要：包含 cookies
-        body: JSON.stringify({
+        jsonBody: {
           type: loginType,
           email: loginType === 'email' ? email : undefined,
           phone: loginType === 'phone' ? phone : undefined,
           otp: otpValue,
-        }),
+        },
+        includeCredentials: true, // 重要：包含 cookies
       })
-
-      const data = await response.json()
 
       if (!data.success) {
         const newFailedAttempts = failedAttempts + 1
@@ -197,19 +191,15 @@ export default function HomePage() {
 
     try {
       // 呼叫真實的 API 重新發送 OTP
-      const response = await fetch('/api/auth/send-otp', {
+      const data = await apiCall<SendOtpResponse['data']>({
+        endpoint: '/api/auth/send-otp',
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+        jsonBody: {
           type: loginType,
           email: loginType === 'email' ? email : undefined,
           phone: loginType === 'phone' ? phone : undefined,
-        }),
+        },
       })
-
-      const data: SendOtpResponse = await response.json()
 
       if (!data.success) {
         setError(data.message || AUTH_MESSAGES.RESEND_OTP_FAILED)
