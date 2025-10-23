@@ -1,7 +1,7 @@
-import ArrowRightDownIcon from '@/assets/icons/arrow-right-sown.svg'
-import DetailIcon from '@/assets/icons/detail.svg'
 import { Button } from '@/components/ui/button'
 import { StateBadge } from '@/components/ui/state-badge'
+import ArrowRightDownIcon from '@/public/icons/arrow-right-sown.svg'
+import DetailIcon from '@/public/icons/detail.svg'
 import { type OrderRecordForList } from '@/types/order'
 
 type OrderRowProps = {

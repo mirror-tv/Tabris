@@ -2,10 +2,10 @@ import { useRouter } from 'next/navigation'
 
 import { Button } from '../ui/button'
 
-import CloseCircleIcon from '@/assets/icons/close-circle.svg'
-import DoneCircleIcon from '@/assets/icons/done-circle.svg'
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
+import CloseCircleIcon from '@/public/icons/close-circle.svg'
+import DoneCircleIcon from '@/public/icons/done-circle.svg'
 
 type SubmitResultProps =
   | {

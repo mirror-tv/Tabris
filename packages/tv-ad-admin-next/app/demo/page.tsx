@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { format } from 'date-fns'
 
-import UploadIcon from '@/assets/icons/upload.svg'
 import { Badge, badgeVariants } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -39,6 +38,7 @@ import {
 } from '@/components/ui/table'
 import { ORDER_STATE, OrderStateMap } from '@/constants'
 import { useResponsive } from '@/hooks/useResponsive'
+import UploadIcon from '@/public/icons/upload.svg'
 import { cn } from '@/utils'
 
 export default function Demo() {

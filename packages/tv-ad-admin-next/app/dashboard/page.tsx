@@ -5,8 +5,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
-import fileIcon from '@/assets/icons/file.svg'
-import uploadIcon from '@/assets/icons/upload.svg'
 import StateCard from '@/components/dashboard/state-card'
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
@@ -18,6 +16,9 @@ import {
   CardContent,
 } from '@/components/ui/card'
 import { OrderStateMap } from '@/constants'
+
+import fileIcon from '@/assets/icons/file.svg'
+import uploadIcon from '@/assets/icons/upload.svg'
 
 export default function DashboardPage() {
   const stateStats = [

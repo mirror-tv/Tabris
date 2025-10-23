@@ -1,6 +1,6 @@
-import DetailIcon from '@/assets/icons/detail.svg'
-import DocumentIcon from '@/assets/icons/document.svg'
 import { Button } from '@/components/ui/button'
+import DetailIcon from '@/public/icons/detail.svg'
+import DocumentIcon from '@/public/icons/document.svg'
 
 type RelatedDocumentsProps = {
   className?: string

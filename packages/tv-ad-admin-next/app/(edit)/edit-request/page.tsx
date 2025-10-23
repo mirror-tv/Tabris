@@ -2,16 +2,17 @@
 
 import { useState } from 'react'
 
-import TextFormatIcon from '@/assets/icons/text-format.svg'
-import TextIcon from '@/assets/icons/text.svg'
-import TriangleExclamationIcon from '@/assets/icons/triangle-exclamation.svg'
-import { Instructions } from '@/components/shared/instructions'
-import { Textarea } from '@/components/ui/textarea'
-import { cn } from '@/utils'
-
 import EditPageLayout, {
   type SubmitStatus,
 } from '../../../components/edit/edit-page-layout'
+
+import { Instructions } from '@/components/shared/instructions'
+import { Textarea } from '@/components/ui/textarea'
+import TextFormatIcon from '@/public/icons/text-format.svg'
+import TextIcon from '@/public/icons/text.svg'
+import TriangleExclamationIcon from '@/public/icons/triangle-exclamation.svg'
+import { cn } from '@/utils'
+
 
 const textareaStyle =
   'w-full resize-none rounded-md bg-gray-2 p-3 placeholder:text-text-tertiary placeholder:text-h6'
