@@ -1,5 +1,6 @@
 'use client'
 import useWindowDimensions from '~/hooks/use-window-dimensions'
+import styles from './_styles/ad-after-story.module.scss'
 
 import dynamic from 'next/dynamic'
 import UiHeadingBordered from '../shared/ui-heading-bordered'
@@ -10,7 +11,7 @@ const LazyRenderWrapper = dynamic(
   }
 )
 
-const AdAfterStory = () => {
+const AdAfterStory: React.FC = () => {
   const { width } = useWindowDimensions()
 
   return (
@@ -61,9 +62,12 @@ const AdAfterStory = () => {
           data-widget_id-mo="xXAWmB7G"
           className="dable-widget-last"
         />
-        {width && width >= 768 && (
+        {width && width >= 1200 && (
           <>
-            <UiHeadingBordered title="每日精選" />
+            <UiHeadingBordered
+              title="每日精選"
+              className={styles.dailySelection}
+            />
             <div id="_popIn_recommend" className="popin_recommend" />
           </>
         )}

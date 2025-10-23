@@ -19,19 +19,19 @@ const badgeVariants = cva(
         outline:
           'text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground',
         // 狀態相關 variants - 根據設計稿調整
-        'pending-upload': 'border-transparent bg-gray-100 text-gray-700',
-        'material-uploaded': 'border-transparent bg-yellow-50 text-yellow-700',
-        transferred: 'border-transparent bg-gray-500 text-white',
-        'video-production': 'border-transparent bg-yellow-50 text-yellow-700',
-        'pending-confirmation': 'border-transparent bg-pink-50 text-red-500',
+        'pending-upload': 'border-transparent bg-gray-1 text-gray-7',
+        'material-uploaded': 'border-transparent bg-yellow-50 text-yellow-7',
+        transferred: 'border-transparent bg-gray-5 text-white',
+        'video-production': 'border-transparent bg-yellow-50 text-yellow-7',
+        'pending-confirmation': 'border-transparent bg-pink-50 text-red-5',
         'modification-requested':
-          'border-transparent bg-yellow-50 text-yellow-700',
+          'border-transparent bg-yellow-50 text-yellow-7',
         'pending-modification-quote':
-          'border-transparent bg-pink-50 text-red-500',
-        'pending-broadcast-date': 'border-transparent bg-pink-50 text-red-500',
-        'pending-schedule': 'border-transparent bg-blue-100 text-blue-700',
-        broadcasted: 'border-transparent bg-green-100 text-green-700',
-        cancelled: 'border-transparent bg-gray-500 text-white',
+          'border-transparent bg-pink-50 text-red-5',
+        'pending-broadcast-date': 'border-transparent bg-pink-50 text-red-5',
+        'pending-schedule': 'border-transparent bg-blue-1 text-blue-7',
+        broadcasted: 'border-transparent bg-green-1 text-green-7',
+        cancelled: 'border-transparent bg-gray-5 text-white',
       },
     },
     defaultVariants: {

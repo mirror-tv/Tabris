@@ -58,8 +58,20 @@
 }
 
 .compassFitHeading {
-  color: #014db8;
   @include media-breakpoint-up(xl) {
-    padding-left: 24px;
+    border-image: linear-gradient(
+        180deg,
+        #153047 35%,
+        transparent 0,
+        transparent 65%,
+        #153047 0
+      )
+      5 !important;
+  }
+
+  p {
+    @include media-breakpoint-up(xl) {
+      color: #153047 !important;
+    }
   }
 }

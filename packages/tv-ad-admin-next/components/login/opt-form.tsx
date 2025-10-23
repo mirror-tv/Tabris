@@ -56,7 +56,6 @@ export default function OptForm({
           type="button"
           onClick={() => handleOtpSubmit()}
           disabled={isLoading}
-          variant="blue"
           size="lg"
           className="w-full"
         >
