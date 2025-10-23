@@ -24,7 +24,7 @@ export default function DevNavigation() {
           Demo
         </Link>
         <span className="font-extrabold">|</span>
-        <Link href="/login" className="hover:text-purple-400">
+        <Link href="/" className="hover:text-purple-400">
           Login
         </Link>
         <Link href="/dashboard" className="hover:text-indigo-400">
