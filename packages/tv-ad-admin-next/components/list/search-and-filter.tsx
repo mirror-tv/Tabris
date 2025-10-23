@@ -7,6 +7,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { type OrderState } from '@/constants'
+import SearchIcon from '@/public/icons/search.svg'
 import { OrderStateUtils } from '@/utils'
 
 type SearchAndFilterProps = {
@@ -41,21 +42,7 @@ export function SearchAndFilter({
             value={searchKeyword}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="搜尋商品名稱"
-            icon={
-              <svg
-                className="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-            }
+            icon={<SearchIcon />}
             className="w-full rounded-lg border-border-default bg-surface-tertiary py-3 text-sm placeholder-text-tertiary focus:border-transparent focus:ring-0 focus:outline-none focus-visible:ring-0"
           />
         </div>
