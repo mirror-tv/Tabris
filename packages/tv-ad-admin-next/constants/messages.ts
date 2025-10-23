@@ -5,7 +5,7 @@
 export const AUTH_MESSAGES = {
   // 成功訊息
   OTP_SENT: '驗證碼已發送',
-  OTP_SENT_DEV: '驗證碼已發送（請查看瀏覽器 Console）',
+  OTP_SENT_DEV: '驗證碼已發送（請查看瀏覽器 Console)',
   LOGIN_SUCCESS: '登入成功',
   LOGOUT_SUCCESS: '登出成功',
 
