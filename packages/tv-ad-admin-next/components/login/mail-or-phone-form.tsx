@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react'
 
-import { CustomInput } from '@/components/custom-ui/input'
+import { LabeledField } from '../custom-ui/labeled-field'
+
+import { CustomInput } from '@/components/custom-ui/custom-input'
 import { Button } from '@/components/ui/button'
 import { useDebounce } from '@/hooks/useDebounce'
 import ArrowRightIcon from '@/public/icons/arrow-right.svg'
 import MailIcon from '@/public/icons/mail.svg'
 import PhoneIcon from '@/public/icons/phone.svg'
 import { validateEmail, validatePhone } from '@/utils/validation'
+
 
 type MailOrPhoneFormProps = {
   status: 'email' | 'phone' | 'OPT'
@@ -20,6 +23,9 @@ type MailOrPhoneFormProps = {
   loadingMessage?: string
   error: string
 }
+
+const emailId = 'email'
+const phoneId = 'phone'
 
 export default function MailOrPhoneForm({
   status,
@@ -81,16 +87,10 @@ export default function MailOrPhoneForm({
 
       <form onSubmit={handleSubmit} className="mt-4 flex w-full flex-col gap-4">
         {status === 'email' && (
-          <div className="flex flex-col gap-1">
-            <label
-              htmlFor="email"
-              className="font-sans text-sm leading-normal font-medium text-text-primary"
-            >
-              電子信箱
-            </label>
+          <LabeledField id={emailId} label="電子信箱" className="mb-2">
             <CustomInput
-              id="email"
-              type="email"
+              id={emailId}
+              type={emailId}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="sample@gmail.com"
@@ -109,19 +109,13 @@ export default function MailOrPhoneForm({
               }
               icon={<MailIcon />}
             />
-          </div>
+          </LabeledField>
         )}
 
         {status === 'phone' && (
-          <div className="flex flex-col gap-1">
-            <label
-              htmlFor="phone"
-              className="font-sans text-sm leading-normal font-medium text-text-primary"
-            >
-              手機號碼
-            </label>
+          <LabeledField id={phoneId} label="手機號碼" className="mb-2">
             <CustomInput
-              id="phone"
+              id={phoneId}
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
@@ -133,7 +127,7 @@ export default function MailOrPhoneForm({
               errorMessage={error.includes('手機號碼') ? error : phoneError}
               icon={<PhoneIcon />}
             />
-          </div>
+          </LabeledField>
         )}
 
         <p

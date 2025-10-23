@@ -1,102 +1,21 @@
-import React, {
-  type ComponentProps,
-  forwardRef,
-  useState,
-  useEffect,
-} from 'react'
+import * as React from "react"
 
-import { cn } from '@/utils'
+import { cn } from "@/utils/index"
 
-type InputProps = ComponentProps<'input'> & {
-  error?: string
-  errorMessage?: string
-  icon?: React.ReactNode
-}
-
-// 錯誤圖示 component
-function ErrorIcon() {
+function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 20 20"
-      fill="currentColor"
-      className="size-4 text-red-6"
-    >
-      <path
-        fillRule="evenodd"
-        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z"
-        clipRule="evenodd"
-      />
-    </svg>
+    <input
+      type={type}
+      data-slot="input"
+      className={cn(
+        "file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+        "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
+        "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+        className
+      )}
+      {...props}
+    />
   )
 }
-
-const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, error, errorMessage, icon, ...props }, ref) => {
-    const [shake, setShake] = useState(false)
-
-    // 當錯誤出現時觸發震動動畫
-    useEffect(() => {
-      if (error && errorMessage) {
-        setShake(true)
-        const timer = setTimeout(() => setShake(false), 650)
-        return () => clearTimeout(timer)
-      }
-    }, [error, errorMessage])
-
-    const inputElement = (
-      <div className={cn('relative', shake && 'animate-shake')}>
-        <input
-          type={type}
-          ref={ref}
-          data-slot="input"
-          className={cn(
-            // Base styles
-            'h-9 min-h-[45px] w-full min-w-0 rounded-md py-1 text-base transition-all duration-200 outline-none',
-            'text-text-primary placeholder:text-text-tertiary',
-            'disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
-            'md:text-sm dark:bg-input/30',
-            // Padding based on icon presence
-            icon ? 'pr-3 pl-10' : 'px-3',
-            // Background - common to all states
-            'bg-surface-tertiary',
-            // Border states - use transparent border to prevent layout shift
-            !error && [
-              'border border-transparent',
-              'hover:border-text-primary',
-              'focus:border-text-secondary',
-            ],
-            error && [
-              'border border-red-6',
-              'focus:border-red-7',
-              'bg-red-50/50',
-            ],
-            className
-          )}
-          {...props}
-        />
-        {icon && (
-          <div className="absolute top-1/2 left-3 -translate-y-1/2">{icon}</div>
-        )}
-      </div>
-    )
-
-    if (error && errorMessage) {
-      return (
-        <div className="flex flex-col gap-1">
-          {inputElement}
-          <div className="flex items-center gap-1 text-sm text-red-6 animate-fade-in">
-            <ErrorIcon />
-            <span>{errorMessage}</span>
-          </div>
-        </div>
-      )
-    }
-
-    return inputElement
-  }
-)
-
-Input.displayName = 'Input'
 
 export { Input }

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { format } from 'date-fns'
 
+import { CustomInput } from '@/components/custom-ui/custom-input'
 import { Badge, badgeVariants } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -15,7 +16,6 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
 import {
   Popover,
   PopoverTrigger,
@@ -49,7 +49,7 @@ export default function Demo() {
     <div className="min-h-screen space-y-8 bg-surface-secondary p-8">
       <h2 className="text-text-primary">Shadcn UI Showcase</h2>
 
-      <div className="w-full text-white bg-green-7 text-center py-2">
+      <div className="w-full bg-green-7 py-2 text-center text-white">
         {isMobile && 'Mobile view'}
         {isTablet && 'Tablet view'}
         {isDesktop && 'Desktop view'}
@@ -99,7 +99,7 @@ export default function Demo() {
 
       {/* Search & Filter */}
       <div className="flex items-center gap-4">
-        <Input placeholder="Search keyword…" className="w-64" />
+        <CustomInput placeholder="Search keyword…" className="w-64" />
         <Select>
           <SelectTrigger className="w-48">
             <SelectValue placeholder="All Status" />

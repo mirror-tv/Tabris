@@ -1,7 +1,8 @@
-import { Badge } from './badge'
+import { Badge as BaseBadge } from '../ui/badge'
 
 import { type OrderStatus } from '@/constants'
 import { OrderStatusUtils } from '@/utils'
+
 
 type StatusBadgeProps = {
   status: OrderStatus
@@ -13,11 +14,11 @@ export function StatusBadge({ status, className = '' }: StatusBadgeProps) {
   const colors = OrderStatusUtils.getColors(status)
 
   return (
-    <Badge
+    <BaseBadge
       variant="outline"
       className={`${colors.bg} ${colors.text} ${colors.border} ${className}`}
     >
       {label}
-    </Badge>
+    </BaseBadge>
   )
 }
