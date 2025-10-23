@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { format } from 'date-fns'
 
-import UploadIcon from '@/assets/icons/upload.svg'
 import { Badge, badgeVariants } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -38,8 +37,9 @@ import {
   TableCell,
 } from '@/components/ui/table'
 import { type OrderStatus, ORDER_STATUS } from '@/constants'
-import { cn, OrderStatusUtils } from '@/utils'
 import { useResponsive } from '@/hooks/useResponsive'
+import UploadIcon from '@/public/icons/upload.svg'
+import { cn, OrderStatusUtils } from '@/utils'
 
 export default function Demo() {
   const [date, setDate] = useState<Date | undefined>(new Date())

@@ -3,6 +3,8 @@ import DetailIcon from '@/assets/icons/detail.svg'
 import { Button } from '@/components/ui/button'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { type OrderRecord } from '@/mocks/mockData'
+import ArrowRightDownIcon from '@/public/icons/arrow-right-sown.svg'
+import DetailIcon from '@/public/icons/detail.svg'
 
 type OrderRowProps = {
   order: OrderRecord

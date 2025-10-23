@@ -1,5 +1,5 @@
-import FileIcon from '@/assets/icons/file.svg'
 import { type OrderStatus } from '@/constants'
+import FileIcon from '@/public/icons/file.svg'
 import { OrderStatusUtils } from '@/utils'
 
 type EmptyStateProps = {

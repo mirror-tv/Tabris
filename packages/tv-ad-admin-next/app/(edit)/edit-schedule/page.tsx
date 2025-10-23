@@ -5,13 +5,13 @@ import { useState } from 'react'
 import { addDays, format, startOfToday } from 'date-fns'
 import { zhTW } from 'date-fns/locale/zh-TW'
 
-import type { DateRange } from 'react-day-picker'
 
-import CalendarIcon from '@/assets/icons/calender.svg'
-import TriangleExclamationIcon from '@/assets/icons/triangle-exclamation.svg'
 import EditPageLayout, {
   type SubmitStatus,
 } from '../../../components/edit/edit-page-layout'
+
+import type { DateRange } from 'react-day-picker'
+
 import { Instructions } from '@/components/shared/instructions'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -20,6 +20,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import CalendarIcon from '@/public/icons/calender.svg'
+import TriangleExclamationIcon from '@/public/icons/triangle-exclamation.svg'
 import { cn } from '@/utils'
 
 const PAGE_TITLE = '設定排播日期'
@@ -109,7 +111,7 @@ export default function EditSchedule() {
             />
           </PopoverContent>
         </Popover>
-        {error && <p className="text-destructive text-sm">{error}</p>}
+        {error && <p className="text-sm text-destructive">{error}</p>}
       </div>
       <Instructions
         title="重要提醒"

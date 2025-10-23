@@ -1,4 +1,4 @@
-import ArrowRightIcon from '@/assets/icons/arrow-right.svg'
+import ArrowRightIcon from '@/public/icons/arrow-right.svg'
 import { cn } from '@/utils'
 
 type StatusCardProps = {

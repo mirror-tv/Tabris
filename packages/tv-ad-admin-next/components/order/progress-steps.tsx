@@ -1,4 +1,3 @@
-import DoneIcon from '@/assets/icons/done.svg'
 import {
   OrderStatusMap,
   PROGRESS_COLOR_RULES,
@@ -7,6 +6,7 @@ import {
   ORDER_STATUS,
   type OrderStatus,
 } from '@/constants'
+import DoneIcon from '@/public/icons/done.svg'
 
 type ProgressStepsProps = {
   currentStatus: OrderStatus
@@ -84,8 +84,8 @@ export function ProgressSteps({
                   stepStatus.isCompleted
                     ? stepStatus.style.bgColor
                     : stepStatus.isActive
-                    ? PROGRESS_COLOR_RULES.getActiveColor(status, 'bg')
-                    : 'bg-gray-4'
+                      ? PROGRESS_COLOR_RULES.getActiveColor(status, 'bg')
+                      : 'bg-gray-4'
                 }`}
               >
                 {stepStatus.isCompleted && <DoneIcon />}
@@ -95,8 +95,8 @@ export function ProgressSteps({
                   stepStatus.isCompleted
                     ? stepStatus.style.textColor
                     : stepStatus.isActive
-                    ? PROGRESS_COLOR_RULES.getActiveColor(status, 'text')
-                    : 'text-text-tertiary'
+                      ? PROGRESS_COLOR_RULES.getActiveColor(status, 'text')
+                      : 'text-text-tertiary'
                 }`}
               >
                 {statusConfig.label}
