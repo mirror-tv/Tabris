@@ -194,8 +194,20 @@ export function RadixInspiredOTP({
 
   const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
     e.preventDefault()
-    const pastedData = e.clipboardData.getData('text')
-    const cleanData = pastedData.replace(/\s/g, '').slice(0, length)
+    let pastedData = e.clipboardData.getData('text')
+
+    // 根據驗證類型過濾字元
+    if (validationType === 'numeric') {
+      pastedData = pastedData.replace(/[^0-9]/g, '')
+    } else if (validationType === 'alpha') {
+      pastedData = pastedData.replace(/[^a-zA-Z]/g, '')
+    } else if (validationType === 'alphanumeric') {
+      pastedData = pastedData.replace(/[^a-zA-Z0-9]/g, '')
+    } else {
+      pastedData = pastedData.replace(/\s/g, '')
+    }
+
+    const cleanData = pastedData.slice(0, length)
 
     const newValue = new Array(length).fill('')
     for (let i = 0; i < cleanData.length; i++) {

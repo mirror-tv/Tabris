@@ -4,7 +4,7 @@ import { OrderRow } from './order-row'
 
 import { type OrderRecord } from '@/mocks/mockData'
 
-interface OrderGroupProps {
+type OrderGroupProps = {
   order: OrderRecord
   onViewOrder: (orderId: string) => void
 }

@@ -45,26 +45,25 @@ export function removeTextFormattingTags(content: string): string {
     return ''
   }
 
-  // 定義需要移除的純文字格式化標籤
+  // 定義需要移除的純文字格式化標籤（只移除真正沒有意義的）
   const formattingTags = [
-    'p',
-    'br',
-    'em',
-    'i',
-    'strong',
-    'b',
-    'u',
-    's',
-    'strike',
-    'del',
-    'span',
-    'font',
-    'small',
-    'big',
-    'sub',
-    'sup',
-    'mark',
-    'ins',
+    'p', // 段落標籤
+    'br', // 換行標籤
+    'em', // 斜體
+    'i', // 斜體
+    'strong', // 粗體
+    'b', // 粗體
+    'u', // 底線
+    's', // 刪除線
+    'strike', // 刪除線
+    'del', // 刪除線
+    'font', // 字體標籤
+    'small', // 小字
+    'big', // 大字
+    'sub', // 下標
+    'sup', // 上標
+    'mark', // 標記
+    'ins', // 插入
   ]
 
   let result = content
@@ -128,10 +127,10 @@ export function removeDuplicateFirstParagraph(
         const remainingContent = contentOriginal
           .replace(firstTextRegex, '')
           .trim()
-        return removeTextFormattingTags(remainingContent)
+        return remainingContent
       }
     }
-    return removeTextFormattingTags(contentOriginal)
+    return contentOriginal
   }
 
   const firstBlock = match[1]
@@ -157,8 +156,8 @@ export function removeDuplicateFirstParagraph(
   ) {
     // 移除第一個段落
     const remainingContent = contentOriginal.replace(firstBlockRegex, '').trim()
-    return removeTextFormattingTags(remainingContent)
+    return remainingContent
   }
 
-  return removeTextFormattingTags(contentOriginal)
+  return contentOriginal
 }
