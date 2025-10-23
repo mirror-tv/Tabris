@@ -37,7 +37,7 @@ export function validatePhone(phone: string): ValidationResult {
   if (!phoneRegex.test(cleanPhone)) {
     return {
       isValid: false,
-      error: '請輸入有效的手機號碼格式 (例：0922119187)',
+      error: '請輸入有效的手機號碼格式 (例：0912345678)',
     }
   }
 
