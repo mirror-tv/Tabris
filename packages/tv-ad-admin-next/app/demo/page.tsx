@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { format } from 'date-fns'
 
+import { CustomInput } from '@/components/custom-ui/custom-input'
 import { Badge, badgeVariants } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -15,7 +16,6 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
 import {
   Popover,
   PopoverTrigger,
@@ -99,7 +99,7 @@ export default function Demo() {
 
       {/* Search & Filter */}
       <div className="flex items-center gap-4">
-        <Input placeholder="Search keyword…" className="w-64" />
+        <CustomInput placeholder="Search keyword…" className="w-64" />
         <Select>
           <SelectTrigger className="w-48">
             <SelectValue placeholder="All State" />
