@@ -4,11 +4,14 @@
  */
 
 import { NextResponse } from 'next/server'
+
 import type { NextRequest } from 'next/server'
+
 import { verifyToken } from '@/utils/auth'
 
+
 // 需要登入才能訪問的路由
-const protectedRoutes = ['/list', '/order', '/dashboard', '/upload', '/preview']
+const protectedRoutes = ['/list', '/order', '/dashboard', '/upload']
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
