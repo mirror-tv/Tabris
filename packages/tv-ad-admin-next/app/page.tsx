@@ -9,7 +9,6 @@ import OptForm from '@/components/login/opt-form'
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
 import { AUTH_MESSAGES, LOADING_MESSAGES } from '@/constants/messages'
-import { apiCall } from '@/utils/api'
 import { validateEmail, validatePhone } from '@/utils/validation'
 
 export default function HomePage() {
@@ -64,16 +63,20 @@ export default function HomePage() {
         localStorage.setItem('lastLoginType', status)
       }
 
-      // 呼叫真實的 API 發送 OTP
-      const data = await apiCall<SendOtpResponse['data']>({
-        endpoint: '/api/auth/send-otp',
+      // 呼叫 Next.js API Route 發送 OTP
+      const response = await fetch('/api/auth/send-otp', {
         method: 'POST',
-        jsonBody: {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           type: status,
           email: status === 'email' ? email : undefined,
           phone: status === 'phone' ? phone : undefined,
-        },
+        }),
       })
+
+      const data: SendOtpResponse = await response.json()
 
       if (!data.success) {
         setError(data.message || AUTH_MESSAGES.SEND_OTP_FAILED)
@@ -143,18 +146,22 @@ export default function HomePage() {
         return
       }
 
-      // 呼叫真實的 API 驗證 OTP
-      const data = await apiCall({
-        endpoint: '/api/auth/verify-otp',
+      // 呼叫 Next.js API Route 驗證 OTP
+      const response = await fetch('/api/auth/verify-otp', {
         method: 'POST',
-        jsonBody: {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // 重要：包含 cookies
+        body: JSON.stringify({
           type: loginType,
           email: loginType === 'email' ? email : undefined,
           phone: loginType === 'phone' ? phone : undefined,
           otp: otpValue,
-        },
-        includeCredentials: true, // 重要：包含 cookies
+        }),
       })
+
+      const data = await response.json()
 
       if (!data.success) {
         const newFailedAttempts = failedAttempts + 1
@@ -190,16 +197,20 @@ export default function HomePage() {
     setLoadingMessage(LOADING_MESSAGES.CHECKING_MEMBER)
 
     try {
-      // 呼叫真實的 API 重新發送 OTP
-      const data = await apiCall<SendOtpResponse['data']>({
-        endpoint: '/api/auth/send-otp',
+      // 呼叫 Next.js API Route 重新發送 OTP
+      const response = await fetch('/api/auth/send-otp', {
         method: 'POST',
-        jsonBody: {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           type: loginType,
           email: loginType === 'email' ? email : undefined,
           phone: loginType === 'phone' ? phone : undefined,
-        },
+        }),
       })
+
+      const data: SendOtpResponse = await response.json()
 
       if (!data.success) {
         setError(data.message || AUTH_MESSAGES.RESEND_OTP_FAILED)
