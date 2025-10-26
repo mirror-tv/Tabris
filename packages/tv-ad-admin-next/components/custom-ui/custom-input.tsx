@@ -1,4 +1,4 @@
-import { forwardRef, useState, useEffect } from 'react'
+import { forwardRef} from 'react'
 import type { ComponentProps, ReactNode } from 'react'
 
 import { Input as BaseInput } from '../ui/input'
@@ -14,24 +14,14 @@ export type CustomInputProps = ComponentProps<'input'> & {
 
 const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
   ({ className, error, errorMessage, icon, ...props }, ref) => {
-    const [shake, setShake] = useState(false)
-
-    // 當錯誤出現時觸發震動動畫
-    useEffect(() => {
-      if (error && errorMessage) {
-        setShake(true)
-        const timer = setTimeout(() => setShake(false), 650)
-        return () => clearTimeout(timer)
-      }
-    }, [error, errorMessage])
 
     return (
-      <div className={cn('relative', shake && 'animate-shake')}>
+      <div className='relative'>
         <BaseInput
           ref={ref}
           className={cn(
             // Base styles
-            'h-9 min-h-[45px] w-full min-w-0 rounded-md py-1 text-base transition-all duration-200 outline-none',
+            'h-9 min-h-[45px] w-full min-w-0 rounded-md py-1 text-base outline-none',
             'text-text-primary placeholder:text-text-tertiary',
             'disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
             'md:text-sm dark:bg-input/30',

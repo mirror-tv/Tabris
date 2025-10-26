@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 
 import { LabeledField } from '../custom-ui/labeled-field'
+import { ShakeInput } from '../custom-ui/shake-input'
 
-import { CustomInput } from '@/components/custom-ui/custom-input'
 import { Button } from '@/components/ui/button'
 import { useDebounce } from '@/hooks/useDebounce'
 import ArrowRightIcon from '@/public/icons/arrow-right.svg'
@@ -88,7 +88,7 @@ export default function MailOrPhoneForm({
       <form onSubmit={handleSubmit} className="mt-4 flex w-full flex-col gap-4">
         {status === 'email' && (
           <LabeledField id={emailId} label="電子信箱" className="mb-2">
-            <CustomInput
+            <ShakeInput
               id={emailId}
               type={emailId}
               value={email}
@@ -114,7 +114,7 @@ export default function MailOrPhoneForm({
 
         {status === 'phone' && (
           <LabeledField id={phoneId} label="手機號碼" className="mb-2">
-            <CustomInput
+            <ShakeInput
               id={phoneId}
               type="tel"
               value={phone}
