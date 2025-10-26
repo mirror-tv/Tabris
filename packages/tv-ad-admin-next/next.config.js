@@ -19,7 +19,13 @@ const nextConfig = {
         {
           loader: '@svgr/webpack',
           options: {
-            svgo: true, // Enable optimization but with safe defaults
+            svgo: false, // Enable optimization but with safe defaults
+            svgoConfig: {
+              plugins: [
+                { name: 'removeViewBox', active: false },
+                { name: 'removeDimensions', active: true },
+              ],
+            },
             titleProp: true, // Allow dynamic titles
             ref: true, // Allow refs for animations or focus
           },
