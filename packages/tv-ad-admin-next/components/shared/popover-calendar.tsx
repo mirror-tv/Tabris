@@ -25,6 +25,7 @@ type PopoverCalendarProps = {
   range: DateRange | undefined
   setRange: Dispatch<SetStateAction<DateRange | undefined>>
   error?: string | null
+  className?: string
 }
 
 const calendarId = '"schedule"'
@@ -33,6 +34,7 @@ export default function PopoverCalendar({
   range,
   setRange,
   error,
+  className
 }: PopoverCalendarProps) {
   const today = startOfToday()
   const minDate = addDays(today, 14)
@@ -66,7 +68,9 @@ export default function PopoverCalendar({
             id={calendarId}
             variant="ghost"
             className={cn(
-              'w-full justify-start gap-2 bg-gray-2 tracking-widest md:w-[360px] md:gap-3'
+              'h-[45px] w-full justify-start gap-2 rounded-md bg-gray-2 tracking-widest md:gap-3',
+              error && ['border border-red-7', 'focus:border-red-8'],
+              className
             )}
           >
             {CalendarText}

@@ -75,11 +75,14 @@ export default function EditPageLayout({
                 variant="outline"
                 intent="secondary"
                 type="button"
+                size="lg"
                 onClick={() => alert('取消')}
               >
                 取消
               </Button>
-              <Button type="submit">{submitButtonName}</Button>
+              <Button type="submit" size="lg">
+                {submitButtonName}
+              </Button>
             </CardFooter>
           </Card>
         </form>
