@@ -1,0 +1,93 @@
+'use client'
+
+import type { Dispatch, SetStateAction } from 'react'
+
+import { addDays, format, startOfToday } from 'date-fns'
+import { zhTW } from 'date-fns/locale/zh-TW'
+
+import { LabeledField } from '../custom-ui/labeled-field'
+import { Button } from '../ui/button'
+
+import type { DateRange } from 'react-day-picker'
+
+import { Calendar } from '@/components/ui/calendar'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
+import CalendarIcon from '@/public/icons/calender.svg'
+import { cn } from '@/utils'
+
+
+
+type PopoverCalendarProps = {
+  range: DateRange | undefined
+  setRange: Dispatch<SetStateAction<DateRange | undefined>>
+  error?: string | null
+}
+
+const calendarId = '"schedule"'
+
+export default function PopoverCalendar({
+  range,
+  setRange,
+  error,
+}: PopoverCalendarProps) {
+  const today = startOfToday()
+  const minDate = addDays(today, 14)
+  const dateFormat = 'yyyy/M/d'
+
+  const CalendarText =
+    range?.from && range?.to ? (
+      <>
+        <span>{format(range.from, dateFormat, { locale: zhTW })}</span>
+        <span>-</span>
+        <span>{format(range.to, dateFormat, { locale: zhTW })}</span>
+      </>
+    ) : (
+      <>
+        <span>年 / 月 / 日</span>
+        <span>-</span>
+        <span>年 / 月 / 日</span>
+      </>
+    )
+
+  return (
+    <LabeledField
+      id={calendarId}
+      label="排播日期"
+      labelIcon={<CalendarIcon />}
+      className="relative flex gap-2"
+    >
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            id={calendarId}
+            variant="ghost"
+            className={cn(
+              'w-full justify-start gap-2 bg-gray-2 tracking-widest md:w-[360px] md:gap-3'
+            )}
+          >
+            {CalendarText}
+            <CalendarIcon className="ml-auto text-text-tertiary" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent align="start" className="w-auto p-0">
+          <Calendar
+            mode="range"
+            selected={range}
+            onSelect={setRange}
+            disabled={{ before: minDate }}
+            defaultMonth={minDate}
+          />
+        </PopoverContent>
+      </Popover>
+      {!!error && (
+        <p className="absolute -bottom-6 left-0 animate-fade-in text-red-7">
+          {error}
+        </p>
+      )}
+    </LabeledField>
+  )
+}

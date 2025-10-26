@@ -69,7 +69,7 @@ export default function EditPageLayout({
         <form onSubmit={onSubmit}>
           <Card>
             {!!cardTitle && <CardTitle>{cardTitle}</CardTitle>}
-            <CardContent className="space-y-3xl">{children}</CardContent>
+            <CardContent className="space-y-4xl">{children}</CardContent>
             <CardFooter className="justify-end gap-2">
               <Button
                 variant="outline"
