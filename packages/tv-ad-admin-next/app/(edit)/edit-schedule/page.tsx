@@ -2,9 +2,7 @@
 
 import { useState } from 'react'
 
-import { addDays, format, startOfToday } from 'date-fns'
-import { zhTW } from 'date-fns/locale/zh-TW'
-
+import { format } from 'date-fns'
 
 import EditPageLayout, {
   type SubmitStatus,
@@ -13,16 +11,10 @@ import EditPageLayout, {
 import type { DateRange } from 'react-day-picker'
 
 import { Instructions } from '@/components/shared/instructions'
-import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
-import CalendarIcon from '@/public/icons/calender.svg'
+import PopoverCalendar from '@/components/shared/popover-calendar'
 import TriangleExclamationIcon from '@/public/icons/triangle-exclamation.svg'
-import { cn } from '@/utils'
+
+
 
 const PAGE_TITLE = '設定排播日期'
 
@@ -30,25 +22,6 @@ export default function EditSchedule() {
   const [range, setRange] = useState<DateRange | undefined>(undefined)
   const [error, setError] = useState<string | null>(null)
   const [submitStatus, setSubmitStatus] = useState<SubmitStatus>('idle')
-
-  const today = startOfToday()
-  const minDate = addDays(today, 14)
-  const dateFormat = 'yyyy/M/d'
-
-  const CalendarText =
-    range?.from && range?.to ? (
-      <>
-        <span>{format(range.from, dateFormat, { locale: zhTW })}</span>
-        <span>-</span>
-        <span>{format(range.to, dateFormat, { locale: zhTW })}</span>
-      </>
-    ) : (
-      <>
-        <span>年 / 月 / 日</span>
-        <span>-</span>
-        <span>年 / 月 / 日</span>
-      </>
-    )
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -84,35 +57,7 @@ export default function EditSchedule() {
       cardTitle="重新設定排播日期"
       submitStatus={submitStatus}
     >
-      <div className="space-y-m">
-        <h6 className="flex items-center gap-1">
-          <CalendarIcon className="text-text-tertiary" />
-          排播日期
-        </h6>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="ghost"
-              className={cn(
-                'w-full justify-start gap-2 bg-gray-2 tracking-widest md:w-[360px] md:gap-3'
-              )}
-            >
-              {CalendarText}
-              <CalendarIcon className="ml-auto text-text-tertiary" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0">
-            <Calendar
-              mode="range"
-              selected={range}
-              onSelect={setRange}
-              disabled={{ before: minDate }}
-              defaultMonth={minDate}
-            />
-          </PopoverContent>
-        </Popover>
-        {error && <p className="text-sm text-destructive">{error}</p>}
-      </div>
+      <PopoverCalendar range={range} setRange={setRange} error={error} />
       <Instructions
         title="重要提醒"
         icon={<TriangleExclamationIcon />}
