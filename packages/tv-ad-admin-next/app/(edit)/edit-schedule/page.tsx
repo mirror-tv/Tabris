@@ -57,7 +57,7 @@ export default function EditSchedule() {
       cardTitle="重新設定排播日期"
       submitStatus={submitStatus}
     >
-      <PopoverCalendar range={range} setRange={setRange} error={error} />
+      <PopoverCalendar range={range} setRange={setRange} error={error} className='md:w-[360px]' />
       <Instructions
         title="重要提醒"
         icon={<TriangleExclamationIcon />}
