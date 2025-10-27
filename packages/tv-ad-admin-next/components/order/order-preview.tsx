@@ -18,14 +18,14 @@ export function OrderPreview({ order, className = '' }: OrderPreviewProps) {
       <ProductionPreview />
       <hr className="my-6 border-gray-3" />
       <RelatedDocuments />
-      {order.status === ORDER_STATUS.PENDING_BROADCAST_DATE && (
+      {order.state === ORDER_STATUS.PENDING_BROADCAST_DATE && (
         <Instructions
           wordings={[
             '由於您未在 9/21 23:59 前完成確認，原始排播日期已作廢，請重新設定',
           ]}
         />
       )}
-      {order.status === ORDER_STATUS.PENDING_BROADCAST_DATE && (
+      {order.state === ORDER_STATUS.PENDING_BROADCAST_DATE && (
         <Instructions
           title="說明"
           wordings={[

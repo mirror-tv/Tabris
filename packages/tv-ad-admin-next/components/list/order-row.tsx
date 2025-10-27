@@ -1,7 +1,7 @@
 import ArrowRightDownIcon from '@/assets/icons/arrow-right-sown.svg'
 import DetailIcon from '@/assets/icons/detail.svg'
 import { Button } from '@/components/ui/button'
-import { StatusBadge } from '@/components/ui/status-badge'
+import { StatusBadge } from '@/components/ui/state-badge'
 import { type OrderRecord } from '@/mocks/mockData'
 
 type OrderRowProps = {
@@ -32,7 +32,7 @@ export function OrderRow({
         {order.broadcastDate}
       </td>
       <td className="px-2 py-3 whitespace-nowrap">
-        <StatusBadge status={order.status} />
+        <StatusBadge status={order.state} />
       </td>
       <td className="px-2 py-3 text-sm whitespace-nowrap text-text-primary">
         {order.lastUpdated}
