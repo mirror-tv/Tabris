@@ -35,7 +35,7 @@ export async function checkMemberByEmail(email: string): Promise<{
     // 檢查 GraphQL 錯誤
     if (errors && errors.length > 0) {
       const graphQLError = new Error(
-        `GraphQL errors: ${errors.map((e) => e.message).join(', ')}`
+        `GraphQL errors: ${errors.map((e: { message: string }) => e.message).join(', ')}`
       )
       errorLogger(graphQLError)
       return {
@@ -85,7 +85,7 @@ export async function checkMemberByPhone(phone: string): Promise<{
     // 檢查 GraphQL 錯誤
     if (errors && errors.length > 0) {
       const graphQLError = new Error(
-        `GraphQL errors: ${errors.map((e) => e.message).join(', ')}`
+        `GraphQL errors: ${errors.map((e: { message: string }) => e.message).join(', ')}`
       )
       errorLogger(graphQLError)
       return {
