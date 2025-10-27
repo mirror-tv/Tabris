@@ -1,11 +1,11 @@
-import { OrderGroup } from '@/components/list/order-group'
-import { type OrderRecord } from '@/mocks/mockData'
+import { OrderRow } from '@/components/list/order-row'
+import { type OrderRecordForList } from '@/types/order'
 
 const TABLE_HEADER_CLASS =
   'p-2 text-left text-sm tracking-wide text-text-primary uppercase'
 
 type OrderTableProps = {
-  orders: OrderRecord[]
+  orders: OrderRecordForList[][] // 巢狀陣列：[[訂單1, 訂單2, 訂單3], [訂單4]]
   onViewOrder: (orderId: string) => void
 }
 
@@ -16,7 +16,7 @@ export function OrderTable({ orders, onViewOrder }: OrderTableProps) {
         <thead>
           <tr>
             <th className={TABLE_HEADER_CLASS}>訂單編號</th>
-            <th className={TABLE_HEADER_CLASS}>商品名稱</th>
+            <th className={TABLE_HEADER_CLASS}>廣告名稱</th>
             <th className={TABLE_HEADER_CLASS}>排播日期</th>
             <th className={TABLE_HEADER_CLASS}>狀態</th>
             <th className={TABLE_HEADER_CLASS}>最後更新</th>
@@ -24,13 +24,16 @@ export function OrderTable({ orders, onViewOrder }: OrderTableProps) {
           </tr>
         </thead>
         <tbody className="divide-y divide-border-default bg-surface-primary">
-          {orders.map((order) => (
-            <OrderGroup
-              key={order.id}
-              order={order}
-              onViewOrder={onViewOrder}
-            />
-          ))}
+          {orders.map((orderGroup) =>
+            orderGroup.map((order, orderIndex) => (
+              <OrderRow
+                key={order.id}
+                order={order}
+                onViewOrder={onViewOrder}
+                isRelated={orderIndex > 0}
+              />
+            ))
+          )}
         </tbody>
       </table>
     </div>

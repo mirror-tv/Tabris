@@ -39,7 +39,7 @@ export function SearchAndFilter({
             type="text"
             value={searchKeyword}
             onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="搜尋商品名稱"
+            placeholder="搜尋廣告名稱"
             icon={
               <svg
                 className="h-5 w-5"

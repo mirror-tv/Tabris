@@ -1,72 +1,44 @@
-'use client'
+import ListContent from './list-content'
 
-import { Suspense, useState, useMemo, useEffect } from 'react'
-
-import { useRouter, useSearchParams } from 'next/navigation'
-
-import { EmptyState } from '@/components/list/empty-state'
-import { OrderTable } from '@/components/list/order-table'
-import { SearchAndFilter } from '@/components/list/search-and-filter'
+import { ErrorState } from '@/components/list/error-state'
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
-import { mockOrderData } from '@/mocks/mockData'
-import { filterOrders } from '@/utils'
+import { getOrdersQuery } from '@/graphql/queries/orders'
+import { type OrderRecordForList } from '@/types/order'
+import { getClient } from '@/utils/apollo-client'
+import { createErrorLogger } from '@/utils/error-handler'
+import { groupOrders } from '@/utils/order-grouping'
+export default async function ListPage() {
+  let isError = false
+  let initialOrders: OrderRecordForList[][] = []
 
-function ListContent() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const status = searchParams.get('status')
-  const [searchKeyword, setSearchKeyword] = useState('')
-  const [orderStatus, setOrderStatus] = useState<string>('all')
+  try {
+    const client = getClient()
+    const { data } = await client.query<{ orders: OrderRecordForList[] }>({
+      query: getOrdersQuery,
+      variables: {
+        where: {},
+        orderBy: [{ updatedAt: 'desc' }],
+      },
+    })
 
-  const filteredOrders = useMemo(() => {
-    return filterOrders(mockOrderData, searchKeyword, orderStatus)
-  }, [searchKeyword, orderStatus])
-
-  useEffect(() => {
-    if (status) {
-      setOrderStatus(status)
-    }
-  }, [status])
-
-  const handleViewOrder = (orderId: string) => {
-    router.push(`/order/${orderId}`)
+    const orders = data?.orders || []
+    initialOrders = groupOrders(orders)
+  } catch (error) {
+    createErrorLogger('Failed to fetch orders list')(error)
+    isError = true
   }
 
   return (
     <>
       <PageHeader title="訂單紀錄" />
       <PageMain className="py-5 md:py-10">
-        <SearchAndFilter
-          searchKeyword={searchKeyword}
-          onSearchChange={setSearchKeyword}
-          orderStatus={orderStatus}
-          onStatusChange={setOrderStatus}
-        />
-
-        <div className="mb-6 flex flex-col gap-6 rounded-xl border border-border-default bg-surface-primary p-6">
-          <h4 className="text-text-primary">
-            訂單列表 ({filteredOrders.length}筆記錄)
-          </h4>
-
-          {!filteredOrders.length ? (
-            <EmptyState
-              searchKeyword={searchKeyword}
-              orderStatus={orderStatus}
-            />
-          ) : (
-            <OrderTable orders={filteredOrders} onViewOrder={handleViewOrder} />
-          )}
-        </div>
+        {isError ? (
+          <ErrorState />
+        ) : (
+          <ListContent initialOrders={initialOrders} />
+        )}
       </PageMain>
     </>
-  )
-}
-
-export default function ListPage() {
-  return (
-    <Suspense fallback={<div>載入中...</div>}>
-      <ListContent />
-    </Suspense>
   )
 }
