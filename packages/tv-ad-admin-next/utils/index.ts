@@ -12,7 +12,7 @@ function filterOrders(
       order.productName.toLowerCase().includes(searchKeyword.toLowerCase()) ||
       order.orderNumber.toLowerCase().includes(searchKeyword.toLowerCase())
 
-    const matchesStatus = status === 'all' ? true : order.status === status
+    const matchesStatus = status === 'all' ? true : order.state === status
 
     return matchesKeyword && matchesStatus
   })
@@ -20,10 +20,13 @@ function filterOrders(
 
 function getStatusStats(orders: OrderRecord[]) {
   const total = orders.length
-  const statusCounts = orders.reduce((acc, order) => {
-    acc[order.status] = (acc[order.status] || 0) + 1
-    return acc
-  }, {} as Record<OrderStatus, number>)
+  const statusCounts = orders.reduce(
+    (acc, order) => {
+      acc[order.state] = (acc[order.state] || 0) + 1
+      return acc
+    },
+    {} as Record<OrderStatus, number>
+  )
 
   return { total, statusCounts }
 }
@@ -34,4 +37,4 @@ export { filterOrders, getStatusStats }
 // Re-exports — generic shared utilities
 export * from './cn'
 export * from './devLog'
-export * from './status'
+export * from './state'

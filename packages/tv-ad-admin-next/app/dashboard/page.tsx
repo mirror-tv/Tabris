@@ -2,13 +2,13 @@
 
 // import { useState, useEffect } from 'react'
 
+import Image from 'next/image'
 import Link from 'next/link'
 
-import Image from 'next/image'
 
 import fileIcon from '@/assets/icons/file.svg'
 import uploadIcon from '@/assets/icons/upload.svg'
-import StatusCard from '@/components/dashboard/status-card'
+import StateCard from '@/components/dashboard/state-card'
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
 import {
@@ -115,7 +115,7 @@ export default function DashboardPage() {
 
               return (
                 <Link key={status} href={`/list?status=${status}`}>
-                  <StatusCard
+                  <StateCard
                     count={count}
                     text={config.label}
                     color={config.colors.text}
