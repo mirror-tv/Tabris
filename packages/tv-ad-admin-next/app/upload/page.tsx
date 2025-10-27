@@ -28,6 +28,9 @@ import {
   SelectItem,
   SelectValue,
 } from '@/components/ui/select'
+import ConfirmDialog, {
+  UploadSubmittedData,
+} from '@/components/upload/confirm-dialog'
 import FileIcon from '@/public/icons/file.svg'
 import ImageIcon from '@/public/icons/image.svg'
 import TextFormatIcon from '@/public/icons/text-format.svg'
@@ -50,6 +53,9 @@ export default function UploadPage() {
   const [text2, setText2] = useState('')
   const [file, setFile] = useState<File | null>(null)
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [submittedData, setSubmittedData] =
+    useState<UploadSubmittedData | null>(null)
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const uploadedFile = e.target.files?.[0]
@@ -86,8 +92,7 @@ export default function UploadPage() {
     if (!adName.trim()) newErrors.adName = '請輸入廣告名稱'
     if (text1.trim().length === 0 || text1.trim().length > 10)
       newErrors.text1 = '請輸入 1–10 字以內的文字素材'
-    if (text2.trim().length === 0 || text2.trim().length > 10)
-      newErrors.text2 = '請輸入 1–10 字以內的文字素材'
+    if (text2.trim().length > 10) newErrors.text2 = '文字素材二最多 10 字'
     if (!range?.from || !range?.to) newErrors.range = '請選擇完整的排播起訖日期'
     if (!file) newErrors.file = '請上傳圖片檔案'
 
@@ -99,16 +104,22 @@ export default function UploadPage() {
       to: format(range!.to!, 'yyyy-MM-dd'),
     }
 
-    console.log('✅ Form submitted:', {
-      order,
+    const data: UploadSubmittedData = {
+      order: order!,
       adName,
       text1,
-      text2,
-      fileName: file?.name,
+      text2: text2 || undefined,
+      fileName: file!.name,
       range: formattedRange,
-    })
+    }
 
-    alert('素材上傳成功！')
+    setSubmittedData(data)
+    setIsDialogOpen(true)
+  }
+
+  function handleConfirmUpload() {
+    console.log('正在送出素材資料:', submittedData)
+    // TODO: 之後可改為實際 API 請求
   }
 
   return (
@@ -117,7 +128,7 @@ export default function UploadPage() {
       <PageMain className="py-5 md:py-10">
         <Card>
           <CardHeader>
-            <CardTitle>訂單資料</CardTitle>
+            <CardTitle>上傳廣告素材</CardTitle>
             <CardDescription>請完整填寫以下資訊，以便製作廣告</CardDescription>
           </CardHeader>
           <form onSubmit={handleSubmit}>
@@ -221,9 +232,10 @@ export default function UploadPage() {
                       ]
                     )}
                   >
+                    <ImageIcon className="mb-2 size-12 text-gray-5" />
                     {file ? (
                       <>
-                        <p className="text-sm text-text-secondary">
+                        <p className="text-text-secondary">
                           已選擇檔案：
                         </p>
                         <p className="font-medium text-text-primary">
@@ -232,7 +244,6 @@ export default function UploadPage() {
                       </>
                     ) : (
                       <>
-                        <ImageIcon className="mb-2 size-12 text-gray-5" />
                         <Button
                           type="button"
                           variant="outline"
@@ -251,11 +262,11 @@ export default function UploadPage() {
                           className="hidden"
                           onChange={handleFileChange}
                         />
-                        <p className="mt-2 text-sm text-gray-500">
-                          支援 JPG, PNG 格式，檔案大小不超過 5MB
-                        </p>
                       </>
                     )}
+                    <p className="mt-2 text-sm text-gray-500">
+                      支援 JPG, PNG 格式，檔案大小不超過 5MB
+                    </p>
                     {errors.file && <ErrorMessage>{errors.file}</ErrorMessage>}
                   </div>
                 </LabeledField>
@@ -278,6 +289,13 @@ export default function UploadPage() {
           </form>
         </Card>
       </PageMain>
+
+      <ConfirmDialog
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        submittedData={submittedData}
+        onConfirm={handleConfirmUpload}
+      />
     </>
   )
 }
