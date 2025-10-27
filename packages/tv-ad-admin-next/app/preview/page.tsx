@@ -1,7 +1,7 @@
-import { env } from '@/constants/environment-variables'
+import { ENV } from '@/constants/environment-variables'
 
 export default function PreviewPage() {
-  const isLocalOrDev = ['local', 'dev'].includes(env.ENV)
+  const isLocalOrDev = ['local', 'dev'].includes(ENV)
   if (!isLocalOrDev) return null
   return (
     <main className="flex h-screen flex-col items-center justify-center bg-gray-100 text-gray-800">

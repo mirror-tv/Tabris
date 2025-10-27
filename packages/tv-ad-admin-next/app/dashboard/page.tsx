@@ -8,7 +8,7 @@ import Link from 'next/link'
 
 import fileIcon from '@/assets/icons/file.svg'
 import uploadIcon from '@/assets/icons/upload.svg'
-import StateCard from '@/components/dashboard/state-card'
+import StatusCard from '@/components/dashboard/status-card'
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
 import {
@@ -115,7 +115,7 @@ export default function DashboardPage() {
 
               return (
                 <Link key={status} href={`/list?status=${status}`}>
-                  <StateCard
+                  <StatusCard
                     count={count}
                     text={config.label}
                     color={config.colors.text}
