@@ -1,10 +1,11 @@
-import { forwardRef} from 'react'
+import { forwardRef } from 'react'
 import type { ComponentProps, ReactNode } from 'react'
 
+
+import { ErrorMessage } from './error-message'
 import { Input as BaseInput } from '../ui/input'
 
 import { cn } from '@/utils'
-
 
 export type CustomInputProps = ComponentProps<'input'> & {
   error?: string
@@ -14,9 +15,8 @@ export type CustomInputProps = ComponentProps<'input'> & {
 
 const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
   ({ className, error, errorMessage, icon, ...props }, ref) => {
-
     return (
-      <div className='relative'>
+      <div className="relative">
         <BaseInput
           ref={ref}
           className={cn(
@@ -46,11 +46,7 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
           </div>
         )}
 
-        {error && errorMessage && (
-          <span className="absolute -bottom-6 left-0 animate-fade-in items-center text-red-7">
-            {errorMessage}
-          </span>
-        )}
+        {error && errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
       </div>
     )
   }

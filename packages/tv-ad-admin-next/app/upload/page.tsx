@@ -6,6 +6,7 @@ import { format } from 'date-fns'
 import { DateRange } from 'react-day-picker'
 
 import { CustomInput } from '@/components/custom-ui/custom-input'
+import { ErrorMessage } from '@/components/custom-ui/error-message'
 import { LabeledField } from '@/components/custom-ui/labeled-field'
 import { Instructions } from '@/components/shared/instructions'
 import PageHeader from '@/components/shared/page-header'
@@ -145,11 +146,7 @@ export default function UploadPage() {
                     <SelectItem value="order2">訂單 B</SelectItem>
                   </SelectContent>
                 </Select>
-                {errors.order && (
-                  <p className="absolute -bottom-6 left-0 animate-fade-in text-red-7">
-                    {errors.order}
-                  </p>
-                )}
+                {errors.order && <ErrorMessage>{errors.order}</ErrorMessage>}
               </LabeledField>
 
               {/* 廣告名稱 + 排播日期 */}
@@ -259,11 +256,7 @@ export default function UploadPage() {
                         </p>
                       </>
                     )}
-                    {errors.file && (
-                      <p className="absolute -bottom-6 left-0 animate-fade-in text-red-7">
-                        {errors.file}
-                      </p>
-                    )}
+                    {errors.file && <ErrorMessage>{errors.file}</ErrorMessage>}
                   </div>
                 </LabeledField>
               </div>
