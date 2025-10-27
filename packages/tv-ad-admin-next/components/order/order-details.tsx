@@ -1,5 +1,5 @@
 import { orderLabels } from '@/constants'
-import { type OrderRecord } from '@/mocks/mockData'
+import { type OrderRecord } from '@/types/order'
 
 type OrderDetailsProps = {
   order: OrderRecord

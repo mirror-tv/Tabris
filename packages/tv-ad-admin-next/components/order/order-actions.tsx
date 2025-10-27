@@ -7,7 +7,7 @@ import EditIcon from '@/assets/icons/edit.svg'
 import UploadIcon from '@/assets/icons/upload.svg'
 import { Button } from '@/components/ui/button'
 import { ORDER_STATUS } from '@/constants'
-import { type OrderRecord } from '@/mocks/mockData'
+import { type OrderRecord } from '@/types/order'
 
 type OrderActionsProps = {
   order: OrderRecord
@@ -188,7 +188,7 @@ export function OrderActions({ order, className = '' }: OrderActionsProps) {
   }
 
   const actionContent =
-    ACTION_MAP[order.state] ?? ACTION_MAP[ORDER_STATUS.PENDING_UPLOAD]
+    ACTION_MAP[order.status] ?? ACTION_MAP[ORDER_STATUS.PENDING_UPLOAD]
 
   return (
     <section className={`${styles.container} ${className}`}>
@@ -200,10 +200,10 @@ export function OrderActions({ order, className = '' }: OrderActionsProps) {
               actionContent.buttonText === '上傳素材'
                 ? handleUploadClick
                 : actionContent.buttonText === '確認'
-                  ? handleConfirmClick
-                  : actionContent.buttonText === '設定排播日期'
-                    ? handleSettingScheduleClick
-                    : undefined
+                ? handleConfirmClick
+                : actionContent.buttonText === '設定排播日期'
+                ? handleSettingScheduleClick
+                : undefined
             }
             disabled={isUploading || isConfirming}
           >
@@ -211,8 +211,8 @@ export function OrderActions({ order, className = '' }: OrderActionsProps) {
             {isUploading && actionContent.buttonText === '上傳素材'
               ? '上傳中...'
               : isConfirming && actionContent.buttonText === '確認'
-                ? '確認中...'
-                : actionContent.buttonText}
+              ? '確認中...'
+              : actionContent.buttonText}
           </Button>
         )}
         {actionContent.secondaryButton && (

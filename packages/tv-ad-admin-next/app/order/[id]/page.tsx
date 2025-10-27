@@ -6,13 +6,13 @@ import { OrderActions } from '@/components/order/order-actions'
 import { OrderDetails } from '@/components/order/order-details'
 import { OrderNotFound } from '@/components/order/order-not-found'
 import { OrderPreview } from '@/components/order/order-preview'
-import { OrderState as OrderStateComponent } from '@/components/order/order-state'
+import { OrderStatus as OrderStatusComponent } from '@/components/order/order-status'
 import { TestModal } from '@/components/order/test-modal'
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
 import { ORDER_STATUS_CONFIG, ORDER_STYLES } from '@/constants'
-import { env } from '@/constants/environment-variables'
-import { mockOrderData } from '@/mocks/mockData'
+import { ENV } from '@/constants/environment-variables'
+import { mockOrderData } from '@/mocks/mockData' // TODO: 待移除，改用實際 API
 
 export default function OrderPage() {
   const params = useParams()
@@ -30,7 +30,7 @@ export default function OrderPage() {
 
   const shouldShowPreview =
     ORDER_STATUS_CONFIG.PREVIEW_REQUIRED_STATUSES.includes(
-      order.state as (typeof ORDER_STATUS_CONFIG.PREVIEW_REQUIRED_STATUSES)[number]
+      order.status as (typeof ORDER_STATUS_CONFIG.PREVIEW_REQUIRED_STATUSES)[number]
     )
 
   return (
@@ -45,11 +45,11 @@ export default function OrderPage() {
                 {shouldShowPreview && <OrderPreview order={order} />}
                 <OrderActions order={order} />
               </div>
-              <OrderStateComponent order={order} />
+              <OrderStatusComponent order={order} />
             </div>
           </div>
 
-          {(env.ENV === 'local' || env.ENV === 'dev') && (
+          {(ENV === 'local' || ENV === 'dev') && (
             <TestModal
               orders={mockOrderData}
               onOrderSelect={(orderId) => {

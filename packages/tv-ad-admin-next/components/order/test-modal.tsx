@@ -6,9 +6,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { StatusBadge } from '@/components/ui/state-badge'
+import { StatusBadge } from '@/components/ui/status-badge'
 import { OrderStatusMap } from '@/constants'
-import { type OrderRecord } from '@/mocks/mockData'
+import { type OrderRecord } from '@/types/order'
 
 type TestModalProps = {
   orders: OrderRecord[]
@@ -62,7 +62,7 @@ export function TestModal({
 
           <div className="grid max-h-96 gap-2 overflow-y-auto">
             {orders.map((order) => {
-              const statusConfig = OrderStatusMap[order.state]
+              const statusConfig = OrderStatusMap[order.status]
               const isSelected = currentOrderId === order.id
 
               return (
@@ -97,7 +97,7 @@ export function TestModal({
                     </div>
                   </div>
 
-                  <StatusBadge status={order.state} />
+                  <StatusBadge status={order.status} />
 
                   {isSelected && (
                     <div className="ml-2">
