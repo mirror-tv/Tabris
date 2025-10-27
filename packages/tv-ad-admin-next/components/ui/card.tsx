@@ -91,6 +91,7 @@ function CardTitle({ asChild, className, ...props }: CardTitleProps) {
 
   return (
     <Comp
+      suppressHydrationWarning
       data-slot="card-title"
       className={cn(isNote && 'text-yellow-8', className)}
       {...props}
