@@ -5,6 +5,7 @@ import type { Dispatch, SetStateAction } from 'react'
 import { addDays, format, startOfToday } from 'date-fns'
 import { zhTW } from 'date-fns/locale/zh-TW'
 
+import { ErrorMessage } from '../custom-ui/error-message'
 import { LabeledField } from '../custom-ui/labeled-field'
 import { Button } from '../ui/button'
 
@@ -34,7 +35,7 @@ export default function PopoverCalendar({
   range,
   setRange,
   error,
-  className
+  className,
 }: PopoverCalendarProps) {
   const today = startOfToday()
   const minDate = addDays(today, 14)
@@ -87,11 +88,7 @@ export default function PopoverCalendar({
           />
         </PopoverContent>
       </Popover>
-      {!!error && (
-        <p className="absolute -bottom-6 left-0 animate-fade-in text-red-7">
-          {error}
-        </p>
-      )}
+      {!!error && <ErrorMessage>{error}</ErrorMessage>}
     </LabeledField>
   )
 }

@@ -6,6 +6,7 @@ import EditPageLayout, {
   type SubmitStatus,
 } from '../../../components/edit/edit-page-layout'
 
+import { ErrorMessage } from '@/components/custom-ui/error-message'
 import { LabeledField } from '@/components/custom-ui/labeled-field'
 import { Instructions } from '@/components/shared/instructions'
 import { Textarea } from '@/components/ui/textarea'
@@ -78,11 +79,7 @@ export default function EditRequest() {
               'border-destructive focus-visible:ring-destructive/40'
           )}
         />
-        {errors.reason && (
-          <p className="absolute -bottom-6 left-0 animate-fade-in text-red-7">
-            {errors.reason}
-          </p>
-        )}
+        {errors.reason && <ErrorMessage>{errors.reason}</ErrorMessage>}
       </LabeledField>
       <LabeledField
         id={detailsId}
@@ -102,11 +99,7 @@ export default function EditRequest() {
               'border-destructive focus-visible:ring-destructive/40'
           )}
         />
-        {errors.details && (
-          <p className="absolute -bottom-6 left-0 animate-fade-in text-red-7">
-            {errors.details}
-          </p>
-        )}
+        {errors.details && <ErrorMessage>{errors.details}</ErrorMessage>}
       </LabeledField>
       <Instructions
         title="重要提醒"
