@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from 'react'
 
+import type { SendOtpResponse } from '@/types/api'
+
 import MailOrPhoneForm from '@/components/login/mail-or-phone-form'
 import OptForm from '@/components/login/opt-form'
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
-import { validateEmail, validatePhone } from '@/utils/validation'
 import { AUTH_MESSAGES, LOADING_MESSAGES } from '@/constants/messages'
-import type { SendOtpResponse } from '@/types/api'
+import { validateEmail, validatePhone } from '@/utils/validation'
 
 export default function HomePage() {
   // 從 localStorage 讀取上次登入方式
@@ -62,7 +63,7 @@ export default function HomePage() {
         localStorage.setItem('lastLoginType', status)
       }
 
-      // 呼叫真實的 API 發送 OTP
+      // 呼叫 Next.js API Route 發送 OTP
       const response = await fetch('/api/auth/send-otp', {
         method: 'POST',
         headers: {
@@ -145,7 +146,7 @@ export default function HomePage() {
         return
       }
 
-      // 呼叫真實的 API 驗證 OTP
+      // 呼叫 Next.js API Route 驗證 OTP
       const response = await fetch('/api/auth/verify-otp', {
         method: 'POST',
         headers: {
@@ -196,7 +197,7 @@ export default function HomePage() {
     setLoadingMessage(LOADING_MESSAGES.CHECKING_MEMBER)
 
     try {
-      // 呼叫真實的 API 重新發送 OTP
+      // 呼叫 Next.js API Route 重新發送 OTP
       const response = await fetch('/api/auth/send-otp', {
         method: 'POST',
         headers: {
