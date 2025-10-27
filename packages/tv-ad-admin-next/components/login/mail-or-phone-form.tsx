@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
+
+import Image from 'next/image'
+
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import Image from 'next/image'
-import { validateEmail, validatePhone } from '@/utils/validation'
 import { useDebounce } from '@/hooks/useDebounce'
+import { validateEmail, validatePhone } from '@/utils/validation'
 
 type MailOrPhoneFormProps = {
   status: 'email' | 'phone' | 'OPT'
@@ -129,7 +131,7 @@ export default function MailOrPhoneForm({
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              placeholder="範例：0922119187"
+              placeholder="範例：0912345678"
               className="rounded-lg"
               error={
                 error.includes('手機號碼') || phoneError ? 'error' : undefined
@@ -158,7 +160,7 @@ export default function MailOrPhoneForm({
             src="/assets/icons/arrow.svg"
             alt="arrow"
             width={16}
-            height={17}
+            height={16}
             className="inline"
           />
         </p>

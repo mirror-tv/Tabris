@@ -5,7 +5,7 @@
 export const AUTH_MESSAGES = {
   // 成功訊息
   OTP_SENT: '驗證碼已發送',
-  OTP_SENT_DEV: '驗證碼已發送（請查看瀏覽器 Console）',
+  OTP_SENT_DEV: '驗證碼已發送',
   LOGIN_SUCCESS: '登入成功',
   LOGOUT_SUCCESS: '登出成功',
 
@@ -13,7 +13,7 @@ export const AUTH_MESSAGES = {
   EMAIL_REQUIRED: '請輸入電子信箱',
   EMAIL_INVALID: '請輸入有效的電子信箱格式',
   PHONE_REQUIRED: '請輸入手機號碼',
-  PHONE_INVALID: '請輸入有效的手機號碼格式 (例：0922119187)',
+  PHONE_INVALID: '請輸入有效的手機號碼格式 (例：0912345678)',
   OTP_REQUIRED: '請輸入驗證碼',
   OTP_INVALID: '驗證碼必須為 6 位數字',
 

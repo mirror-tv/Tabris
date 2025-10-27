@@ -1,9 +1,7 @@
-/**
- * Member 查詢 GraphQL queries
- */
+import { gql } from '@apollo/client'
 
-export const GET_MEMBERS_QUERY = `
-  query GetMembers($where: MemberWhereInput) {
+export const getMembersQuery = gql`
+  query getMembers($where: MemberWhereInput) {
     members(where: $where) {
       id
       firebaseID
@@ -15,8 +13,8 @@ export const GET_MEMBERS_QUERY = `
   }
 `
 
-export const CHECK_MEMBER_BY_EMAIL_QUERY = `
-  query GetMembers($where: MemberWhereInput) {
+export const checkMemberByEmailQuery = gql`
+  query checkMemberByEmail($where: MemberWhereInput) {
     members(where: $where) {
       id
       email
@@ -25,8 +23,8 @@ export const CHECK_MEMBER_BY_EMAIL_QUERY = `
   }
 `
 
-export const CHECK_MEMBER_BY_PHONE_QUERY = `
-  query GetMembers($where: MemberWhereInput) {
+export const checkMemberByPhoneQuery = gql`
+  query checkMemberByPhone($where: MemberWhereInput) {
     members(where: $where) {
       id
       mobile
