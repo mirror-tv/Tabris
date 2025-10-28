@@ -86,6 +86,7 @@ export default function UploadTemplate({
   const [submittedData, setSubmittedData] =
     useState<UploadSubmittedData | null>(null)
   const [reuploadOrderSelected, setReuploadOrderSelected] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
 
   function isDisabled(key: keyof EditableFields) {
     return editableFields[key] === false
@@ -95,31 +96,52 @@ export default function UploadTemplate({
   // this constant controls whether to render all fields
   const shouldShowAllFields = !showAfterOrderSelect || reuploadOrderSelected
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const uploadedFile = e.target.files?.[0]
-    if (!uploadedFile) return
+  // ====================== Start: drop file ======================
+  function _validateAndSetFile(file: File) {
+    if (!['image/jpeg', 'image/png'].includes(file.type)) {
+      setErrors((prev) => ({ ...prev, file: '僅支援 JPG 或 PNG 格式' }))
+      setFile(null)
+      return
+    }
 
-    if (!['image/jpeg', 'image/png'].includes(uploadedFile.type)) {
+    if (file.size > 5 * 1024 * 1024) {
       setErrors((prev) => ({
         ...prev,
-        file: '僅支援 JPG 或 PNG 格式',
+        file: '檔案超過 5MB，請重新上傳',
       }))
       setFile(null)
       return
     }
 
-    if (uploadedFile.size > 5 * 1024 * 1024) {
-      setErrors((prev) => ({
-        ...prev,
-        file: '檔案大小不可超過 5MB',
-      }))
-      setFile(null)
-      return
-    }
-
-    setFile(uploadedFile)
+    setFile(file)
     setErrors((prev) => ({ ...prev, file: '' }))
   }
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const uploadedFile = e.target.files?.[0]
+    if (uploadedFile) _validateAndSetFile(uploadedFile)
+  }
+  function handleDrop(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragging(false)
+
+    const droppedFile = e.dataTransfer.files?.[0]
+    if (droppedFile) _validateAndSetFile(droppedFile)
+  }
+
+  function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragging(true)
+  }
+
+  function handleDragLeave(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragging(false)
+  }
+  // ====================== End: drop file ======================
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -136,7 +158,7 @@ export default function UploadTemplate({
 
     if (!isDisabled('text1')) {
       if (text1.trim().length === 0 || text1.trim().length > 10) {
-        newErrors.text1 = '請輸入 1–10 字以內的文字素材'
+        newErrors.text1 = '請輸入 1 - 10 字以內的文字素材'
       }
     }
 
@@ -234,7 +256,7 @@ export default function UploadTemplate({
               {shouldShowAllFields && (
                 <>
                   {/* 廣告名稱 + 排播日期 */}
-                  <div className="grid gap-4 md:grid-cols-2">
+                  <div className="grid gap-8 md:grid-cols-2 md:gap-4">
                     <LabeledField
                       id={adNameId}
                       label="廣告名稱"
@@ -304,51 +326,65 @@ export default function UploadTemplate({
                       labelIcon={<ImageIcon />}
                     >
                       <div
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
                         className={cn(
-                          'relative flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-3 p-6 text-center',
+                          'relative flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-3 p-6 text-center',
+                          isDragging
+                            ? 'border-blue-5 bg-blue-1'
+                            : 'border-gray-3 bg-transparent',
                           errors.file && [
                             'border border-red-7',
                             'focus:border-red-8',
                           ]
                         )}
                       >
-                        <ImageIcon className="mb-2 size-12 text-gray-5" />
+                        {/* If a file is uploaded, show preview; otherwise show icon */}
                         {file ? (
-                          <>
-                            <p className="text-text-secondary">已選擇檔案：</p>
-                            <p className="font-medium text-text-primary">
-                              {file.name}
-                            </p>
-                          </>
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={URL.createObjectURL(file)}
+                            alt="預覽圖"
+                            className="h-[90px] w-40 rounded-sm bg-white object-contain shadow-sm"
+                          />
                         ) : (
-                          <>
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="lg"
-                              intent="secondary"
-                              disabled={isDisabled('file')}
-                              onClick={() =>
-                                document.getElementById(fileInputId)?.click()
-                              }
-                            >
-                              選擇圖片檔案
-                            </Button>
-                            <input
-                              id={fileInputId}
-                              type="file"
-                              accept=".jpg,.jpeg,.png"
-                              className="hidden"
-                              onChange={handleFileChange}
-                            />
-                          </>
+                          <ImageIcon className="size-[90px] text-gray-5" />
                         )}
-                        <p className="mt-2 text-sm text-gray-500">
-                          支援 JPG, PNG 格式，檔案大小不超過 5MB
-                        </p>
-                        {errors.file && (
-                          <ErrorMessage>{errors.file}</ErrorMessage>
-                        )}
+
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="lg"
+                          intent="secondary"
+                          className="bg-white"
+                          disabled={isDisabled('file')}
+                          onClick={() =>
+                            document.getElementById(fileInputId)?.click()
+                          }
+                        >
+                          {file ? '重新選擇圖片' : '選擇圖片檔案'}
+                        </Button>
+                        <input
+                          id={fileInputId}
+                          type="file"
+                          accept=".jpg,.jpeg,.png"
+                          className="hidden"
+                          onChange={handleFileChange}
+                        />
+                        <div className="min-h-16 md:h-11">
+                          <p className="text-gray-5">
+                            支援 JPG, PNG 格式，檔案大小不超過 5MB
+                          </p>
+                          {file && (
+                            <p className="font-medium text-text-primary">
+                              已選擇檔案：{file.name}
+                            </p>
+                          )}
+                          {errors.file && (
+                            <p className="text-red-7">{errors.file}</p>
+                          )}
+                        </div>
                       </div>
                     </LabeledField>
                   </div>
