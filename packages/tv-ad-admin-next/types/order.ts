@@ -3,8 +3,8 @@ import { type OrderState } from '@/constants'
 export type OrderRecord = {
   id: string
   orderNumber: string
-  productName: string
-  broadcastDate: string
+  name: string
+  schedule: string
   state: OrderState
   relatedOrder?: OrderRecord
   createdAt: string
@@ -13,7 +13,13 @@ export type OrderRecord = {
 
 export type OrderRecordForList = Pick<
   OrderRecord,
-  'id' | 'orderNumber' | 'state' | 'createdAt' | 'updatedAt'
+  | 'id'
+  | 'orderNumber'
+  | 'name'
+  | 'state'
+  | 'schedule'
+  | 'createdAt'
+  | 'updatedAt'
 > & {
-  relatedOrder?: OrderRecordForList
+  relatedOrder?: { id: string }
 }
