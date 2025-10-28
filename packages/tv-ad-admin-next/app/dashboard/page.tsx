@@ -5,7 +5,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
-
 import fileIcon from '@/assets/icons/file.svg'
 import uploadIcon from '@/assets/icons/upload.svg'
 import StateCard from '@/components/dashboard/state-card'
@@ -18,45 +17,42 @@ import {
   CardDescription,
   CardContent,
 } from '@/components/ui/card'
-import { OrderStatusMap } from '@/constants'
-// import { mockOrderData } from '@/mocks/mockData'
-
-// type StatusStats = { status: string; count: number }
+import { OrderStateMap } from '@/constants'
 
 export default function DashboardPage() {
-  const statusStats = [
-    { status: 'pending', count: 10 },
-    { status: 'approved', count: 5 },
-    { status: 'rejected', count: 3 },
-    { status: 'cancelled', count: 2 },
+  const stateStats = [
+    { state: 'pending', count: 10 },
+    { state: 'approved', count: 5 },
+    { state: 'rejected', count: 3 },
+    { state: 'cancelled', count: 2 },
   ]
-  // const [statusStats, setStatusStats] = useState<StatusStats[]>([])
+  // const [stateStats, setStateStats] = useState<StateStats[]>([])
 
-  // const getStatusStats = () => {
-  //   const statusOrder: { status: string; count: number }[] = []
+  // const getStateStats = () => {
+  //   const stateOrder: { state: string; count: number }[] = []
 
   //   mockOrderData.forEach((order) => {
-  //     const existing = statusOrder.find((item) => item.status === order.status)
+  //     const existing = stateOrder.find((item) => item.state === order.state)
   //     if (!existing) {
-  //       statusOrder.push({ status: order.status, count: 1 })
+  //       stateOrder.push({ state: order.state, count: 1 })
   //     } else {
   //       existing.count++
   //     }
   //   })
 
-  //   return statusOrder
+  //   return stateOrder
   // }
 
-  // const fetchOrdersStatusStats = () => {
+  // const fetchOrdersStateStats = () => {
   //   try {
-  //     setStatusStats(getStatusStats())
+  //     setStateStats(getStateStats())
   //   } catch (error) {
   //     console.error(error)
   //   }
   // }
 
   // useEffect(() => {
-  //   fetchOrdersStatusStats()
+  //   fetchOrdersStateStats()
   //   // eslint-disable-next-line react-hooks/exhaustive-deps
   // }, [])
 
@@ -101,20 +97,19 @@ export default function DashboardPage() {
           </Link>
         </div>
 
-        {/* --- Bottom: Order status overview --- */}
+        {/* --- Bottom: Order state overview --- */}
         <Card>
           <CardHeader>
             <CardTitle>訂單狀態總覽</CardTitle>
           </CardHeader>
 
           <CardContent className="grid grid-cols-1 gap-2 md:grid-cols-4 md:gap-4 xl:grid-cols-6">
-            {statusStats.map(({ status, count }) => {
-              const config =
-                OrderStatusMap[status as keyof typeof OrderStatusMap]
+            {stateStats.map(({ state, count }) => {
+              const config = OrderStateMap[state as keyof typeof OrderStateMap]
               if (!config) return null
 
               return (
-                <Link key={status} href={`/list?status=${status}`}>
+                <Link key={state} href={`/list?state=${state}`}>
                   <StateCard
                     count={count}
                     text={config.label}

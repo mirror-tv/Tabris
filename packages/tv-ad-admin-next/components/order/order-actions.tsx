@@ -6,7 +6,7 @@ import DoneCircleIcon from '@/assets/icons/done-circle.svg'
 import EditIcon from '@/assets/icons/edit.svg'
 import UploadIcon from '@/assets/icons/upload.svg'
 import { Button } from '@/components/ui/button'
-import { ORDER_STATUS } from '@/constants'
+import { ORDER_STATE } from '@/constants'
 import { type OrderRecord } from '@/mocks/mockData'
 
 type OrderActionsProps = {
@@ -44,7 +44,7 @@ type ActionConfig = {
 }
 
 const ACTION_MAP: Record<string, ActionConfig> = {
-  [ORDER_STATUS.PENDING_UPLOAD]: {
+  [ORDER_STATE.PENDING_UPLOAD]: {
     buttonText: '上傳素材',
     buttonIcon: <UploadIcon />,
     buttonClassName: 'bg-blue-6 text-white hover:bg-blue-7',
@@ -52,7 +52,7 @@ const ACTION_MAP: Record<string, ActionConfig> = {
     helpLinkText: '申請退款',
     statusMessage: null,
   },
-  [ORDER_STATUS.MATERIAL_UPLOADED]: {
+  [ORDER_STATE.MATERIAL_UPLOADED]: {
     buttonText: null,
     buttonIcon: null,
     buttonClassName: '',
@@ -60,7 +60,7 @@ const ACTION_MAP: Record<string, ActionConfig> = {
     helpLinkText: '申請退款',
     statusMessage: '請等待業務確認素材，如沒問題便會繼續製作影片。',
   },
-  [ORDER_STATUS.VIDEO_PRODUCTION]: {
+  [ORDER_STATE.VIDEO_PRODUCTION]: {
     buttonText: null,
     buttonIcon: null,
     buttonClassName: '',
@@ -68,7 +68,7 @@ const ACTION_MAP: Record<string, ActionConfig> = {
     helpLinkText: '申請退款',
     statusMessage: '請等待業務確認素材，如沒問題便會繼續製作影片。',
   },
-  [ORDER_STATUS.PENDING_SCHEDULE]: {
+  [ORDER_STATE.PENDING_SCHEDULE]: {
     buttonText: null,
     buttonIcon: null,
     buttonClassName: '',
@@ -76,7 +76,7 @@ const ACTION_MAP: Record<string, ActionConfig> = {
     helpLinkText: '申請退款',
     statusMessage: '排播時間已設定，正在等待廣告播出。',
   },
-  [ORDER_STATUS.BROADCASTED]: {
+  [ORDER_STATE.BROADCASTED]: {
     buttonText: null,
     buttonIcon: null,
     buttonClassName: '',
@@ -84,7 +84,7 @@ const ACTION_MAP: Record<string, ActionConfig> = {
     helpLinkText: '申請退款',
     statusMessage: '廣告已成功播出。',
   },
-  [ORDER_STATUS.PENDING_BROADCAST_DATE]: {
+  [ORDER_STATE.PENDING_BROADCAST_DATE]: {
     buttonText: '設定排播日期',
     buttonIcon: <EditIcon />,
     buttonClassName: styles.primaryButton,
@@ -92,7 +92,7 @@ const ACTION_MAP: Record<string, ActionConfig> = {
     helpLinkText: '申請退款',
     statusMessage: null,
   },
-  [ORDER_STATUS.PENDING_CONFIRMATION]: {
+  [ORDER_STATE.PENDING_CONFIRMATION]: {
     buttonText: '確認',
     buttonIcon: <DoneCircleIcon />,
     buttonClassName: styles.primaryButton,
@@ -105,7 +105,7 @@ const ACTION_MAP: Record<string, ActionConfig> = {
       className: styles.secondaryButton,
     },
   },
-  [ORDER_STATUS.CANCELLED]: {
+  [ORDER_STATE.CANCELLED]: {
     buttonText: null,
     buttonIcon: null,
     buttonClassName: '',
@@ -113,7 +113,7 @@ const ACTION_MAP: Record<string, ActionConfig> = {
     helpLinkText: '申請退款',
     statusMessage: '本訂單已作廢。',
   },
-  [ORDER_STATUS.TRANSFERRED]: {
+  [ORDER_STATE.TRANSFERRED]: {
     buttonText: null,
     buttonIcon: null,
     buttonClassName: '',
@@ -121,7 +121,7 @@ const ACTION_MAP: Record<string, ActionConfig> = {
     helpLinkText: '申請退款',
     statusMessage: '此訂單已轉移至新訂單，請到新訂單進行操作。',
   },
-  [ORDER_STATUS.PENDING_QUOTE_CONFIRMATION]: {
+  [ORDER_STATE.PENDING_QUOTE_CONFIRMATION]: {
     buttonText: null,
     buttonIcon: null,
     buttonClassName: '',
@@ -129,7 +129,7 @@ const ACTION_MAP: Record<string, ActionConfig> = {
     helpLinkText: '申請退款',
     statusMessage: '請至信箱確認修改報價並完成付款，以繼續製作廣告。',
   },
-  [ORDER_STATUS.MODIFICATION_REQUEST]: {
+  [ORDER_STATE.MODIFICATION_REQUEST]: {
     buttonText: null,
     buttonIcon: null,
     buttonClassName: '',
@@ -188,7 +188,7 @@ export function OrderActions({ order, className = '' }: OrderActionsProps) {
   }
 
   const actionContent =
-    ACTION_MAP[order.state] ?? ACTION_MAP[ORDER_STATUS.PENDING_UPLOAD]
+    ACTION_MAP[order.state] ?? ACTION_MAP[ORDER_STATE.PENDING_UPLOAD]
 
   return (
     <section className={`${styles.container} ${className}`}>

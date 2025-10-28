@@ -2,23 +2,27 @@ import { type ReactElement } from 'react'
 
 import { OrderRow } from './order-row'
 
-import { type OrderRecord } from '@/mocks/mockData'
+import { type OrderRecordForList } from '@/types/order'
 
 type OrderGroupProps = {
-  order: OrderRecord
+  order: OrderRecordForList
   onViewOrder: (orderId: string) => void
 }
 
 function renderRelatedOrders(
-  order: OrderRecord,
+  order: OrderRecordForList,
   onViewOrder: (orderId: string) => void
 ): ReactElement | null {
-  if (!order.related) return null
+  if (!order.relatedOrder) return null
 
   return (
     <>
-      <OrderRow order={order.related} onViewOrder={onViewOrder} isRelated />
-      {renderRelatedOrders(order.related, onViewOrder)}
+      <OrderRow
+        order={order.relatedOrder as OrderRecordForList}
+        onViewOrder={onViewOrder}
+        isRelated
+      />
+      {renderRelatedOrders(order.relatedOrder, onViewOrder)}
     </>
   )
 }
@@ -26,7 +30,7 @@ function renderRelatedOrders(
 export function OrderGroup({ order, onViewOrder }: OrderGroupProps) {
   return (
     <>
-      <OrderRow order={order} onViewOrder={onViewOrder} />
+      <OrderRow order={order as OrderRecordForList} onViewOrder={onViewOrder} />
       {renderRelatedOrders(order, onViewOrder)}
     </>
   )

@@ -1,11 +1,11 @@
 import ArrowRightDownIcon from '@/assets/icons/arrow-right-sown.svg'
 import DetailIcon from '@/assets/icons/detail.svg'
 import { Button } from '@/components/ui/button'
-import { StatusBadge } from '@/components/ui/state-badge'
-import { type OrderRecord } from '@/mocks/mockData'
+import { StateBadge } from '@/components/ui/state-badge'
+import { type OrderRecordForList } from '@/types/order'
 
 type OrderRowProps = {
-  order: OrderRecord
+  order: OrderRecordForList
   onViewOrder: (orderId: string) => void
   isRelated?: boolean
 }
@@ -26,16 +26,16 @@ export function OrderRow({
         </div>
       </td>
       <td className="px-2 py-3 text-sm whitespace-nowrap text-text-primary">
-        {order.productName}
+        未命名商品
       </td>
       <td className="px-2 py-3 text-sm whitespace-nowrap text-text-primary">
-        {order.broadcastDate}
+        待排播日期
       </td>
       <td className="px-2 py-3 whitespace-nowrap">
-        <StatusBadge status={order.state} />
+        <StateBadge state={order.state} />
       </td>
       <td className="px-2 py-3 text-sm whitespace-nowrap text-text-primary">
-        {order.lastUpdated}
+        {order.updatedAt}
       </td>
       <td className="px-2 py-3 text-sm whitespace-nowrap text-text-primary">
         <Button onClick={() => onViewOrder(order.id)} variant="outline">
