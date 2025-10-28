@@ -65,7 +65,7 @@ export default function ReUploadPage() {
         pageTitle={pageTitle}
         status="success"
         heading="送出成功"
-        message="業務會寄信給您溝通後續修改事宜，再請密切注意"
+        message="請等待業務確認素材，如沒問題便會繼續製作影片"
       />
     )
   } else if (submitStatus === 'failure') {
