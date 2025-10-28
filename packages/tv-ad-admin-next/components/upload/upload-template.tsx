@@ -236,7 +236,6 @@ export default function UploadTemplate({
                   {/* 廣告名稱 + 排播日期 */}
                   <div className="grid gap-4 md:grid-cols-2">
                     <LabeledField
-                      className="mb-2"
                       id={adNameId}
                       label="廣告名稱"
                       labelIcon={<TextIcon />}
