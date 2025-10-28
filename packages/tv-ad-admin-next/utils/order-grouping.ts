@@ -66,22 +66,26 @@ export function groupOrders(
 
       const formattedChain = chain.map((order) => ({
         ...order,
-        updatedAt: order.updatedAt
-          ? formatTaiwanDate(order.updatedAt)
-          : order.createdAt
-            ? formatTaiwanDate(order.createdAt)
-            : '',
-        createdAt: formatTaiwanDate(order.createdAt),
+        createdAt: order.createdAt ? formatTaiwanDate(order.createdAt) : '',
+        updatedAt: order.updatedAt ? formatTaiwanDate(order.updatedAt) : '',
       }))
 
       const rootOrder = formattedChain[0]
       const childOrders = formattedChain.slice(1)
 
-      // 子訂單按時間從舊到新排序
+      // 子訂單排序：非「已轉移」的排在前面，全部按 createdAt 從新到舊
       childOrders.sort((a, b) => {
-        const dateA = a.updatedAt || a.createdAt || ''
-        const dateB = b.updatedAt || b.createdAt || ''
-        return new Date(dateA).getTime() - new Date(dateB).getTime()
+        const isTransferredA = a.state === 'transferred'
+        const isTransferredB = b.state === 'transferred'
+
+        // 非「已轉移」的排在前面
+        if (isTransferredA && !isTransferredB) return 1
+        if (!isTransferredA && isTransferredB) return -1
+
+        // 其餘按 createdAt 從新到舊排序
+        const dateA = a.createdAt ?? ''
+        const dateB = b.createdAt ?? ''
+        return new Date(dateB).getTime() - new Date(dateA).getTime()
       })
 
       const sortedChain = [rootOrder, ...childOrders]
@@ -89,12 +93,12 @@ export function groupOrders(
     }
   }
 
-  // 按群組中最新的訂單時間從新到舊排序
+  // 按群組中第一筆訂單的 updatedAt 從新到舊排序
   groupedOrders.sort((a, b) => {
-    const latestA = a[a.length - 1]
-    const latestB = b[b.length - 1]
-    const dateA = latestA.updatedAt || latestA.createdAt || ''
-    const dateB = latestB.updatedAt || latestB.createdAt || ''
+    const firstA = a[0]
+    const firstB = b[0]
+    const dateA = firstA.updatedAt ?? ''
+    const dateB = firstB.updatedAt ?? ''
     return new Date(dateB).getTime() - new Date(dateA).getTime()
   })
 

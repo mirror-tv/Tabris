@@ -17,7 +17,7 @@ export function OrderRow({
   onViewOrder,
   isRelated = false,
 }: OrderRowProps) {
-  const { id, state, updatedAt } = order
+  const { state, updatedAt, name, orderNumber, schedule } = order
   const rowContent = [
     {
       key: 'number',
@@ -26,14 +26,14 @@ export function OrderRow({
           {isRelated && (
             <ArrowRightDownIcon className="mr-2 h-4 w-4 text-gray-400" />
           )}
-          # {id}
+          # {orderNumber}
         </div>
       ),
     },
-    { key: 'name', content: `未命名` },
-    { key: 'broadcastDate', content: `未排播` },
+    { key: 'name', content: name },
+    { key: 'broadcastDate', content: schedule },
     { key: 'state', content: <StateBadge state={state} /> },
-    { key: 'updatedAt', content: updatedAt || `未更新` },
+    { key: 'updatedAt', content: updatedAt },
     {
       key: 'moreBtn',
       content: (
