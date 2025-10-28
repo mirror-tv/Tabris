@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import Link from 'next/link'
 
@@ -26,28 +26,47 @@ export default function DashboardPage() {
   >([])
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const abortControllerRef = useRef<AbortController | null>(null)
 
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
+    // 取消之前的請求
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+    }
+
+    abortControllerRef.current = new AbortController()
     setIsLoading(true)
     setError(null)
+
     try {
-      const res = await fetch('/api/dashboard/stats')
+      const res = await fetch('/api/dashboard/stats', {
+        signal: abortControllerRef.current.signal,
+      })
       if (!res.ok) {
         throw new Error(`Failed to fetch orders: ${res.statusText}`)
       }
       const data = await res.json()
-      setOrdersState(getOrdersState(data.orders))
+      setOrdersState(getOrdersState(data.orders || []))
     } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') {
+        return // 請求被取消，不更新狀態
+      }
       console.error('Failed to fetch orders:', error)
       setError(error instanceof Error ? error.message : '載入訂單失敗')
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [])
 
   useEffect(() => {
     fetchOrders()
-  }, [])
+    return () => {
+      // 元件卸載時取消請求
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort()
+      }
+    }
+  }, [fetchOrders])
 
   return (
     <>
@@ -96,6 +115,10 @@ export default function DashboardPage() {
               <div className="col-span-full flex flex-col items-center justify-center gap-4 py-8">
                 <p className="text-sm text-red-9">{error}</p>
                 <Button onClick={fetchOrders}>重新整理</Button>
+              </div>
+            ) : ordersState.length === 0 ? (
+              <div className="col-span-full flex items-center justify-center py-8">
+                <p className="text-sm text-gray-7">目前沒有訂單狀態資料</p>
               </div>
             ) : (
               ordersState.map(({ state, count }) => {
