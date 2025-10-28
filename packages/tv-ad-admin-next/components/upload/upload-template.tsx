@@ -31,6 +31,7 @@ import {
 import ConfirmDialog, {
   UploadSubmittedData,
 } from '@/components/upload/confirm-dialog'
+import { layout } from '@/constants'
 import FileIcon from '@/public/icons/file.svg'
 import ImageIcon from '@/public/icons/image.svg'
 import TextFormatIcon from '@/public/icons/text-format.svg'
@@ -210,6 +211,7 @@ export default function UploadTemplate({
                     id={orderId}
                     className={cn(
                       'w-full data-placeholder:bg-gray-2 data-placeholder:text-gray-5!',
+                      layout.hoverBorder,
                       errors.order && [
                         'border border-red-7',
                         'focus:border-red-8',

@@ -1,6 +1,7 @@
 export const layout = {
   maxWidthResponsive: 'max-w-[288px] md:max-w-[780px] xl:max-w-[1080px]',
-  disabled:'disabled:cursor-not-allowed disabled:bg-gray-3 disabled:text-gray-5'
+  disabled:'disabled:cursor-not-allowed disabled:bg-gray-3 disabled:text-gray-5',
+  hoverBorder:'border border-transparent hover:border-text-primary'
 }
 
 export const ORDER_STYLES = {
