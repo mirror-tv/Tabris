@@ -6,6 +6,7 @@ import { ErrorMessage } from '@/components/custom-ui/error-message'
 import { LabeledField } from '@/components/custom-ui/labeled-field'
 import EditPageLayout from '@/components/edit/edit-page-layout'
 import { Instructions } from '@/components/shared/instructions'
+import SubmitResult from '@/components/shared/submit-result'
 import { Textarea } from '@/components/ui/textarea'
 import { layout } from '@/constants'
 import { useSubmitStatus } from '@/hooks/useSubmitStatus'
@@ -55,12 +56,25 @@ export default function EditRequest() {
     setSubmitStatus(isSuccess ? 'success' : 'failure')
   }
 
+  if (submitStatus === 'success') {
+    return (
+      <SubmitResult
+        pageTitle={PAGE_TITLE}
+        status="success"
+        heading="送出成功"
+        message="業務會寄信給您溝通後續修改事宜，再請密切注意"
+      />
+    )
+  } else if (submitStatus === 'failure') {
+    return <SubmitResult pageTitle={PAGE_TITLE} />
+  }
+
   return (
     <EditPageLayout
       pageTitle={PAGE_TITLE}
       onSubmit={handleSubmit}
       submitButtonName="送出修改請求"
-      submitStatus={submitStatus}
+      // submitStatus={submitStatus}
     >
       <LabeledField
         id={reasonId}
