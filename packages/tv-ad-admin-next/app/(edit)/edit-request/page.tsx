@@ -2,19 +2,16 @@
 
 import { useState } from 'react'
 
-import EditPageLayout, {
-  type SubmitStatus,
-} from '../../../components/edit/edit-page-layout'
-
 import { ErrorMessage } from '@/components/custom-ui/error-message'
 import { LabeledField } from '@/components/custom-ui/labeled-field'
+import EditPageLayout from '@/components/edit/edit-page-layout'
 import { Instructions } from '@/components/shared/instructions'
 import { Textarea } from '@/components/ui/textarea'
+import { useSubmitStatus } from '@/hooks/useSubmitStatus'
 import TextFormatIcon from '@/public/icons/text-format.svg'
 import TextIcon from '@/public/icons/text.svg'
 import TriangleExclamationIcon from '@/public/icons/triangle-exclamation.svg'
 import { cn } from '@/utils'
-
 
 const textareaStyle =
   'w-full resize-none rounded-md bg-gray-2 p-3 placeholder:!text-text-tertiary placeholder:text-h6'
@@ -30,7 +27,8 @@ const reasonId = 'reason'
 const detailsId = 'details'
 
 export default function EditRequest() {
-  const [submitStatus, setSubmitStatus] = useState<SubmitStatus>('idle')
+  const { submitStatus, setSubmitStatus } = useSubmitStatus()
+  
   const [reason, setReason] = useState('')
   const [details, setDetails] = useState('')
   const [errors, setErrors] = useState<{ reason?: string; details?: string }>(

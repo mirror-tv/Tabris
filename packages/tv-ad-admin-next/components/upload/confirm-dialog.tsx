@@ -48,7 +48,7 @@ export default function ConfirmDialog({
             <h5 className="typography-h5">再次確認資訊</h5>
           </DialogTitle>
           <DialogDescription className="typography-caption1 text-gray-6">
-            以下是您上傳的素材資料，請再次確認：
+            請確認您即將上傳的素材內容：
           </DialogDescription>
         </DialogHeader>
 
@@ -69,7 +69,7 @@ export default function ConfirmDialog({
         <Instructions
           title="重要提醒"
           icon={<TriangleExclamationIcon />}
-          wordings={['素材送出後將無法編輯、修改，請確認所有上傳內容正確無誤']}
+          wordings={['素材送出後將無法編輯、修改，請確認所有上傳內容正確無誤。']}
         />
 
         <DialogFooter className="pt-4">

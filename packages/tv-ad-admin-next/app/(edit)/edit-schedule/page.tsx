@@ -4,24 +4,22 @@ import { useState } from 'react'
 
 import { format } from 'date-fns'
 
-import EditPageLayout, {
-  type SubmitStatus,
-} from '../../../components/edit/edit-page-layout'
-
 import type { DateRange } from 'react-day-picker'
 
+import EditPageLayout from '@/components/edit/edit-page-layout'
 import { Instructions } from '@/components/shared/instructions'
 import PopoverCalendar from '@/components/shared/popover-calendar'
+import { useSubmitStatus } from '@/hooks/useSubmitStatus'
 import TriangleExclamationIcon from '@/public/icons/triangle-exclamation.svg'
-
 
 
 const PAGE_TITLE = '設定排播日期'
 
 export default function EditSchedule() {
+  const { submitStatus, setSubmitStatus } = useSubmitStatus()
+  
   const [range, setRange] = useState<DateRange | undefined>(undefined)
   const [error, setError] = useState<string | null>(null)
-  const [submitStatus, setSubmitStatus] = useState<SubmitStatus>('idle')
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -57,7 +55,12 @@ export default function EditSchedule() {
       cardTitle="重新設定排播日期"
       submitStatus={submitStatus}
     >
-      <PopoverCalendar range={range} setRange={setRange} error={error} className='md:w-[360px]' />
+      <PopoverCalendar
+        range={range}
+        setRange={setRange}
+        error={error}
+        className="md:w-[360px]"
+      />
       <Instructions
         title="重要提醒"
         icon={<TriangleExclamationIcon />}
