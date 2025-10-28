@@ -33,6 +33,9 @@ export default function DevNavigation() {
         <Link href="/upload" className="hover:text-pink-400">
           Upload
         </Link>
+        <Link href="/reupload" className="hover:text-pink-400">
+          Reupload
+        </Link>
         <Link href="/list" className="hover:text-yellow-400">
           List
         </Link>
