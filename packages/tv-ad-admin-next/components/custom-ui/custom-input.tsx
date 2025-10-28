@@ -1,11 +1,12 @@
 import { forwardRef } from 'react'
 import type { ComponentProps, ReactNode } from 'react'
 
-
 import { ErrorMessage } from './error-message'
 import { Input as BaseInput } from '../ui/input'
 
+import { layout } from '@/constants'
 import { cn } from '@/utils'
+
 
 export type CustomInputProps = ComponentProps<'input'> & {
   error?: string
@@ -23,7 +24,9 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
             // Base styles
             'h-9 min-h-[45px] w-full min-w-0 rounded-md py-1 text-base outline-none',
             'text-text-primary placeholder:text-text-tertiary',
-            'disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
+            // disabled
+            layout.disabled,
+            'disabled:opacity-100', // overwrite base input style
             'md:text-sm dark:bg-input/30',
             // Padding based on icon presence
             icon ? 'pr-3 pl-10' : 'px-3',
