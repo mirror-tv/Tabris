@@ -1,15 +1,15 @@
 'use client'
 
-// import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
-import Image from 'next/image'
 import Link from 'next/link'
 
-import fileIcon from '@/assets/icons/file.svg'
-import uploadIcon from '@/assets/icons/upload.svg'
+import FileIcon from '@/assets/icons/file.svg'
+import UploadIcon from '@/assets/icons/upload.svg'
 import StateCard from '@/components/dashboard/state-card'
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardHeader,
@@ -18,43 +18,36 @@ import {
   CardContent,
 } from '@/components/ui/card'
 import { OrderStateMap } from '@/constants'
+import { getOrdersState } from '@/utils/order-grouping'
 
 export default function DashboardPage() {
-  const stateStats = [
-    { state: 'pending', count: 10 },
-    { state: 'approved', count: 5 },
-    { state: 'rejected', count: 3 },
-    { state: 'cancelled', count: 2 },
-  ]
-  // const [stateStats, setStateStats] = useState<StateStats[]>([])
+  const [ordersState, setOrdersState] = useState<
+    { state: keyof typeof OrderStateMap; count: number }[]
+  >([])
+  const [error, setError] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
-  // const getStateStats = () => {
-  //   const stateOrder: { state: string; count: number }[] = []
+  const fetchOrders = async () => {
+    setIsLoading(true)
+    setError(null)
+    try {
+      const res = await fetch('/api/dashboard/stats')
+      if (!res.ok) {
+        throw new Error(`Failed to fetch orders: ${res.statusText}`)
+      }
+      const data = await res.json()
+      setOrdersState(getOrdersState(data.orders))
+    } catch (error) {
+      console.error('Failed to fetch orders:', error)
+      setError(error instanceof Error ? error.message : '載入訂單失敗')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
-  //   mockOrderData.forEach((order) => {
-  //     const existing = stateOrder.find((item) => item.state === order.state)
-  //     if (!existing) {
-  //       stateOrder.push({ state: order.state, count: 1 })
-  //     } else {
-  //       existing.count++
-  //     }
-  //   })
-
-  //   return stateOrder
-  // }
-
-  // const fetchOrdersStateStats = () => {
-  //   try {
-  //     setStateStats(getStateStats())
-  //   } catch (error) {
-  //     console.error(error)
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   fetchOrdersStateStats()
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [])
+  useEffect(() => {
+    fetchOrders()
+  }, [])
 
   return (
     <>
@@ -65,13 +58,7 @@ export default function DashboardPage() {
           {/* Upload Card */}
           <Link href="/upload">
             <Card className="cursor-pointer items-center justify-center gap-3 hover:shadow-[0_4px_8px_0_rgba(0,0,0,0.10)]">
-              <Image
-                src={uploadIcon}
-                alt="upload"
-                width={40}
-                height={40}
-                className="text-blue-7"
-              />
+              <UploadIcon className="text-blue-7" />
               <CardTitle className="flex flex-col items-center gap-1">
                 <span>上傳廣告素材</span>
                 <CardDescription>上傳後即可進入製作流程</CardDescription>
@@ -82,13 +69,7 @@ export default function DashboardPage() {
           {/* history Card */}
           <Link href="/list">
             <Card className="cursor-pointer items-center justify-center gap-3 hover:shadow-[0_4px_8px_0_rgba(0,0,0,0.10)]">
-              <Image
-                src={fileIcon}
-                alt="file"
-                width={40}
-                height={40}
-                className="text-blue-7"
-              />
+              <FileIcon className="text-blue-7" />
               <CardTitle className="flex flex-col items-center gap-1">
                 <span>訂單紀錄</span>
                 <CardDescription>查看與管理所有訂單</CardDescription>
@@ -104,21 +85,36 @@ export default function DashboardPage() {
           </CardHeader>
 
           <CardContent className="grid grid-cols-1 gap-2 md:grid-cols-4 md:gap-4 xl:grid-cols-6">
-            {stateStats.map(({ state, count }) => {
-              const config = OrderStateMap[state as keyof typeof OrderStateMap]
-              if (!config) return null
+            {isLoading ? (
+              <div className="col-span-full flex items-center justify-center py-8">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="size-8 animate-spin rounded-full border-4 border-gray-3 border-t-blue-6" />
+                  <p className="text-sm text-gray-7">載入中...</p>
+                </div>
+              </div>
+            ) : error ? (
+              <div className="col-span-full flex flex-col items-center justify-center gap-4 py-8">
+                <p className="text-sm text-red-9">{error}</p>
+                <Button onClick={fetchOrders}>重新整理</Button>
+              </div>
+            ) : (
+              ordersState.map(({ state, count }) => {
+                const config =
+                  OrderStateMap[state as keyof typeof OrderStateMap]
+                if (!config) return null
 
-              return (
-                <Link key={state} href={`/list?state=${state}`}>
-                  <StateCard
-                    count={count}
-                    text={config.label}
-                    color={config.colors.text}
-                    bgColor={config.colors.bg}
-                  />
-                </Link>
-              )
-            })}
+                return (
+                  <Link key={state} href={`/list?state=${state}`}>
+                    <StateCard
+                      count={count}
+                      text={config.label}
+                      color={config.colors.text}
+                      bgColor={config.colors.bg}
+                    />
+                  </Link>
+                )
+              })
+            )}
           </CardContent>
         </Card>
       </PageMain>
