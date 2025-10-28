@@ -64,10 +64,13 @@ export function groupOrders(
     if (isRoot) {
       const chain = buildChain(order, [])
 
-      // 格式化日期
       const formattedChain = chain.map((order) => ({
         ...order,
-        updatedAt: formatTaiwanDate(order.updatedAt),
+        updatedAt: order.updatedAt
+          ? formatTaiwanDate(order.updatedAt)
+          : order.createdAt
+            ? formatTaiwanDate(order.createdAt)
+            : '',
         createdAt: formatTaiwanDate(order.createdAt),
       }))
 

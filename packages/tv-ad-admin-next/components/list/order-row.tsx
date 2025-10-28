@@ -22,7 +22,7 @@ export function OrderRow({
           {isRelated && (
             <ArrowRightDownIcon className="mr-2 h-4 w-4 text-gray-400" />
           )}
-          {order.orderNumber}
+          # {order.id}
         </div>
       </td>
       <td className="px-2 py-3 text-sm whitespace-nowrap text-text-primary">
