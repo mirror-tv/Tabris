@@ -9,6 +9,7 @@ import type { DateRange } from 'react-day-picker'
 import EditPageLayout from '@/components/edit/edit-page-layout'
 import { Instructions } from '@/components/shared/instructions'
 import PopoverCalendar from '@/components/shared/popover-calendar'
+import SubmitResult from '@/components/shared/submit-result'
 import { useSubmitStatus } from '@/hooks/useSubmitStatus'
 import TriangleExclamationIcon from '@/public/icons/triangle-exclamation.svg'
 
@@ -17,7 +18,7 @@ const PAGE_TITLE = '設定排播日期'
 
 export default function EditSchedule() {
   const { submitStatus, setSubmitStatus } = useSubmitStatus()
-  
+
   const [range, setRange] = useState<DateRange | undefined>(undefined)
   const [error, setError] = useState<string | null>(null)
 
@@ -40,11 +41,21 @@ export default function EditSchedule() {
     const isSuccess = window.confirm(
       '是否要模擬「送出成功」？按「取消」則模擬失敗。'
     )
-    if (isSuccess) {
-      setSubmitStatus('success')
-    } else {
-      setSubmitStatus('failure')
-    }
+    
+    setSubmitStatus(isSuccess ? 'success' : 'failure')
+  }
+
+  if (submitStatus === 'success') {
+    return (
+      <SubmitResult
+        pageTitle={PAGE_TITLE}
+        status="success"
+        heading="送出成功"
+        message="業務會重新寄送規格書給您，請記得至後台確認"
+      />
+    )
+  } else if (submitStatus === 'failure') {
+    return <SubmitResult pageTitle={PAGE_TITLE} />
   }
 
   return (
@@ -53,7 +64,6 @@ export default function EditSchedule() {
       onSubmit={handleSubmit}
       submitButtonName="送出"
       cardTitle="重新設定排播日期"
-      submitStatus={submitStatus}
     >
       <PopoverCalendar
         range={range}
