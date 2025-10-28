@@ -14,7 +14,7 @@ export default function DevNavigation() {
   if (!isLocalOrDev || !open) return null
 
   return (
-    <nav className="fixed bottom-0 flex w-full shrink-0 justify-center gap-4 bg-gray-800 p-2 text-white z-50">
+    <nav className="fixed bottom-0 z-50 flex w-full shrink-0 justify-center gap-4 bg-gray-800 p-2 text-white">
       <span className="flex items-center text-sm font-semibold tracking-wide whitespace-nowrap uppercase opacity-80">
         Dev Navigation
       </span>
@@ -32,6 +32,9 @@ export default function DevNavigation() {
         </Link>
         <Link href="/upload" className="hover:text-pink-400">
           Upload
+        </Link>
+        <Link href="/reupload" className="hover:text-pink-400">
+          Reupload
         </Link>
         <Link href="/list" className="hover:text-yellow-400">
           List

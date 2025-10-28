@@ -27,6 +27,7 @@ type PopoverCalendarProps = {
   setRange: Dispatch<SetStateAction<DateRange | undefined>>
   error?: string | null
   className?: string
+  disabled?: boolean
 }
 
 const calendarId = '"schedule"'
@@ -36,6 +37,8 @@ export default function PopoverCalendar({
   setRange,
   error,
   className,
+  disabled,
+  ...props
 }: PopoverCalendarProps) {
   const today = startOfToday()
   const minDate = addDays(today, 14)
@@ -73,6 +76,7 @@ export default function PopoverCalendar({
               error && ['border border-red-7', 'focus:border-red-8'],
               className
             )}
+            disabled={disabled}
           >
             {CalendarText}
             <CalendarIcon className="ml-auto text-text-tertiary" />
@@ -85,6 +89,7 @@ export default function PopoverCalendar({
             onSelect={setRange}
             disabled={{ before: minDate }}
             defaultMonth={minDate}
+            {...props}
           />
         </PopoverContent>
       </Popover>
