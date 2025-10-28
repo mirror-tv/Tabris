@@ -7,14 +7,17 @@ import { LabeledField } from '@/components/custom-ui/labeled-field'
 import EditPageLayout from '@/components/edit/edit-page-layout'
 import { Instructions } from '@/components/shared/instructions'
 import { Textarea } from '@/components/ui/textarea'
+import { layout } from '@/constants'
 import { useSubmitStatus } from '@/hooks/useSubmitStatus'
 import TextFormatIcon from '@/public/icons/text-format.svg'
 import TextIcon from '@/public/icons/text.svg'
 import TriangleExclamationIcon from '@/public/icons/triangle-exclamation.svg'
 import { cn } from '@/utils'
 
-const textareaStyle =
-  'w-full resize-none rounded-md bg-gray-2 p-3 placeholder:!text-text-tertiary placeholder:text-h6'
+const textareaStyle = [
+  'w-full resize-none rounded-md bg-gray-2 p-3 placeholder:!text-text-tertiary placeholder:text-h6',
+  layout.hoverBorder,
+]
 
 const INSTRUCTIONS_INFO = [
   '提出修改要求後，原始排播日期將會作廢',
@@ -28,7 +31,7 @@ const detailsId = 'details'
 
 export default function EditRequest() {
   const { submitStatus, setSubmitStatus } = useSubmitStatus()
-  
+
   const [reason, setReason] = useState('')
   const [details, setDetails] = useState('')
   const [errors, setErrors] = useState<{ reason?: string; details?: string }>(

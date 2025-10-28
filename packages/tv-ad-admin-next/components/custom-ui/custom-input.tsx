@@ -33,11 +33,7 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
             // Background - common to all states
             'bg-surface-tertiary',
             // Border states - use transparent border to prevent layout shift
-            !error && [
-              'border border-transparent',
-              'hover:border-text-primary',
-              'focus:border-text-secondary',
-            ],
+            !error && [layout.hoverBorder, 'focus:border-text-secondary'],
             error && ['border border-red-7', 'focus:border-red-8'],
             className
           )}

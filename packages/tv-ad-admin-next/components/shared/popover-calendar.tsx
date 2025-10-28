@@ -5,6 +5,7 @@ import type { Dispatch, SetStateAction } from 'react'
 import { addDays, format, startOfToday } from 'date-fns'
 import { zhTW } from 'date-fns/locale/zh-TW'
 
+
 import { ErrorMessage } from '../custom-ui/error-message'
 import { LabeledField } from '../custom-ui/labeled-field'
 import { Button } from '../ui/button'
@@ -17,17 +18,16 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import { layout } from '@/constants'
 import CalendarIcon from '@/public/icons/calender.svg'
 import { cn } from '@/utils'
-
-
 
 type PopoverCalendarProps = {
   range: DateRange | undefined
   setRange: Dispatch<SetStateAction<DateRange | undefined>>
   error?: string | null
-  className?: string
   disabled?: boolean
+  className?: string
 }
 
 const calendarId = '"schedule"'
@@ -36,28 +36,29 @@ export default function PopoverCalendar({
   range,
   setRange,
   error,
+  disabled = false,
   className,
-  disabled,
   ...props
 }: PopoverCalendarProps) {
   const today = startOfToday()
   const minDate = addDays(today, 14)
   const dateFormat = 'yyyy/M/d'
 
-  const CalendarText =
-    range?.from && range?.to ? (
-      <>
-        <span>{format(range.from, dateFormat, { locale: zhTW })}</span>
-        <span>-</span>
-        <span>{format(range.to, dateFormat, { locale: zhTW })}</span>
-      </>
-    ) : (
-      <>
-        <span>年 / 月 / 日</span>
-        <span>-</span>
-        <span>年 / 月 / 日</span>
-      </>
-    )
+  const hasValue = !!(range?.from && range?.to)
+
+  const CalendarText = hasValue ? (
+    <>
+      <span>{format(range!.from!, dateFormat, { locale: zhTW })}</span>
+      <span>-</span>
+      <span>{format(range!.to!, dateFormat, { locale: zhTW })}</span>
+    </>
+  ) : (
+    <>
+      <span>年 / 月 / 日</span>
+      <span>-</span>
+      <span>年 / 月 / 日</span>
+    </>
+  )
 
   return (
     <LabeledField
@@ -73,6 +74,8 @@ export default function PopoverCalendar({
             variant="ghost"
             className={cn(
               'h-[45px] w-full justify-start gap-2 rounded-md bg-gray-2 tracking-widest md:gap-3',
+              layout.hoverBorder,
+              hasValue ? 'text-text-primary' : 'text-gray-5',
               error && ['border border-red-7', 'focus:border-red-8'],
               className
             )}
