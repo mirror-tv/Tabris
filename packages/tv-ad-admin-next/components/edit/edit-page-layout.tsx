@@ -5,8 +5,7 @@ import PageMain from '@/components/shared/page-main'
 import SubmitResult from '@/components/shared/submit-result'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardTitle } from '@/components/ui/card'
-
-export type SubmitStatus = 'idle' | 'success' | 'failure'
+import { SubmitStatus } from '@/types'
 
 type EditPageLayoutProps = {
   pageTitle: string

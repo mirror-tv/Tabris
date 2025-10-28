@@ -2,12 +2,29 @@
 
 import { useEffect, useState } from 'react'
 
+import SubmitResult from '@/components/shared/submit-result'
 import UploadTemplate, {
   EditableFields,
 } from '@/components/upload/upload-template'
+import { useSubmitStatus } from '@/hooks/useSubmitStatus'
+
+const pageTitle = '重新上傳廣告素材'
 
 export default function ReUploadPage() {
+  const { submitStatus, setSubmitStatus } = useSubmitStatus()
   const [editableFields, setEditableFields] = useState<EditableFields>()
+
+  function handleConfirmReupload(data: unknown) {
+    console.log('重新上傳廣告資料', data) 
+
+    // Demo alert to choose result
+    const isSuccess = window.confirm(
+      '是否要模擬「送出成功」？按「取消」則模擬失敗。'
+    )
+
+    // Update status based on result
+    setSubmitStatus(isSuccess ? 'success' : 'failure')
+  }
 
   useEffect(() => {
     async function fetchEditableFields() {
@@ -18,11 +35,11 @@ export default function ReUploadPage() {
 
         // Mock data: simulate backend response for field editability
         const mockData: EditableFields = {
-          adName: true, // can edit
-          range: true, // cannot edit
-          text1: true,
-          text2: true,
-          file: true,
+          adName: false,
+          range: false,
+          text1: false,
+          text2: false,
+          file: false,
         }
 
         setEditableFields(mockData)
@@ -36,19 +53,32 @@ export default function ReUploadPage() {
           text2: true,
           file: true,
         }) // fallback
-      } 
+      }
     }
 
     fetchEditableFields()
   }, [])
 
+  if (submitStatus === 'success') {
+    return (
+      <SubmitResult
+        pageTitle={pageTitle}
+        status="success"
+        heading="送出成功"
+        message="業務會寄信給您溝通後續修改事宜，再請密切注意"
+      />
+    )
+  } else if (submitStatus === 'failure') {
+    return <SubmitResult pageTitle={pageTitle} />
+  }
+
   return (
     <UploadTemplate
-      pageTitle="重新上傳廣告素材"
+      pageTitle={pageTitle}
       mode="reupload"
       showAfterOrderSelect
       editableFields={editableFields}
-      onSubmit={(data) => console.log('重新上傳廣告資料', data)}
+      onSubmit={handleConfirmReupload}
     />
   )
 }

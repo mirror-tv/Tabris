@@ -44,7 +44,7 @@ export default function SubmitResult({
             <>
               <CloseCircleIcon className="size-12 text-gray-5" />
               <h4>抱歉，出了點問題</h4>
-              <span className="text-gray-6">
+              <span className="text-gray-6 text-center">
                 請重新嘗試，或聯繫客服信箱 mirror@mirrormedia.mg
               </span>
             </>
