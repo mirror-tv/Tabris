@@ -1,10 +1,10 @@
 import { OrderCard } from './order-card'
 
-import { OrderStatusMap } from '@/constants'
+import { OrderStateMap } from '@/constants'
 import { type OrderRecord } from '@/mocks/mockData'
 
 type OrderGroupProps = {
-  status: keyof typeof OrderStatusMap
+  status: keyof typeof OrderStateMap
   orders: OrderRecord[]
   className?: string
 }
@@ -14,7 +14,7 @@ export function OrderGroup({
   orders,
   className = '',
 }: OrderGroupProps) {
-  const statusConfig = OrderStatusMap[status]
+  const statusConfig = OrderStateMap[status]
 
   if (orders.length === 0) {
     return null

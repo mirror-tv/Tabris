@@ -1,18 +1,20 @@
 'use client'
 
 import { useState } from 'react'
+
 import Link from 'next/link'
+
 import { Button } from '@/components/ui/button'
-import { env } from '@/constants/environment-variables'
+import { ENV } from '@/constants/environment-variables'
 
 export default function DevNavigation() {
   const [open, setOpen] = useState(true)
-  const isLocalOrDev = ['local', 'dev'].includes(env.ENV)
+  const isLocalOrDev = ['local', 'dev'].includes(ENV)
 
   if (!isLocalOrDev || !open) return null
 
   return (
-    <nav className="fixed bottom-0 flex w-full shrink-0 justify-center gap-4 bg-gray-800 p-2 text-white z-50">
+    <nav className="fixed bottom-0 z-50 flex w-full shrink-0 justify-center gap-4 bg-gray-800 p-2 text-white">
       <span className="flex items-center text-sm font-semibold tracking-wide whitespace-nowrap uppercase opacity-80">
         Dev Navigation
       </span>

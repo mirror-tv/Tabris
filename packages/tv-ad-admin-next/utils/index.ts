@@ -1,10 +1,10 @@
-import { type OrderStatus } from '../constants'
+import { type OrderState } from '../constants'
 import { type OrderRecord } from '../mocks/mockData'
 
 function filterOrders(
   orders: OrderRecord[],
   searchKeyword: string,
-  status: string
+  state: string
 ): OrderRecord[] {
   return orders.filter((order) => {
     const matchesKeyword =
@@ -12,29 +12,32 @@ function filterOrders(
       order.productName.toLowerCase().includes(searchKeyword.toLowerCase()) ||
       order.orderNumber.toLowerCase().includes(searchKeyword.toLowerCase())
 
-    const matchesStatus = status === 'all' ? true : order.state === status
+    const matchesStatus = state === 'all' ? true : order.state === state
 
     return matchesKeyword && matchesStatus
   })
 }
 
-function getStatusStats(orders: OrderRecord[]) {
+function getStateGroups(orders: OrderRecord[]) {
   const total = orders.length
-  const statusCounts = orders.reduce(
+  const stateCounts = orders.reduce(
     (acc, order) => {
-      acc[order.state] = (acc[order.state] || 0) + 1
+      const key = order.state as OrderState
+      acc[key] = (acc[key] || 0) + 1
       return acc
     },
-    {} as Record<OrderStatus, number>
+    {} as Partial<Record<OrderState, number>>
   )
 
-  return { total, statusCounts }
+  return { total, stateCounts }
 }
 
 // Local exports — domain-related helpers
-export { filterOrders, getStatusStats }
+export { filterOrders, getStateGroups }
 
 // Re-exports — generic shared utilities
 export * from './cn'
 export * from './devLog'
 export * from './state'
+export * from './date'
+export * from './order-grouping'

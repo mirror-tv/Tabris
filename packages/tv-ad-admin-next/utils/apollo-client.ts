@@ -13,6 +13,12 @@ const isServer = (): boolean => {
 }
 
 export const getClient = () => {
+  if (!GQL_ENDPOINT) {
+    throw new Error(
+      'GQL_ENDPOINT is not configured. Please set GQL_ENDPOINT environment variable.'
+    )
+  }
+
   // creat a new client if there's no existing one
   // or if we are running on the server.
   if (!client || isServer()) {
