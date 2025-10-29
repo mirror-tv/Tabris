@@ -5,7 +5,6 @@ import type { Dispatch, SetStateAction } from 'react'
 import { addDays, format, startOfToday } from 'date-fns'
 import { zhTW } from 'date-fns/locale/zh-TW'
 
-
 import { ErrorMessage } from '../custom-ui/error-message'
 import { LabeledField } from '../custom-ui/labeled-field'
 import { Button } from '../ui/button'
@@ -21,6 +20,8 @@ import {
 import { layout } from '@/constants'
 import CalendarIcon from '@/public/icons/calender.svg'
 import { cn } from '@/utils'
+
+
 
 type PopoverCalendarProps = {
   range: DateRange | undefined
@@ -41,7 +42,7 @@ export default function PopoverCalendar({
   ...props
 }: PopoverCalendarProps) {
   const today = startOfToday()
-  const minDate = addDays(today, 14)
+  const minDate = addDays(today, 0)
   const dateFormat = 'yyyy/M/d'
 
   const hasValue = !!(range?.from && range?.to)
