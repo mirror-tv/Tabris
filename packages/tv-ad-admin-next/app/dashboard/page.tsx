@@ -20,6 +20,8 @@ import {
 import { OrderStateMap } from '@/constants'
 import { getOrdersState } from '@/utils/order-grouping'
 
+const ERROR_MESSAGE = '載入訂單失敗，請稍後再試'
+
 export default function DashboardPage() {
   const [ordersState, setOrdersState] = useState<
     { state: keyof typeof OrderStateMap; count: number }[]
@@ -42,17 +44,53 @@ export default function DashboardPage() {
       const res = await fetch('/api/dashboard/stats', {
         signal: abortControllerRef.current.signal,
       })
-      if (!res.ok) {
-        throw new Error(`Failed to fetch orders: ${res.statusText}`)
+
+      // 先讀取 response text，以便在 JSON 解析失敗時可以記錄
+      let data
+      let responseText: string | null = null
+      try {
+        responseText = await res.text()
+        data = JSON.parse(responseText)
+      } catch (jsonError) {
+        // JSON 解析失敗（可能是伺服器回傳非 JSON，如 HTML 錯誤頁）
+        console.error('[Dashboard Stats API] JSON 解析失敗:', {
+          status: res.status,
+          statusText: res.statusText,
+          url: res.url,
+          responseText: responseText?.substring(0, 500), // 限制長度避免 log 過長
+          error: jsonError,
+        })
+        throw new Error(ERROR_MESSAGE)
       }
-      const data = await res.json()
+
+      if (!res.ok) {
+        // API 回傳了錯誤 JSON，記錄完整的 debug 資訊
+        console.error('[Dashboard Stats API] 請求失敗:', {
+          status: res.status,
+          statusText: res.statusText,
+          url: res.url,
+          apiError: data.error,
+          fullResponse: data,
+        })
+        throw new Error(ERROR_MESSAGE)
+      }
+
+      // 成功：設定資料
       setOrdersState(getOrdersState(data.orders || []))
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') {
         return // 請求被取消，不更新狀態
       }
-      console.error('Failed to fetch orders:', error)
-      setError(error instanceof Error ? error.message : '載入訂單失敗')
+      // 記錄完整的錯誤資訊供工程師 debug
+      console.error('[Dashboard Stats] 載入訂單失敗:', {
+        error,
+        errorMessage: error instanceof Error ? error.message : String(error),
+        errorStack: error instanceof Error ? error.stack : undefined,
+        errorName: error instanceof Error ? error.name : undefined,
+      })
+      // 只顯示友善的錯誤訊息給使用者，避免顯示技術細節
+      // 技術細節已記錄在 console，供工程師 debug 使用
+      setError(ERROR_MESSAGE)
     } finally {
       setIsLoading(false)
     }
@@ -61,7 +99,6 @@ export default function DashboardPage() {
   useEffect(() => {
     fetchOrders()
     return () => {
-      // 元件卸載時取消請求
       if (abortControllerRef.current) {
         abortControllerRef.current.abort()
       }
