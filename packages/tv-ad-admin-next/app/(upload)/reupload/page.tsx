@@ -76,7 +76,6 @@ export default function ReUploadPage() {
     <UploadTemplate
       pageTitle={pageTitle}
       mode="reupload"
-      showAfterOrderSelect
       editableFields={editableFields}
       onSubmit={handleConfirmReupload}
     />

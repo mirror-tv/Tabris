@@ -39,6 +39,7 @@ export default function UploadPage() {
       pageTitle={pageTitle}
       mode="upload"
       onSubmit={handleConfirmUpload}
+      showAfterOrderSelect
     />
   )
 }

@@ -56,7 +56,7 @@ export type EditableFields = Partial<{
 
 type UploadTemplateProps = {
   pageTitle: string
-  mode?: 'upload' | 'reupload'
+  mode: 'upload' | 'reupload'
   editableFields?: EditableFields
   showAfterOrderSelect?: boolean
   onSubmit: (data: UploadSubmittedData) => void
@@ -64,7 +64,7 @@ type UploadTemplateProps = {
 
 export default function UploadTemplate({
   pageTitle,
-  mode = 'upload',
+  mode,
   editableFields = {
     adName: true,
     range: true,
@@ -240,7 +240,7 @@ export default function UploadTemplate({
                       ]
                     )}
                   >
-                    <SelectValue placeholder="請選擇要上傳素材的訂單" />
+                    <SelectValue placeholder="請選擇要上傳/修改素材的訂單" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="#C2GS19-1">訂單 1</SelectItem>
