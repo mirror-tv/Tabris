@@ -20,8 +20,8 @@ export async function GET() {
     const orders = data?.orders || []
     const formattedOrders = orders.map((order) => ({
       ...order,
-      scheduleStartDate: formatTaiwanDate(order.scheduleStartDate),
-      scheduleEndDate: formatTaiwanDate(order.scheduleEndDate),
+      scheduleStartDateString: formatTaiwanDate(order.scheduleStartDate),
+      scheduleEndDateString: formatTaiwanDate(order.scheduleEndDate),
     }))
 
     return NextResponse.json({ orders: formattedOrders })

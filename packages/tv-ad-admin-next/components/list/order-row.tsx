@@ -6,7 +6,7 @@ import { type OrderRecordForList } from '@/types/order'
 
 type OrderRowProps = {
   order: OrderRecordForList
-  onViewOrder: (orderId: string) => void
+  onViewOrder: (orderId: number) => void
   isRelated?: boolean
 }
 
@@ -22,8 +22,8 @@ export function OrderRow({
     updatedAt,
     name,
     orderNumber,
-    scheduleStartDate,
-    scheduleEndDate,
+    scheduleStartDateString,
+    scheduleEndDateString,
   } = order
   console.log(order)
   const rowContent = [
@@ -41,7 +41,7 @@ export function OrderRow({
     { key: 'name', content: name || '-' },
     {
       key: 'broadcastDate',
-      content: `${scheduleStartDate} - ${scheduleEndDate}`,
+      content: `${scheduleStartDateString} - ${scheduleEndDateString}`,
     },
     { key: 'state', content: <StateBadge state={state} /> },
     { key: 'updatedAt', content: updatedAt || '-' },
