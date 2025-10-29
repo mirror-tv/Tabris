@@ -17,3 +17,16 @@ export const getOrdersQuery = gql`
     }
   }
 `
+
+export const getOrdersStateQuery = gql`
+  query getOrdersState(
+    $where: OrderWhereInput
+    $orderBy: [OrderOrderByInput!]
+  ) {
+    orders(where: $where, orderBy: $orderBy) {
+      id
+      state
+      updatedAt
+    }
+  }
+`

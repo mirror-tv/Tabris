@@ -1,5 +1,6 @@
 import { formatTaiwanDate } from './date'
 
+import { OrderStateMap } from '@/constants'
 import { type OrderRecordForList } from '@/types/order'
 
 type RelatedOrder = { id: string } | Array<{ id: string }>
@@ -104,4 +105,21 @@ export function groupOrders(
   })
 
   return groupedOrders
+}
+
+export function getOrdersState(
+  orders: OrderRecordForList[]
+): { state: keyof typeof OrderStateMap; count: number }[] {
+  const stateCount = orders.reduce(
+    (acc, order) => {
+      acc[order.state] = (acc[order.state] || 0) + 1
+      return acc
+    },
+    {} as Partial<Record<keyof typeof OrderStateMap, number>>
+  )
+
+  return Object.entries(stateCount).map(([state, count]) => ({
+    state: state as keyof typeof OrderStateMap,
+    count: count || 0,
+  }))
 }

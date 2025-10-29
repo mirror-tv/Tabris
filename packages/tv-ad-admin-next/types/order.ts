@@ -29,3 +29,8 @@ export type OrderRecordForList = Pick<
 > & {
   relatedOrder?: { id: string }
 }
+
+export type OrderRecordForDashboard = Pick<
+  OrderRecord,
+  'id' | 'state' | 'updatedAt'
+>
