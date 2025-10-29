@@ -65,6 +65,11 @@ export default function EmbedCodeBlock({ data }: { data: ApiDataEmbedCode }) {
         embeddedCode.includes('facebook.com/') ||
         embeddedCode.includes('fb.com/')
 
+      // 檢測是否包含 PDF 檔案
+      const hasPdfFile =
+        embeddedCode.includes('.pdf') ||
+        embeddedCode.includes('application/pdf')
+
       // 如果是 YouTube iframe，移除寬高屬性
       let processedEmbeddedCode = embeddedCode
       if (hasYouTubeIframe) {
@@ -100,6 +105,26 @@ export default function EmbedCodeBlock({ data }: { data: ApiDataEmbedCode }) {
             return result
           }
         )
+      }
+
+      if (hasPdfFile) {
+        // 情況1：純 PDF URL（例如：https://example.com/file.pdf）
+        const isPurePdfUrl = embeddedCode.match(/^https?:\/\/[^"\s]+\.pdf$/i)
+        if (isPurePdfUrl) {
+          processedEmbeddedCode = `<object data="${embeddedCode}" type="application/pdf" style="width: 100%; height: 474px; border: none;">
+            <p>您的瀏覽器不支援 PDF 預覽功能</p>
+            <p>請點擊 <a href="${embeddedCode}" target="_blank" rel="noopener">這裡</a> 下載或在新視窗中開啟 PDF 檔案</p>
+          </object>`
+        } else {
+          // 情況2：如果 embeddedCode 已經包含 HTML 標籤（例如：<embed src="file.pdf" />）
+          processedEmbeddedCode = processedEmbeddedCode.replace(
+            /<(embed|object|iframe)([^>]*(?:src=["'][^"']*\.pdf["']|data=["'][^"']*\.pdf["'])[^>]*)>/gi,
+            (_, tag, attributes) => {
+              const result = `<${tag}${attributes} style="width: 100%; height: 474px; border: none;" type="application/pdf"></${tag}>`
+              return result
+            }
+          )
+        }
       }
 
       const parser = new DOMParser()
