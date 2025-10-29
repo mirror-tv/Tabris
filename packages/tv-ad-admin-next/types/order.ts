@@ -1,10 +1,13 @@
 import { type OrderState } from '@/constants'
 
 export type OrderRecord = {
-  id: string
+  id: number
   orderNumber: string
-  productName: string
-  broadcastDate: string
+  name: string | null
+  scheduleStartDate: Date | null
+  scheduleEndDate: Date | null
+  scheduleStartDateString?: string | null
+  scheduleEndDateString?: string | null
   state: OrderState
   relatedOrder?: OrderRecord
   createdAt: string
@@ -13,7 +16,16 @@ export type OrderRecord = {
 
 export type OrderRecordForList = Pick<
   OrderRecord,
-  'id' | 'orderNumber' | 'state' | 'createdAt' | 'updatedAt'
+  | 'id'
+  | 'orderNumber'
+  | 'name'
+  | 'state'
+  | 'scheduleStartDate'
+  | 'scheduleEndDate'
+  | 'scheduleStartDateString'
+  | 'scheduleEndDateString'
+  | 'createdAt'
+  | 'updatedAt'
 > & {
-  relatedOrder?: OrderRecordForList
+  relatedOrder?: { id: string }
 }
