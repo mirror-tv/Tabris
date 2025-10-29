@@ -17,7 +17,15 @@ export function OrderRow({
   onViewOrder,
   isRelated = false,
 }: OrderRowProps) {
-  const { state, updatedAt, name, orderNumber, schedule } = order
+  const {
+    state,
+    updatedAt,
+    name,
+    orderNumber,
+    scheduleStartDate,
+    scheduleEndDate,
+  } = order
+  console.log(order)
   const rowContent = [
     {
       key: 'number',
@@ -30,10 +38,13 @@ export function OrderRow({
         </div>
       ),
     },
-    { key: 'name', content: name },
-    { key: 'broadcastDate', content: schedule },
+    { key: 'name', content: name || '-' },
+    {
+      key: 'broadcastDate',
+      content: `${scheduleStartDate} - ${scheduleEndDate}`,
+    },
     { key: 'state', content: <StateBadge state={state} /> },
-    { key: 'updatedAt', content: updatedAt },
+    { key: 'updatedAt', content: updatedAt || '-' },
     {
       key: 'moreBtn',
       content: (

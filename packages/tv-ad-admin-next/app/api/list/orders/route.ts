@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server'
 import { getOrdersQuery } from '@/graphql/queries/orders'
 import { type OrderRecordForList } from '@/types/order'
 import { getClient } from '@/utils/apollo-client'
+import { formatTaiwanDate } from '@/utils/date'
 import { createErrorLogger } from '@/utils/error-handler'
 
 export async function GET() {
@@ -17,8 +18,13 @@ export async function GET() {
     })
 
     const orders = data?.orders || []
+    const formattedOrders = orders.map((order) => ({
+      ...order,
+      scheduleStartDate: formatTaiwanDate(order.scheduleStartDate),
+      scheduleEndDate: formatTaiwanDate(order.scheduleEndDate),
+    }))
 
-    return NextResponse.json({ orders })
+    return NextResponse.json({ orders: formattedOrders })
   } catch (error) {
     createErrorLogger('Failed to fetch orders list')(error)
 

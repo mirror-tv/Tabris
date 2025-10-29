@@ -7,7 +7,8 @@ export const getOrdersQuery = gql`
       orderNumber
       name
       state
-      schedule
+      scheduleStartDate
+      scheduleEndDate
       createdAt
       updatedAt
       relatedOrder {

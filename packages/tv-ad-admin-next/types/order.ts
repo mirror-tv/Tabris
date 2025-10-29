@@ -4,7 +4,8 @@ export type OrderRecord = {
   id: string
   orderNumber: string
   name: string
-  schedule: string
+  scheduleStartDate: string
+  scheduleEndDate: string
   state: OrderState
   relatedOrder?: OrderRecord
   createdAt: string
@@ -17,7 +18,8 @@ export type OrderRecordForList = Pick<
   | 'orderNumber'
   | 'name'
   | 'state'
-  | 'schedule'
+  | 'scheduleStartDate'
+  | 'scheduleEndDate'
   | 'createdAt'
   | 'updatedAt'
 > & {
