@@ -47,25 +47,32 @@ export default async function Anchorperson() {
   ])
 
   anchorData = handleResponse(
-    responses[0],
-    (response: Awaited<ReturnType<typeof fetchAnchorPerson>> | undefined) => {
-      return response?.data?.allContacts ?? []
+    responses[0] as PromiseSettledResult<Record<string, unknown>>,
+    (response: Record<string, unknown> | undefined) => {
+      const data = response as
+        | Awaited<ReturnType<typeof fetchAnchorPerson>>
+        | undefined
+      return data?.data?.allContacts ?? []
     },
     'Error occurs while fetching anchorData'
   )
 
   hostData = handleResponse(
-    responses[1],
-    (response: Awaited<ReturnType<typeof fetchHost>> | undefined) => {
-      return response?.data?.allContacts ?? []
+    responses[1] as PromiseSettledResult<Record<string, unknown>>,
+    (response: Record<string, unknown> | undefined) => {
+      const data = response as Awaited<ReturnType<typeof fetchHost>> | undefined
+      return data?.data?.allContacts ?? []
     },
     'Error occurs while fetching hostData'
   )
 
   internationalData = handleResponse(
-    responses[2],
-    (response: Awaited<ReturnType<typeof fetchInternational>> | undefined) => {
-      return response?.data?.allContacts ?? []
+    responses[2] as PromiseSettledResult<Record<string, unknown>>,
+    (response: Record<string, unknown> | undefined) => {
+      const data = response as
+        | Awaited<ReturnType<typeof fetchInternational>>
+        | undefined
+      return data?.data?.allContacts ?? []
     },
     'Error occurs while fetching internationalData'
   )
