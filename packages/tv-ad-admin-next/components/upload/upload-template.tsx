@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { format } from 'date-fns'
 import { DateRange } from 'react-day-picker'
@@ -87,6 +87,7 @@ export default function UploadTemplate({
     useState<UploadSubmittedData | null>(null)
   const [reuploadOrderSelected, setReuploadOrderSelected] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
+  const [preview, setPreview] = useState<string | null>(null)
 
   function isDisabled(key: keyof EditableFields) {
     return editableFields[key] === false
@@ -205,6 +206,18 @@ export default function UploadTemplate({
     setIsDialogOpen(false)
     // TODO: 之後可改為實際 API 請求
   }
+
+  useEffect(() => {
+    if (!file) {
+      setPreview(null)
+      return
+    }
+
+    const objectUrl = URL.createObjectURL(file)
+    setPreview(objectUrl)
+
+    return () => URL.revokeObjectURL(objectUrl)
+  }, [file])
 
   return (
     <>
@@ -341,10 +354,10 @@ export default function UploadTemplate({
                         )}
                       >
                         {/* If a file is uploaded, show preview; otherwise show icon */}
-                        {file ? (
+                        {preview ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img
-                            src={URL.createObjectURL(file)}
+                            src={preview}
                             alt="預覽圖"
                             className="h-[90px] w-40 rounded-sm bg-white object-contain shadow-sm"
                           />
