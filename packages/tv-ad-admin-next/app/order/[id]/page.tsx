@@ -12,6 +12,7 @@ import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
 import { ORDER_STATE_CONFIG, ORDER_STYLES } from '@/constants'
 import { ENV } from '@/constants/environment-variables'
+import { type OrderRecordForList } from '@/graphql/queries/orders'
 import { mockOrderData } from '@/mocks/mockData'
 
 export default function OrderPage() {
@@ -45,7 +46,22 @@ export default function OrderPage() {
                 {shouldShowPreview && <OrderPreview order={order} />}
                 <OrderActions order={order} />
               </div>
-              <OrderStateComponent order={order} />
+              {(() => {
+                const orderForState: OrderRecordForList = {
+                  id: Number(order.id),
+                  orderNumber: order.orderNumber,
+                  name: order.productName ?? null,
+                  state: order.state as OrderRecordForList['state'],
+                  scheduleStartDate: null,
+                  scheduleEndDate: null,
+                  scheduleStartDateString: undefined,
+                  scheduleEndDateString: undefined,
+                  createdAt: order.createdAt,
+                  updatedAt: order.updatedAt,
+                  relatedOrder: [],
+                }
+                return <OrderStateComponent order={orderForState} />
+              })()}
             </div>
           </div>
 

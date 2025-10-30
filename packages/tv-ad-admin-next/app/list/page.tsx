@@ -40,7 +40,7 @@ function ListContent() {
     fetchOrders()
   }, [])
 
-  const handleViewOrder = (orderId: string) => {
+  const handleViewOrder = (orderId: number) => {
     router.push(`/order/${orderId}`)
   }
 
