@@ -1,10 +1,15 @@
 'use client'
 
+import { useCallback, useEffect, useRef, useState } from 'react'
+
 import Link from 'next/link'
 
+import FileIcon from '@/assets/icons/file.svg'
+import UploadIcon from '@/assets/icons/upload.svg'
 import StateCard from '@/components/dashboard/state-card'
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardHeader,
@@ -13,47 +18,92 @@ import {
   CardContent,
 } from '@/components/ui/card'
 import { OrderStateMap } from '@/constants'
-import FileIcon from '@/public/icons/file.svg'
-import UploadIcon from '@/public/icons/upload.svg'
+import { getOrdersState } from '@/utils/order-grouping'
 
-// import { mockOrderData } from '@/mocks/mockData'
+const ERROR_MESSAGE = '載入訂單失敗，請稍後再試'
 
 export default function DashboardPage() {
-  const stateStats = [
-    { state: 'pending', count: 10 },
-    { state: 'approved', count: 5 },
-    { state: 'rejected', count: 3 },
-    { state: 'cancelled', count: 2 },
-  ]
-  // const [stateStats, setStateStats] = useState<StateStats[]>([])
+  const [ordersState, setOrdersState] = useState<
+    { state: keyof typeof OrderStateMap; count: number }[]
+  >([])
+  const [error, setError] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const abortControllerRef = useRef<AbortController | null>(null)
 
-  // const getStateStats = () => {
-  //   const stateOrder: { state: string; count: number }[] = []
+  const fetchOrders = useCallback(async () => {
+    // 取消之前的請求
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+    }
 
-  //   mockOrderData.forEach((order) => {
-  //     const existing = stateOrder.find((item) => item.state === order.state)
-  //     if (!existing) {
-  //       stateOrder.push({ state: order.state, count: 1 })
-  //     } else {
-  //       existing.count++
-  //     }
-  //   })
+    abortControllerRef.current = new AbortController()
+    setIsLoading(true)
+    setError(null)
 
-  //   return stateOrder
-  // }
+    try {
+      const res = await fetch('/api/dashboard/stats', {
+        signal: abortControllerRef.current.signal,
+      })
 
-  // const fetchOrdersStateStats = () => {
-  //   try {
-  //     setStateStats(getStateStats())
-  //   } catch (error) {
-  //     console.error(error)
-  //   }
-  // }
+      // 先讀取 response text，以便在 JSON 解析失敗時可以記錄
+      let data
+      let responseText: string | null = null
+      try {
+        responseText = await res.text()
+        data = JSON.parse(responseText)
+      } catch (jsonError) {
+        // JSON 解析失敗（可能是伺服器回傳非 JSON，如 HTML 錯誤頁）
+        console.error('[Dashboard Stats API] JSON 解析失敗:', {
+          status: res.status,
+          statusText: res.statusText,
+          url: res.url,
+          responseText: responseText?.substring(0, 500), // 限制長度避免 log 過長
+          error: jsonError,
+        })
+        throw new Error(ERROR_MESSAGE)
+      }
 
-  // useEffect(() => {
-  //   fetchOrdersStateStats()
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [])
+      if (!res.ok) {
+        // API 回傳了錯誤 JSON，記錄完整的 debug 資訊
+        console.error('[Dashboard Stats API] 請求失敗:', {
+          status: res.status,
+          statusText: res.statusText,
+          url: res.url,
+          apiError: data.error,
+          fullResponse: data,
+        })
+        throw new Error(ERROR_MESSAGE)
+      }
+
+      // 成功：設定資料
+      setOrdersState(getOrdersState(data.orders || []))
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') {
+        return // 請求被取消，不更新狀態
+      }
+      // 記錄完整的錯誤資訊供工程師 debug
+      console.error('[Dashboard Stats] 載入訂單失敗:', {
+        error,
+        errorMessage: error instanceof Error ? error.message : String(error),
+        errorStack: error instanceof Error ? error.stack : undefined,
+        errorName: error instanceof Error ? error.name : undefined,
+      })
+      // 只顯示友善的錯誤訊息給使用者，避免顯示技術細節
+      // 技術細節已記錄在 console，供工程師 debug 使用
+      setError(ERROR_MESSAGE)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchOrders()
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort()
+      }
+    }
+  }, [fetchOrders])
 
   return (
     <>
@@ -91,21 +141,40 @@ export default function DashboardPage() {
           </CardHeader>
 
           <CardContent className="grid grid-cols-1 gap-2 md:grid-cols-4 md:gap-4 xl:grid-cols-6">
-            {stateStats.map(({ state, count }) => {
-              const config = OrderStateMap[state as keyof typeof OrderStateMap]
-              if (!config) return null
+            {isLoading ? (
+              <div className="col-span-full flex items-center justify-center py-8">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="size-8 animate-spin rounded-full border-4 border-gray-3 border-t-blue-6" />
+                  <p className="text-sm text-gray-7">載入中...</p>
+                </div>
+              </div>
+            ) : error ? (
+              <div className="col-span-full flex flex-col items-center justify-center gap-4 py-8">
+                <p className="text-sm text-red-9">{error}</p>
+                <Button onClick={fetchOrders}>重新整理</Button>
+              </div>
+            ) : ordersState.length === 0 ? (
+              <div className="col-span-full flex items-center justify-center py-8">
+                <p className="text-sm text-gray-7">目前沒有訂單狀態資料</p>
+              </div>
+            ) : (
+              ordersState.map(({ state, count }) => {
+                const config =
+                  OrderStateMap[state as keyof typeof OrderStateMap]
+                if (!config) return null
 
-              return (
-                <Link key={state} href={`/list?state=${state}`}>
-                  <StateCard
-                    count={count}
-                    text={config.label}
-                    color={config.colors.text}
-                    bgColor={config.colors.bg}
-                  />
-                </Link>
-              )
-            })}
+                return (
+                  <Link key={state} href={`/list?state=${state}`}>
+                    <StateCard
+                      count={count}
+                      text={config.label}
+                      color={config.colors.text}
+                      bgColor={config.colors.bg}
+                    />
+                  </Link>
+                )
+              })
+            )}
           </CardContent>
         </Card>
       </PageMain>
