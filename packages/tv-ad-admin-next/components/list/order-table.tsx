@@ -6,7 +6,7 @@ const TABLE_HEADER_CLASS =
 
 type OrderTableProps = {
   orders: OrderRecordForList[][]
-  onViewOrder: (orderId: number) => void
+  onViewOrder: (orderNumber: string) => void
 }
 
 const tableHeader = [

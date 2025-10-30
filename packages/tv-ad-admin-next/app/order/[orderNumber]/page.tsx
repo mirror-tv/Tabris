@@ -17,16 +17,16 @@ import { mockOrderData } from '@/mocks/mockData'
 
 export default function OrderPage() {
   const params = useParams()
-  const id = params?.id as string
+  const orderNumber = params?.orderNumber as string
 
-  if (!id) {
+  if (!orderNumber) {
     return <OrderNotFound orderId={undefined} />
   }
 
-  const order = mockOrderData.find((o) => o.id === id)
+  const order = mockOrderData.find((o) => o.orderNumber === orderNumber)
 
   if (!order) {
-    return <OrderNotFound orderId={id} />
+    return <OrderNotFound orderId={orderNumber} />
   }
 
   const shouldShowPreview =
@@ -68,10 +68,10 @@ export default function OrderPage() {
           {(ENV === 'local' || ENV === 'dev') && (
             <TestModal
               orders={mockOrderData}
-              onOrderSelect={(orderId) => {
-                window.location.href = `/order/${orderId}`
+              onOrderSelect={(selectedOrderNumber) => {
+                window.location.href = `/order/${selectedOrderNumber}`
               }}
-              currentOrderId={id}
+              currentOrderId={orderNumber}
             />
           )}
         </div>

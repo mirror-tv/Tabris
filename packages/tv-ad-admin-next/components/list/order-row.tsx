@@ -6,7 +6,7 @@ import DetailIcon from '@/public/icons/detail.svg'
 
 type OrderRowProps = {
   order: OrderRecordForList
-  onViewOrder: (orderId: number) => void
+  onViewOrder: (orderNumber: string) => void
   isRelated?: boolean
 }
 
@@ -48,7 +48,10 @@ export function OrderRow({
     {
       key: 'moreBtn',
       content: (
-        <Button onClick={() => onViewOrder(order.id)} variant="outline">
+        <Button
+          onClick={() => onViewOrder(order.orderNumber)}
+          variant="outline"
+        >
           <DetailIcon className="h-4 w-4" />
           查看
         </Button>

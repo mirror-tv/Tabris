@@ -4,8 +4,6 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 import Link from 'next/link'
 
-import FileIcon from '@/assets/icons/file.svg'
-import UploadIcon from '@/assets/icons/upload.svg'
 import StateCard from '@/components/dashboard/state-card'
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
@@ -18,6 +16,8 @@ import {
   CardContent,
 } from '@/components/ui/card'
 import { OrderStateMap } from '@/constants'
+import FileIcon from '@/public/icons/file.svg'
+import UploadIcon from '@/public/icons/upload.svg'
 import { getOrdersState } from '@/utils/order-grouping'
 
 const ERROR_MESSAGE = '載入訂單失敗，請稍後再試'

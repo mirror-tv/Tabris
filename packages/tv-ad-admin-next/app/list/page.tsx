@@ -40,8 +40,8 @@ function ListContent() {
     fetchOrders()
   }, [])
 
-  const handleViewOrder = (orderId: number) => {
-    router.push(`/order/${orderId}`)
+  const handleViewOrder = (orderNumber: string) => {
+    router.push(`/order/${orderNumber}`)
   }
 
   // 使用 memo 避免重複計算訂單總數
