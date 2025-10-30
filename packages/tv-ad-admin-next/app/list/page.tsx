@@ -9,7 +9,7 @@ import { SearchAndFilter } from '@/components/list/search-and-filter'
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
 import { type OrderState } from '@/constants'
-import { type OrderRecordForList } from '@/types/order'
+import { type OrderRecordForList } from '@/graphql/queries/orders'
 import { groupOrders } from '@/utils/order-grouping'
 
 function ListContent() {

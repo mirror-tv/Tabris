@@ -1,5 +1,5 @@
 import { OrderGroup } from '@/components/list/order-group'
-import { type OrderRecordForList } from '@/types/order'
+import { type OrderRecordForList } from '@/graphql/queries/orders'
 
 const TABLE_HEADER_CLASS =
   'p-2 text-left text-sm tracking-wide text-text-primary uppercase'

@@ -1,5 +1,23 @@
 import { gql } from '@apollo/client'
 
+import { OrderSchema } from '@/types/order'
+
+export type OrderRecordForList = Pick<
+  OrderSchema,
+  | 'id'
+  | 'orderNumber'
+  | 'name'
+  | 'state'
+  | 'scheduleStartDate'
+  | 'scheduleEndDate'
+  | 'scheduleStartDateString'
+  | 'scheduleEndDateString'
+  | 'createdAt'
+  | 'updatedAt'
+> & {
+  relatedOrder?: { id: string }[]
+}
+
 export const getOrdersQuery = gql`
   query getOrders($where: OrderWhereInput, $orderBy: [OrderOrderByInput!]) {
     orders(where: $where, orderBy: $orderBy) {
@@ -17,6 +35,11 @@ export const getOrdersQuery = gql`
     }
   }
 `
+
+export type OrderRecordForDashboard = Pick<
+  OrderSchema,
+  'id' | 'state' | 'updatedAt'
+>
 
 export const getOrdersStateQuery = gql`
   query getOrdersState(

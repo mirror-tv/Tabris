@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 
 import { getOrdersStateQuery } from '@/graphql/queries/orders'
-import { type OrderRecordForDashboard } from '@/types/order'
+import { type OrderRecordForDashboard } from '@/graphql/queries/orders'
 import { getClient } from '@/utils/apollo-client'
 import { createErrorLogger } from '@/utils/error-handler'
 

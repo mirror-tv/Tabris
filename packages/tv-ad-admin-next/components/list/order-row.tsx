@@ -1,8 +1,8 @@
 import { StateBadge } from '@/components/custom-ui/state-badge'
 import { Button } from '@/components/ui/button'
+import { type OrderRecordForList } from '@/graphql/queries/orders'
 import ArrowRightDownIcon from '@/public/icons/arrow-right-sown.svg'
 import DetailIcon from '@/public/icons/detail.svg'
-import { type OrderRecordForList } from '@/types/order'
 
 type OrderRowProps = {
   order: OrderRecordForList

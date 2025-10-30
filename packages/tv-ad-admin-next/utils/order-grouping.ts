@@ -2,9 +2,9 @@ import { formatTaiwanDate } from './date'
 
 import { OrderStateMap } from '@/constants'
 import {
-  type OrderRecordForDashboard,
   type OrderRecordForList,
-} from '@/types/order'
+  type OrderRecordForDashboard,
+} from '@/graphql/queries/orders'
 
 type RelatedOrder = { id: string } | Array<{ id: string }>
 

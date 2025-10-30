@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 
 import { getOrdersQuery } from '@/graphql/queries/orders'
-import { type OrderRecordForList } from '@/types/order'
+import { type OrderRecordForList } from '@/graphql/queries/orders'
 import { getClient } from '@/utils/apollo-client'
 import { formatTaiwanDate } from '@/utils/date'
 import { createErrorLogger } from '@/utils/error-handler'
