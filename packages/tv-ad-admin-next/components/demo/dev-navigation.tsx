@@ -20,14 +20,11 @@ export default function DevNavigation() {
       </span>
 
       <div className="flex w-full flex-wrap items-center justify-center gap-2">
-        <Link href="/preview" className="hover:text-blue-400">
-          Preview
-        </Link>
         <Link href="/demo" className="hover:text-green-400">
           Demo
         </Link>
         <span className="font-extrabold">|</span>
-        <Link href="/login" className="hover:text-purple-400">
+        <Link href="/" className="hover:text-purple-400">
           Login
         </Link>
         <Link href="/dashboard" className="hover:text-indigo-400">
@@ -35,6 +32,9 @@ export default function DevNavigation() {
         </Link>
         <Link href="/upload" className="hover:text-pink-400">
           Upload
+        </Link>
+        <Link href="/reupload" className="hover:text-pink-400">
+          Reupload
         </Link>
         <Link href="/list" className="hover:text-yellow-400">
           List

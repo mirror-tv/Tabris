@@ -1,4 +1,6 @@
-import { Input } from '@/components/ui/input'
+import { LabeledField } from '../custom-ui/labeled-field'
+
+import { CustomInput } from '@/components/custom-ui/custom-input'
 import {
   Select,
   SelectContent,
@@ -7,7 +9,9 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { type OrderState } from '@/constants'
+import SearchIcon from '@/public/icons/search.svg'
 import { OrderStateUtils } from '@/utils'
+
 
 type SearchAndFilterProps = {
   searchKeyword: string
@@ -15,6 +19,8 @@ type SearchAndFilterProps = {
   orderState: OrderState | 'all'
   onStateChange: (value: OrderState | 'all') => void
 }
+
+const searchId = 'search'
 
 export function SearchAndFilter({
   searchKeyword,
@@ -32,33 +38,21 @@ export function SearchAndFilter({
       <h4 className="text-text-primary">搜尋與篩選</h4>
 
       <div className="flex w-full flex-col gap-4 md:flex-row">
-        <div className="flex-1">
-          <label className="mb-2 block text-sm font-medium text-text-primary">
-            搜尋關鍵字
-          </label>
-          <Input
+        <LabeledField
+          id={searchId}
+          label="搜尋關鍵字"
+          className="w-full flex-1"
+        >
+          <CustomInput
+            id={searchId}
             type="text"
             value={searchKeyword}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="搜尋商品名稱"
-            icon={
-              <svg
-                className="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-            }
+            icon={<SearchIcon />}
             className="w-full rounded-lg border-border-default bg-surface-tertiary py-3 text-sm placeholder-text-tertiary focus:border-transparent focus:ring-0 focus:outline-none focus-visible:ring-0"
           />
-        </div>
+        </LabeledField>
         <div className="w-full flex-1">
           <label className="mb-2 block text-sm font-medium text-text-primary">
             訂單狀態

@@ -8,10 +8,10 @@ import { useRouter } from 'next/navigation'
 
 import { Button } from '../ui/button'
 
-import ArrowBackIcon from '@/assets/icons/arrow-back.svg'
-import LogoutIcon from '@/assets/icons/log-out.svg'
-import LogoIcon from '@/assets/icons/mnews-logo.svg'
 import { layout } from '@/constants'
+import ArrowBackIcon from '@/public/icons/arrow-back.svg'
+import LogoutIcon from '@/public/icons/log-out.svg'
+import LogoIcon from '@/public/icons/mnews-logo.svg'
 import { cn } from '@/utils'
 
 type PageHeaderProps =

@@ -2,19 +2,23 @@
 
 import { useState } from 'react'
 
-import TextFormatIcon from '@/assets/icons/text-format.svg'
-import TextIcon from '@/assets/icons/text.svg'
-import TriangleExclamationIcon from '@/assets/icons/triangle-exclamation.svg'
+import { ErrorMessage } from '@/components/custom-ui/error-message'
+import { LabeledField } from '@/components/custom-ui/labeled-field'
+import EditPageLayout from '@/components/edit/edit-page-layout'
 import { Instructions } from '@/components/shared/instructions'
+import SubmitResult from '@/components/shared/submit-result'
 import { Textarea } from '@/components/ui/textarea'
+import { layout } from '@/constants'
+import { useSubmitStatus } from '@/hooks/useSubmitStatus'
+import TextFormatIcon from '@/public/icons/text-format.svg'
+import TextIcon from '@/public/icons/text.svg'
+import TriangleExclamationIcon from '@/public/icons/triangle-exclamation.svg'
 import { cn } from '@/utils'
 
-import EditPageLayout, {
-  type SubmitStatus,
-} from '../../../components/edit/edit-page-layout'
-
-const textareaStyle =
-  'w-full resize-none rounded-md bg-gray-2 p-3 placeholder:text-text-tertiary placeholder:text-h6'
+const textareaStyle = [
+  'w-full resize-none rounded-md bg-gray-2 p-3 placeholder:!text-text-tertiary placeholder:text-h6',
+  layout.hoverBorder,
+]
 
 const INSTRUCTIONS_INFO = [
   '提出修改要求後，原始排播日期將會作廢',
@@ -23,9 +27,12 @@ const INSTRUCTIONS_INFO = [
 ]
 
 const PAGE_TITLE = '提出修改'
+const reasonId = 'reason'
+const detailsId = 'details'
 
 export default function EditRequest() {
-  const [submitStatus, setSubmitStatus] = useState<SubmitStatus>('idle')
+  const { submitStatus, setSubmitStatus } = useSubmitStatus()
+
   const [reason, setReason] = useState('')
   const [details, setDetails] = useState('')
   const [errors, setErrors] = useState<{ reason?: string; details?: string }>(
@@ -49,24 +56,35 @@ export default function EditRequest() {
     setSubmitStatus(isSuccess ? 'success' : 'failure')
   }
 
+  if (submitStatus === 'success') {
+    return (
+      <SubmitResult
+        pageTitle={PAGE_TITLE}
+        status="success"
+        heading="送出成功"
+        message="業務會寄信給您溝通後續修改事宜，再請密切注意"
+      />
+    )
+  } else if (submitStatus === 'failure') {
+    return <SubmitResult pageTitle={PAGE_TITLE} />
+  }
+
   return (
     <EditPageLayout
       pageTitle={PAGE_TITLE}
       onSubmit={handleSubmit}
       submitButtonName="送出修改請求"
-      submitStatus={submitStatus}
+      // submitStatus={submitStatus}
     >
-      <div className="space-y-m">
-        <label
-          htmlFor="reason"
-          className="typography-h6 flex items-center gap-1"
-        >
-          <TextIcon className="text-text-tertiary" />
-          修改原因
-        </label>
+      <LabeledField
+        id={reasonId}
+        label="修改原因"
+        labelIcon={<TextIcon />}
+        className="relative"
+      >
         <Textarea
-          id="reason"
-          name="reason"
+          id={reasonId}
+          name={reasonId}
           value={reason}
           onChange={(e) => setReason(e.target.value)}
           placeholder="例如：文字需要調整"
@@ -76,19 +94,17 @@ export default function EditRequest() {
               'border-destructive focus-visible:ring-destructive/40'
           )}
         />
-        {errors.reason && <p className="text-destructive">{errors.reason}</p>}
-      </div>
-      <div className="space-y-m">
-        <label
-          htmlFor="details"
-          className="typography-h6 flex items-center gap-1"
-        >
-          <TextFormatIcon className="text-text-tertiary" />
-          修改詳情
-        </label>
+        {errors.reason && <ErrorMessage>{errors.reason}</ErrorMessage>}
+      </LabeledField>
+      <LabeledField
+        id={detailsId}
+        label="修改詳情"
+        labelIcon={<TextFormatIcon />}
+        className="relative"
+      >
         <Textarea
-          id="details"
-          name="details"
+          id={detailsId}
+          name={detailsId}
           value={details}
           onChange={(e) => setDetails(e.target.value)}
           placeholder="請詳細描述您希望調整的地方及期望結果"
@@ -98,8 +114,8 @@ export default function EditRequest() {
               'border-destructive focus-visible:ring-destructive/40'
           )}
         />
-        {errors.details && <p className="text-destructive">{errors.details}</p>}
-      </div>
+        {errors.details && <ErrorMessage>{errors.details}</ErrorMessage>}
+      </LabeledField>
       <Instructions
         title="重要提醒"
         icon={<TriangleExclamationIcon />}

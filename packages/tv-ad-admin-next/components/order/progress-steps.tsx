@@ -1,4 +1,3 @@
-import DoneIcon from '@/assets/icons/done.svg'
 import {
   OrderStateMap,
   PROGRESS_COLOR_RULES,
@@ -7,6 +6,7 @@ import {
   ORDER_STATE,
   type OrderState,
 } from '@/constants'
+import DoneIcon from '@/public/icons/done.svg'
 
 type ProgressStepsProps = {
   currentStatus: OrderState

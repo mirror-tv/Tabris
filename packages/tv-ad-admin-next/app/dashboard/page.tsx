@@ -1,12 +1,7 @@
 'use client'
 
-// import { useState, useEffect } from 'react'
-
-import Image from 'next/image'
 import Link from 'next/link'
 
-import fileIcon from '@/assets/icons/file.svg'
-import uploadIcon from '@/assets/icons/upload.svg'
 import StateCard from '@/components/dashboard/state-card'
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
@@ -18,6 +13,10 @@ import {
   CardContent,
 } from '@/components/ui/card'
 import { OrderStateMap } from '@/constants'
+import FileIcon from '@/public/icons/file.svg'
+import UploadIcon from '@/public/icons/upload.svg'
+
+// import { mockOrderData } from '@/mocks/mockData'
 
 export default function DashboardPage() {
   const stateStats = [
@@ -65,13 +64,7 @@ export default function DashboardPage() {
           {/* Upload Card */}
           <Link href="/upload">
             <Card className="cursor-pointer items-center justify-center gap-3 hover:shadow-[0_4px_8px_0_rgba(0,0,0,0.10)]">
-              <Image
-                src={uploadIcon}
-                alt="upload"
-                width={40}
-                height={40}
-                className="text-blue-7"
-              />
+              <UploadIcon className="size-10 text-blue-7" />
               <CardTitle className="flex flex-col items-center gap-1">
                 <span>上傳廣告素材</span>
                 <CardDescription>上傳後即可進入製作流程</CardDescription>
@@ -82,13 +75,7 @@ export default function DashboardPage() {
           {/* history Card */}
           <Link href="/list">
             <Card className="cursor-pointer items-center justify-center gap-3 hover:shadow-[0_4px_8px_0_rgba(0,0,0,0.10)]">
-              <Image
-                src={fileIcon}
-                alt="file"
-                width={40}
-                height={40}
-                className="text-blue-7"
-              />
+              <FileIcon className="size-10 text-blue-7" />
               <CardTitle className="flex flex-col items-center gap-1">
                 <span>訂單紀錄</span>
                 <CardDescription>查看與管理所有訂單</CardDescription>
