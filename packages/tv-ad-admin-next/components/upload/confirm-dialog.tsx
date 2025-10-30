@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactNode } from 'react'
+import { ReactNode, useState } from 'react'
 
 import { Instructions } from '@/components/shared/instructions'
 import { Button } from '@/components/ui/button'
@@ -31,7 +31,7 @@ type ConfirmDialogProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
   submittedData: UploadSubmittedData | null
-   onConfirm: () => void
+  onConfirm: () => void
 }
 
 export default function ConfirmDialog({
@@ -40,6 +40,18 @@ export default function ConfirmDialog({
   submittedData,
   onConfirm,
 }: ConfirmDialogProps) {
+  const [isUploading, setIsUploading] = useState(false)
+
+  async function handleConfirm() {
+    try {
+      setIsUploading(true)
+      await onConfirm() // wait for API completion
+      onOpenChange(false)
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="gap-3">
@@ -69,7 +81,9 @@ export default function ConfirmDialog({
         <Instructions
           title="重要提醒"
           icon={<TriangleExclamationIcon />}
-          wordings={['素材送出後將無法編輯、修改，請確認所有上傳內容正確無誤。']}
+          wordings={[
+            '素材送出後將無法編輯、修改，請確認所有上傳內容正確無誤。',
+          ]}
         />
 
         <DialogFooter className="pt-4">
@@ -78,10 +92,8 @@ export default function ConfirmDialog({
               取消
             </Button>
           </DialogClose>
-          <Button size="lg" onClick={() => {
-            onConfirm()
-            onOpenChange(false)}}>
-            確認上傳
+          <Button size="lg" onClick={handleConfirm} disabled={isUploading}>
+            {isUploading ? '上傳中…' : '確認上傳'}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -89,14 +101,7 @@ export default function ConfirmDialog({
   )
 }
 
-
-function InfoRow({
-  label,
-  children,
-}: {
-  label: string
-  children: ReactNode
-}) {
+function InfoRow({ label, children }: { label: string; children: ReactNode }) {
   return (
     <p className="font-medium text-gray-8">
       <span className="font-medium text-gray-6">{label}</span>
