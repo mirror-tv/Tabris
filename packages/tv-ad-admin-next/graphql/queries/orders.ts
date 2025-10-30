@@ -53,3 +53,39 @@ export const getOrdersStateQuery = gql`
     }
   }
 `
+
+export type OrderRecordForOrderNumber = Pick<
+  OrderSchema,
+  | 'id'
+  | 'orderNumber'
+  | 'name'
+  | 'state'
+  | 'scheduleStartDate'
+  | 'scheduleEndDate'
+  | 'scheduleStartDateString'
+  | 'scheduleEndDateString'
+  | 'paragraphOne'
+  | 'paragraphTwo'
+  | 'createdAt'
+  | 'updatedAt'
+>
+
+export const getOrdersByOrderNumberQuery = gql`
+  query getOrdersByOrderNumber($orderNumber: String!) {
+    orders(where: { orderNumber: $orderNumber }) {
+      id
+      orderNumber
+      name
+      state
+      scheduleStartDate
+      scheduleEndDate
+      paragraphOne
+      paragraphTwo
+      createdAt
+      updatedAt
+      relatedOrder {
+        id
+      }
+    }
+  }
+`
