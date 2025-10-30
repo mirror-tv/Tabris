@@ -1,3 +1,4 @@
+import { StateBadge } from '@/components/custom-ui/state-badge'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -6,7 +7,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { StateBadge } from '@/components/ui/state-badge'
 import { OrderStateMap } from '@/constants'
 import { type OrderRecord } from '@/mocks/mockData'
 

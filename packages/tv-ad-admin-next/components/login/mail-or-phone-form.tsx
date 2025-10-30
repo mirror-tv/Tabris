@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react'
 
-import Image from 'next/image'
-
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { useDebounce } from '@/hooks/useDebounce'
+import ArrowRightIcon from '@/public/icons/arrow-right.svg'
+import MailIcon from '@/public/icons/mail.svg'
+import PhoneIcon from '@/public/icons/phone.svg'
 import { validateEmail, validatePhone } from '@/utils/validation'
+
+import { LabeledField } from '../custom-ui/labeled-field'
+import { ShakeInput } from '../custom-ui/shake-input'
 
 type MailOrPhoneFormProps = {
   status: 'email' | 'phone' | 'OPT'
@@ -19,6 +22,9 @@ type MailOrPhoneFormProps = {
   loadingMessage?: string
   error: string
 }
+
+const emailId = 'email'
+const phoneId = 'phone'
 
 export default function MailOrPhoneForm({
   status,
@@ -80,16 +86,10 @@ export default function MailOrPhoneForm({
 
       <form onSubmit={handleSubmit} className="mt-4 flex w-full flex-col gap-4">
         {status === 'email' && (
-          <div className="flex flex-col gap-1">
-            <label
-              htmlFor="email"
-              className="font-sans text-sm leading-normal font-medium text-text-primary"
-            >
-              電子信箱
-            </label>
-            <Input
-              id="email"
-              type="email"
+          <LabeledField id={emailId} label="電子信箱" className="mb-2">
+            <ShakeInput
+              id={emailId}
+              type={emailId}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="sample@gmail.com"
@@ -106,28 +106,15 @@ export default function MailOrPhoneForm({
                   ? error
                   : emailError
               }
-              icon={
-                <Image
-                  src="/assets/icons/mail.svg"
-                  alt="mail"
-                  width={16}
-                  height={16}
-                />
-              }
+              icon={<MailIcon />}
             />
-          </div>
+          </LabeledField>
         )}
 
         {status === 'phone' && (
-          <div className="flex flex-col gap-1">
-            <label
-              htmlFor="phone"
-              className="font-sans text-sm leading-normal font-medium text-text-primary"
-            >
-              手機號碼
-            </label>
-            <Input
-              id="phone"
+          <LabeledField id={phoneId} label="手機號碼" className="mb-2">
+            <ShakeInput
+              id={phoneId}
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
@@ -137,16 +124,9 @@ export default function MailOrPhoneForm({
                 error.includes('手機號碼') || phoneError ? 'error' : undefined
               }
               errorMessage={error.includes('手機號碼') ? error : phoneError}
-              icon={
-                <Image
-                  src="/assets/icons/phone.svg"
-                  alt="phone"
-                  width={16}
-                  height={16}
-                />
-              }
+              icon={<PhoneIcon />}
             />
-          </div>
+          </LabeledField>
         )}
 
         <p
@@ -156,13 +136,7 @@ export default function MailOrPhoneForm({
           className="flex cursor-pointer items-center text-sm leading-normal font-medium text-brand-primary hover:cursor-pointer"
         >
           使用{status === 'email' ? '手機號碼' : '電子信箱'}登入
-          <Image
-            src="/assets/icons/arrow.svg"
-            alt="arrow"
-            width={16}
-            height={16}
-            className="inline"
-          />
+          <ArrowRightIcon />
         </p>
 
         <Button

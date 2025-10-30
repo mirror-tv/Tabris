@@ -30,6 +30,7 @@
     ".next/types/**/*.ts",
     "types/**/*.d.ts",
     "*.config.cjs", // Explicitly include the Prettier config
+    "next.config.js",
     ".eslintrc.cjs"
   ],
   "exclude": ["node_modules"]
