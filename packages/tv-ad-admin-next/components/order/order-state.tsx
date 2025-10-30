@@ -1,9 +1,9 @@
 import { ProgressSteps } from './progress-steps'
 
-import { type OrderSchema } from '@/types/order'
+import { type OrderRecordForList } from '@/graphql/queries/orders'
 
 type OrderStateProps = {
-  order: OrderSchema
+  order: OrderRecordForList
   className?: string
 }
 
