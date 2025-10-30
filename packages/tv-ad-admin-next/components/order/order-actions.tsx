@@ -4,13 +4,15 @@ import Link from 'next/link'
 
 import { Button } from '@/components/ui/button'
 import { ORDER_STATE } from '@/constants'
-import { type OrderRecord } from '@/mocks/mockData'
+import { type OrderRecordForOrderNumber } from '@/graphql/queries/orders'
 import DoneCircleIcon from '@/public/icons/done-circle.svg'
 import EditIcon from '@/public/icons/edit.svg'
 import UploadIcon from '@/public/icons/upload.svg'
+import { useRouter } from 'next/navigation'
+import { useMemo } from 'react'
 
 type OrderActionsProps = {
-  order: OrderRecord
+  order: OrderRecordForOrderNumber
   className?: string
 }
 
@@ -142,22 +144,9 @@ const ACTION_MAP: Record<string, ActionConfig> = {
 export function OrderActions({ order, className = '' }: OrderActionsProps) {
   const [isUploading, setIsUploading] = useState(false)
   const [isConfirming, setIsConfirming] = useState(false)
-
+  const router = useRouter()
   const handleUploadClick = async () => {
-    if (isUploading) return
-
-    setIsUploading(true)
-
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 5000))
-
-      alert('上傳完成，進入下一個階段')
-      // 可以 trigger parent component 的 cb 來更新訂單狀態
-    } catch (error) {
-      console.error('上傳失敗:', error)
-    } finally {
-      setIsUploading(false)
-    }
+    router.push(`/order/re-upload/${order.orderNumber}`)
   }
 
   const handleConfirmClick = async () => {
@@ -167,28 +156,24 @@ export function OrderActions({ order, className = '' }: OrderActionsProps) {
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 5000))
-
-      alert('確認完成，進入下一個階段')
-      // 可以 trigger parent component 的 cb 來更新訂單狀態
+      // TODO: 確認完成後，進入下一個階段
+      alert('我還沒做！請提醒1軒')
     } catch (error) {
       console.error('確認失敗:', error)
-    } finally {
-      setIsConfirming(false)
     }
   }
 
   const handleSettingScheduleClick = () => {
-    alert('進入排定日程頁面')
-    // 跳轉到排播頁面
+    router.push(`/order/${order.orderNumber}/schedule`)
   }
 
   const handleModifyClick = () => {
-    alert('進入修改頁面，俊昕交給你了')
-    // 跳轉到修改頁面
+    router.push(`/order/ask/${order.orderNumber}`)
   }
 
-  const actionContent =
-    ACTION_MAP[order.state] ?? ACTION_MAP[ORDER_STATE.PENDING_UPLOAD]
+  const actionContent = useMemo(() => {
+    return ACTION_MAP[order.state] ?? ACTION_MAP[ORDER_STATE.PENDING_UPLOAD]
+  }, [order.state])
 
   return (
     <section className={`${styles.container} ${className}`}>

@@ -1,8 +1,8 @@
 import { orderLabels } from '@/constants'
-import { type OrderRecord } from '@/mocks/mockData'
+import { type OrderRecordForOrderNumber } from '@/graphql/queries/orders'
 
 type OrderDetailsProps = {
-  order: OrderRecord
+  order: OrderRecordForOrderNumber
   className?: string
 }
 
@@ -18,19 +18,22 @@ export function OrderDetails({ order, className = '' }: OrderDetailsProps) {
       <div className="space-y-3">
         <div>
           <label className={labelStyles}>{orderLabels.adName}</label>
-          <p className={valueStyles}>{order.productName}</p>
+          <p className={valueStyles}>{order.name || '-'}</p>
         </div>
         <div>
           <label className={labelStyles}>{orderLabels.broadcastDate}</label>
-          <p className={valueStyles}>{order.broadcastDate}</p>
+          <p className={valueStyles}>
+            {order.scheduleStartDateString || ''} -{' '}
+            {order.scheduleEndDateString || ''}
+          </p>
         </div>
         <div>
           <label className={labelStyles}>{orderLabels.textMaterial1}</label>
-          <p className={valueStyles}>新年快樂</p>
+          <p className={valueStyles}>{order.paragraphOne || '-'}</p>
         </div>
         <div>
           <label className={labelStyles}>{orderLabels.textMaterial2}</label>
-          <p className={valueStyles}>歡慶新年特惠價</p>
+          <p className={valueStyles}>{order.paragraphTwo || '-'}</p>
         </div>
       </div>
     </section>

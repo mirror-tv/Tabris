@@ -3,10 +3,10 @@ import { RelatedDocuments } from './related-documents'
 import { Instructions } from '../shared/instructions'
 
 import { ORDER_STATE, ORDER_STYLES } from '@/constants'
-import { type OrderRecord } from '@/mocks/mockData'
+import { type OrderRecordForOrderNumber } from '@/graphql/queries/orders'
 
 type OrderPreviewProps = {
-  order: OrderRecord
+  order: OrderRecordForOrderNumber
   className?: string
 }
 
@@ -25,7 +25,7 @@ export function OrderPreview({ order, className = '' }: OrderPreviewProps) {
           ]}
         />
       )}
-      {order.state === ORDER_STATE.PENDING_BROADCAST_DATE && (
+      {order.state === ORDER_STATE.PENDING_SCHEDULE && (
         <Instructions
           title="說明"
           wordings={[

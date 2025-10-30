@@ -12,27 +12,56 @@ import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
 import { ORDER_STATE_CONFIG, ORDER_STYLES } from '@/constants'
 import { ENV } from '@/constants/environment-variables'
-import { type OrderRecordForList } from '@/graphql/queries/orders'
+import {
+  OrderRecordForOrderNumber,
+  type OrderRecordForList,
+} from '@/graphql/queries/orders'
 import { mockOrderData } from '@/mocks/mockData'
+import { useEffect, useState, useMemo } from 'react'
 
 export default function OrderPage() {
   const params = useParams()
   const orderNumber = params?.orderNumber as string
+  const [order, setOrder] = useState<OrderRecordForOrderNumber | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
-  if (!orderNumber) {
-    return <OrderNotFound orderId={undefined} />
-  }
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const res = await fetch(`/api/order/${orderNumber}`)
+        if (!res.ok) {
+          throw new Error(
+            `Failed to fetch order by order number: ${orderNumber}: ${res.statusText}`
+          )
+        }
+        const data = await res.json()
+        const order = data.orders[0]
+        if (!order) {
+          setError(`Order not found: ${orderNumber}`)
+          return
+        }
+        setOrder(order)
+        setError(null)
+      } catch (error) {
+        console.error('Failed to fetch orders:', error)
+        setError(error instanceof Error ? error.message : '載入訂單失敗')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    if (!orderNumber) {
+      setError('Order number is required')
+    }
+    fetchOrders()
+  }, [])
 
-  const order = mockOrderData.find((o) => o.orderNumber === orderNumber)
-
-  if (!order) {
-    return <OrderNotFound orderId={orderNumber} />
-  }
-
-  const shouldShowPreview =
-    ORDER_STATE_CONFIG.PREVIEW_REQUIRED_STATUSES.includes(
+  const shouldShowPreview = useMemo(() => {
+    if (!order) return false
+    return ORDER_STATE_CONFIG.PREVIEW_REQUIRED_STATUSES.includes(
       order.state as (typeof ORDER_STATE_CONFIG.PREVIEW_REQUIRED_STATUSES)[number]
     )
+  }, [order])
 
   return (
     <div className={ORDER_STYLES.pageContainer}>
@@ -42,26 +71,11 @@ export default function OrderPage() {
           <div className={ORDER_STYLES.innerContainer}>
             <div className={ORDER_STYLES.layoutGrid}>
               <div className={`flex-1 ${ORDER_STYLES.sectionSpacing}`}>
-                <OrderDetails order={order} />
-                {shouldShowPreview && <OrderPreview order={order} />}
-                <OrderActions order={order} />
+                {order && <OrderDetails order={order} />}
+                {shouldShowPreview && order && <OrderPreview order={order} />}
+                {order && <OrderActions order={order} />}
               </div>
-              {(() => {
-                const orderForState: OrderRecordForList = {
-                  id: Number(order.id),
-                  orderNumber: order.orderNumber,
-                  name: order.productName ?? null,
-                  state: order.state as OrderRecordForList['state'],
-                  scheduleStartDate: null,
-                  scheduleEndDate: null,
-                  scheduleStartDateString: undefined,
-                  scheduleEndDateString: undefined,
-                  createdAt: order.createdAt,
-                  updatedAt: order.updatedAt,
-                  relatedOrder: [],
-                }
-                return <OrderStateComponent order={orderForState} />
-              })()}
+              {order && <OrderStateComponent order={order} />}
             </div>
           </div>
 
