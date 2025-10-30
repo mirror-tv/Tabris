@@ -4,7 +4,7 @@ import { type OrderRecordForList } from '@/graphql/queries/orders'
 
 type OrderGroupProps = {
   orders: OrderRecordForList[]
-  onViewOrder: (orderId: string) => void
+  onViewOrder: (orderId: number) => void
 }
 
 export function OrderGroup({ orders, onViewOrder }: OrderGroupProps) {

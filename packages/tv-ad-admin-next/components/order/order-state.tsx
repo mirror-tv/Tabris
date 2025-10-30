@@ -1,9 +1,9 @@
 import { ProgressSteps } from './progress-steps'
 
-import { type OrderRecord } from '@/types/order'
+import { type OrderSchema } from '@/types/order'
 
 type OrderStateProps = {
-  order: OrderRecord
+  order: OrderSchema
   className?: string
 }
 
