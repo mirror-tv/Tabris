@@ -1,37 +1,51 @@
 'use client'
 
-import { Suspense, useState, useMemo, useEffect } from 'react'
+import { Suspense, useState, useEffect, useMemo } from 'react'
 
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
-import { EmptyState } from '@/components/list/empty-state'
 import { OrderTable } from '@/components/list/order-table'
 import { SearchAndFilter } from '@/components/list/search-and-filter'
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
-import { mockOrderData } from '@/mocks/mockData'
-import { filterOrders } from '@/utils'
+import { type OrderState } from '@/constants'
+import { type OrderRecordForList } from '@/types/order'
+import { groupOrders } from '@/utils/order-grouping'
 
 function ListContent() {
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const status = searchParams.get('status')
   const [searchKeyword, setSearchKeyword] = useState('')
-  const [orderStatus, setOrderStatus] = useState<string>('all')
-
-  const filteredOrders = useMemo(() => {
-    return filterOrders(mockOrderData, searchKeyword, orderStatus)
-  }, [searchKeyword, orderStatus])
+  const [orderState, setOrderState] = useState<OrderState | 'all'>('all')
+  const [orders, setOrders] = useState<OrderRecordForList[][]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (status) {
-      setOrderStatus(status)
+    const fetchOrders = async () => {
+      try {
+        const res = await fetch('/api/list/orders')
+        if (!res.ok) {
+          throw new Error(`Failed to fetch orders: ${res.statusText}`)
+        }
+        const data = await res.json()
+        setOrders(groupOrders(data.orders || []))
+        setError(null)
+      } catch (error) {
+        console.error('Failed to fetch orders:', error)
+        setError(error instanceof Error ? error.message : '載入訂單失敗')
+      } finally {
+        setIsLoading(false)
+      }
     }
-  }, [status])
+    fetchOrders()
+  }, [])
 
   const handleViewOrder = (orderId: string) => {
     router.push(`/order/${orderId}`)
   }
+
+  // 使用 memo 避免重複計算訂單總數
+  const totalOrders = useMemo(() => orders.flat().length, [orders])
 
   return (
     <>
@@ -40,22 +54,21 @@ function ListContent() {
         <SearchAndFilter
           searchKeyword={searchKeyword}
           onSearchChange={setSearchKeyword}
-          orderStatus={orderStatus}
-          onStatusChange={setOrderStatus}
+          orderState={orderState}
+          onStateChange={setOrderState as (state: OrderState | 'all') => void}
         />
 
         <div className="mb-6 flex flex-col gap-6 rounded-xl border border-border-default bg-surface-primary p-6">
-          <h4 className="text-text-primary">
-            訂單列表 ({filteredOrders.length}筆記錄)
-          </h4>
+          <h4 className="text-text-primary">訂單列表 ({totalOrders}筆記錄)</h4>
 
-          {!filteredOrders.length ? (
-            <EmptyState
-              searchKeyword={searchKeyword}
-              orderStatus={orderStatus}
-            />
+          {isLoading ? (
+            <div className="py-8 text-center">載入中...</div>
+          ) : error ? (
+            <div className="py-8 text-center text-red-500">{error}</div>
+          ) : !totalOrders ? (
+            <div className="py-8 text-center text-gray-6">沒有訂單資料</div>
           ) : (
-            <OrderTable orders={filteredOrders} onViewOrder={handleViewOrder} />
+            <OrderTable orders={orders} onViewOrder={handleViewOrder} />
           )}
         </div>
       </PageMain>

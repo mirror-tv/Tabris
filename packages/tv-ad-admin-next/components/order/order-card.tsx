@@ -1,5 +1,5 @@
-import { StatusBadge } from '@/components/ui/status-badge'
-import { OrderStatusMap, ORDER_STATUS } from '@/constants'
+import { StateBadge } from '@/components/ui/state-badge'
+import { OrderStateMap, ORDER_STATE } from '@/constants'
 import { type OrderRecord } from '@/mocks/mockData'
 
 type OrderCardProps = {
@@ -8,8 +8,8 @@ type OrderCardProps = {
 }
 
 export function OrderCard({ order, className = '' }: OrderCardProps) {
-  const statusConfig = OrderStatusMap[order.status]
-  const colors = statusConfig.colors
+  const stateConfig = OrderStateMap[order.state as keyof typeof OrderStateMap]
+  const colors = stateConfig.colors
 
   return (
     <div
@@ -26,7 +26,7 @@ export function OrderCard({ order, className = '' }: OrderCardProps) {
           <h5 className="mb-1 text-gray-9">{order.productName}</h5>
           <p className="typography-caption1 text-gray-6">{order.orderNumber}</p>
         </div>
-        <StatusBadge status={order.status} />
+        <StateBadge state={order.state} />
       </div>
 
       {/* Order details */}
@@ -37,12 +37,12 @@ export function OrderCard({ order, className = '' }: OrderCardProps) {
         </div>
         <div className="typography-caption1 flex items-center justify-between">
           <span className="text-gray-6">最後更新</span>
-          <span className="text-gray-8">{order.lastUpdated}</span>
+          <span className="text-gray-8">{order.updatedAt}</span>
         </div>
       </div>
 
       {/* Action buttons for certain statuses */}
-      {order.status === ORDER_STATUS.PENDING_CONFIRMATION && (
+      {order.state === ORDER_STATE.PENDING_CONFIRMATION && (
         <div className="mt-4 flex gap-2">
           <button className="typography-caption1 flex-1 rounded-md bg-red-6 px-3 py-2 text-white transition-colors hover:bg-red-7">
             確認
@@ -53,7 +53,7 @@ export function OrderCard({ order, className = '' }: OrderCardProps) {
         </div>
       )}
 
-      {order.status === ORDER_STATUS.PENDING_QUOTE_CONFIRMATION && (
+      {order.state === ORDER_STATE.PENDING_QUOTE_CONFIRMATION && (
         <div className="mt-4">
           <div className="rounded-md bg-red-1 p-3">
             <p className="typography-caption1 font-medium text-red-9">
@@ -64,11 +64,11 @@ export function OrderCard({ order, className = '' }: OrderCardProps) {
       )}
 
       {/* Image placeholder for certain statuses */}
-      {(order.status === ORDER_STATUS.PENDING_CONFIRMATION ||
-        order.status === ORDER_STATUS.PENDING_SCHEDULE ||
-        order.status === ORDER_STATUS.PENDING_QUOTE_CONFIRMATION ||
-        order.status === ORDER_STATUS.MODIFICATION_REQUEST ||
-        order.status === ORDER_STATUS.PENDING_BROADCAST_DATE) && (
+      {(order.state === ORDER_STATE.PENDING_CONFIRMATION ||
+        order.state === ORDER_STATE.PENDING_SCHEDULE ||
+        order.state === ORDER_STATE.PENDING_QUOTE_CONFIRMATION ||
+        order.state === ORDER_STATE.MODIFICATION_REQUEST ||
+        order.state === ORDER_STATE.PENDING_BROADCAST_DATE) && (
         <div className="mt-4">
           <div className="flex aspect-video w-full items-center justify-center rounded-md bg-gray-1">
             <div className="text-center">

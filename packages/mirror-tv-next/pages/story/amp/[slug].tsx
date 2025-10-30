@@ -466,9 +466,12 @@ export const getServerSideProps: GetServerSideProps<{
   )
 
   const latestPostsList = handleResponse(
-    responses[2],
-    (response: Awaited<ReturnType<typeof getLatestPostsFn>> | undefined) => {
-      return response?.data?.allPosts?.map(formatPostAsJson) ?? []
+    responses[2] as PromiseSettledResult<Record<string, unknown>>,
+    (response: Record<string, unknown> | undefined) => {
+      const data = response as
+        | Awaited<ReturnType<typeof getLatestPostsFn>>
+        | undefined
+      return data?.data?.allPosts?.map(formatPostAsJson) ?? []
     },
     `Error occurs while fetching latest data in story amp page (slug: ${slug})`
   )

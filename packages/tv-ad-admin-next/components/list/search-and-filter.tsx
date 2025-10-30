@@ -6,24 +6,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { OrderStatusUtils } from '@/utils'
+import { type OrderState } from '@/constants'
+import { OrderStateUtils } from '@/utils'
 
 type SearchAndFilterProps = {
   searchKeyword: string
   onSearchChange: (value: string) => void
-  orderStatus: string
-  onStatusChange: (value: string) => void
+  orderState: OrderState | 'all'
+  onStateChange: (value: OrderState | 'all') => void
 }
 
 export function SearchAndFilter({
   searchKeyword,
   onSearchChange,
-  orderStatus,
-  onStatusChange,
+  orderState,
+  onStateChange,
 }: SearchAndFilterProps) {
-  const orderStatusOptions = [
+  const orderStateOptions = [
     { value: 'all', label: '全部狀態' },
-    ...OrderStatusUtils.getAllOptions(),
+    ...OrderStateUtils.getAllOptions(),
   ]
 
   return (
@@ -62,12 +63,17 @@ export function SearchAndFilter({
           <label className="mb-2 block text-sm font-medium text-text-primary">
             訂單狀態
           </label>
-          <Select value={orderStatus} onValueChange={onStatusChange}>
+          <Select
+            value={orderState}
+            onValueChange={(value) =>
+              onStateChange(value as OrderState | 'all')
+            }
+          >
             <SelectTrigger className="min-h-[45px] w-full rounded-lg border-border-default bg-surface-tertiary py-3 text-sm focus:border-transparent focus:ring-0 focus:outline-none focus-visible:ring-0">
               <SelectValue placeholder="選擇狀態" />
             </SelectTrigger>
             <SelectContent>
-              {orderStatusOptions.map((option) => (
+              {orderStateOptions.map((option) => (
                 <SelectItem key={option.value} value={option.value}>
                   {option.label}
                 </SelectItem>

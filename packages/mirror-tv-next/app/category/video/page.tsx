@@ -116,11 +116,12 @@ export default async function VideoCategoryPage() {
   ])
 
   allCategories = handleResponse(
-    responses[0],
-    (
-      latestPostsData: Awaited<ReturnType<typeof fetchAllCategory>> | undefined
-    ) => {
-      return latestPostsData?.data?.allCategories ?? []
+    responses[0] as PromiseSettledResult<Record<string, unknown>>,
+    (response: Record<string, unknown> | undefined) => {
+      const data = response as
+        | Awaited<ReturnType<typeof fetchAllCategory>>
+        | undefined
+      return data?.data?.allCategories ?? []
     },
     'Error occurs while fetching category data in video category page'
   )
@@ -167,8 +168,11 @@ export default async function VideoCategoryPage() {
   )
 
   allVideoEditorChoices = handleResponse(
-    responses[5],
-    (data: Awaited<ReturnType<typeof fetchVideoEditorChoice>> | undefined) => {
+    responses[5] as PromiseSettledResult<Record<string, unknown>>,
+    (response: Record<string, unknown> | undefined) => {
+      const data = response as
+        | Awaited<ReturnType<typeof fetchVideoEditorChoice>>
+        | undefined
       return data?.data?.allVideoEditorChoices ?? []
     },
     'Error occurs while fetching video editor choices in video category page'

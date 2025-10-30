@@ -5,12 +5,13 @@ import { useState } from 'react'
 import TextFormatIcon from '@/assets/icons/text-format.svg'
 import TextIcon from '@/assets/icons/text.svg'
 import TriangleExclamationIcon from '@/assets/icons/triangle-exclamation.svg'
+import { Instructions } from '@/components/shared/instructions'
+import { Textarea } from '@/components/ui/textarea'
+import { cn } from '@/utils'
+
 import EditPageLayout, {
   type SubmitStatus,
 } from '../../../components/edit/edit-page-layout'
-import { Instructions } from '@/components/shared/instructions'
-import { cn } from '@/utils'
-import { Textarea } from '@/components/ui/textarea'
 
 const textareaStyle =
   'w-full resize-none rounded-md bg-gray-2 p-3 placeholder:text-text-tertiary placeholder:text-h6'
@@ -70,13 +71,12 @@ export default function EditRequest() {
           onChange={(e) => setReason(e.target.value)}
           placeholder="例如：文字需要調整"
           className={cn(
+            textareaStyle,
             errors.reason &&
               'border-destructive focus-visible:ring-destructive/40'
           )}
         />
-        {errors.reason && (
-          <p className="text-destructive">{errors.reason}</p>
-        )}
+        {errors.reason && <p className="text-destructive">{errors.reason}</p>}
       </div>
       <div className="space-y-m">
         <label
@@ -93,13 +93,12 @@ export default function EditRequest() {
           onChange={(e) => setDetails(e.target.value)}
           placeholder="請詳細描述您希望調整的地方及期望結果"
           className={cn(
+            textareaStyle,
             errors.details &&
               'border-destructive focus-visible:ring-destructive/40'
           )}
         />
-        {errors.details && (
-          <p className="text-destructive">{errors.details}</p>
-        )}
+        {errors.details && <p className="text-destructive">{errors.details}</p>}
       </div>
       <Instructions
         title="重要提醒"

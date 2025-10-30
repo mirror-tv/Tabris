@@ -41,16 +41,16 @@ export const COLOR_THEMES = {
 
   progress: {
     orange: {
-      bg: 'bg-[#D97706]',
-      text: 'text-[#D97706]',
-      border: 'border-[#D97706]',
-      dot: 'bg-[#D97706]',
+      bg: 'bg-yellow-7',
+      text: 'text-yellow-7',
+      border: 'border-yellow-7',
+      dot: 'bg-yellow-7',
     },
     red: {
-      bg: 'bg-[#DC2626]',
-      text: 'text-[#DC2626]',
-      border: 'border-[#DC2626]',
-      dot: 'bg-[#DC2626]',
+      bg: 'bg-red-7',
+      text: 'text-red-7',
+      border: 'border-red-7',
+      dot: 'bg-red-7',
     },
     yellow: {
       bg: 'bg-yellow-7',

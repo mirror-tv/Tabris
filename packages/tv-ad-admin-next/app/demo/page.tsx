@@ -37,9 +37,9 @@ import {
   TableBody,
   TableCell,
 } from '@/components/ui/table'
-import { type OrderStatus, ORDER_STATUS } from '@/constants'
-import { cn, OrderStatusUtils } from '@/utils'
+import { ORDER_STATE, OrderStateMap } from '@/constants'
 import { useResponsive } from '@/hooks/useResponsive'
+import { cn } from '@/utils'
 
 export default function Demo() {
   const [date, setDate] = useState<Date | undefined>(new Date())
@@ -49,7 +49,7 @@ export default function Demo() {
     <div className="min-h-screen space-y-8 bg-surface-secondary p-8">
       <h2 className="text-text-primary">Shadcn UI Showcase</h2>
 
-      <div className="w-full text-white bg-green-7 text-center py-2">
+      <div className="w-full bg-green-7 py-2 text-center text-white">
         {isMobile && 'Mobile view'}
         {isTablet && 'Tablet view'}
         {isDesktop && 'Desktop view'}
@@ -102,11 +102,11 @@ export default function Demo() {
         <Input placeholder="Search keyword…" className="w-64" />
         <Select>
           <SelectTrigger className="w-48">
-            <SelectValue placeholder="All Status" />
+            <SelectValue placeholder="All State" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">全部狀態</SelectItem>
-            <SelectItem value={ORDER_STATUS.PENDING_UPLOAD}>
+            <SelectItem value={ORDER_STATE.PENDING_UPLOAD}>
               待上傳素材
             </SelectItem>
             <SelectItem value="pending_production">影片製作中</SelectItem>
@@ -152,7 +152,7 @@ export default function Demo() {
             <TableRow>
               <TableHead>Order ID</TableHead>
               <TableHead>Product</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>State</TableHead>
               <TableHead>Action</TableHead>
             </TableRow>
           </TableHeader>
@@ -162,7 +162,7 @@ export default function Demo() {
               <TableCell>Summer Promo</TableCell>
               <TableCell>
                 <Badge variant="pending-upload">
-                  {OrderStatusUtils.getLabel(ORDER_STATUS.PENDING_UPLOAD)}
+                  {OrderStateMap[ORDER_STATE.PENDING_UPLOAD].label}
                 </Badge>
               </TableCell>
               <TableCell>
@@ -174,7 +174,7 @@ export default function Demo() {
               <TableCell>Winter Fair</TableCell>
               <TableCell>
                 <Badge variant="broadcasted">
-                  {OrderStatusUtils.getLabel('broadcasted')}
+                  {OrderStateMap[ORDER_STATE.BROADCASTED].label}
                 </Badge>
               </TableCell>
               <TableCell>
@@ -185,26 +185,28 @@ export default function Demo() {
         </Table>
       </div>
 
-      {/* Status Color Preview */}
+      {/* State Color Preview */}
       <div className="space-y-4">
         <h4 className="text-gray-900">狀態顏色預覽</h4>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {OrderStatusUtils.getAllOptions().map(({ value, label }) => {
-            const colors = OrderStatusUtils.getColors(value as OrderStatus)
-            const variant = OrderStatusUtils.getBadgeVariant(
-              value as OrderStatus
-            )
+          {Object.values(OrderStateMap).map((stateConfig) => {
+            // const variant = stateConfig.colors
             return (
               <div
-                key={value}
+                key={stateConfig.label}
                 className="rounded-lg border border-gray-200 p-3"
               >
-                <Badge variant={variant as keyof typeof badgeVariants}>
-                  {label}
+                <Badge
+                  variant={stateConfig.colors.bg as keyof typeof badgeVariants}
+                >
+                  {stateConfig.label}
                 </Badge>
-                <p className="mt-2 text-xs text-gray-600">Variant: {variant}</p>
+                <p className="mt-2 text-xs text-gray-600">
+                  Variant: {stateConfig.colors.bg}
+                </p>
                 <p className="mt-1 text-xs text-gray-500">
-                  背景: {colors.bg} • 文字: {colors.text}
+                  背景: {stateConfig.colors.bg} • 文字:{' '}
+                  {stateConfig.colors.text}
                 </p>
               </div>
             )

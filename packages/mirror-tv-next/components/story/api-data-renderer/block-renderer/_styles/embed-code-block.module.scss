@@ -16,4 +16,16 @@
       border: none;
     }
   }
+  // style 和 unstyled-block.module.scss 用來處理超連結的樣式相同
+  a {
+    text-decoration-line: underline;
+    text-decoration-style: solid;
+    text-decoration-skip-ink: none;
+    text-decoration-thickness: auto;
+    text-underline-offset: auto;
+    color: #004dbc;
+    &:hover {
+      color: #036;
+    }
+  }
 }

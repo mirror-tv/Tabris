@@ -65,8 +65,13 @@ export default async function RootLayout({
     value: Awaited<ReturnType<typeof fetchPopularPosts>> | undefined
   ) => value?.data || []
   const getAllPostsFromLatestPostsResult = (
-    value: Awaited<ReturnType<typeof getLatestPostsAside>> | undefined
-  ) => value?.data.allPosts || []
+    value: Record<string, unknown> | undefined
+  ) => {
+    const data = value as
+      | Awaited<ReturnType<typeof getLatestPostsAside>>
+      | undefined
+    return data?.data.allPosts || []
+  }
 
   initialPopularPosts = handleResponse(
     popularPostsResult,
@@ -74,7 +79,7 @@ export default async function RootLayout({
     'Error occurs while fetching popular posts'
   )
   initialLatestPosts = handleResponse(
-    latestPostsResult,
+    latestPostsResult as PromiseSettledResult<Record<string, unknown>>,
     getAllPostsFromLatestPostsResult,
     'Error occurs while fetching latest posts'
   )
