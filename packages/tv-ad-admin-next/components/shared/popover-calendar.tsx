@@ -31,7 +31,7 @@ type PopoverCalendarProps = {
   className?: string
 }
 
-const calendarId = '"schedule"'
+const calendarId = 'schedule'
 
 export default function PopoverCalendar({
   range,
