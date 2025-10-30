@@ -134,12 +134,16 @@ export default function UploadTemplate({
   function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault()
     e.stopPropagation()
+    const related = e.relatedTarget as Node | null
+    if (related && e.currentTarget.contains(related)) return
     setIsDragging(true)
   }
 
   function handleDragLeave(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault()
     e.stopPropagation()
+    const related = e.relatedTarget as Node | null
+    if (related && e.currentTarget.contains(related)) return
     setIsDragging(false)
   }
   // ====================== End: drop file ======================
