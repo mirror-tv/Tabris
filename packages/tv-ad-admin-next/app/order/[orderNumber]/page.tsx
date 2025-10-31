@@ -1,5 +1,7 @@
 'use client'
 
+import { useEffect, useState, useMemo } from 'react'
+
 import { useParams } from 'next/navigation'
 
 import { OrderActions } from '@/components/order/order-actions'
@@ -12,12 +14,8 @@ import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
 import { ORDER_STATE_CONFIG, ORDER_STYLES } from '@/constants'
 import { ENV } from '@/constants/environment-variables'
-import {
-  OrderRecordForOrderNumber,
-  type OrderRecordForList,
-} from '@/graphql/queries/orders'
+import { type OrderRecordForOrderNumber } from '@/graphql/queries/orders'
 import { mockOrderData } from '@/mocks/mockData'
-import { useEffect, useState, useMemo } from 'react'
 
 export default function OrderPage() {
   const params = useParams()
@@ -28,6 +26,10 @@ export default function OrderPage() {
 
   useEffect(() => {
     const fetchOrders = async () => {
+      if (!orderNumber) {
+        setError('Order number is required')
+        return
+      }
       try {
         const res = await fetch(`/api/order/${orderNumber}`)
         if (!res.ok) {
@@ -50,11 +52,8 @@ export default function OrderPage() {
         setIsLoading(false)
       }
     }
-    if (!orderNumber) {
-      setError('Order number is required')
-    }
     fetchOrders()
-  }, [])
+  }, [orderNumber])
 
   const shouldShowPreview = useMemo(() => {
     if (!order) return false
@@ -77,6 +76,11 @@ export default function OrderPage() {
               </div>
               {order && <OrderStateComponent order={order} />}
             </div>
+            {error && <div className="text-red-500">{error}</div>}
+            {isLoading && <div className="text-gray-500">載入中...</div>}
+            {!error && !isLoading && !order && (
+              <OrderNotFound orderId={orderNumber} />
+            )}
           </div>
 
           {(ENV === 'local' || ENV === 'dev') && (
