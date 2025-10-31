@@ -17,7 +17,6 @@ export function ProgressSteps({
   currentStatus,
   className = '',
 }: ProgressStepsProps) {
-  // 對於已作廢狀態，只顯示該狀態本身
   if (currentStatus === ORDER_STATE.CANCELLED) {
     const progressSteps = [currentStatus]
 
