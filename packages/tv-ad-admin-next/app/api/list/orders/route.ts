@@ -1,30 +1,19 @@
 import { NextResponse } from 'next/server'
 
-import { getOrdersByOrderNumberQuery } from '@/graphql/queries/orders'
-import { type OrderRecordForOrderNumber } from '@/graphql/queries/orders'
+import { getOrdersQuery } from '@/graphql/queries/orders'
+import { type OrderRecordForList } from '@/graphql/queries/orders'
 import { getClient } from '@/utils/apollo-client'
 import { formatTaiwanDate } from '@/utils/date'
 import { createErrorLogger } from '@/utils/error-handler'
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url)
-  const orderNumber = searchParams.get('orderNumber')
-
-  if (!orderNumber) {
-    return NextResponse.json(
-      { error: 'Order number is required' },
-      { status: 400 }
-    )
-  }
-
+export async function GET() {
   try {
     const client = getClient()
-    const { data } = await client.query<{
-      orders: OrderRecordForOrderNumber[]
-    }>({
-      query: getOrdersByOrderNumberQuery,
+    const { data } = await client.query<{ orders: OrderRecordForList[] }>({
+      query: getOrdersQuery,
       variables: {
-        orderNumber: orderNumber,
+        where: {},
+        orderBy: [{ updatedAt: 'desc' }],
       },
     })
 
@@ -37,12 +26,10 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ orders: formattedOrders })
   } catch (error) {
-    createErrorLogger(`Failed to fetch orders by order number: ${orderNumber}`)(
-      error
-    )
+    createErrorLogger('Failed to fetch orders list')(error)
 
     return NextResponse.json(
-      { error: `Failed to fetch orders by order number: ${orderNumber}` },
+      { error: 'Failed to fetch orders list' },
       { status: 500 }
     )
   }
