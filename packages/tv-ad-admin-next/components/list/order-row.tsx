@@ -1,48 +1,68 @@
 import ArrowRightDownIcon from '@/assets/icons/arrow-right-sown.svg'
 import DetailIcon from '@/assets/icons/detail.svg'
 import { Button } from '@/components/ui/button'
-import { StatusBadge } from '@/components/ui/status-badge'
-import { type OrderRecord } from '@/mocks/mockData'
+import { StateBadge } from '@/components/ui/state-badge'
+import { type OrderRecordForList } from '@/types/order'
 
-interface OrderRowProps {
-  order: OrderRecord
-  onViewOrder: (orderId: string) => void
+type OrderRowProps = {
+  order: OrderRecordForList
+  onViewOrder: (orderId: number) => void
   isRelated?: boolean
 }
+
+const tdStyle = 'px-2 py-3 text-sm whitespace-nowrap'
 
 export function OrderRow({
   order,
   onViewOrder,
   isRelated = false,
 }: OrderRowProps) {
-  return (
-    <tr className={isRelated ? 'bg-gray-50' : ''}>
-      <td className="px-2 py-3 text-sm whitespace-nowrap text-text-primary">
+  const {
+    state,
+    updatedAt,
+    name,
+    orderNumber,
+    scheduleStartDateString,
+    scheduleEndDateString,
+  } = order
+  console.log(order)
+  const rowContent = [
+    {
+      key: 'number',
+      content: (
         <div className="flex items-center">
           {isRelated && (
             <ArrowRightDownIcon className="mr-2 h-4 w-4 text-gray-400" />
           )}
-          {order.orderNumber}
+          # {orderNumber}
         </div>
-      </td>
-      <td className="px-2 py-3 text-sm whitespace-nowrap text-text-primary">
-        {order.productName}
-      </td>
-      <td className="px-2 py-3 text-sm whitespace-nowrap text-text-primary">
-        {order.broadcastDate}
-      </td>
-      <td className="px-2 py-3 whitespace-nowrap">
-        <StatusBadge status={order.status} />
-      </td>
-      <td className="px-2 py-3 text-sm whitespace-nowrap text-text-primary">
-        {order.lastUpdated}
-      </td>
-      <td className="px-2 py-3 text-sm whitespace-nowrap text-text-primary">
+      ),
+    },
+    { key: 'name', content: name || '-' },
+    {
+      key: 'broadcastDate',
+      content: `${scheduleStartDateString} - ${scheduleEndDateString}`,
+    },
+    { key: 'state', content: <StateBadge state={state} /> },
+    { key: 'updatedAt', content: updatedAt || '-' },
+    {
+      key: 'moreBtn',
+      content: (
         <Button onClick={() => onViewOrder(order.id)} variant="outline">
           <DetailIcon className="h-4 w-4" />
           查看
         </Button>
-      </td>
+      ),
+    },
+  ]
+
+  return (
+    <tr className={isRelated ? 'bg-gray-50' : ''}>
+      {rowContent.map((item) => (
+        <td key={item.key} className={tdStyle}>
+          {item.content}
+        </td>
+      ))}
     </tr>
   )
 }

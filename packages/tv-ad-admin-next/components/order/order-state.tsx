@@ -1,8 +1,8 @@
 import { ProgressSteps } from './progress-steps'
 
-import { type OrderRecord } from '@/mocks/mockData'
+import { type OrderRecord } from '@/types/order'
 
-type OrderStatusProps = {
+type OrderStateProps = {
   order: OrderRecord
   className?: string
 }
@@ -10,7 +10,7 @@ type OrderStatusProps = {
 const labelClassName = 'text-sm font-medium text-text-secondary'
 const valueClassName = 'text-base font-normal text-text-primary'
 
-export function OrderStatus({ order, className = '' }: OrderStatusProps) {
+export function OrderState({ order, className = '' }: OrderStateProps) {
   return (
     <div className={`w-full space-y-6 md:max-w-none xl:max-w-60 ${className}`}>
       <div className="w-full rounded-lg border border-border-default bg-surface-primary p-6">
@@ -29,13 +29,13 @@ export function OrderStatus({ order, className = '' }: OrderStatusProps) {
               </div>
               <div>
                 <label className={labelClassName}>最後更新</label>
-                <p className={valueClassName}>{order.lastUpdated}</p>
+                <p className={valueClassName}>{order.updatedAt}</p>
               </div>
             </div>
           </div>
 
           <div className="mt-6 border-t border-border-default pt-6 md:mt-0 md:flex-1 md:border-t-0 md:pt-0 xl:mt-6 xl:border-t xl:pt-6">
-            <ProgressSteps currentStatus={order.status} />
+            <ProgressSteps currentStatus={order.state} />
           </div>
         </div>
       </div>

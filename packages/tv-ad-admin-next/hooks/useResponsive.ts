@@ -1,19 +1,14 @@
 'use client'
 
+import { useEffect } from 'react'
+
 import { useResponsiveStore } from '@/store'
-import { useEffect, useRef } from 'react'
 
 export function useResponsive() {
   const { isMobile, isTablet, isDesktop, updateResponsive } =
     useResponsiveStore()
 
-  // A ref to ensure listeners are registered only once
-  const hasInitialized = useRef(false)
-
   useEffect(() => {
-    if (hasInitialized.current) return
-    hasInitialized.current = true
-
     const mobileQuery = window.matchMedia('(max-width: 767px)')
     const tabletQuery = window.matchMedia(
       '(min-width: 768px) and (max-width: 1199px)'
