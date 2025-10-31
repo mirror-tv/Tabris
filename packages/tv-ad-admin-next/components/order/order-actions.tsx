@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
 import { ORDER_STATE } from '@/constants'
@@ -8,8 +9,6 @@ import { type OrderRecordForOrderNumber } from '@/graphql/queries/orders'
 import DoneCircleIcon from '@/public/icons/done-circle.svg'
 import EditIcon from '@/public/icons/edit.svg'
 import UploadIcon from '@/public/icons/upload.svg'
-import { useRouter } from 'next/navigation'
-import { useMemo } from 'react'
 
 type OrderActionsProps = {
   order: OrderRecordForOrderNumber
@@ -142,7 +141,7 @@ const ACTION_MAP: Record<string, ActionConfig> = {
 }
 
 export function OrderActions({ order, className = '' }: OrderActionsProps) {
-  const [isUploading, setIsUploading] = useState(false)
+  const [isUploading] = useState(false)
   const [isConfirming, setIsConfirming] = useState(false)
   const router = useRouter()
   const handleUploadClick = async () => {

@@ -83,9 +83,6 @@ export const getOrdersByOrderNumberQuery = gql`
       paragraphTwo
       createdAt
       updatedAt
-      relatedOrder {
-        id
-      }
     }
   }
 `
