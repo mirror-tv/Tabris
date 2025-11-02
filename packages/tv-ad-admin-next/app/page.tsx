@@ -2,8 +2,6 @@
 
 import { useState, useEffect } from 'react'
 
-import { useRouter } from 'next/navigation'
-
 import type { SendOtpResponse } from '@/types/api'
 
 import MailOrPhoneForm from '@/components/login/mail-or-phone-form'
@@ -11,13 +9,9 @@ import OptForm from '@/components/login/opt-form'
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
 import { AUTH_MESSAGES, LOADING_MESSAGES } from '@/constants/messages'
-import { useAuthStore } from '@/store'
 import { validateEmail, validatePhone } from '@/utils/validation'
 
 export default function HomePage() {
-  const router = useRouter()
-  const { isAuthenticated, login, initialize } = useAuthStore()
-
   // 從 localStorage 讀取上次登入方式
   const [status, setStatus] = useState<'email' | 'phone' | 'OPT'>(() => {
     if (typeof window !== 'undefined') {
@@ -31,7 +25,7 @@ export default function HomePage() {
 
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
-  const [loginType, setLoginType] = useState<'email' | 'phone'>('email')
+  const [loginType, setLoginType] = useState<'email' | 'phone'>('email') // 保存原始登入類型
   const [isLoading, setIsLoading] = useState(false)
   const [loadingMessage, setLoadingMessage] = useState('')
   const [error, setError] = useState('')
@@ -39,18 +33,6 @@ export default function HomePage() {
   const [canResend, setCanResend] = useState(true)
   const [failedAttempts, setFailedAttempts] = useState(0)
   const maxAttempts = 3 // 與後端一致
-
-  // 初始化認證狀態
-  useEffect(() => {
-    initialize()
-  }, [initialize])
-
-  // 如果已登入，重定向到 dashboard
-  useEffect(() => {
-    if (isAuthenticated) {
-      router.push('/dashboard')
-    }
-  }, [isAuthenticated, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -193,16 +175,11 @@ export default function HomePage() {
         return
       }
 
-      // 登入成功，更新 store
-      if (data.user) {
-        login(data.user)
-      }
-
       // 等待確保 cookie 已設定
       await new Promise((resolve) => setTimeout(resolve, 300))
 
-      // 登入成功，跳轉到 dashboard
-      router.push('/dashboard')
+      // 登入成功，強制跳轉
+      window.location.href = '/dashboard'
     } catch (err) {
       console.error(err)
       setError(AUTH_MESSAGES.NETWORK_ERROR)
