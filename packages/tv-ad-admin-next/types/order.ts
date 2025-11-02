@@ -1,4 +1,7 @@
+import { PhotoSchema } from './photo'
+
 import { type OrderState } from '@/constants'
+
 
 export type OrderSchema = {
   id: number
@@ -21,9 +24,9 @@ export type OrderSchema = {
   paragraphOneEditable?: boolean
   paragraphTwo?: string | null
   paragraphTwoEditable?: boolean
-  image?: { id: string } | null
+  image?: Pick<PhotoSchema, 'id'> | null
   imageEditable?: boolean
-  demoImage?: { id: string }[]
+  demoImage?: Pick<PhotoSchema, 'id'>[]
   createdAt: string
   updatedAt: string
 }
