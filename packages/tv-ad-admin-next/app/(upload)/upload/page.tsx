@@ -1,13 +1,49 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+
+import { useSearchParams,useRouter } from 'next/navigation'
+
 import SubmitResult from '@/components/shared/submit-result'
 import UploadTemplate from '@/components/upload/upload-template'
+import { OrderRecordForUpload } from '@/graphql/queries/orders'
 import { useSubmitStatus } from '@/hooks/useSubmitStatus'
 
 const pageTitle = '上傳廣告素材'
 
 export default function UploadPage() {
   const { submitStatus, setSubmitStatus } = useSubmitStatus()
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
+  const [orders, setOrders] = useState<OrderRecordForUpload[]>([])
+  const [loading, setLoading] = useState(true)
+
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const memberId = searchParams.get('memberId')
+        const res = await fetch(`/api/upload/orders?memberId=${memberId ?? ''}`)
+        if (!res.ok) {
+          // If the API returns an error, redirect to not-found page with status code
+          router.push(`/not-found?status=${res.status}`)
+          return
+        }
+
+        const data = await res.json()
+
+        setOrders(data.orders || [])
+      } catch (err) {
+        console.error('Failed to fetch orders for upload:', err)
+        router.push(`/not-found?status=500`)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchOrders()
+  }, [router, searchParams])
 
   function handleConfirmUpload(data: unknown) {
     console.log('送出上傳資料', data)
@@ -39,6 +75,8 @@ export default function UploadPage() {
       pageTitle={pageTitle}
       mode="upload"
       onSubmit={handleConfirmUpload}
+      orders={orders}
+      loading={loading}
       showAfterOrderSelect
     />
   )

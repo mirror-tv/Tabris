@@ -2,20 +2,26 @@
 
 import { useEffect, useState } from 'react'
 
+import { useSearchParams, useRouter } from 'next/navigation'
+
 import SubmitResult from '@/components/shared/submit-result'
-import UploadTemplate, {
-  EditableFields,
-} from '@/components/upload/upload-template'
+import UploadTemplate from '@/components/upload/upload-template'
+import { OrderRecordForUpload } from '@/graphql/queries/orders'
 import { useSubmitStatus } from '@/hooks/useSubmitStatus'
 
 const pageTitle = '重新上傳廣告素材'
 
 export default function ReUploadPage() {
   const { submitStatus, setSubmitStatus } = useSubmitStatus()
-  const [editableFields, setEditableFields] = useState<EditableFields>()
+  const [orders, setOrders] = useState<OrderRecordForUpload[]>([])
+  const [loading, setLoading] = useState(true)
+  // const [editableFields, setEditableFields] = useState<EditableFields>()
+
+  const router = useRouter()
+  const searchParams = useSearchParams()
 
   function handleConfirmReupload(data: unknown) {
-    console.log('重新上傳廣告資料', data) 
+    console.log('重新上傳廣告資料', data)
 
     // Demo alert to choose result
     const isSuccess = window.confirm(
@@ -26,6 +32,33 @@ export default function ReUploadPage() {
     setSubmitStatus(isSuccess ? 'success' : 'failure')
   }
 
+  // ToDO: 暫時層 upload 搬過來，待重新整合
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const memberId = searchParams.get('memberId')
+        const res = await fetch(`/api/upload/orders?memberId=${memberId ?? ''}`)
+        if (!res.ok) {
+          // If the API returns an error, redirect to not-found page with status code
+          router.push(`/not-found?status=${res.status}`)
+          return
+        }
+
+        const data = await res.json()
+
+        setOrders(data.orders || [])
+      } catch (err) {
+        console.error('Failed to fetch orders for upload:', err)
+        router.push(`/not-found?status=500`)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchOrders()
+  }, [router, searchParams])
+
   useEffect(() => {
     async function fetchEditableFields() {
       try {
@@ -34,25 +67,25 @@ export default function ReUploadPage() {
         // const data = (await res.json()) as EditableFields
 
         // Mock data: simulate backend response for field editability
-        const mockData: EditableFields = {
-          adName: false,
-          range: false,
-          text1: false,
-          text2: false,
-          file: false,
-        }
+        // const mockData: EditableFields = {
+        //   adName: false,
+        //   range: false,
+        //   text1: false,
+        //   text2: false,
+        //   file: false,
+        // }
 
-        setEditableFields(mockData)
+        // setEditableFields(mockData)
         await new Promise((resolve) => setTimeout(resolve, 2000))
       } catch (err) {
         console.error('Failed to fetch editableFields', err)
-        setEditableFields({
-          adName: true,
-          range: true,
-          text1: true,
-          text2: true,
-          file: true,
-        }) // fallback
+        // setEditableFields({
+        //   adName: true,
+        //   range: true,
+        //   text1: true,
+        //   text2: true,
+        //   file: true,
+        // }) // fallback
       }
     }
 
@@ -76,8 +109,10 @@ export default function ReUploadPage() {
     <UploadTemplate
       pageTitle={pageTitle}
       mode="reupload"
-      editableFields={editableFields}
+      // editableFields={editableFields}
       onSubmit={handleConfirmReupload}
+      orders={orders}
+      loading={loading}
     />
   )
 }
