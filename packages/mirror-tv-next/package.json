@@ -32,7 +32,7 @@
     "zod": "^4.1.5"
   },
   "engines": {
-    "node": ">=18.17.0"
+    "node": ">=20.19.0"
   },
   "devDependencies": {
     "@types/google-publisher-tag": "^1.20240219.0",
