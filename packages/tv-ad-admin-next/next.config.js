@@ -2,7 +2,13 @@
 const nextConfig = {
   output: 'standalone',
   images: {
-    domains: [],
+    domains: ['storage.googleapis.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'storage.googleapis.com',
+      },
+    ],
   },
   webpack: (config) => {
     // Exclude SVGs from Next.js' default file loader
