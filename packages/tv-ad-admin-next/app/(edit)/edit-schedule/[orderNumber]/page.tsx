@@ -3,7 +3,6 @@
 import { useState } from 'react'
 
 import { format } from 'date-fns'
-import { useParams } from 'next/navigation'
 
 import type { DateRange } from 'react-day-picker'
 
@@ -17,9 +16,12 @@ import TriangleExclamationIcon from '@/public/icons/triangle-exclamation.svg'
 
 const PAGE_TITLE = '設定排播日期'
 
-export default function EditSchedule() {
-  const params = useParams()
-  const orderNumber = params?.orderNumber as string
+export default function EditSchedule({
+  params,
+}: {
+  params: { orderNumber: string }
+}) {
+  const { orderNumber } = params
   const { submitStatus, setSubmitStatus } = useSubmitStatus()
 
   const [range, setRange] = useState<DateRange | undefined>(undefined)
@@ -55,8 +57,7 @@ export default function EditSchedule() {
       })
 
       if (!res.ok) {
-        const data = await res.json()
-        throw new Error(data.error || '更新排播日期失敗')
+        throw new Error(`Response status: ${res.status}`)
       }
 
       setSubmitStatus('success')
