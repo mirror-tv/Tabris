@@ -6,9 +6,11 @@ import { getClient } from '@/utils/apollo-client'
 import { formatTaiwanDate } from '@/utils/date'
 import { createErrorLogger } from '@/utils/error-handler'
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url)
-  const orderNumber = searchParams.get('orderNumber')
+export async function GET(
+  request: Request,
+  { params }: { params: { orderNumber: string } }
+) {
+  const orderNumber = params.orderNumber
 
   if (!orderNumber) {
     return NextResponse.json(
@@ -24,7 +26,11 @@ export async function GET(request: Request) {
     }>({
       query: getOrdersByOrderNumberQuery,
       variables: {
-        orderNumber: orderNumber,
+        where: {
+          orderNumber: {
+            equals: orderNumber,
+          },
+        },
       },
     })
 

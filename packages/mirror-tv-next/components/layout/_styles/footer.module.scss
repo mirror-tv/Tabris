@@ -11,7 +11,7 @@
   display: flex;
   align-items: center;
   flex-direction: column;
-  max-width: 1290px;
+  max-width: $footer-max-width;
   margin: auto;
 
   @include media-breakpoint-up(xl) {
