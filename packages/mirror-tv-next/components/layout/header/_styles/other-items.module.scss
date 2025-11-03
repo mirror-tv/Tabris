@@ -18,11 +18,10 @@
     padding: 4px $header-padding-md 4px 12px;
   }
   @include media-breakpoint-up(xl) {
-    $paddingLeft: calc((100vw - $header-max-width-xl) / 2);
-    padding: 4px $paddingLeft 4px 20px;
+    padding: 4px $header-padding-xl 4px 20px;
   }
   @include media-breakpoint-up(xxl) {
-    $paddingLeft: calc((100vw - $header-max-width-xxl) / 2);
+    $paddingLeft: max(calc((100vw - 1640px + 200px) / 2), 100px);
     padding: 4px $paddingLeft 4px 20px;
   }
 
