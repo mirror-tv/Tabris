@@ -1,14 +1,15 @@
+import { parseISO } from 'date-fns'
 import { NextRequest, NextResponse } from 'next/server'
 
-import { updateOrderScheduleMutation } from '@/graphql/mutatuions/orders'
+import { updateOrderScheduleMutation } from '@/graphql/mutations/orders'
 import { getClient } from '@/utils/apollo-client'
 import { createErrorLogger } from '@/utils/error-handler'
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { orderNumber: string } }
+  { params }: { params: { orderNumber?: string } }
 ) {
-  const orderNumber = params.orderNumber
+  const { orderNumber } = params ?? {}
 
   if (!orderNumber) {
     return NextResponse.json(
@@ -36,8 +37,8 @@ export async function POST(
           orderNumber: orderNumber,
         },
         data: {
-          scheduleStartDate: new Date(scheduleStartDate),
-          scheduleEndDate: new Date(scheduleEndDate),
+          scheduleStartDate: parseISO(scheduleStartDate),
+          scheduleEndDate: parseISO(scheduleEndDate),
         },
       },
       errorPolicy: 'all',
