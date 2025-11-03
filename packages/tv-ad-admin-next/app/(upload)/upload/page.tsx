@@ -76,7 +76,6 @@ export default function UploadPage() {
       onSubmit={handleConfirmUpload}
       orders={orders}
       loading={loading}
-      showAfterOrderSelect
     />
   )
 }

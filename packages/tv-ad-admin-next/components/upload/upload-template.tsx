@@ -73,7 +73,6 @@ type UploadTemplateProps = {
   onSubmit: (data: UploadSubmittedData) => void
   orders: OrderRecordForUpload[]
   loading: boolean
-  showAfterOrderSelect?: boolean
 }
 
 const initialFormState: FormState = {
@@ -98,9 +97,9 @@ export default function UploadTemplate({
   onSubmit,
   orders,
   loading,
-  showAfterOrderSelect = false,
 }: UploadTemplateProps) {
-  const [orderId, setOrderId] = useState<string>('')
+  const [selectedOrder, setSelectedOrder] =
+    useState<OrderRecordForUpload | null>(null)
   const [formState, setFormState] = useState<FormState>(initialFormState)
   const [editableFields, setEditableFields] = useState<EditableFields>(
     initialEditableFields
@@ -109,7 +108,6 @@ export default function UploadTemplate({
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [submittedData, setSubmittedData] =
     useState<UploadSubmittedData | null>(null)
-  const [reuploadOrderSelected, setReuploadOrderSelected] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
   const [preview, setPreview] = useState<string | null>(null)
 
@@ -118,11 +116,8 @@ export default function UploadTemplate({
   function isDisabled(key: keyof EditableFields) {
     return editableFields[key] === false
   }
-  devLog(orderId, 'orderId')
+  devLog(selectedOrder, 'selectedOrder')
   devLog(orders, 'orders')
-
-  // this constant controls whether to render all fields
-  const shouldShowAllFields = !showAfterOrderSelect || reuploadOrderSelected
 
   // ====================== Start: drop file ======================
   function _validateAndSetFile(file: File) {
@@ -184,13 +179,11 @@ export default function UploadTemplate({
   // ====================== End: drop file ======================
 
   async function handleOrderSelect(value: string) {
-    setOrderId(value)
-    if (showAfterOrderSelect) setReuploadOrderSelected(true)
+    const currentOrder = orders.find((o) => o.orderNumber === value)
+    if (!currentOrder) return
+    setSelectedOrder(currentOrder)
 
-    const selectedOrder = orders.find((o) => o.orderNumber === value)
-    if (!selectedOrder) return
-
-    const image = selectedOrder.image
+    const image = currentOrder.image
     const photoData =
       image && image.id
         ? {
@@ -204,28 +197,28 @@ export default function UploadTemplate({
         : null
 
     // Date conversion
-    const startDate = selectedOrder.scheduleStartDate
-      ? new Date(selectedOrder.scheduleStartDate)
+    const startDate = currentOrder.scheduleStartDate
+      ? new Date(currentOrder.scheduleStartDate)
       : undefined
-    const endDate = selectedOrder.scheduleEndDate
-      ? new Date(selectedOrder.scheduleEndDate)
+    const endDate = currentOrder.scheduleEndDate
+      ? new Date(currentOrder.scheduleEndDate)
       : undefined
 
     setFormState({
-      adName: selectedOrder.name ?? '',
-      text1: selectedOrder.paragraphOne ?? '',
-      text2: selectedOrder.paragraphTwo ?? '',
+      adName: currentOrder.name ?? '',
+      text1: currentOrder.paragraphOne ?? '',
+      text2: currentOrder.paragraphTwo ?? '',
       range:
         startDate && endDate ? { from: startDate, to: endDate } : undefined,
       file: photoData,
     })
 
     setEditableFields({
-      adName: selectedOrder.nameEditable,
-      range: selectedOrder.scheduleEditable,
-      text1: selectedOrder.paragraphOneEditable,
-      text2: selectedOrder.paragraphTwoEditable,
-      file: selectedOrder.imageEditable,
+      adName: currentOrder.nameEditable,
+      range: currentOrder.scheduleEditable,
+      text1: currentOrder.paragraphOneEditable,
+      text2: currentOrder.paragraphTwoEditable,
+      file: currentOrder.imageEditable,
     })
   }
 
@@ -235,7 +228,7 @@ export default function UploadTemplate({
     const newErrors: Record<string, string> = {}
 
     // Always validate "order" because it’s never disabled
-    if (!orderId) newErrors.order = '請選擇訂單'
+    if (!selectedOrder) newErrors.order = '請選擇訂單'
 
     // Skip validation if the field is disabled in reupload page
     if (!isDisabled('adName') && !adName.trim()) {
@@ -275,7 +268,7 @@ export default function UploadTemplate({
         : undefined
 
     const data: UploadSubmittedData = {
-      order: orderId!,
+      order: selectedOrder!.orderNumber,
       adName: adName || '[未修改]',
       text1: text1 || '[未修改]',
       text2: text2 || '[未修改]',
@@ -366,7 +359,7 @@ export default function UploadTemplate({
                 {errors.order && <ErrorMessage>{errors.order}</ErrorMessage>}
               </LabeledField>
 
-              {shouldShowAllFields && (
+              {!!selectedOrder && (
                 <>
                   {/* 廣告名稱 + 排播日期 */}
                   <div className="grid gap-8 md:grid-cols-2 md:gap-4">
@@ -507,7 +500,7 @@ export default function UploadTemplate({
                         </Button>
                         <input
                           id={fileInputLabelId}
-                          key={file?.name} 
+                          key={file?.name}
                           type="file"
                           accept=".jpg,.jpeg,.png"
                           className="hidden"
@@ -541,7 +534,7 @@ export default function UploadTemplate({
                 </>
               )}
             </CardContent>
-            {shouldShowAllFields && (
+            {!!selectedOrder && (
               <CardFooter className="mt-6 justify-center">
                 <Button type="submit" size="lg">
                   {mode === 'reupload' ? '重新上傳 ' : '上傳素材'}
