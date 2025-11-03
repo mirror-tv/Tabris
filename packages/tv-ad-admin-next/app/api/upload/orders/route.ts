@@ -22,7 +22,13 @@ export async function GET(req: Request) {
     const { data } = await client.query<{ orders: OrderRecordForUpload[] }>({
       query: getOrdersForUpload,
       variables: {
-        where: { member: { id: { equals: memberId } } },
+        where: {
+          member: { id: { equals: memberId } },
+          OR: [
+            { state: { equals: 'paid' } },
+            { state: { equals: 'pending_quote_confirmation' } },
+          ],
+        },
         orderBy: [{ updatedAt: 'desc' }],
       },
     })

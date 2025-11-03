@@ -70,7 +70,6 @@ type EditableFields = Partial<{
 type UploadTemplateProps = {
   pageTitle: string
   mode: 'upload' | 'reupload'
-  // editableFields?: EditableFields
   onSubmit: (data: UploadSubmittedData) => void
   orders: OrderRecordForUpload[]
   loading: boolean
@@ -101,7 +100,7 @@ export default function UploadTemplate({
   loading,
   showAfterOrderSelect = false,
 }: UploadTemplateProps) {
-  const [orderId, setOrderId] = useState<string>('orderId')
+  const [orderId, setOrderId] = useState<string>('')
   const [formState, setFormState] = useState<FormState>(initialFormState)
   const [editableFields, setEditableFields] = useState<EditableFields>(
     initialEditableFields
@@ -145,7 +144,7 @@ export default function UploadTemplate({
     setFormState({
       ...formState,
       file: {
-        id: 'temp-id',
+        id: '',
         name: file.name,
         url: '',
         data: file,
@@ -197,7 +196,7 @@ export default function UploadTemplate({
         ? {
             id: image.id,
             name: image.name
-              ? `${image.name}.${image.imageFile?.extension}`
+              ? `${image.name}${image.imageFile?.extension ? `.${image.imageFile?.extension}` : ''}`
               : '舊圖片',
             url: image.url ?? '',
             data: null,
@@ -340,7 +339,13 @@ export default function UploadTemplate({
                       ]
                     )}
                   >
-                    <SelectValue placeholder={loading ? "讀取資料中..." :"請選擇要上傳/修改素材的訂單"} />
+                    <SelectValue
+                      placeholder={
+                        loading
+                          ? '讀取資料中...'
+                          : '請選擇要上傳/修改素材的訂單'
+                      }
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     {orders.map((order) => {
@@ -349,7 +354,10 @@ export default function UploadTemplate({
                           value={order.orderNumber}
                           key={order.orderNumber}
                         >
-                          {order.orderNumber}{order.name ? ` - ${order.name}` : ' - 未命名 [新訂單]'}
+                          {order.orderNumber}
+                          {order.name
+                            ? ` - ${order.name}`
+                            : ' - 未命名 [新訂單]'}
                         </SelectItem>
                       )
                     })}
@@ -471,6 +479,7 @@ export default function UploadTemplate({
                         {preview ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img
+                            loading="lazy"
                             src={preview}
                             alt={file?.name || '預覽圖'}
                             className="h-[90px] w-40 rounded-sm bg-white object-contain shadow-sm"
@@ -498,6 +507,7 @@ export default function UploadTemplate({
                         </Button>
                         <input
                           id={fileInputLabelId}
+                          key={file?.name} 
                           type="file"
                           accept=".jpg,.jpeg,.png"
                           className="hidden"
