@@ -47,7 +47,7 @@ function ListContent() {
   }, [searchParams])
 
   const renderedOrders = useMemo(() => {
-    let filtered = orders
+    let filtered = [...orders]
     if (orderState !== 'all') {
       filtered = filtered.filter((order) => {
         return order.some((o) => o.state === orderState)
@@ -63,9 +63,8 @@ function ListContent() {
         )
       })
     }
-
     return filtered
-  }, [orders, orderState, searchKeyword])
+  }, [orderState, searchKeyword])
 
   const handleViewOrder = (orderNumber: string) => {
     router.push(`/order/${orderNumber}`)
