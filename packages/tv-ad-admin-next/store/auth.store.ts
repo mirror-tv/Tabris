@@ -35,21 +35,15 @@ export const useAuthStore = create<AuthStore>()(
   persist(
     (set, get) => ({
       ...initialState,
-
-      // 設定使用者
       setUser: (user) => {
         set({
           user,
           isAuthenticated: !!user,
         })
       },
-
-      // 設定載入狀態
       setLoading: (loading) => {
         set({ isLoading: loading })
       },
-
-      // 登入
       login: (user) => {
         set({
           user,
@@ -58,7 +52,6 @@ export const useAuthStore = create<AuthStore>()(
         })
       },
 
-      // 登出
       logout: async () => {
         try {
           // 呼叫登出 API（清除 cookie）
@@ -68,8 +61,8 @@ export const useAuthStore = create<AuthStore>()(
           })
         } catch (error) {
           console.error('登出 API 錯誤:', error)
-          // 即使 API 失敗，也清除本地狀態
         } finally {
+          // 即使 API 失敗，也清除 localStorage 中的使用者資訊
           // 清除 store 狀態
           set({
             ...initialState,
@@ -77,7 +70,6 @@ export const useAuthStore = create<AuthStore>()(
           })
         }
       },
-
       // 檢查認證狀態（從 API 獲取當前使用者）
       checkAuth: async () => {
         const { setUser, setLoading } = get()
@@ -104,7 +96,6 @@ export const useAuthStore = create<AuthStore>()(
           set({ isInitialized: true })
         }
       },
-
       // 初始化（應用啟動時檢查認證狀態）
       initialize: async () => {
         const { isInitialized, checkAuth } = get()
@@ -121,19 +112,18 @@ export const useAuthStore = create<AuthStore>()(
         user: state.user,
         isAuthenticated: state.isAuthenticated,
       }),
-      // 水合後需要重新驗證 token（因為 cookie 才是真實來源）
+      // hydration 後需要重新驗證 token（因為 cookie 才是真實來源）
       onRehydrateStorage: () => (state) => {
-        // 水合後，如果從 localStorage 恢復了用戶信息，仍需要驗證
+        // hydration 後，如果從 localStorage 恢復了使用者資訊，仍需要驗證
         // 因為 cookie 可能已過期
         if (state?.isAuthenticated && typeof window !== 'undefined') {
-          // 在客戶端異步驗證 token（但不設置 isInitialized，讓 initialize 方法處理）
-          state.checkAuth().then(() => {
-            // 驗證完成後設置初始化標記
-            state && (state.isInitialized = true)
-          })
+          // 在客戶端非同步驗證 token（checkAuth 會自動設置 isInitialized）
+          state.checkAuth()
         } else {
-          // 如果沒有用戶信息，直接設置為已初始化
-          state && (state.isInitialized = true)
+          // 如果沒有使用者資訊，直接設置為已初始化
+          if (state) {
+            useAuthStore.setState({ isInitialized: true })
+          }
         }
       },
     }
