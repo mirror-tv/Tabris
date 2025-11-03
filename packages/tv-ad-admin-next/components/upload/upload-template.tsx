@@ -340,7 +340,7 @@ export default function UploadTemplate({
                       ]
                     )}
                   >
-                    <SelectValue placeholder="請選擇要上傳/修改素材的訂單" />
+                    <SelectValue placeholder={loading ? "讀取資料中..." :"請選擇要上傳/修改素材的訂單"} />
                   </SelectTrigger>
                   <SelectContent>
                     {orders.map((order) => {
@@ -349,7 +349,7 @@ export default function UploadTemplate({
                           value={order.orderNumber}
                           key={order.orderNumber}
                         >
-                          {order.orderNumber}
+                          {order.orderNumber}{order.name ? ` - ${order.name}` : ' - 未命名 [新訂單]'}
                         </SelectItem>
                       )
                     })}
