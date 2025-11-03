@@ -15,9 +15,9 @@ export function OrderPreview({ order, className = '' }: OrderPreviewProps) {
     <section
       className={`${ORDER_STYLES.sectionSpacing} ${ORDER_STYLES.card} ${className}`}
     >
-      <ProductionPreview />
+      <ProductionPreview order={order} />
       <hr className="my-6 border-gray-3" />
-      <RelatedDocuments />
+      {order.attachment && <RelatedDocuments attachment={order.attachment} />}
       {order.state === ORDER_STATE.PENDING_BROADCAST_DATE && (
         <Instructions
           wordings={[

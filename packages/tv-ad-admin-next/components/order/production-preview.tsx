@@ -1,8 +1,15 @@
+import Image from 'next/image'
+
+import { OrderRecordForOrderNumber } from '@/graphql/queries/orders'
 type ProductionPreviewProps = {
   className?: string
+  order: OrderRecordForOrderNumber
 }
 
-export function ProductionPreview({ className = '' }: ProductionPreviewProps) {
+export function ProductionPreview({
+  className = '',
+  order,
+}: ProductionPreviewProps) {
   return (
     <div className={className}>
       <h5 className="mb-4 text-text-primary">製作成品預覽</h5>
@@ -10,10 +17,20 @@ export function ProductionPreview({ className = '' }: ProductionPreviewProps) {
         <h6 className="font-sans text-sm leading-normal font-medium text-text-secondary">
           影片截圖
         </h6>
-        <div className="my-2 aspect-video w-full overflow-hidden rounded-lg bg-gray-2">
-          <div className="flex h-full w-full items-center justify-center text-text-tertiary">
-            影片截圖預覽
-          </div>
+        <div className="relative my-2 aspect-video w-full overflow-hidden rounded-lg bg-gray-2">
+          {order.demoImage?.[0]?.url ? (
+            <Image
+              src={order.demoImage?.[0]?.url || '/images/image-default.jpg'}
+              alt="video-preview"
+              fill
+              className="object-cover"
+              loading="lazy"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center text-text-tertiary">
+              影片截圖預覽
+            </div>
+          )}
         </div>
         <div className="flex justify-between font-sans text-sm leading-normal font-normal text-text-secondary">
           <div>
@@ -22,7 +39,10 @@ export function ProductionPreview({ className = '' }: ProductionPreviewProps) {
           </div>
           <div>
             <span>尺寸：</span>
-            <span>1920x1080</span>
+            <span>
+              {order.demoImage?.[0]?.imageFile?.width || '???'}x
+              {order.demoImage?.[0]?.imageFile?.height || '???'}
+            </span>
           </div>
         </div>
       </div>
