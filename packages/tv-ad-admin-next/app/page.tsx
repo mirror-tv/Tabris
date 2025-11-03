@@ -195,13 +195,12 @@ export default function HomePage() {
 
       // 登入成功，更新 store
       if (data.user) {
+        // login 是同步函數，只是更新 zustand store 的 state，不需要 await
         login(data.user)
       }
 
-      // 等待確保 cookie 已設定
-      await new Promise((resolve) => setTimeout(resolve, 300))
-
       // 登入成功，跳轉到 dashboard
+      // Cookie 已在 API 響應時設定，狀態更新是同步的，可直接跳轉
       router.push('/dashboard')
     } catch (err) {
       console.error(err)
