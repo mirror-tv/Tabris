@@ -49,8 +49,13 @@ export function OrderRow({
       key: 'moreBtn',
       content: (
         <Button
-          onClick={() => onViewOrder(order.orderNumber)}
+          onClick={() => {
+            if (order.orderNumber) {
+              onViewOrder(order.orderNumber)
+            }
+          }}
           variant="outline"
+          disabled={!order.orderNumber}
         >
           <DetailIcon className="h-4 w-4" />
           查看
