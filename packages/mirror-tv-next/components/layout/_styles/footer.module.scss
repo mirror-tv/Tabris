@@ -11,12 +11,13 @@
   display: flex;
   align-items: center;
   flex-direction: column;
-  max-width: 1440px;
+  max-width: $footer-max-width;
   margin: auto;
 
   @include media-breakpoint-up(xl) {
     flex-direction: row;
     justify-content: space-between;
+    padding: 0 83px 0 45px;
     height: 164px;
   }
 }
