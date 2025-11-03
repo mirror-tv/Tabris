@@ -36,7 +36,7 @@ export async function GET() {
       return NextResponse.json({ error: '會員資料驗證失敗' }, { status: 403 })
     }
 
-    // 查詢訂單資料（可以根據 member.id 過濾，這裡示範取得所有訂單）
+    // 查詢訂單資料（根據 member.id 過濾，只取得該會員的訂單）
     const client = getClient()
     const { data } = await client.query<{ orders: OrderRecordForDashboard[] }>({
       query: getOrdersStateQuery,
@@ -52,8 +52,8 @@ export async function GET() {
 
     return NextResponse.json({
       orders,
-      member, // 返回 member 資料
-      user: currentUser, // 返回使用者資訊
+      member,
+      user: currentUser,
     })
   } catch (error) {
     createErrorLogger('Failed to fetch dashboard stats')(error)
