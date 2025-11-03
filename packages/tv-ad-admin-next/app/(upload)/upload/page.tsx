@@ -19,7 +19,6 @@ export default function UploadPage() {
   const [orders, setOrders] = useState<OrderRecordForUpload[]>([])
   const [loading, setLoading] = useState(true)
 
-
   useEffect(() => {
     const fetchOrders = async () => {
       try {

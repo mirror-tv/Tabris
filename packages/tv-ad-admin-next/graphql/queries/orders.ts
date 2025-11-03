@@ -137,6 +137,11 @@ export const getOrdersForUpload = gql`
       paragraphTwoEditable
       image {
         id
+        url
+        name
+        imageFile {
+          extension
+        }
       }
       imageEditable
       state

@@ -33,12 +33,12 @@ import ConfirmDialog, {
 } from '@/components/upload/confirm-dialog'
 import { layout } from '@/constants'
 import { OrderRecordForUpload } from '@/graphql/queries/orders'
-import { PhotoRecordForUploadPreview } from '@/graphql/queries/photo'
 import FileIcon from '@/public/icons/file.svg'
 import ImageIcon from '@/public/icons/image.svg'
 import TextFormatIcon from '@/public/icons/text-format.svg'
 import TextIcon from '@/public/icons/text.svg'
 import TriangleExclamationIcon from '@/public/icons/triangle-exclamation.svg'
+import { PhotoSchema } from '@/types/photo'
 import { cn, devLog } from '@/utils'
 
 // ===== Label / Input Element IDs =====
@@ -47,14 +47,16 @@ const adNameLabelId = 'ad-name-label'
 const text1LabelId = 'text1-label'
 const text2LabelId = 'text2-label'
 const uploadLabelId = 'upload-label'
-const fileInputLabelId = 'file-input'
+const fileInputLabelId = 'file-input-label'
 
 type FormState = {
   adName: string
   text1: string
   text2: string
   range: DateRange | undefined
-  file: (PhotoRecordForUploadPreview & { data: File | null }) | null
+  file:
+    | (Pick<PhotoSchema, 'id' | 'name' | 'url'> & { data: File | null })
+    | null
 }
 
 type EditableFields = Partial<{
@@ -123,22 +125,6 @@ export default function UploadTemplate({
   // this constant controls whether to render all fields
   const shouldShowAllFields = !showAfterOrderSelect || reuploadOrderSelected
 
-  async function fetchImage(
-    photoId: string
-  ): Promise<PhotoRecordForUploadPreview | null> {
-    try {
-      const res = await fetch(`/api/photo/${photoId}`)
-
-      if (!res.ok) return null
-      const data = await res.json()
-
-      return data as PhotoRecordForUploadPreview
-    } catch (err) {
-      console.error('[fetchImage] Failed to get image URL:', err)
-      return null
-    }
-  }
-
   // ====================== Start: drop file ======================
   function _validateAndSetFile(file: File) {
     if (!['image/jpeg', 'image/png'].includes(file.type)) {
@@ -205,21 +191,18 @@ export default function UploadTemplate({
     const selectedOrder = orders.find((o) => o.orderNumber === value)
     if (!selectedOrder) return
 
-    let photoData: FormState['file'] = null
-    if (selectedOrder.image?.id) {
-      const fetchedImage = await fetchImage(selectedOrder.image.id)
-
-      console.log(fetchedImage, 'fetchedImage ===')
-
-      if (fetchedImage) {
-        photoData = {
-          id: selectedOrder.image.id,
-          name: fetchedImage.name ?? '舊圖片',
-          url: fetchedImage.url,
-          data: null,
-        }
-      }
-    }
+    const image = selectedOrder.image
+    const photoData =
+      image && image.id
+        ? {
+            id: image.id,
+            name: image.name
+              ? `${image.name}.${image.imageFile?.extension}`
+              : '舊圖片',
+            url: image.url ?? '',
+            data: null,
+          }
+        : null
 
     // Date conversion
     const startDate = selectedOrder.scheduleStartDate
@@ -237,8 +220,6 @@ export default function UploadTemplate({
         startDate && endDate ? { from: startDate, to: endDate } : undefined,
       file: photoData,
     })
-
-    // setPreview(imagePreview)
 
     setEditableFields({
       adName: selectedOrder.nameEditable,
@@ -293,6 +274,7 @@ export default function UploadTemplate({
             to: format(range.to, 'yyyy/MM/dd'),
           }
         : undefined
+
     const data: UploadSubmittedData = {
       order: orderId!,
       adName: adName || '[未修改]',

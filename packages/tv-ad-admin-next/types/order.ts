@@ -24,9 +24,9 @@ export type OrderSchema = {
   paragraphOneEditable?: boolean
   paragraphTwo?: string | null
   paragraphTwoEditable?: boolean
-  image?: Pick<PhotoSchema, 'id'> | null
+  image?: Partial<PhotoSchema> | null
   imageEditable?: boolean
-  demoImage?: Pick<PhotoSchema, 'id'>[]
+  demoImage?: Partial<PhotoSchema>[]
   createdAt: string
   updatedAt: string
 }

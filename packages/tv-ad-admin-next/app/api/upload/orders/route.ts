@@ -9,7 +9,6 @@ import { getClient } from '@/utils/apollo-client'
 export async function GET(req: Request) {
   const url = new URL(req.url)
   const memberId = url.searchParams.get('memberId')
-  console.log(memberId, typeof memberId, 'test--')
 
   if (!memberId) {
     return NextResponse.json(
