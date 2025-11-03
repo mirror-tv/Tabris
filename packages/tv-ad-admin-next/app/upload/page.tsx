@@ -72,7 +72,6 @@ export default function UploadPage() {
   return (
     <UploadTemplate
       pageTitle={pageTitle}
-      mode="upload"
       onSubmit={handleConfirmUpload}
       orders={orders}
       loading={loading}

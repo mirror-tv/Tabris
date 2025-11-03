@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 
+import { ORDER_STATE } from '@/constants'
 import {
   getOrdersForUpload,
   OrderRecordForUpload,
@@ -25,8 +26,8 @@ export async function GET(req: Request) {
         where: {
           member: { id: { equals: memberId } },
           OR: [
-            { state: { equals: 'paid' } },
-            { state: { equals: 'pending_quote_confirmation' } },
+            { state: { equals: ORDER_STATE.PENDING_UPLOAD } },
+            { state: { equals: ORDER_STATE.PENDING_QUOTE_CONFIRMATION } },
           ],
         },
         orderBy: [{ updatedAt: 'desc' }],

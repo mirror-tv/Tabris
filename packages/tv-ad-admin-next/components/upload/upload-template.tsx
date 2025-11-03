@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { format } from 'date-fns'
 import { DateRange } from 'react-day-picker'
@@ -31,7 +31,7 @@ import {
 import ConfirmDialog, {
   UploadSubmittedData,
 } from '@/components/upload/confirm-dialog'
-import { layout } from '@/constants'
+import { layout, ORDER_STATE } from '@/constants'
 import { OrderRecordForUpload } from '@/graphql/queries/orders'
 import FileIcon from '@/public/icons/file.svg'
 import ImageIcon from '@/public/icons/image.svg'
@@ -69,7 +69,6 @@ type EditableFields = Partial<{
 
 type UploadTemplateProps = {
   pageTitle: string
-  mode: 'upload' | 'reupload'
   onSubmit: (data: UploadSubmittedData) => void
   orders: OrderRecordForUpload[]
   loading: boolean
@@ -93,7 +92,6 @@ const initialEditableFields: EditableFields = {
 
 export default function UploadTemplate({
   pageTitle,
-  mode,
   onSubmit,
   orders,
   loading,
@@ -113,9 +111,17 @@ export default function UploadTemplate({
 
   const { adName, text1, text2, range, file } = formState
 
-  function isDisabled(key: keyof EditableFields) {
+  const mode = useMemo(() => {
+    if (selectedOrder?.state === ORDER_STATE.PENDING_QUOTE_CONFIRMATION)
+      return 'reupload'
+    if (selectedOrder?.state === ORDER_STATE.PENDING_UPLOAD) return 'upload'
+    return 'upload'
+  }, [selectedOrder])
+
+  function isFieldEditable(key: keyof EditableFields) {
     return editableFields[key] === false
   }
+
   devLog(selectedOrder, 'selectedOrder')
   devLog(orders, 'orders')
 
@@ -231,27 +237,27 @@ export default function UploadTemplate({
     if (!selectedOrder) newErrors.order = '請選擇訂單'
 
     // Skip validation if the field is disabled in reupload page
-    if (!isDisabled('adName') && !adName.trim()) {
+    if (!isFieldEditable('adName') && !adName.trim()) {
       newErrors.adName = '請輸入廣告名稱'
     }
 
-    if (!isDisabled('text1')) {
+    if (!isFieldEditable('text1')) {
       if (text1.trim().length === 0 || text1.trim().length > 10) {
         newErrors.text1 = '請輸入 1 - 10 字以內的文字素材'
       }
     }
 
-    if (!isDisabled('text2')) {
+    if (!isFieldEditable('text2')) {
       if (text2.trim().length > 10) {
         newErrors.text2 = '文字素材二最多 10 字'
       }
     }
 
-    if (!isDisabled('range') && (!range?.from || !range?.to)) {
+    if (!isFieldEditable('range') && (!range?.from || !range?.to)) {
       newErrors.range = '請選擇完整的排播起訖日期'
     }
 
-    if (!isDisabled('file') && !file) {
+    if (!isFieldEditable('file') && !file) {
       newErrors.file = '請上傳圖片檔案'
     }
 
@@ -260,7 +266,7 @@ export default function UploadTemplate({
 
     // Handle data construction safely for reupload mode
     const formattedRange =
-      !isDisabled('range') && range?.from && range?.to
+      !isFieldEditable('range') && range?.from && range?.to
         ? {
             from: format(range.from, 'yyyy/MM/dd'),
             to: format(range.to, 'yyyy/MM/dd'),
@@ -372,7 +378,8 @@ export default function UploadTemplate({
                         id={adNameLabelId}
                         type="text"
                         placeholder="請輸入廣告名稱"
-                        disabled={isDisabled('adName')}
+                        value={adName}
+                        disabled={isFieldEditable('adName')}
                         onChange={(e) =>
                           setFormState((prev) => ({
                             ...prev,
@@ -393,7 +400,7 @@ export default function UploadTemplate({
                         }))
                       }
                       error={errors.range}
-                      disabled={isDisabled('range')}
+                      disabled={isFieldEditable('range')}
                     />
                   </div>
 
@@ -408,17 +415,17 @@ export default function UploadTemplate({
                       type="text"
                       placeholder="請輸入第一段文字素材"
                       className={cn(
-                        isDisabled('text1') &&
+                        isFieldEditable('text1') &&
                           'cursor-not-allowed bg-gray-3 text-gray-5'
                       )}
-                      value={formState.text1}
+                      value={text1}
                       onChange={(e) =>
                         setFormState((prev) => ({
                           ...prev,
                           text1: e.target.value,
                         }))
                       }
-                      disabled={isDisabled('text1')}
+                      disabled={isFieldEditable('text1')}
                       error={errors.text1}
                       errorMessage={errors.text1}
                     />
@@ -440,7 +447,7 @@ export default function UploadTemplate({
                           text2: e.target.value,
                         }))
                       }
-                      disabled={isDisabled('text2')}
+                      disabled={isFieldEditable('text2')}
                       error={errors.text2}
                       errorMessage={errors.text2}
                     />
@@ -491,7 +498,7 @@ export default function UploadTemplate({
                           size="lg"
                           intent="secondary"
                           className="bg-white"
-                          disabled={isDisabled('file')}
+                          disabled={isFieldEditable('file')}
                           onClick={() =>
                             document.getElementById(fileInputLabelId)?.click()
                           }
