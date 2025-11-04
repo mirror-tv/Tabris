@@ -6,6 +6,7 @@ import {
   OrderRecordForUpload,
 } from '@/graphql/queries/orders'
 import { getClient } from '@/utils/apollo-client'
+import { createErrorLogger } from '@/utils/error-handler'
 
 export async function GET(
   _req: Request,
@@ -46,9 +47,12 @@ export async function GET(
 
     return NextResponse.json({ orders: data.orders })
   } catch (error) {
-    console.error('Failed to fetch upload orders:', error)
+    createErrorLogger(`Failed to fetch upload orders by memberId: ${memberId}`)(
+      error
+    )
+
     return NextResponse.json(
-      { error: 'Failed to fetch upload orders.' },
+      { success: false, error: 'Failed to fetch upload orders.' },
       { status: 500 }
     )
   }
