@@ -113,14 +113,15 @@ export const useAuthStore = create<AuthStore>()(
         isAuthenticated: state.isAuthenticated,
       }),
       // hydration 後需要重新驗證 token（因為 cookie 才是真實來源）
-      onRehydrateStorage: () => (state) => {
+      onRehydrateStorage: () => async (state) => {
         // hydration 後，如果從 localStorage 恢復了使用者資訊，仍需要驗證
         // 因為 cookie 可能已過期
         if (state?.isAuthenticated && typeof window !== 'undefined') {
-          // 在客戶端非同步驗證 token（checkAuth 會自動設置 isInitialized）
-          state.checkAuth()
+          // 在開始驗證前，先設置 loading 狀態，避免畫面閃爍
+          state.setLoading(true)
+          // 等待驗證完成（checkAuth 會自動設置 isInitialized 和 loading）
+          await state.checkAuth()
         } else {
-          // 如果沒有使用者資訊，直接設置為已初始化
           if (state) {
             useAuthStore.setState({ isInitialized: true })
           }
