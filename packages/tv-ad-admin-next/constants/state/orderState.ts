@@ -7,6 +7,22 @@ export type StateRoute =
   | 'edit'
   | 'transferred'
 
+// TODO: 跟後端的有些值對不上，可能還少一兩個 key
+// const orderStateOptions = [
+//   { label: '待上傳素材', value: 'paid' },
+//   { label: '已上傳檔案', value: 'file_uploaded' },
+//   { label: '已確認素材', value: 'material_confirmed' },
+//   { label: '素材更新', value: 'material_updated' },
+//   { label: '已製作', value: 'produced' },
+//   { label: '影片確認', value: 'video_confirmed' },
+//   { label: '排播', value: 'scheduled' },
+//   { label: '已播出', value: 'broadcasted' },
+//   { label: '提出修改要求', value: 'modification_request' }, 待修正
+//   { label: '待確認修改報價', value: 'pending_quote_confirmation' }, 已修正
+//   { label: '已轉交', value: 'transferred' },
+//   { label: '待排播', value: 'pending_broadcast_date' },
+//   { label: '已取消', value: 'cancelled' },
+// ]
 export const ORDER_STATE = {
   PENDING_UPLOAD: 'paid',
   MATERIAL_UPLOADED: 'file_uploaded',
@@ -15,7 +31,7 @@ export const ORDER_STATE = {
   PENDING_SCHEDULE: 'produced',
   BROADCASTED: 'video_confirmed',
   MODIFICATION_REQUEST: 'scheduled',
-  PENDING_QUOTE_CONFIRMATION: 'broadcasted',
+  PENDING_QUOTE_CONFIRMATION: 'pending_quote_confirmation',
   TRANSFERRED: 'transferred',
   PENDING_BROADCAST_DATE: 'pending_broadcast_date',
   CANCELLED: 'cancelled',

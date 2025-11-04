@@ -1,7 +1,5 @@
 'use client'
 
-import type { Dispatch, SetStateAction } from 'react'
-
 import { addDays, format, startOfToday } from 'date-fns'
 import { zhTW } from 'date-fns/locale/zh-TW'
 
@@ -25,7 +23,7 @@ import { cn } from '@/utils'
 
 type PopoverCalendarProps = {
   range: DateRange | undefined
-  setRange: Dispatch<SetStateAction<DateRange | undefined>>
+  setRange: (range: DateRange | undefined) => void 
   error?: string | null
   disabled?: boolean
   className?: string

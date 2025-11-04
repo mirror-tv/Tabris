@@ -1,4 +1,7 @@
+import { PhotoSchema } from './photo'
+
 import { type OrderState } from '@/constants'
+
 
 /**
  * Order 文件在 GraphQL schema 中的完整類型定義
@@ -51,28 +54,16 @@ export type OrderSchema = {
     filesize?: number | null
     url?: string | null
   } | null
-  image?: {
-    id: string
-    filename?: string | null
-    filesize?: number | null
-    url?: string | null
-  } | null
-  demoImage?: {
-    id: string
-    filename?: string | null
-    filesize?: number | null
-    url?: string | null
-  }[]
-
+  
   paragraphOne?: string | null
   paragraphTwo?: string | null
-
-  createdAt: string // ISO 8601 日期時間字串
-  updatedAt: string // ISO 8601 日期時間字串
-
   nameEditable?: boolean
   scheduleEditable?: boolean
   paragraphOneEditable?: boolean
   paragraphTwoEditable?: boolean
   imageEditable?: boolean
+  image?: Partial<PhotoSchema> | null
+  demoImage?: Partial<PhotoSchema>[]
+  createdAt: string // ISO 8601 日期時間字串
+  updatedAt: string // ISO 8601 日期時間字串
 }

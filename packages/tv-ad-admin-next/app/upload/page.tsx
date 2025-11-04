@@ -1,13 +1,49 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+
+import {  useRouter } from 'next/navigation'
+
 import SubmitResult from '@/components/shared/submit-result'
 import UploadTemplate from '@/components/upload/upload-template'
+import { OrderRecordForUpload } from '@/graphql/queries/orders'
 import { useSubmitStatus } from '@/hooks/useSubmitStatus'
 
 const pageTitle = '上傳廣告素材'
 
 export default function UploadPage() {
   const { submitStatus, setSubmitStatus } = useSubmitStatus()
+  const router = useRouter()
+
+  const [orders, setOrders] = useState<OrderRecordForUpload[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        // TODO: 待改成 auth 後得到的會員資訊, 目前是寫死的會員 id
+        // const res = await fetch(`/api/upload/${memberId}/orders`)
+        const res = await fetch(`/api/upload/2/orders`)
+
+        if (!res.ok) {
+          // If the API returns an error, redirect to not-found page with status code
+          router.push(`/not-found/${res.status}`)
+          return
+        }
+
+        const data = await res.json()
+
+        setOrders(data.orders || [])
+      } catch (err) {
+        console.error('Failed to fetch orders for upload:', err)
+        router.push(`/not-found/500`)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchOrders()
+  }, [router])
 
   function handleConfirmUpload(data: unknown) {
     console.log('送出上傳資料', data)
@@ -37,9 +73,9 @@ export default function UploadPage() {
   return (
     <UploadTemplate
       pageTitle={pageTitle}
-      mode="upload"
       onSubmit={handleConfirmUpload}
-      showAfterOrderSelect
+      orders={orders}
+      loading={loading}
     />
   )
 }
