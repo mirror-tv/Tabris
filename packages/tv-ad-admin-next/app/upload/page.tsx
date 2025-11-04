@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 
-import { useSearchParams,useRouter } from 'next/navigation'
+import {  useRouter } from 'next/navigation'
 
 import SubmitResult from '@/components/shared/submit-result'
 import UploadTemplate from '@/components/upload/upload-template'
@@ -14,7 +14,6 @@ const pageTitle = '上傳廣告素材'
 export default function UploadPage() {
   const { submitStatus, setSubmitStatus } = useSubmitStatus()
   const router = useRouter()
-  const searchParams = useSearchParams()
 
   const [orders, setOrders] = useState<OrderRecordForUpload[]>([])
   const [loading, setLoading] = useState(true)
@@ -22,11 +21,13 @@ export default function UploadPage() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const memberId = searchParams.get('memberId')
-        const res = await fetch(`/api/upload/orders?memberId=${memberId ?? ''}`)
+        // TODO: 待改成 auth 後得到的會員資訊, 目前是寫死的會員 id
+        // const res = await fetch(`/api/upload/${memberId}/orders`)
+        const res = await fetch(`/api/upload/2/orders`)
+
         if (!res.ok) {
           // If the API returns an error, redirect to not-found page with status code
-          router.push(`/not-found?status=${res.status}`)
+          router.push(`/not-found/${res.status}`)
           return
         }
 
@@ -35,14 +36,14 @@ export default function UploadPage() {
         setOrders(data.orders || [])
       } catch (err) {
         console.error('Failed to fetch orders for upload:', err)
-        router.push(`/not-found?status=500`)
+        router.push(`/not-found/500`)
       } finally {
         setLoading(false)
       }
     }
 
     fetchOrders()
-  }, [router, searchParams])
+  }, [router])
 
   function handleConfirmUpload(data: unknown) {
     console.log('送出上傳資料', data)

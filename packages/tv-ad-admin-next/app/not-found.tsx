@@ -1,6 +1,6 @@
 'use client'
 
-import { useSearchParams, useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
@@ -9,8 +9,8 @@ import NotFoundIcon from '@/public/icons/close-circle.svg'
 
 export default function NotFoundPage() {
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const statusCode = searchParams.get('status')
+  const pathname = usePathname()
+  const lastSegment = pathname.split('/').filter(Boolean).pop()
 
   return (
     <>
@@ -19,8 +19,8 @@ export default function NotFoundPage() {
         <section className="mt-20 flex flex-col items-center gap-3 text-center">
           <NotFoundIcon className="size-12 text-gray-5" />
           <div>
-            {statusCode && (
-              <h2 className="font-semibold text-gray-8">{statusCode}</h2>
+            {lastSegment && (
+              <h2 className="font-semibold text-gray-8">{lastSegment}</h2>
             )}
             <h4 className="text-gray-8">找不到該頁面</h4>
           </div>

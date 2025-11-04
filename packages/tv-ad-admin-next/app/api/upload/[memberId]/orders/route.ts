@@ -7,9 +7,11 @@ import {
 } from '@/graphql/queries/orders'
 import { getClient } from '@/utils/apollo-client'
 
-export async function GET(req: Request) {
-  const url = new URL(req.url)
-  const memberId = url.searchParams.get('memberId')
+export async function GET(
+  _req: Request,
+  { params }: { params: { memberId: string } }
+) {
+  const { memberId } = params
 
   if (!memberId) {
     return NextResponse.json(
