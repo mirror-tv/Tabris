@@ -15,7 +15,7 @@ export type OrderRecordForList = Pick<
   | 'createdAt'
   | 'updatedAt'
 > & {
-  relatedOrder?: { id: string }[]
+  relatedOrder?: { id: OrderSchema['id'] }[]
 }
 
 export const getOrdersQuery = gql`
@@ -71,8 +71,8 @@ export type OrderRecordForOrderNumber = Pick<
 >
 
 export const getOrdersByOrderNumberQuery = gql`
-  query getOrdersByOrderNumber($orderNumber: String!) {
-    orders(where: { orderNumber: $orderNumber }) {
+  query getOrdersByOrderNumber($where: OrderWhereInput!) {
+    orders(where: $where) {
       id
       orderNumber
       name

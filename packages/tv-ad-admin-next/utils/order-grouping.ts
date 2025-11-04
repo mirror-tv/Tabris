@@ -45,8 +45,7 @@ export function groupOrders(
 
     chain.push(order)
     processed[order.id] = true
-    const children =
-      parentMap.get(order.id.toString()) || ([] as OrderRecordForList[])
+    const children = parentMap.get(order.id) || ([] as OrderRecordForList[])
 
     for (const child of children) {
       if (!processed[child.id]) {

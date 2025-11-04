@@ -16,33 +16,58 @@ import TriangleExclamationIcon from '@/public/icons/triangle-exclamation.svg'
 
 const PAGE_TITLE = '設定排播日期'
 
-export default function EditSchedule() {
+export default function EditSchedule({
+  params,
+}: {
+  params: { orderNumber: string }
+}) {
+  const { orderNumber } = params
   const { submitStatus, setSubmitStatus } = useSubmitStatus()
 
   const [range, setRange] = useState<DateRange | undefined>(undefined)
   const [error, setError] = useState<string | null>(null)
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
+
+    if (!orderNumber) {
+      setError('訂單編號不存在')
+      return
+    }
 
     if (!range?.from || !range?.to) {
       setError('請選擇完整的排播起訖日期')
       return
     }
 
+    setError(null)
+
     const formattedRange = {
-      from: format(range.from, 'yyyy-MM-dd'),
-      to: format(range.to, 'yyyy-MM-dd'),
+      scheduleStartDate: format(range.from, 'yyyy-MM-dd'),
+      scheduleEndDate: format(range.to, 'yyyy-MM-dd'),
     }
 
-    console.log('Submitted schedule:', formattedRange)
+    try {
+      const res = await fetch(`/api/order/${orderNumber}/schedule`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formattedRange),
+      })
 
-    // Demo alert to choose result
-    const isSuccess = window.confirm(
-      '是否要模擬「送出成功」？按「取消」則模擬失敗。'
-    )
-    
-    setSubmitStatus(isSuccess ? 'success' : 'failure')
+      if (!res.ok) {
+        throw new Error(`Response status: ${res.status}`)
+      }
+
+      setSubmitStatus('success')
+    } catch (error) {
+      console.error('Failed to update order schedule:', error)
+      setError(
+        error instanceof Error ? error.message : '更新排播日期失敗，請稍後再試'
+      )
+      setSubmitStatus('failure')
+    }
   }
 
   if (submitStatus === 'success') {

@@ -4,8 +4,9 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { verifyOTP } from '@/utils/otp-storage'
+
 import { generateToken } from '@/utils/auth'
+import { verifyOTP } from '@/utils/otp-storage'
 
 export async function POST(request: NextRequest) {
   try {
