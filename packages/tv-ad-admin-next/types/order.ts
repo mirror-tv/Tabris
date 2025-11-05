@@ -1,15 +1,5 @@
 import { type OrderState } from '@/constants'
 
-/**
- * Order 文件在 GraphQL schema 中的完整類型定義
- * 對應 Keystone CMS 的 Order model
- *
- * 注意：
- * - `id` 在 GraphQL 中為字串類型（GraphQL ID scalar）
- * - `scheduleStartDate` 和 `scheduleEndDate` 從 GraphQL 回傳為 ISO 8601 字串或 null
- * - `scheduleStartDateString` 和 `scheduleEndDateString` 為前端格式化後的顯示字串
- * - `*Editable` 欄位為前端狀態標記，不會從 GraphQL 回傳
- */
 export type OrderSchema = {
   id: string
   orderNumber: string | null
@@ -21,6 +11,7 @@ export type OrderSchema = {
   scheduleEndDate: string | null
   scheduleStartDateString?: string | null
   scheduleEndDateString?: string | null
+  scheduleConfirmDeadline?: string | null
   schedule?: string | null
 
   member?: MemberSchema | null
@@ -28,7 +19,7 @@ export type OrderSchema = {
 
   attachment?: AttachmentSchema | null
   image?: ImageSchema | null
-  demoImage?: ImageSchema[] | null
+  demoImage?: ImageSchema | null
 
   paragraphOne?: string | null
   paragraphTwo?: string | null
@@ -41,6 +32,9 @@ export type OrderSchema = {
   paragraphOneEditable?: boolean
   paragraphTwoEditable?: boolean
   imageEditable?: boolean
+
+  price?: number | null
+  videoDuration?: number | null
 }
 
 export type MemberSchema = {
@@ -64,9 +58,11 @@ export type AttachmentSchema = {
 
 export type ImageSchema = {
   id: string
+  name?: string | null
   url?: string | null
   imageFile?: {
     width: number
     height: number
+    extension?: string | null
   } | null
 }
