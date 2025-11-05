@@ -39,7 +39,9 @@ function ListContent() {
       }
     }
     fetchOrders()
+  }, [])
 
+  useEffect(() => {
     const state = searchParams.get('state') || 'all'
     const keyword = searchParams.get('keyword') || ''
     setOrderState(state as OrderState | 'all')
@@ -64,7 +66,7 @@ function ListContent() {
       })
     }
     return filtered
-  }, [orderState, searchKeyword])
+  }, [orders, orderState, searchKeyword])
 
   const handleViewOrder = (orderNumber: string) => {
     router.push(`/order/${orderNumber}`)
