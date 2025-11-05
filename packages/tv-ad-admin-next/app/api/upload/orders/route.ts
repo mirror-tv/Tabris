@@ -5,24 +5,24 @@ import {
   getOrdersForUpload,
   OrderRecordForUploadQuery,
 } from '@/graphql/queries/orders'
+import { ApiResponse } from '@/types'
 import { getClient } from '@/utils/apollo-client'
 import { getCurrentUser } from '@/utils/auth'
 import { createErrorLogger } from '@/utils/error-handler'
 
 export async function GET() {
-
   try {
     const currentUser = await getCurrentUser()
 
     if (!currentUser?.memberId) {
-      return NextResponse.json(
-        { error: 'Unauthorized or missing memberId.' },
+      return NextResponse.json<ApiResponse>(
+        { success: false, message: 'Unauthorized or missing memberId.' },
         { status: 401 }
       )
     }
 
     const client = getClient()
-    const { data } = await client.query<{
+    const { data, errors } = await client.query<{
       orders: OrderRecordForUploadQuery[]
     }>({
       query: getOrdersForUpload,
@@ -36,24 +36,39 @@ export async function GET() {
         },
         orderBy: [{ state: 'desc' }],
       },
+      errorPolicy: 'all',
     })
 
-    // Optional: handle case where no orders are found
+    // Handle any GraphQL errors
+    if (errors?.length) {
+      const message = errors.map((e) => e.message).join(', ')
+      createErrorLogger('GraphQL errors while fetching orders')(
+        new Error(message)
+      )
+      return NextResponse.json<ApiResponse>(
+        { success: false, message },
+        { status: 500 }
+      )
+    }
+
+    // Handle case where no orders are found
     if (!data.orders || data.orders.length === 0) {
       return NextResponse.json(
-        { error: 'No orders found for this member.' },
+        { success: false, message: 'No orders found for this member.' },
         { status: 404 }
       )
     }
 
-    return NextResponse.json({ orders: data.orders })
+    return NextResponse.json<ApiResponse<OrderRecordForUploadQuery[]>>({
+      success: true,
+      message: 'Orders fetched successfully',
+      data: data.orders,
+    })
   } catch (error) {
-    createErrorLogger('Failed to fetch upload orders')(
-      error
-    )
+    createErrorLogger('Failed to fetch upload orders')(error)
 
-    return NextResponse.json(
-      { success: false, error: 'Internal server error' },
+    return NextResponse.json<ApiResponse>(
+      { success: false, message: 'Internal server error' },
       { status: 500 }
     )
   }

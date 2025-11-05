@@ -264,7 +264,7 @@ export default function UploadTemplate({
     if (Object.keys(newErrors).length > 0) return
 
     const mutationData: OrderRecordForUploadMutation = {
-      id: selectedOrder!.id,
+      orderNumber: selectedOrder!.orderNumber,
     }
 
     if (fields.nameEditable) mutationData.name = adName
