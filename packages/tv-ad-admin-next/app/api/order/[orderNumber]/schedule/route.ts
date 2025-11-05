@@ -2,14 +2,100 @@ import { parseISO } from 'date-fns'
 import { NextRequest, NextResponse } from 'next/server'
 
 import { updateOrderScheduleMutation } from '@/graphql/mutations/orders'
+import { getOrderScheduleQuery } from '@/graphql/queries/orders'
 import { getClient } from '@/utils/apollo-client'
+import { getCurrentUser } from '@/utils/auth'
+import { formatTaiwanDate } from '@/utils/date'
 import { createErrorLogger } from '@/utils/error-handler'
+
+export async function GET(
+  _req: NextRequest,
+  { params }: { params: { orderNumber?: string } }
+) {
+  const { orderNumber } = params ?? {}
+  const user = await getCurrentUser()
+
+  if (!user || !user.memberId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  if (!orderNumber) {
+    return NextResponse.json(
+      { error: 'Order number is required' },
+      { status: 400 }
+    )
+  }
+
+  try {
+    const client = getClient()
+    const { data, errors } = await client.query({
+      query: getOrderScheduleQuery,
+      variables: {
+        where: {
+          orderNumber: {
+            equals: orderNumber,
+          },
+          member: {
+            id: {
+              equals: user.memberId,
+            },
+          },
+        },
+      },
+      errorPolicy: 'all',
+    })
+
+    if (errors && errors.length > 0) {
+      const errorMessage = errors
+        .map((e: { message: string }) => e.message)
+        .join(', ')
+      createErrorLogger(`Failed to get order schedule: ${orderNumber}`)(
+        new Error(`GraphQL errors: ${errorMessage}`)
+      )
+
+      return NextResponse.json(
+        { error: `Failed to get order schedule: ${errorMessage}` },
+        { status: 500 }
+      )
+    }
+
+    const order = data?.orders?.[0]
+
+    if (!order) {
+      return NextResponse.json({ error: 'Order not found' }, { status: 404 })
+    }
+
+    // 格式化日期字符串，與其他 API 保持一致
+    const formattedOrder = {
+      ...order,
+      scheduleStartDateString: formatTaiwanDate(order.scheduleStartDate),
+      scheduleEndDateString: formatTaiwanDate(order.scheduleEndDate),
+    }
+
+    return NextResponse.json({
+      success: true,
+      order: formattedOrder,
+    })
+  } catch (error) {
+    createErrorLogger(`Failed to get order schedule: ${orderNumber}`)(error)
+
+    return NextResponse.json(
+      { error: `Failed to get order schedule: ${orderNumber}` },
+      { status: 500 }
+    )
+  }
+}
 
 export async function POST(
   request: NextRequest,
   { params }: { params: { orderNumber?: string } }
 ) {
   const { orderNumber } = params ?? {}
+  const user = await getCurrentUser()
+
+  if (!user || !user.memberId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
 
   if (!orderNumber) {
     return NextResponse.json(
@@ -35,6 +121,11 @@ export async function POST(
       variables: {
         where: {
           orderNumber: orderNumber,
+          member: {
+            id: {
+              equals: user.memberId,
+            },
+          },
         },
         data: {
           scheduleStartDate: parseISO(scheduleStartDate),

@@ -148,3 +148,28 @@ export const getOrdersForUpload = gql`
     }
   }
 `
+
+export type OrderRecordForSchedule = Pick<
+  OrderSchema,
+  | 'id'
+  | 'orderNumber'
+  | 'name'
+  | 'state'
+  | 'scheduleStartDate'
+  | 'scheduleEndDate'
+  | 'scheduleStartDateString'
+  | 'scheduleEndDateString'
+>
+
+export const getOrderScheduleQuery = gql`
+  query getOrderSchedule($where: OrderWhereInput!) {
+    orders(where: $where) {
+      id
+      orderNumber
+      name
+      state
+      scheduleStartDate
+      scheduleEndDate
+    }
+  }
+`

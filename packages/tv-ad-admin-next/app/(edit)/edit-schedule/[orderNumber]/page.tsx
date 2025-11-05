@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
-import { format } from 'date-fns'
+import { format, parseISO } from 'date-fns'
 
+import type { OrderRecordForSchedule } from '@/graphql/queries/orders'
 import type { DateRange } from 'react-day-picker'
 
 import EditPageLayout from '@/components/edit/edit-page-layout'
@@ -12,7 +13,6 @@ import PopoverCalendar from '@/components/shared/popover-calendar'
 import SubmitResult from '@/components/shared/submit-result'
 import { useSubmitStatus } from '@/hooks/useSubmitStatus'
 import TriangleExclamationIcon from '@/public/icons/triangle-exclamation.svg'
-
 
 const PAGE_TITLE = '設定排播日期'
 
@@ -26,6 +26,46 @@ export default function EditSchedule({
 
   const [range, setRange] = useState<DateRange | undefined>(undefined)
   const [error, setError] = useState<string | null>(null)
+  const [orderData, setOrderData] = useState<OrderRecordForSchedule | null>(
+    null
+  )
+  useEffect(() => {
+    const fetchSchedule = async () => {
+      if (!orderNumber) {
+        setError('Order number is required')
+        return
+      }
+      try {
+        const res = await fetch(`/api/order/${orderNumber}/schedule`)
+        if (!res.ok) {
+          throw new Error(
+            `Failed to fetch schedule by order number: ${orderNumber}: ${res.statusText}`
+          )
+        }
+        const data = await res.json()
+        const { order } = data
+        if (!order) {
+          setError(`Order not found: ${orderNumber}`)
+          return
+        }
+        setOrderData(order)
+
+        // 初始化現有的排播日期到 range state
+        if (order.scheduleStartDate && order.scheduleEndDate) {
+          setRange({
+            from: parseISO(order.scheduleStartDate),
+            to: parseISO(order.scheduleEndDate),
+          })
+        }
+
+        setError(null)
+      } catch (error) {
+        console.error('Failed to fetch orders:', error)
+        setError(error instanceof Error ? error.message : '載入訂單失敗')
+      }
+    }
+    fetchSchedule()
+  }, [orderNumber])
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -86,6 +126,7 @@ export default function EditSchedule({
   return (
     <EditPageLayout
       pageTitle={PAGE_TITLE}
+      orderData={orderData}
       onSubmit={handleSubmit}
       submitButtonName="送出"
       cardTitle="重新設定排播日期"
