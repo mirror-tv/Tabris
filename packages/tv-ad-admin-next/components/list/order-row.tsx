@@ -25,7 +25,6 @@ export function OrderRow({
     scheduleStartDateString,
     scheduleEndDateString,
   } = order
-  console.log(order)
   const rowContent = [
     {
       key: 'number',
