@@ -18,9 +18,9 @@ export function ProductionPreview({
           影片截圖
         </h6>
         <div className="relative my-2 aspect-video w-full overflow-hidden rounded-lg bg-gray-2">
-          {order.demoImage?.[0]?.url ? (
+          {order.demoImage?.url ? (
             <Image
-              src={order.demoImage[0].url}
+              src={order.demoImage.url}
               alt="video-preview"
               fill
               className="object-cover"
@@ -35,13 +35,13 @@ export function ProductionPreview({
         <div className="flex justify-between font-sans text-sm leading-normal font-normal text-text-secondary">
           <div>
             <span>影片長度：</span>
-            <span>10秒</span>
+            <span>{order.videoDuration}秒</span>
           </div>
           <div>
             <span>尺寸：</span>
             <span>
-              {order.demoImage?.[0]?.imageFile?.width || '???'}x
-              {order.demoImage?.[0]?.imageFile?.height || '???'}
+              {order.demoImage?.imageFile?.width || '???'}x
+              {order.demoImage?.imageFile?.height || '???'}
             </span>
           </div>
         </div>
