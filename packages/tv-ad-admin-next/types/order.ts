@@ -1,7 +1,4 @@
-import { PhotoSchema } from './photo'
-
 import { type OrderState } from '@/constants'
-
 
 /**
  * Order 文件在 GraphQL schema 中的完整類型定義
@@ -26,46 +23,12 @@ export type OrderSchema = {
   scheduleEndDateString?: string | null
   schedule?: string | null
 
-  member?: {
-    id: string
-    firebaseID?: string | null
-    email?: string | null
-    state?: string | null
-    name?: string | null
-    mobile?: string | null
-  } | null
+  member?: MemberSchema | null
   relatedOrder?: { id: string }[]
 
-  attachment?: {
-    id: string
-    name?: string | null
-    description?: string | null
-    filename?: string | null
-    filesize?: number | null
-    url?: string | null
-  } | null
-  image?: {
-    id: string
-    name?: string | null
-    filename?: string | null
-    filesize?: number | null
-    url?: string | null
-    urlOriginal?: string | null
-    width?: number | null
-    height?: number | null
-    extension?: 'jpg' | 'png' | 'webp' | 'gif' | null
-  } | null
-  demoImage?: {
-    id: string
-    name?: string | null
-    filename?: string | null
-    filesize?: number | null
-    url?: string | null
-    urlOriginal?: string | null
-    width?: number | null
-    height?: number | null
-    extension?: 'jpg' | 'png' | 'webp' | 'gif' | null
-  }[]
+  attachment?: AttachmentSchema | null
+  image?: ImageSchema | null
+  demoImage?: ImageSchema[] | null
 
   paragraphOne?: string | null
   paragraphTwo?: string | null
@@ -78,8 +41,32 @@ export type OrderSchema = {
   paragraphOneEditable?: boolean
   paragraphTwoEditable?: boolean
   imageEditable?: boolean
-  image?: Partial<PhotoSchema> | null
-  demoImage?: Partial<PhotoSchema>[]
-  createdAt: string // ISO 8601 日期時間字串
-  updatedAt: string // ISO 8601 日期時間字串
+}
+
+export type MemberSchema = {
+  id: string
+  firebaseID?: string | null
+  email?: string | null
+  state?: string | null
+  name?: string | null
+  mobile?: string | null
+}
+
+export type AttachmentSchema = {
+  id: string
+  name?: string | null
+  url?: string | null
+  file?: {
+    filename: string
+    filesize: number
+  } | null
+}
+
+export type ImageSchema = {
+  id: string
+  url?: string | null
+  imageFile?: {
+    width: number
+    height: number
+  } | null
 }
