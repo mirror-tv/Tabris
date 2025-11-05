@@ -1,12 +1,19 @@
 import { Button } from '@/components/ui/button'
+import { type OrderRecordForOrderNumber } from '@/graphql/queries/orders'
 import DetailIcon from '@/public/icons/detail.svg'
 import DocumentIcon from '@/public/icons/document.svg'
 
 type RelatedDocumentsProps = {
   className?: string
+  attachment?: OrderRecordForOrderNumber['attachment']
 }
 
-export function RelatedDocuments({ className = '' }: RelatedDocumentsProps) {
+export function RelatedDocuments({
+  className = '',
+  attachment,
+}: RelatedDocumentsProps) {
+  if (!attachment) return null
+
   return (
     <div className={`${className}`}>
       <h5 className="mb-3 text-text-secondary">相關文件</h5>
@@ -18,15 +25,20 @@ export function RelatedDocuments({ className = '' }: RelatedDocumentsProps) {
             </div>
             <div>
               <p className="font-sans text-base leading-normal font-medium text-text-primary">
-                廣告素材規格書.pdf
+                {attachment.name ||
+                  attachment.file?.filename ||
+                  '檔案文件規格書.pdf'}
               </p>
               <p className="typography-caption2 text-text-tertiary">
-                236 KB • PDF文件
+                {attachment.file?.filesize
+                  ? `${(attachment.file?.filesize / 1024).toFixed(0)} KB`
+                  : '???'}{' '}
+                • PDF文件
               </p>
             </div>
           </div>
           <Button
-            onClick={() => window.open('https://www.google.com', '_blank')}
+            onClick={() => window.open(attachment.url || '', '_blank')}
             variant="outline"
             intent="secondary"
             className="gap-1"

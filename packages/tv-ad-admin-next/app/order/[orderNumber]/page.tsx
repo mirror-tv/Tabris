@@ -9,13 +9,10 @@ import { OrderDetails } from '@/components/order/order-details'
 import { OrderNotFound } from '@/components/order/order-not-found'
 import { OrderPreview } from '@/components/order/order-preview'
 import { OrderState as OrderStateComponent } from '@/components/order/order-state'
-import { TestModal } from '@/components/order/test-modal'
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
 import { ORDER_STATE_CONFIG, ORDER_STYLES } from '@/constants'
-import { ENV } from '@/constants/environment-variables'
 import { type OrderRecordForOrderNumber } from '@/graphql/queries/orders'
-import { mockOrderData } from '@/mocks/mockData'
 
 export default function OrderPage() {
   const params = useParams()
@@ -82,16 +79,6 @@ export default function OrderPage() {
               <OrderNotFound orderId={orderNumber} />
             )}
           </div>
-
-          {(ENV === 'local' || ENV === 'dev') && (
-            <TestModal
-              orders={mockOrderData}
-              onOrderSelect={(selectedOrderNumber) => {
-                window.location.href = `/order/${selectedOrderNumber}`
-              }}
-              currentOrderId={orderNumber}
-            />
-          )}
         </div>
       </PageMain>
     </div>
