@@ -5,8 +5,9 @@ import { useEffect, useMemo, useState } from 'react'
 import { format, formatISO, parseISO } from 'date-fns'
 import { DateRange } from 'react-day-picker'
 
+import OrderSelectField from './order-select-field'
+
 import { CustomInput } from '@/components/custom-ui/custom-input'
-import { ErrorMessage } from '@/components/custom-ui/error-message'
 import { LabeledField } from '@/components/custom-ui/labeled-field'
 import { Instructions } from '@/components/shared/instructions'
 import PageHeader from '@/components/shared/page-header'
@@ -21,18 +22,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectValue,
-} from '@/components/ui/select'
 import ConfirmDialog, { PreviewData } from '@/components/upload/confirm-dialog'
-import { layout, ORDER_STATE } from '@/constants'
+import { ORDER_STATE } from '@/constants'
 import { OrderRecordForUploadMutation } from '@/graphql/mutations/order'
 import { OrderRecordForUploadQuery } from '@/graphql/queries/orders'
-import FileIcon from '@/public/icons/file.svg'
 import ImageIcon from '@/public/icons/image.svg'
 import TextFormatIcon from '@/public/icons/text-format.svg'
 import TextIcon from '@/public/icons/text.svg'
@@ -40,8 +33,8 @@ import TriangleExclamationIcon from '@/public/icons/triangle-exclamation.svg'
 import { PhotoSchema } from '@/types/photo'
 import { cn, devLog } from '@/utils'
 
+
 // ===== Label / Input Element IDs =====
-const orderLabelId = 'order-label'
 const adNameLabelId = 'ad-name-label'
 const adText1LabelId = 'ad-text1-label'
 const adText2LabelId = 'ad-text2-label'
@@ -82,12 +75,12 @@ const initialFormState: FormState = {
 }
 
 const initialFieldsEditability: FieldEditability = {
-    nameEditable: true,
-    scheduleEditable: true,
-    paragraphOneEditable: true,
-    paragraphTwoEditable: true,
-    imageEditable: true,
-  }
+  nameEditable: true,
+  scheduleEditable: true,
+  paragraphOneEditable: true,
+  paragraphTwoEditable: true,
+  imageEditable: true,
+}
 
 export default function UploadTemplate({
   pageTitle,
@@ -98,7 +91,9 @@ export default function UploadTemplate({
   const [selectedOrder, setSelectedOrder] =
     useState<OrderRecordForUploadQuery | null>(null)
   const [formState, setFormState] = useState<FormState>(initialFormState)
-  const [fields, setFields] = useState<FieldEditability>(initialFieldsEditability)
+  const [fields, setFields] = useState<FieldEditability>(
+    initialFieldsEditability
+  )
   const [uploadData, setUploadData] =
     useState<OrderRecordForUploadMutation | null>(null)
   const [previewData, setPreviewData] = useState<PreviewData | null>(null)
@@ -296,7 +291,7 @@ export default function UploadTemplate({
       },
     }
 
-    devLog(mutationData,'mutationData ==')
+    devLog(mutationData, 'mutationData ==')
     setPreviewData(dialogPreviewData)
     setUploadData(mutationData)
     setIsDialogOpen(true)
@@ -342,48 +337,12 @@ export default function UploadTemplate({
           </CardHeader>
           <form onSubmit={handleSubmit}>
             <CardContent className="flex flex-col justify-between gap-8">
-              <LabeledField
-                id={orderLabelId}
-                label="選擇訂單"
-                labelIcon={<FileIcon />}
-                className="relative"
-              >
-                <Select onValueChange={handleOrderSelect} disabled={loading}>
-                  <SelectTrigger
-                    id={orderLabelId}
-                    className={cn(
-                      'w-full data-placeholder:bg-gray-2 data-placeholder:text-gray-5!',
-                      layout.hoverBorder,
-                      errors.order && [
-                        'border border-red-7',
-                        'focus:border-red-8',
-                      ]
-                    )}
-                  >
-                    <SelectValue
-                      placeholder={
-                        loading
-                          ? '讀取資料中...'
-                          : '請選擇要上傳/修改素材的訂單'
-                      }
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {orders.map((order) => {
-                      const orderNumber = order.orderNumber || order.id
-                      return (
-                        <SelectItem value={orderNumber} key={orderNumber}>
-                          {order.orderNumber || order.id}
-                          {order.name
-                            ? ` - ${order.name}`
-                            : ' - 未命名 [新訂單]'}
-                        </SelectItem>
-                      )
-                    })}
-                  </SelectContent>
-                </Select>
-                {errors.order && <ErrorMessage>{errors.order}</ErrorMessage>}
-              </LabeledField>
+              <OrderSelectField
+                orders={orders}
+                loading={loading}
+                error={errors.order}
+                onSelect={handleOrderSelect}
+              />
 
               {!!selectedOrder && (
                 <>
