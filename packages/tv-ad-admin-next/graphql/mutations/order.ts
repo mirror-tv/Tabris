@@ -2,7 +2,10 @@ import { gql } from '@apollo/client'
 
 import { OrderSchema } from '@/types'
 
-export type OrderRecordForUploadMutation = Pick<OrderSchema, 'orderNumber'> &
+export type OrderRecordForUploadMutation = Pick<
+  OrderSchema,
+  'orderNumber' | 'state'
+> &
   Partial<
     Pick<
       OrderSchema,
@@ -13,7 +16,6 @@ export type OrderRecordForUploadMutation = Pick<OrderSchema, 'orderNumber'> &
       | 'scheduleStartDate'
       | 'scheduleEndDate'
       | 'image'
-      | 'state'
     >
   >
 

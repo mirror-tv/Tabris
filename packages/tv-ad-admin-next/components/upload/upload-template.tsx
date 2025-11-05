@@ -31,7 +31,7 @@ import TextFormatIcon from '@/public/icons/text-format.svg'
 import TextIcon from '@/public/icons/text.svg'
 import TriangleExclamationIcon from '@/public/icons/triangle-exclamation.svg'
 import { PhotoSchema } from '@/types/photo'
-import { cn, devLog } from '@/utils'
+import { cn } from '@/utils'
 
 
 // ===== Label / Input Element IDs =====
@@ -103,16 +103,22 @@ export default function UploadTemplate({
   const [imagePreview, setImagePreview] = useState<string | null>(null)
 
   const { adName, adText1, adText2, adRange, adImage } = formState
+  const { mode, nextState } =
+    useMemo(() => {
+      if (selectedOrder?.state === ORDER_STATE.PENDING_UPLOAD) {
+        return {
+          mode: 'upload' as const,
+          nextState: ORDER_STATE.MATERIAL_UPLOADED,
+        }
+      }
 
-  const mode = useMemo(() => {
-    if (selectedOrder?.state === ORDER_STATE.PENDING_QUOTE_CONFIRMATION)
-      return 'reupload'
-    if (selectedOrder?.state === ORDER_STATE.PENDING_UPLOAD) return 'upload'
-    return 'upload'
-  }, [selectedOrder])
-
-  devLog(selectedOrder, 'selectedOrder')
-  devLog(orders, 'orders')
+      if (selectedOrder?.state === ORDER_STATE.PENDING_QUOTE_CONFIRMATION) {
+        return {
+          mode: 'reupload' as const,
+          nextState: ORDER_STATE.TRANSFERRED,
+        }
+      }
+    }, [selectedOrder]) ?? {}
 
   // ====================== Start: drop image ======================
   function _validateAndSetFile(adImage: File) {
@@ -258,16 +264,29 @@ export default function UploadTemplate({
     setErrors(newErrors)
     if (Object.keys(newErrors).length > 0) return
 
-    const mutationData: OrderRecordForUploadMutation = {
-      orderNumber: selectedOrder!.orderNumber,
+    if (!selectedOrder || !nextState) {
+      console.warn('[UploadTemplate] Missing required data for submission:', {
+        selectedOrder,
+        nextState,
+      })
+      return
     }
 
-    if (fields.nameEditable) mutationData.name = adName
-    if (fields.paragraphOneEditable) mutationData.paragraphOne = adText1
-    if (fields.paragraphTwoEditable) mutationData.paragraphTwo = adText2
-    if (fields.scheduleEditable && adRange?.from && adRange?.to) {
-      mutationData.scheduleStartDate = formatISO(adRange.from)
-      mutationData.scheduleEndDate = formatISO(adRange.to)
+    // Build a complete GraphQL mutation payload in one step.
+    // Use conditional spread syntax to include only editable fields.
+    // This approach avoids later object mutations and ensures a clean, immutable data structure.
+    const mutationData: OrderRecordForUploadMutation = {
+      orderNumber: selectedOrder.orderNumber,
+      state: nextState,
+      ...(fields.nameEditable && { name: adName }),
+      ...(fields.paragraphOneEditable && { paragraphOne: adText1 }),
+      ...(fields.paragraphTwoEditable && { paragraphTwo: adText2 }),
+      ...(fields.scheduleEditable &&
+        adRange?.from &&
+        adRange?.to && {
+          scheduleStartDate: formatISO(adRange.from),
+          scheduleEndDate: formatISO(adRange.to),
+        }),
     }
     // if (fields.imageEditable && adImage) {
     //   mutationData.image = {
@@ -278,7 +297,7 @@ export default function UploadTemplate({
     //   }
     // }
 
-    // 2. Build dialog preview data (for UI only)
+    // Build dialog preview data (for UI only)
     const dialogPreviewData: PreviewData = {
       orderNumber: selectedOrder!.orderNumber,
       adName,
@@ -291,7 +310,6 @@ export default function UploadTemplate({
       },
     }
 
-    devLog(mutationData, 'mutationData ==')
     setPreviewData(dialogPreviewData)
     setUploadData(mutationData)
     setIsDialogOpen(true)
