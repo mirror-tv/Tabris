@@ -3,14 +3,20 @@ import { NextResponse } from 'next/server'
 import { getOrdersByOrderNumberQuery } from '@/graphql/queries/orders'
 import { type OrderRecordForOrderNumber } from '@/graphql/queries/orders'
 import { getClient } from '@/utils/apollo-client'
+import { getCurrentUser } from '@/utils/auth'
 import { formatTaiwanDate } from '@/utils/date'
 import { createErrorLogger } from '@/utils/error-handler'
 
 export async function GET(
-  request: Request,
+  _req: Request,
   { params }: { params: { orderNumber: string } }
 ) {
-  const orderNumber = params.orderNumber
+  const { orderNumber } = params
+  const user = await getCurrentUser()
+
+  if (!user || !user.memberId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
 
   if (!orderNumber) {
     return NextResponse.json(
@@ -29,6 +35,11 @@ export async function GET(
         where: {
           orderNumber: {
             equals: orderNumber,
+          },
+          member: {
+            id: {
+              equals: user.memberId,
+            },
           },
         },
       },
