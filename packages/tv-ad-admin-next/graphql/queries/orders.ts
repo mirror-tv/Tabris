@@ -113,7 +113,7 @@ export const getOrdersByOrderNumberQuery = gql`
  * Order type used in the upload page, containing all fields required for uploading ad materials.
  */
 
-export type OrderRecordForUpload = Pick<
+export type OrderRecordForUploadQuery = Pick<
   OrderSchema,
   | 'id'
   | 'orderNumber'
