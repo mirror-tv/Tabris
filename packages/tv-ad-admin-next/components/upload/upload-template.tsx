@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 
-import { format } from 'date-fns'
+import { format, formatISO, parseISO } from 'date-fns'
 import { DateRange } from 'react-day-picker'
 
 import { CustomInput } from '@/components/custom-ui/custom-input'
@@ -28,11 +28,10 @@ import {
   SelectItem,
   SelectValue,
 } from '@/components/ui/select'
-import ConfirmDialog, {
-  UploadSubmittedData,
-} from '@/components/upload/confirm-dialog'
+import ConfirmDialog, { PreviewData } from '@/components/upload/confirm-dialog'
 import { layout, ORDER_STATE } from '@/constants'
-import { OrderRecordForUpload } from '@/graphql/queries/orders'
+import { OrderRecordForUploadMutation } from '@/graphql/mutations/order'
+import { OrderRecordForUploadQuery } from '@/graphql/queries/orders'
 import FileIcon from '@/public/icons/file.svg'
 import ImageIcon from '@/public/icons/image.svg'
 import TextFormatIcon from '@/public/icons/text-format.svg'
@@ -44,51 +43,51 @@ import { cn, devLog } from '@/utils'
 // ===== Label / Input Element IDs =====
 const orderLabelId = 'order-label'
 const adNameLabelId = 'ad-name-label'
-const text1LabelId = 'text1-label'
-const text2LabelId = 'text2-label'
-const uploadLabelId = 'upload-label'
-const fileInputLabelId = 'file-input-label'
+const adText1LabelId = 'ad-text1-label'
+const adText2LabelId = 'ad-text2-label'
+const imageUploadLabelId = 'image-upload-label'
 
 type FormState = {
   adName: string
-  text1: string
-  text2: string
-  range: DateRange | undefined
-  file:
+  adText1: string
+  adText2: string
+  adRange: DateRange | undefined
+  adImage:
     | (Pick<PhotoSchema, 'id' | 'name' | 'url'> & { data: File | null })
     | null
 }
 
-type EditableFields = Partial<{
-  adName: boolean
-  range: boolean
-  text1: boolean
-  text2: boolean
-  file: boolean
-}>
+type FieldEditability = Pick<
+  OrderRecordForUploadQuery,
+  | 'nameEditable'
+  | 'scheduleEditable'
+  | 'paragraphOneEditable'
+  | 'paragraphTwoEditable'
+  | 'imageEditable'
+>
 
 type UploadTemplateProps = {
   pageTitle: string
-  onSubmit: (data: UploadSubmittedData) => void
-  orders: OrderRecordForUpload[]
+  onSubmit: (data: OrderRecordForUploadMutation) => void
+  orders: OrderRecordForUploadQuery[]
   loading: boolean
 }
 
 const initialFormState: FormState = {
   adName: '',
-  text1: '',
-  text2: '',
-  range: undefined,
-  file: null,
+  adText1: '',
+  adText2: '',
+  adRange: undefined,
+  adImage: null,
 }
 
-const initialEditableFields: EditableFields = {
-  adName: true,
-  range: true,
-  text1: true,
-  text2: true,
-  file: true,
-}
+const initialFieldsEditability: FieldEditability = {
+    nameEditable: true,
+    scheduleEditable: true,
+    paragraphOneEditable: true,
+    paragraphTwoEditable: true,
+    imageEditable: true,
+  }
 
 export default function UploadTemplate({
   pageTitle,
@@ -97,19 +96,18 @@ export default function UploadTemplate({
   loading,
 }: UploadTemplateProps) {
   const [selectedOrder, setSelectedOrder] =
-    useState<OrderRecordForUpload | null>(null)
+    useState<OrderRecordForUploadQuery | null>(null)
   const [formState, setFormState] = useState<FormState>(initialFormState)
-  const [editableFields, setEditableFields] = useState<EditableFields>(
-    initialEditableFields
-  )
+  const [fields, setFields] = useState<FieldEditability>(initialFieldsEditability)
+  const [uploadData, setUploadData] =
+    useState<OrderRecordForUploadMutation | null>(null)
+  const [previewData, setPreviewData] = useState<PreviewData | null>(null)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [submittedData, setSubmittedData] =
-    useState<UploadSubmittedData | null>(null)
   const [isDragging, setIsDragging] = useState(false)
-  const [preview, setPreview] = useState<string | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
 
-  const { adName, text1, text2, range, file } = formState
+  const { adName, adText1, adText2, adRange, adImage } = formState
 
   const mode = useMemo(() => {
     if (selectedOrder?.state === ORDER_STATE.PENDING_QUOTE_CONFIRMATION)
@@ -118,40 +116,36 @@ export default function UploadTemplate({
     return 'upload'
   }, [selectedOrder])
 
-  function isFieldEditable(key: keyof EditableFields) {
-    return editableFields[key] === false
-  }
-
   devLog(selectedOrder, 'selectedOrder')
   devLog(orders, 'orders')
 
-  // ====================== Start: drop file ======================
-  function _validateAndSetFile(file: File) {
-    if (!['image/jpeg', 'image/png'].includes(file.type)) {
-      setErrors((prev) => ({ ...prev, file: '僅支援 JPG 或 PNG 格式' }))
-      setFormState((prev) => ({ ...prev, file: null }))
+  // ====================== Start: drop image ======================
+  function _validateAndSetFile(adImage: File) {
+    if (!['image/jpeg', 'image/png'].includes(adImage.type)) {
+      setErrors((prev) => ({ ...prev, adImage: '僅支援 JPG 或 PNG 格式' }))
+      setFormState((prev) => ({ ...prev, adImage: null }))
       return
     }
 
-    if (file.size > 5 * 1024 * 1024) {
+    if (adImage.size > 5 * 1024 * 1024) {
       setErrors((prev) => ({
         ...prev,
-        file: '檔案超過 5MB，請重新上傳',
+        adImage: '檔案超過 5MB，請重新上傳',
       }))
-      setFormState((prev) => ({ ...prev, file: null }))
+      setFormState((prev) => ({ ...prev, adImage: null }))
       return
     }
 
     setFormState({
       ...formState,
-      file: {
+      adImage: {
         id: '',
-        name: file.name,
+        name: adImage.name,
         url: '',
-        data: file,
+        data: adImage,
       },
     })
-    setErrors((prev) => ({ ...prev, file: '' }))
+    setErrors((prev) => ({ ...prev, adImage: '' }))
   }
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -182,13 +176,13 @@ export default function UploadTemplate({
     if (related && e.currentTarget.contains(related)) return
     setIsDragging(false)
   }
-  // ====================== End: drop file ======================
+  // ====================== End: drop image ======================
 
-  async function handleOrderSelect(value: string) {
-    const currentOrder = orders.find(
-      (o) => o.orderNumber === value || o.id === value
-    )
+  function handleOrderSelect(value: string) {
+    const currentOrder = orders.find((o) => o.orderNumber === value)
     if (!currentOrder) return
+
+    setErrors({})
     setSelectedOrder(currentOrder)
 
     const image = currentOrder.image
@@ -202,29 +196,37 @@ export default function UploadTemplate({
           }
         : null
 
-    // Date conversion
     const startDate = currentOrder.scheduleStartDate
-      ? new Date(currentOrder.scheduleStartDate)
+      ? parseISO(currentOrder.scheduleStartDate)
       : undefined
+
     const endDate = currentOrder.scheduleEndDate
-      ? new Date(currentOrder.scheduleEndDate)
+      ? parseISO(currentOrder.scheduleEndDate)
       : undefined
 
     setFormState({
       adName: currentOrder.name ?? '',
-      text1: currentOrder.paragraphOne ?? '',
-      text2: currentOrder.paragraphTwo ?? '',
-      range:
+      adText1: currentOrder.paragraphOne ?? '',
+      adText2: currentOrder.paragraphTwo ?? '',
+      adRange:
         startDate && endDate ? { from: startDate, to: endDate } : undefined,
-      file: photoData,
+      adImage: photoData,
     })
 
-    setEditableFields({
-      adName: currentOrder.nameEditable,
-      range: currentOrder.scheduleEditable,
-      text1: currentOrder.paragraphOneEditable,
-      text2: currentOrder.paragraphTwoEditable,
-      file: currentOrder.imageEditable,
+    const {
+      nameEditable,
+      scheduleEditable,
+      paragraphOneEditable,
+      paragraphTwoEditable,
+      imageEditable,
+    } = currentOrder
+
+    setFields({
+      nameEditable,
+      scheduleEditable,
+      paragraphOneEditable,
+      paragraphTwoEditable,
+      imageEditable,
     })
   }
 
@@ -237,77 +239,97 @@ export default function UploadTemplate({
     if (!selectedOrder) newErrors.order = '請選擇訂單'
 
     // Skip validation if the field is disabled in reupload page
-    if (!isFieldEditable('adName') && !adName.trim()) {
+    if (fields.nameEditable && !adName.trim()) {
       newErrors.adName = '請輸入廣告名稱'
     }
 
-    if (!isFieldEditable('text1')) {
-      if (text1.trim().length === 0 || text1.trim().length > 10) {
-        newErrors.text1 = '請輸入 1 - 10 字以內的文字素材'
+    if (fields.paragraphOneEditable) {
+      if (adText1.trim().length === 0 || adText1.trim().length > 10) {
+        newErrors.adText1 = '請輸入 1 - 10 字以內的文字素材'
       }
     }
 
-    if (!isFieldEditable('text2')) {
-      if (text2.trim().length > 10) {
-        newErrors.text2 = '文字素材二最多 10 字'
-      }
+    if (fields.paragraphTwoEditable && adText2.trim().length > 10)
+      newErrors.adText2 = '文字素材二最多 10 字'
+
+    if (fields.scheduleEditable && (!adRange?.from || !adRange?.to)) {
+      newErrors.adRange = '請選擇完整的排播起訖日期'
     }
 
-    if (!isFieldEditable('range') && (!range?.from || !range?.to)) {
-      newErrors.range = '請選擇完整的排播起訖日期'
-    }
-
-    if (!isFieldEditable('file') && !file) {
-      newErrors.file = '請上傳圖片檔案'
+    if (fields.imageEditable && !adImage) {
+      newErrors.adImage = '請上傳圖片檔案'
     }
 
     setErrors(newErrors)
     if (Object.keys(newErrors).length > 0) return
 
-    // Handle data construction safely for reupload mode
-    const formattedRange =
-      !isFieldEditable('range') && range?.from && range?.to
-        ? {
-            from: format(range.from, 'yyyy/MM/dd'),
-            to: format(range.to, 'yyyy/MM/dd'),
-          }
-        : undefined
-
-    const data: UploadSubmittedData = {
-      order: selectedOrder!.orderNumber || '',
-      adName: adName || '[未修改]',
-      text1: text1 || '[未修改]',
-      text2: text2 || '[未修改]',
-      fileName: file?.data?.name ?? (file?.id ? '[舊圖片保留]' : '[未上傳]'),
-      range: formattedRange ?? { from: '[未修改]', to: '[未修改]' },
+    const mutationData: OrderRecordForUploadMutation = {
+      id: selectedOrder!.id,
     }
 
-    setSubmittedData(data)
+    if (fields.nameEditable) mutationData.name = adName
+    if (fields.paragraphOneEditable) mutationData.paragraphOne = adText1
+    if (fields.paragraphTwoEditable) mutationData.paragraphTwo = adText2
+    if (fields.scheduleEditable && adRange?.from && adRange?.to) {
+      mutationData.scheduleStartDate = formatISO(adRange.from)
+      mutationData.scheduleEndDate = formatISO(adRange.to)
+    }
+    // if (fields.imageEditable && adImage) {
+    //   mutationData.image = {
+    //     name: adImage!.name,
+    //     // imageFile:{
+    //     //   extension: adImage.
+    //     // }
+    //   }
+    // }
+
+    // 2. Build dialog preview data (for UI only)
+    const dialogPreviewData: PreviewData = {
+      orderNumber: selectedOrder!.orderNumber,
+      adName,
+      adText1,
+      adText2,
+      adImageName: adImage!.name,
+      adRange: {
+        from: format(adRange!.from!, 'yyyy/MM/dd'),
+        to: format(adRange!.to!, 'yyyy/MM/dd'),
+      },
+    }
+
+    devLog(mutationData,'mutationData ==')
+    setPreviewData(dialogPreviewData)
+    setUploadData(mutationData)
     setIsDialogOpen(true)
   }
 
-  function handleConfirmUpload() {
-    if (submittedData && onSubmit) onSubmit(submittedData)
-    setIsDialogOpen(false)
-    // TODO: 之後可改為實際 API 請求
+  async function handleConfirmUpload() {
+    if (!uploadData) return
+
+    try {
+      await onSubmit(uploadData) // Pass payload to parent for API submission
+      setIsDialogOpen(false)
+    } catch (err) {
+      console.error('Upload submission failed:', err)
+    }
   }
-  // ===== Update preview when file changes =====
+
+  // ===== Update image preview when adImage changes =====
   useEffect(() => {
-    if (!file) {
-      setPreview(null)
+    if (!adImage) {
+      setImagePreview(null)
       return
     }
 
-    if (file.data) {
-      const objectUrl = URL.createObjectURL(file.data)
-      setPreview(objectUrl)
+    if (adImage.data) {
+      const objectUrl = URL.createObjectURL(adImage.data)
+      setImagePreview(objectUrl)
       return () => URL.revokeObjectURL(objectUrl)
     }
 
-    if (file.url) {
-      setPreview(file.url)
+    if (adImage.url) {
+      setImagePreview(adImage.url)
     }
-  }, [file])
+  }, [adImage])
 
   return (
     <>
@@ -377,7 +399,7 @@ export default function UploadTemplate({
                         type="text"
                         placeholder="請輸入廣告名稱"
                         value={adName}
-                        disabled={isFieldEditable('adName')}
+                        disabled={!fields.nameEditable}
                         onChange={(e) =>
                           setFormState((prev) => ({
                             ...prev,
@@ -390,71 +412,71 @@ export default function UploadTemplate({
                     </LabeledField>
 
                     <PopoverCalendar
-                      range={range}
+                      range={adRange}
                       setRange={(newRange) =>
                         setFormState((prev) => ({
                           ...prev,
-                          range: newRange,
+                          adRange: newRange,
                         }))
                       }
-                      error={errors.range}
-                      disabled={isFieldEditable('range')}
+                      error={errors.adRange}
+                      disabled={!fields.scheduleEditable}
                     />
                   </div>
 
                   {/* 文字素材一、二 */}
                   <LabeledField
-                    id={text1LabelId}
+                    id={adText1LabelId}
                     label="文字素材一 (10字內)"
                     labelIcon={<TextFormatIcon />}
                   >
                     <CustomInput
-                      id={text1LabelId}
+                      id={adText1LabelId}
                       type="text"
                       placeholder="請輸入第一段文字素材"
                       className={cn(
-                        isFieldEditable('text1') &&
+                        !fields.paragraphOneEditable &&
                           'cursor-not-allowed bg-gray-3 text-gray-5'
                       )}
-                      value={text1}
+                      value={adText1}
                       onChange={(e) =>
                         setFormState((prev) => ({
                           ...prev,
-                          text1: e.target.value,
+                          adText1: e.target.value,
                         }))
                       }
-                      disabled={isFieldEditable('text1')}
-                      error={errors.text1}
-                      errorMessage={errors.text1}
+                      disabled={!fields.paragraphOneEditable}
+                      error={errors.adText1}
+                      errorMessage={errors.adText1}
                     />
                   </LabeledField>
 
                   <LabeledField
-                    id={text2LabelId}
+                    id={adText2LabelId}
                     label="文字素材二 (10字內)"
                     labelIcon={<TextFormatIcon />}
                   >
                     <CustomInput
-                      id={text2LabelId}
+                      id={adText2LabelId}
                       type="text"
                       placeholder="請輸入第二段文字素材"
-                      value={text2}
+                      value={adText2}
                       onChange={(e) =>
                         setFormState((prev) => ({
                           ...prev,
-                          text2: e.target.value,
+                          adText2: e.target.value,
                         }))
                       }
-                      disabled={isFieldEditable('text2')}
-                      error={errors.text2}
-                      errorMessage={errors.text2}
+                      disabled={!fields.paragraphTwoEditable}
+                      error={errors.adText2}
+                      errorMessage={errors.adText2}
                     />
                   </LabeledField>
 
                   {/* 上傳圖片 */}
                   <div className="space-y-2">
                     <LabeledField
-                      id={uploadLabelId}
+                      id={imageUploadLabelId}
                       label="上傳圖片"
                       labelIcon={<ImageIcon />}
                     >
@@ -467,19 +489,19 @@ export default function UploadTemplate({
                           isDragging
                             ? 'border-blue-5 bg-blue-1'
                             : 'border-gray-3 bg-transparent',
-                          errors.file && [
+                          errors.adImage && [
                             'border border-red-7',
                             'focus:border-red-8',
                           ]
                         )}
                       >
-                        {/* If a file is uploaded, show preview; otherwise show icon */}
-                        {preview ? (
+                        {/* If a adImage is uploaded, show image preview; otherwise show icon */}
+                        {imagePreview ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img
                             loading="lazy"
-                            src={preview}
-                            alt={file?.name || '預覽圖'}
+                            src={imagePreview}
+                            alt={adImage?.name || '預覽圖'}
                             className="h-[90px] w-40 rounded-sm bg-white object-contain shadow-sm"
                             onError={(e) => {
                               ;(e.target as HTMLImageElement).src =
@@ -496,16 +518,16 @@ export default function UploadTemplate({
                           size="lg"
                           intent="secondary"
                           className="bg-white"
-                          disabled={isFieldEditable('file')}
+                          disabled={!fields.imageEditable}
                           onClick={() =>
-                            document.getElementById(fileInputLabelId)?.click()
+                            document.getElementById(imageUploadLabelId)?.click()
                           }
                         >
-                          {file ? '重新選擇圖片' : '選擇圖片檔案'}
+                          {adImage ? '重新選擇圖片' : '選擇圖片檔案'}
                         </Button>
                         <input
-                          id={fileInputLabelId}
-                          key={file?.name}
+                          id={imageUploadLabelId}
+                          key={adImage?.name}
                           type="file"
                           accept=".jpg,.jpeg,.png"
                           className="hidden"
@@ -515,13 +537,13 @@ export default function UploadTemplate({
                           <p className="text-gray-5">
                             支援 JPG, PNG 格式，檔案大小不超過 5MB
                           </p>
-                          {file && (
+                          {adImage && (
                             <p className="font-medium text-text-primary">
-                              已選擇檔案：{file.name}
+                              已選擇檔案：{adImage.name}
                             </p>
                           )}
-                          {errors.file && (
-                            <p className="text-red-7">{errors.file}</p>
+                          {errors.adImage && (
+                            <p className="text-red-7">{errors.adImage}</p>
                           )}
                         </div>
                       </div>
@@ -550,12 +572,14 @@ export default function UploadTemplate({
         </Card>
       </PageMain>
 
-      <ConfirmDialog
-        open={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
-        submittedData={submittedData}
-        onConfirm={handleConfirmUpload}
-      />
+      {previewData && (
+        <ConfirmDialog
+          open={isDialogOpen}
+          onOpenChange={setIsDialogOpen}
+          previewData={previewData}
+          onConfirm={handleConfirmUpload}
+        />
+      )}
     </>
   )
 }

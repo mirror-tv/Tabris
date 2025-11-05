@@ -15,37 +15,40 @@ import {
 } from '@/components/ui/dialog'
 import TriangleExclamationIcon from '@/public/icons/triangle-exclamation.svg'
 
-export type UploadSubmittedData = {
-  order: string
+export type PreviewData = {
+  orderNumber: string
   adName: string
-  text1: string
-  text2?: string
-  fileName: string
-  range: {
+  adText1: string
+  adText2?: string
+  adRange: {
     from: string
     to: string
   }
+  adImageName: string
 }
 
 type ConfirmDialogProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
-  submittedData: UploadSubmittedData | null
+  previewData: PreviewData
   onConfirm: () => void
 }
 
 export default function ConfirmDialog({
   open,
   onOpenChange,
-  submittedData,
+  previewData,
   onConfirm,
 }: ConfirmDialogProps) {
   const [isUploading, setIsUploading] = useState(false)
 
+  const { orderNumber, adName, adRange, adText1, adText2, adImageName } =
+    previewData
+
   async function handleConfirm() {
     try {
       setIsUploading(true)
-      await onConfirm() // wait for API completion
+      await onConfirm()
       onOpenChange(false)
     } finally {
       setIsUploading(false)
@@ -64,20 +67,17 @@ export default function ConfirmDialog({
           </DialogDescription>
         </DialogHeader>
 
-        {submittedData && (
-          <div className="space-y-1 rounded-lg bg-gray-2 p-3">
-            <InfoRow label="訂單編號：">{submittedData.order}</InfoRow>
-            <InfoRow label="廣告名稱：">{submittedData.adName}</InfoRow>
-            <InfoRow label="排播日期：">
-              {`${submittedData.range.from} - ${submittedData.range.to}`}
-            </InfoRow>
-            <InfoRow label="文字素材一：">{submittedData.text1}</InfoRow>
-            {submittedData.text2 && (
-              <InfoRow label="文字素材二：">{submittedData.text2}</InfoRow>
-            )}
-            <InfoRow label="上傳檔案：">{submittedData.fileName}</InfoRow>
-          </div>
-        )}
+        <div className="space-y-1 rounded-lg bg-gray-2 p-3">
+          <InfoRow label="訂單編號：">{orderNumber}</InfoRow>
+          <InfoRow label="廣告名稱：">{adName}</InfoRow>
+          <InfoRow label="排播日期：">
+            {`${adRange.from} - ${adRange.to}`}
+          </InfoRow>
+          <InfoRow label="文字素材一：">{adText1}</InfoRow>
+          {adText2 && <InfoRow label="文字素材二：">{adText2}</InfoRow>}
+          <InfoRow label="上傳檔案：">{adImageName}</InfoRow>
+        </div>
+
         <Instructions
           title="重要提醒"
           icon={<TriangleExclamationIcon />}
