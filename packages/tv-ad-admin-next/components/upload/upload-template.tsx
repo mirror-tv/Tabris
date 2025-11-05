@@ -185,7 +185,9 @@ export default function UploadTemplate({
   // ====================== End: drop file ======================
 
   async function handleOrderSelect(value: string) {
-    const currentOrder = orders.find((o) => o.orderNumber === value)
+    const currentOrder = orders.find(
+      (o) => o.orderNumber === value || o.id === value
+    )
     if (!currentOrder) return
     setSelectedOrder(currentOrder)
 
@@ -194,9 +196,7 @@ export default function UploadTemplate({
       image && image.id
         ? {
             id: image.id,
-            name: image.name
-              ? `${image.name}${image.imageFile?.extension ? `.${image.imageFile?.extension}` : ''}`
-              : '舊圖片',
+            name: image.name || '舊圖片',
             url: image.url ?? '',
             data: null,
           }
@@ -274,7 +274,7 @@ export default function UploadTemplate({
         : undefined
 
     const data: UploadSubmittedData = {
-      order: selectedOrder!.orderNumber,
+      order: selectedOrder!.orderNumber || '',
       adName: adName || '[未修改]',
       text1: text1 || '[未修改]',
       text2: text2 || '[未修改]',
@@ -348,12 +348,10 @@ export default function UploadTemplate({
                   </SelectTrigger>
                   <SelectContent>
                     {orders.map((order) => {
+                      const orderNumber = order.orderNumber || order.id
                       return (
-                        <SelectItem
-                          value={order.orderNumber}
-                          key={order.orderNumber}
-                        >
-                          {order.orderNumber}
+                        <SelectItem value={orderNumber} key={orderNumber}>
+                          {order.orderNumber || order.id}
                           {order.name
                             ? ` - ${order.name}`
                             : ' - 未命名 [新訂單]'}
