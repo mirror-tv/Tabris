@@ -70,6 +70,8 @@ export type OrderRecordForOrderNumber = Pick<
   | 'updatedAt'
   | 'attachment'
   | 'demoImage'
+  | 'videoDuration'
+  | 'scheduleConfirmDeadline'
 >
 
 export const getOrdersByOrderNumberQuery = gql`
@@ -81,10 +83,12 @@ export const getOrdersByOrderNumberQuery = gql`
       state
       scheduleStartDate
       scheduleEndDate
+      scheduleConfirmDeadline
       paragraphOne
       paragraphTwo
       createdAt
       updatedAt
+      videoDuration
       attachment {
         id
         url
