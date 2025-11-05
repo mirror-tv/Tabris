@@ -1,6 +1,7 @@
 import { parseISO } from 'date-fns'
 import { NextRequest, NextResponse } from 'next/server'
 
+import { ORDER_STATE } from '@/constants/state/orderState'
 import { updateOrderScheduleMutation } from '@/graphql/mutations/orders'
 import { getOrderScheduleQuery } from '@/graphql/queries/orders'
 import { getClient } from '@/utils/apollo-client'
@@ -40,6 +41,9 @@ export async function GET(
               equals: user.memberId,
             },
           },
+          state: {
+            equals: ORDER_STATE.PENDING_BROADCAST_DATE,
+          },
         },
       },
       errorPolicy: 'all',
@@ -61,6 +65,7 @@ export async function GET(
 
     const order = data?.orders?.[0]
 
+    // 如果查詢不到訂單，表示訂單不存在或狀態不符合
     if (!order) {
       return NextResponse.json({ error: 'Order not found' }, { status: 404 })
     }
@@ -120,16 +125,23 @@ export async function POST(
       mutation: updateOrderScheduleMutation,
       variables: {
         where: {
-          orderNumber: orderNumber,
+          orderNumber: {
+            equals: orderNumber,
+          },
           member: {
             id: {
               equals: user.memberId,
             },
           },
+          state: {
+            equals: ORDER_STATE.PENDING_BROADCAST_DATE,
+          },
         },
         data: {
           scheduleStartDate: parseISO(scheduleStartDate),
           scheduleEndDate: parseISO(scheduleEndDate),
+          // 設定排播日期後，將狀態更新為「待確認」
+          state: ORDER_STATE.PENDING_CONFIRMATION,
         },
       },
       errorPolicy: 'all',
@@ -149,9 +161,14 @@ export async function POST(
       )
     }
 
+    // 如果沒有更新到訂單，表示訂單不存在或狀態不符合
+    if (!data?.updateOrder) {
+      return NextResponse.json({ error: 'Order not found' }, { status: 404 })
+    }
+
     return NextResponse.json({
       success: true,
-      order: data?.updateOrder,
+      order: data.updateOrder,
     })
   } catch (error) {
     createErrorLogger(`Failed to update order schedule: ${orderNumber}`)(error)

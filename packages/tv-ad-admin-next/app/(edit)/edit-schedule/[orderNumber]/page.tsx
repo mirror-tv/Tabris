@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 
 import { format, parseISO } from 'date-fns'
+import { useRouter } from 'next/navigation'
+
 
 import type { OrderRecordForSchedule } from '@/graphql/queries/orders'
 import type { DateRange } from 'react-day-picker'
@@ -22,6 +24,7 @@ export default function EditSchedule({
   params: { orderNumber: string }
 }) {
   const { orderNumber } = params
+  const router = useRouter()
   const { submitStatus, setSubmitStatus } = useSubmitStatus()
 
   const [range, setRange] = useState<DateRange | undefined>(undefined)
@@ -38,6 +41,10 @@ export default function EditSchedule({
       try {
         const res = await fetch(`/api/order/${orderNumber}/schedule`)
         if (!res.ok) {
+          if (res.status === 404 || res.status === 401) {
+            router.push('/not-found/404')
+            return
+          }
           throw new Error(
             `Failed to fetch schedule by order number: ${orderNumber}: ${res.statusText}`
           )
@@ -45,9 +52,10 @@ export default function EditSchedule({
         const data = await res.json()
         const { order } = data
         if (!order) {
-          setError(`Order not found: ${orderNumber}`)
+          router.push('/not-found/404')
           return
         }
+
         setOrderData(order)
 
         // 初始化現有的排播日期到 range state
@@ -97,6 +105,11 @@ export default function EditSchedule({
       })
 
       if (!res.ok) {
+        // 如果是 404，重定向到 404 頁面
+        if (res.status === 404) {
+          router.push('/not-found/404')
+          return
+        }
         throw new Error(`Response status: ${res.status}`)
       }
 
