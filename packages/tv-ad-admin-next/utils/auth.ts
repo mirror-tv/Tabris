@@ -6,12 +6,28 @@
 import { SignJWT, jwtVerify } from 'jose'
 import { cookies } from 'next/headers'
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'dev-secret-change-in-production'
-)
+// 🔒 安全性：生產環境必須設定 JWT_SECRET
+const getJwtSecret = () => {
+  const secret = process.env.JWT_SECRET
+  const isProduction = process.env.NODE_ENV === 'production'
+
+  if (
+    isProduction &&
+    (!secret || secret === 'dev-secret-change-in-production')
+  ) {
+    throw new Error(
+      'JWT_SECRET 必須在生產環境中設定，不能使用預設值。請檢查環境變數設定。'
+    )
+  }
+
+  return new TextEncoder().encode(secret || 'dev-secret-change-in-production')
+}
+
+const JWT_SECRET = getJwtSecret()
 
 export type UserPayload = {
   userId: string
+  memberId: string // CMS member id（必填）
   email?: string
   phone?: string
 }

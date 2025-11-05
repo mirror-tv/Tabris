@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 import { generateToken } from '@/utils/auth'
+import { getMemberByIdentifier } from '@/utils/member'
 import { verifyOTP } from '@/utils/otp-storage'
 
 export async function POST(request: NextRequest) {
@@ -41,21 +42,32 @@ export async function POST(request: NextRequest) {
     // 生成使用者 ID
     const userId = Buffer.from(identifier).toString('base64')
 
-    // 生成 JWT token
-    const token = await generateToken({
+    // 取得 member id（登入時就取得，之後可以直接用 id 查詢）
+    const member = await getMemberByIdentifier(
+      type === 'email' ? email : undefined,
+      type === 'phone' ? phone : undefined
+    )
+
+    if (!member?.id) {
+      return NextResponse.json(
+        { success: false, message: '無法取得會員資料，請重新登入' },
+        { status: 404 }
+      )
+    }
+
+    const userPayload = {
       userId,
-      email: type === 'email' ? email : undefined,
-      phone: type === 'phone' ? phone : undefined,
-    })
+      memberId: member.id,
+      ...(type === 'email' ? { email } : { phone }),
+    }
+
+    // 生成 JWT token（必須包含 memberId）
+    const token = await generateToken(userPayload)
 
     const response = NextResponse.json({
       success: true,
       message: '登入成功',
-      user: {
-        userId,
-        email: type === 'email' ? email : undefined,
-        phone: type === 'phone' ? phone : undefined,
-      },
+      user: userPayload,
     })
 
     // 使用 Next.js 推薦的方式設定 cookie

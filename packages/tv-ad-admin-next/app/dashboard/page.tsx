@@ -41,7 +41,7 @@ export default function DashboardPage() {
     setError(null)
 
     try {
-      const res = await fetch('/api/dashboard/stats', {
+      const res = await fetch('/api/dashboard/state', {
         signal: abortControllerRef.current.signal,
       })
 
