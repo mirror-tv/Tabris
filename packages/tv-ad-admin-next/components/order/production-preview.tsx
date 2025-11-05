@@ -20,7 +20,7 @@ export function ProductionPreview({
         <div className="relative my-2 aspect-video w-full overflow-hidden rounded-lg bg-gray-2">
           {order.demoImage?.[0]?.url ? (
             <Image
-              src={order.demoImage?.[0]?.url || '/images/image-default.jpg'}
+              src={order.demoImage[0].url}
               alt="video-preview"
               fill
               className="object-cover"
@@ -28,7 +28,7 @@ export function ProductionPreview({
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center text-text-tertiary">
-              影片截圖預覽
+              影片預覽圖還未上傳
             </div>
           )}
         </div>
