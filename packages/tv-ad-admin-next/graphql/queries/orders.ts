@@ -68,25 +68,9 @@ export type OrderRecordForOrderNumber = Pick<
   | 'paragraphTwo'
   | 'createdAt'
   | 'updatedAt'
-> & {
-  attachment?:
-    | (Pick<NonNullable<OrderSchema['attachment']>, 'id' | 'url' | 'name'> & {
-        file?: {
-          filename: string
-          filesize: number
-        } | null
-      })
-    | null
-  demoImage?: (Pick<
-    NonNullable<NonNullable<OrderSchema['demoImage']>[number]>,
-    'id' | 'url'
-  > & {
-    imageFile?: {
-      width: number
-      height: number
-    } | null
-  })[]
-}
+  | 'attachment'
+  | 'demoImage'
+>
 
 export const getOrdersByOrderNumberQuery = gql`
   query getOrdersByOrderNumber($where: OrderWhereInput!) {
