@@ -1,4 +1,5 @@
-import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client'
+import { ApolloClient, InMemoryCache } from '@apollo/client'
+import { createUploadLink } from 'apollo-upload-client'
 
 import { GQL_ENDPOINT } from '@/constants/environment-variables'
 
@@ -23,8 +24,9 @@ export const getClient = () => {
   // or if we are running on the server.
   if (!client || isServer()) {
     client = new ApolloClient({
-      link: new HttpLink({
+      link: createUploadLink({
         uri: GQL_ENDPOINT,
+        fetch: globalThis.fetch,
       }),
       cache: new InMemoryCache(),
       defaultOptions: {
@@ -32,6 +34,7 @@ export const getClient = () => {
           fetchPolicy: 'no-cache',
           errorPolicy: 'all',
         },
+        mutate: { errorPolicy: 'all' },
       },
     })
   }
