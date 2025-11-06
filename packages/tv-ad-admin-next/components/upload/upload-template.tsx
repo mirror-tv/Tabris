@@ -100,6 +100,7 @@ export default function UploadTemplate({
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   const { adName, adText1, adText2, adRange, adImage } = formState
+
   const { mode, nextState } =
     useMemo(() => {
       if (selectedOrder?.state === ORDER_STATE.PENDING_UPLOAD) {
@@ -225,15 +226,8 @@ export default function UploadTemplate({
           scheduleStartDate: formatISO(adRange.from),
           scheduleEndDate: formatISO(adRange.to),
         }),
+      ...(fields.imageEditable && adImage && { image: { data: adImage.data } }),
     }
-    // if (fields.imageEditable && adImage) {
-    //   mutationData.image = {
-    //     name: adImage!.name,
-    //     // imageFile:{
-    //     //   extension: adImage.
-    //     // }
-    //   }
-    // }
 
     // Build dialog preview data (for UI only)
     const dialogPreviewData: PreviewData = {

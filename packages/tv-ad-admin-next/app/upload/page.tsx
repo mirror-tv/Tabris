@@ -50,10 +50,34 @@ export default function UploadPage() {
 
   async function handleConfirmUpload(data: OrderRecordForUploadMutation) {
     try {
+      const formData = new FormData()
+
+      formData.append('orderNumber', data.orderNumber)
+      formData.append('state', data.state)
+
+      if ('name' in data && data.name) formData.append('name', data.name)
+      if ('paragraphOne' in data && data.paragraphOne)
+        formData.append('paragraphOne', data.paragraphOne)
+      if ('paragraphTwo' in data && data.paragraphTwo)
+        formData.append('paragraphTwo', data.paragraphTwo)
+      if ('scheduleStartDate' in data && data.scheduleStartDate)
+        formData.append('scheduleStartDate', data.scheduleStartDate)
+      if ('scheduleEndDate' in data && data.scheduleEndDate)
+        formData.append('scheduleEndDate', data.scheduleEndDate)
+
+      // Attach image file if present
+      if ('image' in data && data.image?.data) {
+        if (data.image.data instanceof File) {
+          formData.append('file', data.image.data)
+        } else {
+          // Log an error if image.data exists but is not a valid File instance.
+          console.error('Invalid image file type:', data.image.data)
+        }
+      }
+
       const res = await fetch('/api/upload/submit', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: formData,
       })
 
       const payload: ApiResponse = await res.json()
@@ -61,6 +85,7 @@ export default function UploadPage() {
       if (!res.ok || !payload.success) {
         throw new Error(payload.message || 'Upload failed')
       }
+
       setSubmitStatus('success')
     } catch (error) {
       console.error('Upload submit error:', error)

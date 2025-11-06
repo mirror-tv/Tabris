@@ -1,6 +1,7 @@
 import { gql } from '@apollo/client'
 
 import { OrderSchema } from '@/types'
+import { PhotoSchema } from '@/types/photo'
 
 export type OrderRecordForUploadMutation = Pick<
   OrderSchema,
@@ -15,8 +16,12 @@ export type OrderRecordForUploadMutation = Pick<
       | 'paragraphTwo'
       | 'scheduleStartDate'
       | 'scheduleEndDate'
-      | 'image'
-    >
+    > & {
+      image?:
+        | (Partial<PhotoSchema> & { data?: File | null })
+        | { data: File | null }
+        | null
+    }
   >
 
 export const updateOrderForUploadSubmit = gql`

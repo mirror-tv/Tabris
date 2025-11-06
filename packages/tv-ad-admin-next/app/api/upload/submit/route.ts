@@ -1,12 +1,116 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import { updateOrderForUploadSubmit } from '@/graphql/mutations/order'
+import {
+  OrderRecordForUploadMutation,
+  updateOrderForUploadSubmit,
+} from '@/graphql/mutations/order'
+import { uploadImageMutation } from '@/graphql/mutations/photo'
 import { ApiResponse } from '@/types'
 import { getClient } from '@/utils/apollo-client'
 import { createErrorLogger } from '@/utils/error-handler'
 
 export async function POST(req: NextRequest) {
+  const client = getClient()
+  const contentType = req.headers.get('content-type') || ''
+
   try {
+    // Case 1: multipart/form-data (image + fields)
+    if (contentType.includes('multipart/form-data')) {
+      const formData = await req.formData()
+
+      const orderNumber = formData.get('orderNumber') as string
+      const state = formData.get(
+        'state'
+      ) as OrderRecordForUploadMutation['state']
+      const name = formData.get('name') as string | null
+      const paragraphOne = formData.get('paragraphOne') as string | null
+      const paragraphTwo = formData.get('paragraphTwo') as string | null
+      const scheduleStartDate = formData.get('scheduleStartDate') as
+        | string
+        | null
+      const scheduleEndDate = formData.get('scheduleEndDate') as string | null
+      const file = formData.get('file') as File | null
+
+      if (!orderNumber) {
+        return NextResponse.json<ApiResponse>(
+          { success: false, message: 'Missing orderNumber' },
+          { status: 400 }
+        )
+      }
+
+      let imageId: string | undefined
+
+      // --- Step 1. Upload image if provided ---
+      if (file) {
+        const cleanName = file.name.replace(/\.[^/.]+$/, '')
+        const { data, errors } = await client.mutate({
+          mutation: uploadImageMutation,
+          variables: { name: cleanName, upload: file },
+          context: {
+            // Add CSRF-safe header when calling Keystone GraphQL endpoint.
+            // This header is only needed for server-side Apollo Client requests,
+            headers: {
+              'x-apollo-operation-name': 'uploadImage',
+            },
+          },
+          errorPolicy: 'all',
+        })
+
+        if (errors?.length) {
+          const msg = errors.map((e) => e.message).join(', ')
+          createErrorLogger('Image upload failed')(new Error(msg))
+          return NextResponse.json<ApiResponse>(
+            { success: false, message: msg },
+            { status: 500 }
+          )
+        }
+
+        imageId = data?.createPhoto?.id
+      }
+
+      // --- Step 2. Update order ---
+      const updateData: Omit<
+        OrderRecordForUploadMutation,
+        'orderNumber' | 'image'
+      > & {
+        image?: { connect: { id: string } }
+      } = {
+        state,
+        ...(name && { name }),
+        ...(paragraphOne && { paragraphOne }),
+        ...(paragraphTwo && { paragraphTwo }),
+        ...(scheduleStartDate && { scheduleStartDate }),
+        ...(scheduleEndDate && { scheduleEndDate }),
+        ...(imageId && { image: { connect: { id: imageId } } }),
+      }
+
+      const { data: result, errors } = await client.mutate({
+        mutation: updateOrderForUploadSubmit,
+        variables: {
+          where: { orderNumber },
+          data: updateData,
+        },
+        errorPolicy: 'all',
+      })
+
+      if (errors?.length) {
+        const errorMsg = errors.map((e) => e.message).join(', ')
+        createErrorLogger(`Order update failed: ${orderNumber}`)(
+          new Error(errorMsg)
+        )
+        return NextResponse.json<ApiResponse>(
+          { success: false, message: errorMsg },
+          { status: 500 }
+        )
+      }
+      return NextResponse.json<ApiResponse>({
+        success: true,
+        message: 'Order and image processed successfully',
+        data: result?.updateOrder,
+      })
+    }
+
+    // Case 2: fallback for JSON-only requests
     const body = await req.json()
     const { orderNumber, ...updateData } = body
 
@@ -24,7 +128,6 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const client = getClient()
     const { data: result, errors } = await client.mutate({
       mutation: updateOrderForUploadSubmit,
       variables: {
