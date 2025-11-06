@@ -9,6 +9,7 @@ import { OrderDetails } from '@/components/order/order-details'
 import { OrderNotFound } from '@/components/order/order-not-found'
 import { OrderPreview } from '@/components/order/order-preview'
 import { OrderState as OrderStateComponent } from '@/components/order/order-state'
+import LoadingSpinner from '@/components/shared/loading-spinner'
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
 import { ORDER_STATE_CONFIG, ORDER_STYLES } from '@/constants'
@@ -74,7 +75,11 @@ export default function OrderPage() {
               {order && <OrderStateComponent order={order} />}
             </div>
             {error && <div className="text-red-500">{error}</div>}
-            {isLoading && <div className="text-gray-500">載入中...</div>}
+            {isLoading && (
+              <div className="flex min-h-[400px] items-center justify-center">
+                <LoadingSpinner />
+              </div>
+            )}
             {!error && !isLoading && !order && (
               <OrderNotFound orderId={orderNumber} />
             )}

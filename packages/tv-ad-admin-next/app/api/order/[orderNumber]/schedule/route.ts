@@ -97,11 +97,9 @@ export async function POST(
 ) {
   const { orderNumber } = params ?? {}
   const user = await getCurrentUser()
-
   if (!user || !user.memberId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
-
   if (!orderNumber) {
     return NextResponse.json(
       { error: 'Order number is required' },
