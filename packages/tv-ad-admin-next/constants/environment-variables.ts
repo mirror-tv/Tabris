@@ -3,6 +3,7 @@
 
 const ENV = process.env.NEXT_PUBLIC_ENV || 'local'
 const GQL_ENDPOINT = process.env.GQL_ENDPOINT
+const JWT_SECRET = process.env.JWT_SECRET
 
 // API Endpoints
 let API_BASE_URL: string
@@ -54,4 +55,5 @@ export {
   GLOBAL_CACHE_SETTING,
   GTM_ID,
   GA4_ID,
+  JWT_SECRET,
 }
