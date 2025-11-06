@@ -1,5 +1,9 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
+
+import type { OrderRecordForSchedule } from '@/graphql/queries/orders'
+
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
 import { Button } from '@/components/ui/button'
@@ -11,6 +15,7 @@ type EditPageLayoutProps = {
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
   submitButtonName: string
   cardTitle?: string
+  orderData?: OrderRecordForSchedule | null
 }
 
 const Mock_Order_Number = 'B7H8M3'
@@ -23,11 +28,25 @@ export default function EditPageLayout({
   onSubmit,
   submitButtonName,
   cardTitle,
+  orderData,
 }: EditPageLayoutProps) {
+  const router = useRouter()
+
   const orderInfo = [
-    { title: '訂單編號', value: '#' + Mock_Order_Number },
-    { title: '廣告名稱', value: Mock_Order_Name },
-    { title: '排播日期', value: Mock_Order_Date },
+    {
+      title: '訂單編號',
+      value: '#' + orderData?.orderNumber || Mock_Order_Number,
+    },
+    { title: '廣告名稱', value: orderData?.name || Mock_Order_Name },
+    {
+      title: '排播日期',
+      value:
+        orderData?.scheduleStartDateString && orderData?.scheduleEndDateString
+          ? orderData.scheduleStartDateString +
+            '-' +
+            orderData.scheduleEndDateString
+          : Mock_Order_Date,
+    },
   ]
 
   return (
@@ -58,7 +77,7 @@ export default function EditPageLayout({
                 intent="secondary"
                 type="button"
                 size="lg"
-                onClick={() => alert('取消')}
+                onClick={() => router.back()}
               >
                 取消
               </Button>
