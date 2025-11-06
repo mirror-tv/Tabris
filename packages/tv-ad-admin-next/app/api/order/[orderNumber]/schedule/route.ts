@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import { updateOrderScheduleMutation } from '@/graphql/mutations/orders'
 import { getClient } from '@/utils/apollo-client'
+import { getCurrentUser } from '@/utils/auth'
 import { createErrorLogger } from '@/utils/error-handler'
 
 export async function POST(
@@ -10,7 +11,10 @@ export async function POST(
   { params }: { params: { orderNumber?: string } }
 ) {
   const { orderNumber } = params ?? {}
-
+  const user = await getCurrentUser()
+  if (!user || !user.memberId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
   if (!orderNumber) {
     return NextResponse.json(
       { error: 'Order number is required' },
@@ -35,6 +39,11 @@ export async function POST(
       variables: {
         where: {
           orderNumber: orderNumber,
+          member: {
+            id: {
+              equals: user.memberId,
+            },
+          },
         },
         data: {
           scheduleStartDate: parseISO(scheduleStartDate),
