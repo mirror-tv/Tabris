@@ -101,6 +101,8 @@ export default function UploadTemplate({
 
   const { adName, adText1, adText2, adRange, adImage } = formState
 
+  // mode: 'upload' | 'reupload'
+  // Derived from selectedOrder.state. Used only for UI rendering (labels, buttons, editable fields), not for business or server logic.
   const { mode, nextState } =
     useMemo(() => {
       if (selectedOrder?.state === ORDER_STATE.PENDING_UPLOAD) {
