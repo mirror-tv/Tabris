@@ -6,10 +6,11 @@
 import { SignJWT, jwtVerify } from 'jose'
 import { cookies } from 'next/headers'
 
-// 🔒 安全性：生產環境必須設定 JWT_SECRET
+import { JWT_SECRET, ENV } from '@/constants/environment-variables'
+
 const getJwtSecret = () => {
-  const secret = process.env.JWT_SECRET
-  const isProduction = process.env.NODE_ENV === 'production'
+  const secret = JWT_SECRET
+  const isProduction = ENV === 'prod'
 
   if (
     isProduction &&
@@ -23,8 +24,6 @@ const getJwtSecret = () => {
   return new TextEncoder().encode(secret || 'dev-secret-change-in-production')
 }
 
-const JWT_SECRET = getJwtSecret()
-
 export type UserPayload = {
   userId: string
   memberId: string // CMS member id（必填）
@@ -33,6 +32,7 @@ export type UserPayload = {
 }
 
 export async function generateToken(payload: UserPayload): Promise<string> {
+  const JWT_SECRET = getJwtSecret()
   return await new SignJWT(payload as Record<string, unknown>)
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
@@ -42,6 +42,7 @@ export async function generateToken(payload: UserPayload): Promise<string> {
 
 export async function verifyToken(token: string): Promise<UserPayload | null> {
   try {
+    const JWT_SECRET = getJwtSecret()
     const { payload } = await jwtVerify(token, JWT_SECRET)
     return payload as UserPayload
   } catch {
