@@ -5,7 +5,6 @@ import { useState, useEffect } from 'react'
 import { format, parseISO } from 'date-fns'
 import { useRouter } from 'next/navigation'
 
-
 import type { OrderRecordForSchedule } from '@/graphql/queries/orders'
 import type { DateRange } from 'react-day-picker'
 
@@ -73,7 +72,7 @@ export default function EditSchedule({
       }
     }
     fetchSchedule()
-  }, [orderNumber])
+  }, [router, orderNumber])
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
