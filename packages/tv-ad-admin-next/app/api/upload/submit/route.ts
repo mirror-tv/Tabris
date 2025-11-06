@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+import { deletePhotoMutation } from '@/graphql/delete/photo'
 import {
   OrderRecordForUploadMutation,
   updateOrderForUploadSubmit,
 } from '@/graphql/mutations/order'
 import { uploadImageMutation } from '@/graphql/mutations/photo'
+import { getOrderImageQuery } from '@/graphql/queries/photo'
 import { ApiResponse } from '@/types'
 import { getClient } from '@/utils/apollo-client'
 import { createErrorLogger } from '@/utils/error-handler'
@@ -40,8 +42,25 @@ export async function POST(req: NextRequest) {
 
       let imageId: string | undefined
 
-      // --- Step 1. Upload image if provided ---
       if (file) {
+        // --- Step 0. Check and delete existing image before uploading a new one
+        const { data: existing } = await client.query({
+          query: getOrderImageQuery,
+          variables: { orderNumber },
+          fetchPolicy: 'no-cache',
+        })
+
+        const oldImageId = existing?.orders?.[0]?.image?.id
+
+        if (oldImageId) {
+          await client.mutate({
+            mutation: deletePhotoMutation,
+            variables: { where: { id: oldImageId } },
+            context: { headers: { 'x-apollo-operation-name': 'deletePhoto' } },
+          })
+        }
+
+        // --- Step 1. Upload image if provided ---
         const cleanName = file.name.replace(/\.[^/.]+$/, '')
         const { data, errors } = await client.mutate({
           mutation: uploadImageMutation,
@@ -57,10 +76,10 @@ export async function POST(req: NextRequest) {
         })
 
         if (errors?.length) {
-          const msg = errors.map((e) => e.message).join(', ')
-          createErrorLogger('Image upload failed')(new Error(msg))
+          const errorMsg = errors.map((e) => e.message).join(', ')
+          createErrorLogger('Image upload failed')(new Error(errorMsg))
           return NextResponse.json<ApiResponse>(
-            { success: false, message: msg },
+            { success: false, message: errorMsg },
             { status: 500 }
           )
         }
