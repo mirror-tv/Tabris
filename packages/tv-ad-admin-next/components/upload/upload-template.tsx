@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import { format, formatISO, parseISO } from 'date-fns'
 import { DateRange } from 'react-day-picker'
 
+import ImageUploadField from './image-upload-field'
 import OrderSelectField from './order-select-field'
 
 import { CustomInput } from '@/components/custom-ui/custom-input'
@@ -26,7 +27,6 @@ import ConfirmDialog, { PreviewData } from '@/components/upload/confirm-dialog'
 import { ORDER_STATE } from '@/constants'
 import { OrderRecordForUploadMutation } from '@/graphql/mutations/order'
 import { OrderRecordForUploadQuery } from '@/graphql/queries/orders'
-import ImageIcon from '@/public/icons/image.svg'
 import TextFormatIcon from '@/public/icons/text-format.svg'
 import TextIcon from '@/public/icons/text.svg'
 import TriangleExclamationIcon from '@/public/icons/triangle-exclamation.svg'
@@ -34,13 +34,7 @@ import { PhotoSchema } from '@/types/photo'
 import { cn } from '@/utils'
 
 
-// ===== Label / Input Element IDs =====
-const adNameLabelId = 'ad-name-label'
-const adText1LabelId = 'ad-text1-label'
-const adText2LabelId = 'ad-text2-label'
-const imageUploadLabelId = 'image-upload-label'
-
-type FormState = {
+export type FormState = {
   adName: string
   adText1: string
   adText2: string
@@ -82,6 +76,11 @@ const initialFieldsEditability: FieldEditability = {
   imageEditable: true,
 }
 
+// ===== Label / Input Element IDs =====
+const adNameLabelId = 'ad-name-label'
+const adText1LabelId = 'ad-text1-label'
+const adText2LabelId = 'ad-text2-label'
+
 export default function UploadTemplate({
   pageTitle,
   onSubmit,
@@ -99,8 +98,6 @@ export default function UploadTemplate({
   const [previewData, setPreviewData] = useState<PreviewData | null>(null)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [isDragging, setIsDragging] = useState(false)
-  const [imagePreview, setImagePreview] = useState<string | null>(null)
 
   const { adName, adText1, adText2, adRange, adImage } = formState
   const { mode, nextState } =
@@ -119,65 +116,6 @@ export default function UploadTemplate({
         }
       }
     }, [selectedOrder]) ?? {}
-
-  // ====================== Start: drop image ======================
-  function _validateAndSetFile(adImage: File) {
-    if (!['image/jpeg', 'image/png'].includes(adImage.type)) {
-      setErrors((prev) => ({ ...prev, adImage: '僅支援 JPG 或 PNG 格式' }))
-      setFormState((prev) => ({ ...prev, adImage: null }))
-      return
-    }
-
-    if (adImage.size > 5 * 1024 * 1024) {
-      setErrors((prev) => ({
-        ...prev,
-        adImage: '檔案超過 5MB，請重新上傳',
-      }))
-      setFormState((prev) => ({ ...prev, adImage: null }))
-      return
-    }
-
-    setFormState({
-      ...formState,
-      adImage: {
-        id: '',
-        name: adImage.name,
-        url: '',
-        data: adImage,
-      },
-    })
-    setErrors((prev) => ({ ...prev, adImage: '' }))
-  }
-
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const uploadedFile = e.target.files?.[0]
-    if (uploadedFile) _validateAndSetFile(uploadedFile)
-  }
-  function handleDrop(e: React.DragEvent<HTMLDivElement>) {
-    e.preventDefault()
-    e.stopPropagation()
-    setIsDragging(false)
-
-    const droppedFile = e.dataTransfer.files?.[0]
-    if (droppedFile) _validateAndSetFile(droppedFile)
-  }
-
-  function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
-    e.preventDefault()
-    e.stopPropagation()
-    const related = e.relatedTarget as Node | null
-    if (related && e.currentTarget.contains(related)) return
-    setIsDragging(true)
-  }
-
-  function handleDragLeave(e: React.DragEvent<HTMLDivElement>) {
-    e.preventDefault()
-    e.stopPropagation()
-    const related = e.relatedTarget as Node | null
-    if (related && e.currentTarget.contains(related)) return
-    setIsDragging(false)
-  }
-  // ====================== End: drop image ======================
 
   function handleOrderSelect(value: string) {
     const currentOrder = orders.find((o) => o.orderNumber === value)
@@ -326,24 +264,6 @@ export default function UploadTemplate({
     }
   }
 
-  // ===== Update image preview when adImage changes =====
-  useEffect(() => {
-    if (!adImage) {
-      setImagePreview(null)
-      return
-    }
-
-    if (adImage.data) {
-      const objectUrl = URL.createObjectURL(adImage.data)
-      setImagePreview(objectUrl)
-      return () => URL.revokeObjectURL(objectUrl)
-    }
-
-    if (adImage.url) {
-      setImagePreview(adImage.url)
-    }
-  }, [adImage])
-
   return (
     <>
       <PageHeader title={pageTitle} />
@@ -451,81 +371,18 @@ export default function UploadTemplate({
                   </LabeledField>
 
                   {/* 上傳圖片 */}
-                  <div className="space-y-2">
-                    <LabeledField
-                      id={imageUploadLabelId}
-                      label="上傳圖片"
-                      labelIcon={<ImageIcon />}
-                    >
-                      <div
-                        onDragOver={handleDragOver}
-                        onDragLeave={handleDragLeave}
-                        onDrop={handleDrop}
-                        className={cn(
-                          'relative flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-3 p-6 text-center',
-                          isDragging
-                            ? 'border-blue-5 bg-blue-1'
-                            : 'border-gray-3 bg-transparent',
-                          errors.adImage && [
-                            'border border-red-7',
-                            'focus:border-red-8',
-                          ]
-                        )}
-                      >
-                        {/* If a adImage is uploaded, show image preview; otherwise show icon */}
-                        {imagePreview ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            loading="lazy"
-                            src={imagePreview}
-                            alt={adImage?.name || '預覽圖'}
-                            className="h-[90px] w-40 rounded-sm bg-white object-contain shadow-sm"
-                            onError={(e) => {
-                              ;(e.target as HTMLImageElement).src =
-                                '/icons/image.svg'
-                            }}
-                          />
-                        ) : (
-                          <ImageIcon className="size-[90px] text-gray-5" />
-                        )}
-
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="lg"
-                          intent="secondary"
-                          className="bg-white"
-                          disabled={!fields.imageEditable}
-                          onClick={() =>
-                            document.getElementById(imageUploadLabelId)?.click()
-                          }
-                        >
-                          {adImage ? '重新選擇圖片' : '選擇圖片檔案'}
-                        </Button>
-                        <input
-                          id={imageUploadLabelId}
-                          key={adImage?.name}
-                          type="file"
-                          accept=".jpg,.jpeg,.png"
-                          className="hidden"
-                          onChange={handleFileChange}
-                        />
-                        <div className="min-h-16 md:h-11">
-                          <p className="text-gray-5">
-                            支援 JPG, PNG 格式，檔案大小不超過 5MB
-                          </p>
-                          {adImage && (
-                            <p className="font-medium text-text-primary">
-                              已選擇檔案：{adImage.name}
-                            </p>
-                          )}
-                          {errors.adImage && (
-                            <p className="text-red-7">{errors.adImage}</p>
-                          )}
-                        </div>
-                      </div>
-                    </LabeledField>
-                  </div>
+                  <ImageUploadField
+                    adImage={adImage}
+                    setImage={(newImage) =>
+                      setFormState((prev) => ({
+                        ...prev,
+                        adImage: newImage,
+                      }))
+                    }
+                    setErrors={setErrors}
+                    error={errors.adImage}
+                    disabled={!fields.imageEditable}
+                  />
 
                   {/* 提示文字 */}
                   <Instructions
