@@ -3,6 +3,7 @@ import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
+import LoadingSpinner from '@/components/shared/loading-spinner'
 import { Button } from '@/components/ui/button'
 import { ORDER_STATE } from '@/constants'
 import { type OrderRecordForOrderNumber } from '@/graphql/queries/orders'
@@ -154,11 +155,28 @@ export function OrderActions({ order, className = '' }: OrderActionsProps) {
     setIsConfirming(true)
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 5000))
-      // TODO: 確認完成後，進入下一個階段
-      alert('我還沒做！請提醒1軒')
+      const response = await fetch(`/api/order/${order.orderNumber}/confirm`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      const data = await response.json()
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || '確認失敗')
+      }
+      window.location.reload()
     } catch (error) {
       console.error('確認失敗:', error)
+      alert(
+        error instanceof Error
+          ? `確認失敗: ${error.message}`
+          : '確認失敗，請稍後再試'
+      )
+    } finally {
+      setIsConfirming(false)
     }
   }
 
@@ -175,7 +193,8 @@ export function OrderActions({ order, className = '' }: OrderActionsProps) {
   }, [order.state])
 
   return (
-    <section className={`${styles.container} ${className}`}>
+    <section className={`${styles.container} ${className} relative`}>
+      {isConfirming && <LoadingSpinner message="確認中..." overlay />}
       <h5 className={styles.title}>訂單操作</h5>
       <div className={styles.buttonContainer}>
         {actionContent.buttonText && (
