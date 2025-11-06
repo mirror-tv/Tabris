@@ -13,3 +13,15 @@ export const updateOrderScheduleMutation = gql`
     }
   }
 `
+
+export const updateOrderStateMutation = gql`
+  mutation updateOrderState(
+    $where: OrderWhereUniqueInput!
+    $data: OrderUpdateInput!
+  ) {
+    updateOrder(where: $where, data: $data) {
+      id
+      state
+    }
+  }
+`
