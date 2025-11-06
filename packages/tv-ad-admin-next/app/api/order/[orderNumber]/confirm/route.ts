@@ -32,10 +32,10 @@ export async function POST(
         },
         data: {
           state: ORDER_STATE.PENDING_SCHEDULE,
-        },
-        member: {
-          id: {
-            equals: user.memberId,
+          member: {
+            id: {
+              equals: user.memberId,
+            },
           },
         },
       },
