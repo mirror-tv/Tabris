@@ -116,7 +116,6 @@ export const getOrdersByOrderNumberQuery = gql`
 export type OrderRecordForUploadQuery = Pick<
   OrderSchema,
   | 'id'
-  | 'orderNumber'
   | 'name'
   | 'member'
   | 'nameEditable'
@@ -133,7 +132,9 @@ export type OrderRecordForUploadQuery = Pick<
   | 'image'
   | 'imageEditable'
   | 'state'
->
+> & {
+  orderNumber: string
+}
 
 /**
  * Retrieves the list of orders related to ad material uploads, with optional filtering by member.

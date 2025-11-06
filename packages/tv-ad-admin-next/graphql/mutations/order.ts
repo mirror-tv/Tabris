@@ -3,10 +3,7 @@ import { gql } from '@apollo/client'
 import { OrderSchema } from '@/types'
 import { PhotoSchema } from '@/types/photo'
 
-export type OrderRecordForUploadMutation = Pick<
-  OrderSchema,
-  'orderNumber' | 'state'
-> &
+export type OrderRecordForUploadMutation = Pick<OrderSchema, 'state'> &
   Partial<
     Pick<
       OrderSchema,
@@ -22,7 +19,9 @@ export type OrderRecordForUploadMutation = Pick<
         | { data: File | null }
         | null
     }
-  >
+  > & {
+    orderNumber: string
+  }
 
 export const updateOrderForUploadSubmit = gql`
   mutation UpdateOrderForUploadSubmit(
