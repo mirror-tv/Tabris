@@ -27,8 +27,7 @@ export type SendOtpResponse = ApiResponse<{
 export type VerifyOtpResponse = ApiResponse<{
   user: {
     userId: string
-    email?: string
-    phone?: string
+    email: string
   }
   token?: string // 如果需要在 Response Body 中返回
 }>
@@ -37,8 +36,7 @@ export type VerifyOtpResponse = ApiResponse<{
 export type GetMeResponse = ApiResponse<{
   user: {
     userId: string
-    email?: string
-    phone?: string
+    email: string
   }
 }>
 
@@ -60,20 +58,13 @@ export type RateLimitResponse = {
   remaining?: number
 }
 
-// 登入類型
-export type LoginType = 'email' | 'phone'
-
 // 登入請求
 export type LoginRequest = {
-  type: LoginType
-  email?: string
-  phone?: string
+  email: string
 }
 
 // OTP 驗證請求
 export type VerifyOtpRequest = {
-  type: LoginType
-  email?: string
-  phone?: string
+  email: string
   otp: string
 }

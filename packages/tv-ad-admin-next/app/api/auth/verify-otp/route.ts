@@ -11,7 +11,7 @@ import { verifyOTP } from '@/utils/otp-storage'
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, phone, otp, type } = await request.json()
+    const { email, otp } = await request.json()
 
     if (!otp) {
       return NextResponse.json(
@@ -20,17 +20,15 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const identifier = type === 'email' ? email : phone
-
-    if (!identifier) {
+    if (!email) {
       return NextResponse.json(
-        { success: false, message: '請提供 Email 或手機號碼' },
+        { success: false, message: '請提供 Email' },
         { status: 400 }
       )
     }
 
     // 驗證 OTP
-    const result = verifyOTP(identifier, otp)
+    const result = verifyOTP(email, otp)
 
     if (!result.success) {
       return NextResponse.json(
@@ -40,13 +38,10 @@ export async function POST(request: NextRequest) {
     }
 
     // 生成使用者 ID
-    const userId = Buffer.from(identifier).toString('base64')
+    const userId = Buffer.from(email).toString('base64')
 
     // 取得 member id（登入時就取得，之後可以直接用 id 查詢）
-    const member = await getMemberByIdentifier(
-      type === 'email' ? email : undefined,
-      type === 'phone' ? phone : undefined
-    )
+    const member = await getMemberByIdentifier(email)
 
     if (!member?.id) {
       return NextResponse.json(
@@ -58,7 +53,7 @@ export async function POST(request: NextRequest) {
     const userPayload = {
       userId,
       memberId: member.id,
-      ...(type === 'email' ? { email } : { phone }),
+      email,
     }
 
     // 生成 JWT token（必須包含 memberId）
