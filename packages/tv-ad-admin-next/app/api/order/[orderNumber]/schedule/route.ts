@@ -1,7 +1,7 @@
 import { parseISO } from 'date-fns'
 import { NextRequest, NextResponse } from 'next/server'
 
-import { ORDER_STATE } from '@/constants/state/orderState'
+import { getNextState, ORDER_STATE } from '@/constants/state/orderState'
 import { updateOrderScheduleMutation } from '@/graphql/mutations/orders'
 import { getOrderScheduleQuery } from '@/graphql/queries/orders'
 import { getClient } from '@/utils/apollo-client'
@@ -119,6 +119,17 @@ export async function POST(
     }
 
     const client = getClient()
+
+    // 先獲取當前訂單狀態（已在 where 條件中確認是 PENDING_BROADCAST_DATE）
+    // 根據 flow 獲取下一個狀態
+    const nextState = getNextState(ORDER_STATE.PENDING_BROADCAST_DATE)
+    if (!nextState) {
+      return NextResponse.json(
+        { error: 'Cannot determine next state for current order state' },
+        { status: 400 }
+      )
+    }
+
     const { data, errors } = await client.mutate({
       mutation: updateOrderScheduleMutation,
       variables: {
@@ -138,8 +149,7 @@ export async function POST(
         data: {
           scheduleStartDate: parseISO(scheduleStartDate),
           scheduleEndDate: parseISO(scheduleEndDate),
-          // 設定排播日期後，將狀態更新為「待確認」
-          state: ORDER_STATE.PENDING_CONFIRMATION,
+          state: nextState,
         },
       },
       errorPolicy: 'all',

@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import { ORDER_STATE } from '@/constants'
+import { getNextState, type OrderState } from '@/constants'
 import { updateOrderStateMutation } from '@/graphql/mutations/orders'
+import { getOrdersByOrderNumberQuery } from '@/graphql/queries/orders'
 import { getClient } from '@/utils/apollo-client'
 import { getCurrentUser } from '@/utils/auth'
 import { createErrorLogger } from '@/utils/error-handler'
@@ -24,6 +25,38 @@ export async function POST(
 
   try {
     const client = getClient()
+
+    // 先獲取當前訂單狀態
+    const { data: orderData } = await client.query({
+      query: getOrdersByOrderNumberQuery,
+      variables: {
+        where: {
+          orderNumber: {
+            equals: orderNumber,
+          },
+          member: {
+            id: {
+              equals: user.memberId,
+            },
+          },
+        },
+      },
+    })
+
+    const currentOrder = orderData?.orders?.[0]
+    if (!currentOrder) {
+      return NextResponse.json({ error: 'Order not found' }, { status: 404 })
+    }
+
+    // 根據 flow 獲取下一個狀態
+    const nextState = getNextState(currentOrder.state as OrderState)
+    if (!nextState) {
+      return NextResponse.json(
+        { error: 'Cannot determine next state for current order state' },
+        { status: 400 }
+      )
+    }
+
     const { data, errors } = await client.mutate({
       mutation: updateOrderStateMutation,
       variables: {
@@ -31,7 +64,7 @@ export async function POST(
           orderNumber: orderNumber,
         },
         data: {
-          state: ORDER_STATE.PENDING_SCHEDULE,
+          state: nextState,
           member: {
             id: {
               equals: user.memberId,
