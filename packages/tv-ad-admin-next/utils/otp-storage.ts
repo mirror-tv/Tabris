@@ -152,7 +152,3 @@ export function verifyOTP(
 export function validateEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 }
-
-export function validatePhone(phone: string): boolean {
-  return /^09\d{8}$/.test(phone.replace(/\s/g, ''))
-}

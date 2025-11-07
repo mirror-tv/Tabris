@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button'
 
 type OptFormProps = {
   email: string
-  phone: string
   error: string
   isLoading: boolean
   countdown: number
@@ -20,7 +19,6 @@ type OptFormProps = {
 
 export default function OptForm({
   email,
-  phone,
   error,
   isLoading,
   countdown,
@@ -38,7 +36,7 @@ export default function OptForm({
       <h3 className="text-center text-text-primary">輸入驗證碼</h3>
       <p className="text-center font-sans text-sm leading-normal font-normal text-text-secondary">
         驗證碼已發送到{' '}
-        <span className="inline max-w-full truncate">{email || phone}</span>
+        <span className="inline max-w-full truncate">{email}</span>
         <br />
         請輸入您收到的六位數驗證碼
       </p>
@@ -89,7 +87,7 @@ export default function OptForm({
           href={`/`}
           className="-mt-2 text-center text-sm leading-normal font-medium text-brand-primary hover:font-bold"
         >
-          重新填寫{email ? '電子信箱' : '手機號碼'}
+          重新填寫電子信箱
         </Link>
       </div>
     </>
