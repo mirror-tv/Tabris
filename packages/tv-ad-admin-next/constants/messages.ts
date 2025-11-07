@@ -39,7 +39,7 @@ export const AUTH_MESSAGES = {
 
   // 參數錯誤
   INVALID_REQUEST: '請求參數錯誤',
-  MISSING_IDENTIFIER: '請提供 Email',
+  MISSING_IDENTIFIER: '請提供電子信箱',
 
   // Token 錯誤
   TOKEN_INVALID: 'Token 無效或已過期',

@@ -18,7 +18,7 @@ export default function HomePage() {
   const router = useRouter()
   const { isAuthenticated, login, initialize } = useAuthStore()
 
-  const [isOtpMode, setIsOtpMode] = useState(false)
+  const [showOtpForm, setShowOtpForm] = useState(false)
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [loadingMessage, setLoadingMessage] = useState('')
@@ -93,7 +93,7 @@ export default function HomePage() {
         )
       }
 
-      setIsOtpMode(true)
+      setShowOtpForm(true)
       setCountdown(60)
       setCanResend(false)
     } catch (err) {
@@ -239,7 +239,7 @@ export default function HomePage() {
       <PageHeader variant="centered" />
       <PageMain className="flex justify-center py-5 md:py-10">
         <div className="flex h-fit max-w-[288px] flex-col items-center rounded-xl border border-border-default bg-surface-primary p-4 shadow-lg md:max-w-[448px] md:min-w-[448px] md:p-6">
-          {!isOtpMode ? (
+          {!showOtpForm ? (
             <EmailForm
               email={email}
               setEmail={setEmail}

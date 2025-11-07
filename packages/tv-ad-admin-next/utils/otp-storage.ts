@@ -147,8 +147,3 @@ export function verifyOTP(
   deleteOTPFile(identifier)
   return { success: true, message: '驗證成功' }
 }
-
-// 驗證工具
-export function validateEmail(email: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-}

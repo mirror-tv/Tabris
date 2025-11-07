@@ -114,7 +114,7 @@ export async function getMemberById(id: string): Promise<MemberData | null> {
 /**
  * 根據 email 取得完整的 Member 資料（用於登入時查詢 member id）
  */
-export async function getMemberByIdentifier(
+export async function getMemberByEmail(
   email: string
 ): Promise<MemberData | null> {
   if (!email) {
@@ -129,17 +129,12 @@ export async function getMemberByIdentifier(
   const members = await queryMembers(
     getMembersQuery,
     { where: whereCondition },
-    'getMemberByIdentifier'
+    'getMemberByEmail'
   )
 
   return members.length > 0 ? members[0] : null
 }
 
-/**
- * 根據 UserPayload 取得完整的 Member 資料（透過 email 查詢）
- * @deprecated 如果 UserPayload 已有 memberId，請使用 getMemberById
- * 此函數僅為向後兼容保留，建議使用 getMemberByIdentifier 或 getMemberById
- */
 export async function getMemberByUser(
   user: UserPayload
 ): Promise<MemberData | null> {
@@ -148,6 +143,5 @@ export async function getMemberByUser(
     return getMemberById(user.memberId)
   }
 
-  // 否則使用 email 查詢
-  return user.email ? getMemberByIdentifier(user.email) : null
+  return getMemberByEmail(user.email)
 }
