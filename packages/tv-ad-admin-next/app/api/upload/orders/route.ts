@@ -42,7 +42,7 @@ export async function GET() {
     // Handle any GraphQL errors
     if (errors?.length) {
       const message = errors.map((e) => e.message).join(', ')
-      createErrorLogger('GraphQL errors while fetching orders')(
+      createErrorLogger('GraphQL errors while fetching upload/reupload orders')(
         new Error(message)
       )
       return NextResponse.json<ApiResponse>(
@@ -54,18 +54,22 @@ export async function GET() {
     // Handle case where no orders are found
     if (!data.orders || data.orders.length === 0) {
       return NextResponse.json(
-        { success: false, message: 'No orders found for this member.' },
-        { status: 404 }
+        {
+          success: true,
+          message: 'No uploaded or re-uploaded orders found for this member.',
+          data: [],
+        },
+        { status: 200 }
       )
     }
 
     return NextResponse.json<ApiResponse<OrderRecordForUploadQuery[]>>({
       success: true,
-      message: 'Orders fetched successfully',
+      message: 'Uploaded/re-uploaded orders fetched successfully.',
       data: data.orders,
     })
   } catch (error) {
-    createErrorLogger('Failed to fetch upload orders')(error)
+    createErrorLogger('Failed to fetch uploaded or re-uploaded orders')(error)
 
     return NextResponse.json<ApiResponse>(
       { success: false, message: 'Internal server error' },

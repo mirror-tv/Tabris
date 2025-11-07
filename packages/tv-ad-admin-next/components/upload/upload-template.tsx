@@ -249,17 +249,6 @@ export default function UploadTemplate({
     setIsDialogOpen(true)
   }
 
-  async function handleConfirmUpload() {
-    if (!uploadData) return
-
-    try {
-      await onSubmit(uploadData) // Pass payload to parent for API submission
-      setIsDialogOpen(false)
-    } catch (err) {
-      console.error('Upload submission failed:', err)
-    }
-  }
-
   return (
     <>
       <PageHeader title={pageTitle} />
@@ -407,7 +396,7 @@ export default function UploadTemplate({
           open={isDialogOpen}
           onOpenChange={setIsDialogOpen}
           previewData={previewData}
-          onConfirm={handleConfirmUpload}
+          onConfirm={()=>uploadData && onSubmit(uploadData)}
         />
       )}
     </>

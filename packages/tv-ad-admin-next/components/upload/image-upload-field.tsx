@@ -30,17 +30,17 @@ export default function ImageUploadField({
   const [isDragging, setIsDragging] = useState(false)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
 
-  function _validateAndSetFile(adImage: File) {
-    if (!['image/jpeg', 'image/png'].includes(adImage.type)) {
-      setErrors((prev) => ({ ...prev, adImage: '僅支援 JPG 或 PNG 格式' }))
+  function _validateAndSetFile(adImageFile: File) {
+    if (!['image/jpeg', 'image/png'].includes(adImageFile.type)) {
+      setErrors((prev) => ({ ...prev, adImageFile: '僅支援 JPG 或 PNG 格式' }))
       setImage(null)
       return
     }
 
-    if (adImage.size > 5 * 1024 * 1024) {
+    if (adImageFile.size > 5 * 1024 * 1024) {
       setErrors((prev) => ({
         ...prev,
-        adImage: '檔案超過 5MB，請重新上傳',
+        adImageFile: '檔案超過 5MB，請重新上傳',
       }))
       setImage(null)
       return
@@ -48,11 +48,11 @@ export default function ImageUploadField({
 
     setImage({
       id: '',
-      name: adImage.name,
+      name: adImageFile.name,
       url: '',
-      data: adImage,
+      data: adImageFile,
     })
-    setErrors((prev) => ({ ...prev, adImage: '' }))
+    setErrors((prev) => ({ ...prev, adImageFile: '' }))
   }
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -86,19 +86,25 @@ export default function ImageUploadField({
 
   // ===== Update image preview when adImage changes =====
   useEffect(() => {
+    // 1. No image object → clear preview
     if (!adImage) {
       setImagePreview(null)
       return
     }
 
+    // 2. Uploaded file exists → generate preview
     if (adImage.data) {
       const objectUrl = URL.createObjectURL(adImage.data)
       setImagePreview(objectUrl)
       return () => URL.revokeObjectURL(objectUrl)
     }
-
+    // 3. Existing image URL from backend
     if (adImage.url) {
       setImagePreview(adImage.url)
+    } else {
+      // 4. Defensive fallback: image object exists but URL missing
+      //    (e.g., broken data or empty relation)
+      setImagePreview(null)
     }
   }, [adImage])
 

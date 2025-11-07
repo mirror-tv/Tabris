@@ -28,15 +28,15 @@ export default function UploadPage() {
         const payload: ApiResponse<OrderRecordForUploadQuery[]> =
           await res.json()
 
-        if (!res.ok || !payload.success) {
-          console.error('Failed to fetch orders:', payload.message)
+        if (!res.ok || !payload?.success) {
+          console.error('Failed to fetch orders:', payload?.message)
 
           // If the API returns an error, redirect to not-found page with status code
           router.push(`/not-found/${res.status}`)
           return
         }
 
-        setOrders(payload.data || [])
+        setOrders(payload?.data || [])
       } catch (err) {
         console.error('Failed to fetch orders for upload:', err)
         router.push(`/not-found/500`)
@@ -82,13 +82,13 @@ export default function UploadPage() {
 
       const payload: ApiResponse = await res.json()
 
-      if (!res.ok || !payload.success) {
-        throw new Error(payload.message || 'Upload failed')
+      if (!res.ok || !payload?.success) {
+        throw new Error(payload?.message || 'Upload failed')
       }
 
       setSubmitStatus('success')
     } catch (error) {
-      console.error('Upload submit error:', error)
+      console.error('Upload page submit error:', error)
       setSubmitStatus('failure')
     }
   }
