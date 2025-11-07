@@ -1,8 +1,8 @@
 import {
   OrderStateMap,
   PROGRESS_COLOR_RULES,
-  getStatesByRoute,
-  getCurrentRoute,
+  getStatesByFlow,
+  getCurrentFlow,
   ORDER_STATE,
   type OrderState,
 } from '@/constants'
@@ -50,20 +50,20 @@ export function ProgressSteps({
     )
   }
 
-  const currentRoute = getCurrentRoute(currentStatus)
-  const progressSteps = getStatesByRoute(currentRoute)
+  const currentFlow = getCurrentFlow(currentStatus)
+  const progressSteps = getStatesByFlow(currentFlow)
 
   const getStepStatus = (step: OrderState, index: number) => {
     const isActive = currentStatus === step
     const completedStyle = PROGRESS_COLOR_RULES.getCompletedStyle()
     const currentIndex = progressSteps.indexOf(currentStatus)
 
-    const isTransferredRoute = currentRoute === 'transferred'
-    const isCompleted = isTransferredRoute ? true : index < currentIndex
+    const isTransferredFlow = currentFlow === 'transferred'
+    const isCompleted = isTransferredFlow ? true : index < currentIndex
 
     return {
       isCompleted: isCompleted,
-      isActive: isActive && !isTransferredRoute,
+      isActive: isActive && !isTransferredFlow,
       style: completedStyle,
     }
   }

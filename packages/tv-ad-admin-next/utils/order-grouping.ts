@@ -1,6 +1,6 @@
 import { formatTaiwanDate } from './date'
 
-import { OrderStateMap } from '@/constants'
+import { OrderStateMap, ORDER_STATE } from '@/constants'
 import {
   type OrderRecordForList,
   type OrderRecordForDashboard,
@@ -79,8 +79,8 @@ export function groupOrders(
 
       // 子訂單排序：非「已轉移」的排在前面，全部按 createdAt 從新到舊
       childOrders.sort((a, b) => {
-        const isTransferredA = a.state === 'transferred'
-        const isTransferredB = b.state === 'transferred'
+        const isTransferredA = a.state === ORDER_STATE.TRANSFERRED
+        const isTransferredB = b.state === ORDER_STATE.TRANSFERRED
 
         // 非「已轉移」的排在前面
         if (isTransferredA && !isTransferredB) return 1
