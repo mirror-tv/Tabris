@@ -6,32 +6,20 @@ import { useRouter } from 'next/navigation'
 
 import type { SendOtpResponse } from '@/types/api'
 
-import MailOrPhoneForm from '@/components/login/mail-or-phone-form'
+import EmailForm from '@/components/login/email-form'
 import OptForm from '@/components/login/opt-form'
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
 import { AUTH_MESSAGES, LOADING_MESSAGES } from '@/constants/messages'
 import { useAuthStore } from '@/store'
-import { validateEmail, validatePhone } from '@/utils/validation'
+import { validateEmail } from '@/utils/validation'
 
 export default function HomePage() {
   const router = useRouter()
   const { isAuthenticated, login, initialize } = useAuthStore()
 
-  // 從 localStorage 讀取上次登入方式
-  const [status, setStatus] = useState<'email' | 'phone' | 'OPT'>(() => {
-    if (typeof window !== 'undefined') {
-      const lastLoginType = localStorage.getItem('lastLoginType')
-      return (lastLoginType === 'phone' ? 'phone' : 'email') as
-        | 'email'
-        | 'phone'
-    }
-    return 'email'
-  })
-
+  const [showOtpForm, setShowOtpForm] = useState(false)
   const [email, setEmail] = useState('')
-  const [phone, setPhone] = useState('')
-  const [loginType, setLoginType] = useState<'email' | 'phone'>('email')
   const [isLoading, setIsLoading] = useState(false)
   const [loadingMessage, setLoadingMessage] = useState('')
   const [error, setError] = useState('')
@@ -60,25 +48,10 @@ export default function HomePage() {
 
     try {
       // 驗證輸入
-      if (status === 'email') {
-        const validation = validateEmail(email)
-        if (!validation.isValid) {
-          setError(validation.error || AUTH_MESSAGES.EMAIL_INVALID)
-          return
-        }
-      }
-
-      if (status === 'phone') {
-        const validation = validatePhone(phone)
-        if (!validation.isValid) {
-          setError(validation.error || AUTH_MESSAGES.PHONE_INVALID)
-          return
-        }
-      }
-
-      // 保存登入方式到 localStorage
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('lastLoginType', status)
+      const validation = validateEmail(email)
+      if (!validation.isValid) {
+        setError(validation.error || AUTH_MESSAGES.EMAIL_INVALID)
+        return
       }
 
       // 呼叫 Next.js API Route 發送 OTP
@@ -88,9 +61,7 @@ export default function HomePage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          type: status,
-          email: status === 'email' ? email : undefined,
-          phone: status === 'phone' ? phone : undefined,
+          email,
         }),
       })
 
@@ -110,10 +81,7 @@ export default function HomePage() {
           '%c🔐 ========== OTP 驗證碼 ==========',
           'color: #10b981; font-size: 14px; font-weight: bold;'
         )
-        console.log(
-          `%c📧 ${status === 'email' ? email : phone}`,
-          'color: #3b82f6; font-size: 12px;'
-        )
+        console.log(`%c📧 ${email}`, 'color: #3b82f6; font-size: 12px;')
         console.log(
           `%c🔢 驗證碼: ${data.data.otp}`,
           'color: #ef4444; font-size: 16px; font-weight: bold;'
@@ -125,8 +93,7 @@ export default function HomePage() {
         )
       }
 
-      setLoginType(status as 'email' | 'phone') // 保存原始登入類型
-      setStatus('OPT')
+      setShowOtpForm(true)
       setCountdown(60)
       setCanResend(false)
     } catch (err) {
@@ -172,9 +139,7 @@ export default function HomePage() {
         },
         credentials: 'include', // 重要：包含 cookies
         body: JSON.stringify({
-          type: loginType,
-          email: loginType === 'email' ? email : undefined,
-          phone: loginType === 'phone' ? phone : undefined,
+          email,
           otp: otpValue,
         }),
       })
@@ -226,9 +191,7 @@ export default function HomePage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          type: loginType,
-          email: loginType === 'email' ? email : undefined,
-          phone: loginType === 'phone' ? phone : undefined,
+          email,
         }),
       })
 
@@ -248,10 +211,7 @@ export default function HomePage() {
           '%c🔐 ========== 重新發送 OTP ==========',
           'color: #10b981; font-size: 14px; font-weight: bold;'
         )
-        console.log(
-          `%c📧 ${loginType === 'email' ? email : phone}`,
-          'color: #3b82f6; font-size: 12px;'
-        )
+        console.log(`%c📧 ${email}`, 'color: #3b82f6; font-size: 12px;')
         console.log(
           `%c🔢 驗證碼: ${data.data.otp}`,
           'color: #ef4444; font-size: 16px; font-weight: bold;'
@@ -279,25 +239,18 @@ export default function HomePage() {
       <PageHeader variant="centered" />
       <PageMain className="flex justify-center py-5 md:py-10">
         <div className="flex h-fit max-w-[288px] flex-col items-center rounded-xl border border-border-default bg-surface-primary p-4 shadow-lg md:max-w-[448px] md:min-w-[448px] md:p-6">
-          {status !== 'OPT' && (
-            <MailOrPhoneForm
-              status={status}
+          {!showOtpForm ? (
+            <EmailForm
               email={email}
-              phone={phone}
               setEmail={setEmail}
-              setPhone={setPhone}
-              setStatus={setStatus}
               handleSubmit={handleSubmit}
               isLoading={isLoading}
               loadingMessage={loadingMessage}
               error={error}
             />
-          )}
-
-          {status === 'OPT' && (
+          ) : (
             <OptForm
               email={email}
-              phone={phone}
               error={error}
               isLoading={isLoading}
               countdown={countdown}

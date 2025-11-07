@@ -7,7 +7,6 @@ import type { UserPayload } from '@/utils/auth'
 
 import {
   checkMemberByEmailQuery,
-  checkMemberByPhoneQuery,
   getMembersQuery,
 } from '@/graphql/queries/members'
 import { getClient } from '@/utils/apollo-client'
@@ -27,10 +26,7 @@ export type MemberData = {
  * 內部共用：執行 GraphQL 查詢並處理錯誤
  */
 async function queryMembers(
-  query:
-    | typeof checkMemberByEmailQuery
-    | typeof checkMemberByPhoneQuery
-    | typeof getMembersQuery,
+  query: typeof checkMemberByEmailQuery | typeof getMembersQuery,
   variables: Record<string, unknown>,
   functionName: string
 ): Promise<MemberData[]> {
@@ -88,28 +84,6 @@ export async function checkMemberByEmail(email: string): Promise<{
 }
 
 /**
- * 檢查手機號碼是否在 CMS member 中存在
- */
-export async function checkMemberByPhone(phone: string): Promise<{
-  exists: boolean
-  message?: string
-}> {
-  const members = await queryMembers(
-    checkMemberByPhoneQuery,
-    {
-      where: { mobile: { equals: phone }, state: { equals: 'active' } },
-    },
-    'checkMemberByPhone'
-  )
-
-  return {
-    exists: members.length > 0,
-    message:
-      members.length === 0 ? '請輸入您註冊應援科技使用的手機號碼' : undefined,
-  }
-}
-
-/**
  * 根據 member id 取得完整的 Member 資料（推薦：更可靠）
  */
 export async function getMemberById(id: string): Promise<MemberData | null> {
@@ -138,37 +112,29 @@ export async function getMemberById(id: string): Promise<MemberData | null> {
 }
 
 /**
- * 根據 email 或 phone 取得完整的 Member 資料（用於登入時查詢 member id）
+ * 根據 email 取得完整的 Member 資料（用於登入時查詢 member id）
  */
-export async function getMemberByIdentifier(
-  email?: string,
-  phone?: string
+export async function getMemberByEmail(
+  email: string
 ): Promise<MemberData | null> {
-  // 根據 email 或 phone 查詢 member
-  const whereCondition = email
-    ? { email: { equals: email }, state: { equals: 'active' } }
-    : phone
-      ? { mobile: { equals: phone }, state: { equals: 'active' } }
-      : null
-
-  if (!whereCondition) {
+  if (!email) {
     return null
+  }
+
+  const whereCondition = {
+    email: { equals: email },
+    state: { equals: 'active' },
   }
 
   const members = await queryMembers(
     getMembersQuery,
     { where: whereCondition },
-    'getMemberByIdentifier'
+    'getMemberByEmail'
   )
 
   return members.length > 0 ? members[0] : null
 }
 
-/**
- * 根據 UserPayload 取得完整的 Member 資料（透過 email/phone 查詢）
- * @deprecated 如果 UserPayload 已有 memberId，請使用 getMemberById
- * 此函數僅為向後兼容保留，建議使用 getMemberByIdentifier 或 getMemberById
- */
 export async function getMemberByUser(
   user: UserPayload
 ): Promise<MemberData | null> {
@@ -177,6 +143,5 @@ export async function getMemberByUser(
     return getMemberById(user.memberId)
   }
 
-  // 否則使用 email/phone 查詢
-  return getMemberByIdentifier(user.email, user.phone)
+  return getMemberByEmail(user.email)
 }

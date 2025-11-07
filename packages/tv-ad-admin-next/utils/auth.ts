@@ -27,8 +27,7 @@ const getJwtSecret = () => {
 export type UserPayload = {
   userId: string
   memberId: string // CMS member id（必填）
-  email?: string
-  phone?: string
+  email: string
 }
 
 export async function generateToken(payload: UserPayload): Promise<string> {

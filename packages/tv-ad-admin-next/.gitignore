@@ -37,4 +37,3 @@ next-env.d.ts
 
 # OTP cache (開發環境使用)
 /.cache
-
