@@ -41,28 +41,21 @@ export async function POST(req: NextRequest) {
       }
 
       let imageId: string | undefined
+      let oldImageId: string | undefined
 
+      // --- Step 0. Query existing image (for later cleanup if replaced) ---
       if (file) {
-        // --- Step 0. Check and delete existing image before uploading a new one
         const { data: existing } = await client.query({
           query: getOrderImageQuery,
           variables: { orderNumber },
           fetchPolicy: 'no-cache',
         })
 
-        const oldImageId = existing?.orders?.[0]?.image?.id
+        oldImageId = existing?.orders?.[0]?.image?.id
 
-        if (oldImageId) {
-          await client.mutate({
-            mutation: deletePhotoMutation,
-            variables: { where: { id: oldImageId } },
-            context: { headers: { 'x-apollo-operation-name': 'deletePhoto' } },
-          })
-        }
-
-        // --- Step 1. Upload image if provided ---
+        // --- Step 1. Upload new image (create Photo record in Keystone) ---
         const cleanName = file.name.replace(/\.[^/.]+$/, '')
-        const { data, errors } = await client.mutate({
+        const { data: uploadData, errors: uploadErrors } = await client.mutate({
           mutation: uploadImageMutation,
           variables: { name: cleanName, upload: file },
           context: {
@@ -75,8 +68,8 @@ export async function POST(req: NextRequest) {
           errorPolicy: 'all',
         })
 
-        if (errors?.length) {
-          const errorMsg = errors.map((e) => e.message).join(', ')
+        if (uploadErrors?.length) {
+          const errorMsg = uploadErrors.map((e) => e.message).join(', ')
           createErrorLogger('Image upload failed')(new Error(errorMsg))
           return NextResponse.json<ApiResponse>(
             { success: false, message: errorMsg },
@@ -84,10 +77,10 @@ export async function POST(req: NextRequest) {
           )
         }
 
-        imageId = data?.createPhoto?.id
+        imageId = uploadData?.createPhoto?.id
       }
 
-      // --- Step 2. Update order ---
+      // --- Step 2. Update order with new image (automatically unlinks old one) ---
       const updateData: Omit<
         OrderRecordForUploadMutation,
         'orderNumber' | 'image'
@@ -103,7 +96,7 @@ export async function POST(req: NextRequest) {
         ...(imageId && { image: { connect: { id: imageId } } }),
       }
 
-      const { data: result, errors } = await client.mutate({
+      const { data: result, errors: updateErrors } = await client.mutate({
         mutation: updateOrderForUploadSubmit,
         variables: {
           where: { orderNumber },
@@ -112,8 +105,28 @@ export async function POST(req: NextRequest) {
         errorPolicy: 'all',
       })
 
-      if (errors?.length) {
-        const errorMsg = errors.map((e) => e.message).join(', ')
+      if (updateErrors?.length) {
+        // If order update failed, try compensating: delete newly uploaded image.
+        if (imageId) {
+          try {
+            await client.mutate({
+              mutation: deletePhotoMutation,
+              variables: { where: { id: imageId } },
+              context: {
+                headers: { 'x-apollo-operation-name': 'deleteFailedNewPhoto' },
+              },
+            })
+            createErrorLogger(
+              `Compensated: deleted unlinked new photo ${imageId}`
+            )(new Error('Order update failed'))
+          } catch (cleanupError) {
+            createErrorLogger(`Compensation failed for new photo ${imageId}`)(
+              cleanupError
+            )
+          }
+        }
+
+        const errorMsg = updateErrors.map((e) => e.message).join(', ')
         createErrorLogger(`Order update failed: ${orderNumber}`)(
           new Error(errorMsg)
         )
@@ -122,6 +135,24 @@ export async function POST(req: NextRequest) {
           { status: 500 }
         )
       }
+
+      // --- Step 3. Delete old image after successful update ---
+      if (oldImageId) {
+        try {
+          await client.mutate({
+            mutation: deletePhotoMutation,
+            variables: { where: { id: oldImageId } },
+            context: {
+              headers: { 'x-apollo-operation-name': 'deleteOldPhoto' },
+            },
+          })
+        } catch (cleanupError) {
+          createErrorLogger(`Failed to delete old photo ${oldImageId}`)(
+            cleanupError
+          )
+        }
+      }
+
       return NextResponse.json<ApiResponse>({
         success: true,
         message: 'Order and image processed successfully',
