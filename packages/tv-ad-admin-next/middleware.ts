@@ -11,22 +11,22 @@ import { verifyToken } from '@/utils/auth'
 
 
 // 需要登入才能訪問的路由
-const protectedRoutes = ['/list', '/order', '/dashboard', '/upload']
+const protectedRoutes = ['/list', '/order', '/upload']
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // 檢查是否是受保護的路由
-  const isProtectedRoute = protectedRoutes.some((route) =>
-    pathname.startsWith(route)
-  )
+  // 檢查是否是受保護的路由（首頁 / 現在是 dashboard，也需要保護）
+  const isProtectedRoute =
+    pathname === '/' ||
+    protectedRoutes.some((route) => pathname.startsWith(route))
 
   // 從 cookie 取得 token
   const token = request.cookies.get('auth_token')?.value
 
   // 如果是受保護的路由但沒有 token，重定向到登入頁
   if (isProtectedRoute && !token) {
-    const loginUrl = new URL('/', request.url)
+    const loginUrl = new URL('/login', request.url)
     loginUrl.searchParams.set('redirect', pathname)
     return NextResponse.redirect(loginUrl)
   }
@@ -37,7 +37,7 @@ export async function middleware(request: NextRequest) {
 
     // Token 無效或過期
     if (!payload && isProtectedRoute) {
-      const loginUrl = new URL('/', request.url)
+      const loginUrl = new URL('/login', request.url)
       loginUrl.searchParams.set('redirect', pathname)
       loginUrl.searchParams.set('expired', 'true')
 
@@ -47,9 +47,9 @@ export async function middleware(request: NextRequest) {
       return response
     }
 
-    // 如果已登入且訪問登入頁，重定向到 dashboard
-    if (payload && pathname === '/') {
-      return NextResponse.redirect(new URL('/dashboard', request.url))
+    // 如果已登入且訪問登入頁，重定向到首頁（dashboard）
+    if (payload && pathname === '/login') {
+      return NextResponse.redirect(new URL('/', request.url))
     }
   }
 
