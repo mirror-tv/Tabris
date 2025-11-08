@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import { getNextState, ORDER_STATE } from '@/constants/state/orderState'
 import { updateOrderScheduleMutation } from '@/graphql/mutations/orders'
-import { getOrderScheduleQuery } from '@/graphql/queries/orders'
+import { getOrderForEditQuery } from '@/graphql/queries/orders'
 import { getClient } from '@/utils/apollo-client'
 import { getCurrentUser } from '@/utils/auth'
 import { formatTaiwanDate } from '@/utils/date'
@@ -30,7 +30,7 @@ export async function GET(
   try {
     const client = getClient()
     const { data, errors } = await client.query({
-      query: getOrderScheduleQuery,
+      query: getOrderForEditQuery,
       variables: {
         where: {
           orderNumber: {
