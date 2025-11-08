@@ -9,6 +9,7 @@ import { uploadImageMutation } from '@/graphql/mutations/photo'
 import { getOrderImageQuery } from '@/graphql/queries/photo'
 import { ApiResponse } from '@/types'
 import { getClient } from '@/utils/apollo-client'
+import { getCurrentUser } from '@/utils/auth'
 import { createErrorLogger } from '@/utils/error-handler'
 
 export async function POST(req: NextRequest) {
@@ -16,6 +17,16 @@ export async function POST(req: NextRequest) {
   const contentType = req.headers.get('content-type') || ''
 
   try {
+    const currentUser = await getCurrentUser()
+
+    // Step 0: Authenticate and verify member identity
+    if (!currentUser?.memberId) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, message: 'Unauthorized or missing memberId.' },
+        { status: 401 }
+      )
+    }
+
     // Case 1: multipart/form-data (image + fields)
     if (contentType.includes('multipart/form-data')) {
       const formData = await req.formData()
@@ -43,17 +54,42 @@ export async function POST(req: NextRequest) {
       let imageId: string | undefined
       let oldImageId: string | undefined
 
-      // --- Step 0. Query existing image (for later cleanup if replaced) ---
-      if (file) {
-        const { data: existing } = await client.query({
+      // --- Step 1-1. Verify the order belongs to current user ---
+      const { data: existingOrder, errors: ownershipErrors } =
+        await client.query({
           query: getOrderImageQuery,
-          variables: { orderNumber },
+          variables: {
+            orderNumber,
+            memberId: currentUser.memberId,
+          },
           fetchPolicy: 'no-cache',
         })
 
-        oldImageId = existing?.orders?.[0]?.image?.id
+      if (ownershipErrors?.length) {
+        const message = ownershipErrors.map((e) => e.message).join(', ')
+        createErrorLogger('Ownership validation failed')(new Error(message))
+        return NextResponse.json<ApiResponse>(
+          { success: false, message },
+          { status: 500 }
+        )
+      }
 
-        // --- Step 1. Upload new image (create Photo record in Keystone) ---
+      const order = existingOrder?.orders?.[0]
+      if (!order || order.member?.id !== currentUser.memberId) {
+        return NextResponse.json<ApiResponse>(
+          {
+            success: false,
+            message: 'Unauthorized: Order does not belong to this member.',
+          },
+          { status: 403 }
+        )
+      }
+
+      // --- Step 1-2. Query existing image (for later cleanup if replaced) ---
+      if (file) {
+       oldImageId = order?.image?.id
+
+        // --- Step 1-3. Upload new image (create Photo record in Keystone) ---
         const cleanName = file.name.replace(/\.[^/.]+$/, '')
         const { data: uploadData, errors: uploadErrors } = await client.mutate({
           mutation: uploadImageMutation,
@@ -80,7 +116,8 @@ export async function POST(req: NextRequest) {
         imageId = uploadData?.createPhoto?.id
       }
 
-      // --- Step 2. Update order with new image (automatically unlinks old one) ---
+      // --- Step 1-4. Update order with new image ---
+      // This links the new image to the order and unlinks the old one automatically.
       const updateData: Omit<
         OrderRecordForUploadMutation,
         'orderNumber' | 'image'
@@ -105,8 +142,8 @@ export async function POST(req: NextRequest) {
         errorPolicy: 'all',
       })
 
+      // --- Step 1-5. Handle update failure with compensation (delete new image) ---
       if (updateErrors?.length) {
-        // If order update failed, try compensating: delete newly uploaded image.
         if (imageId) {
           try {
             await client.mutate({
@@ -136,7 +173,7 @@ export async function POST(req: NextRequest) {
         )
       }
 
-      // --- Step 3. Delete old image after successful update ---
+      // --- Step 1-6. Delete old image after successful update ---
       if (oldImageId) {
         try {
           await client.mutate({
@@ -164,6 +201,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const { orderNumber, ...updateData } = body
 
+    // --- Step 2-1. Validate required input fields (basic sanity check) ---
     if (!orderNumber) {
       return NextResponse.json<ApiResponse>(
         { success: false, message: 'Missing order orderNumber' },
@@ -177,7 +215,24 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       )
     }
+    // --- Step 2-2. Verify ownership before updating ---
+    const { data: existingOrder } = await client.query({
+      query: getOrderImageQuery,
+      variables: { orderNumber, memberId: currentUser.memberId },
+      fetchPolicy: 'no-cache',
+    })
 
+    if (!existingOrder?.orders?.length) {
+      return NextResponse.json<ApiResponse>(
+        {
+          success: false,
+          message: 'Unauthorized: order not found or access denied.',
+        },
+        { status: 403 }
+      )
+    }
+
+    // --- Step 2-3. Perform the order update mutation ---
     const { data: result, errors } = await client.mutate({
       mutation: updateOrderForUploadSubmit,
       variables: {
@@ -198,6 +253,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    // --- Step 2-4. Return success response ---
     return NextResponse.json<ApiResponse>({
       success: true,
       message: 'Order updated successfully',
