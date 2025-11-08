@@ -1,6 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+
+import { useRouter } from 'next/navigation'
+
+import type { OrderRecordForEdit } from '@/graphql/queries/orders'
 
 import { ErrorMessage } from '@/components/custom-ui/error-message'
 import { LabeledField } from '@/components/custom-ui/labeled-field'
@@ -14,6 +18,7 @@ import TextFormatIcon from '@/public/icons/text-format.svg'
 import TextIcon from '@/public/icons/text.svg'
 import TriangleExclamationIcon from '@/public/icons/triangle-exclamation.svg'
 import { cn } from '@/utils'
+
 
 const textareaStyle = [
   'w-full resize-none rounded-md bg-gray-2 p-3 placeholder:!text-text-tertiary placeholder:text-h6',
@@ -30,23 +35,68 @@ const PAGE_TITLE = '提出修改'
 const reasonId = 'reason'
 const detailsId = 'details'
 
-export default function EditRequest() {
+export default function EditRequest({
+  params,
+}: {
+  params: { orderNumber: string }
+}) {
+  const { orderNumber } = params
+  const router = useRouter()
   const { submitStatus, setSubmitStatus } = useSubmitStatus()
 
   const [reason, setReason] = useState('')
   const [details, setDetails] = useState('')
-  const [errors, setErrors] = useState<{ reason?: string; details?: string }>(
-    {}
-  )
+  const [error, setError] = useState<{
+    reason?: string
+    details?: string
+  }>({})
+  const [orderData, setOrderData] = useState<OrderRecordForEdit | null>(null)
+
+  useEffect(() => {
+    const fetchEditRequest = async () => {
+      if (!orderNumber) {
+        router.push('/not-found/404')
+        return
+      }
+      try {
+        const res = await fetch(`/api/order/${orderNumber}/edit-request`)
+        if (!res.ok) {
+          if (res.status === 404 || res.status === 401) {
+            router.push('/not-found/404')
+            return
+          }
+          throw new Error(
+            `Failed to fetch edit request by order number: ${orderNumber}: ${res.statusText}`
+          )
+        }
+        const data = await res.json()
+        const { order } = data
+        if (!order) {
+          router.push('/not-found/404')
+          return
+        }
+
+        setOrderData(order)
+
+        setError({})
+      } catch (error) {
+        console.error('Failed to fetch edit request:', error)
+        router.push('/not-found/404')
+        return
+      }
+    }
+    fetchEditRequest()
+  }, [router, orderNumber])
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    const newErrors: typeof errors = {}
-    if (!reason.trim()) newErrors.reason = '請輸入修改原因'
-    if (!details.trim()) newErrors.details = '請輸入修改詳情'
-    setErrors(newErrors)
+    const newError: typeof error = {}
+    if (!reason.trim()) newError.reason = '請輸入修改原因'
+    if (!details.trim()) newError.details = '請輸入修改詳情'
+    setError(newError)
 
-    if (Object.keys(newErrors).length > 0) return
+    if (Object.keys(newError).length > 0) return
+    // eslint-disable-next-line no-console
     console.log({ reason, details })
 
     // Demo alert to choose result
@@ -74,6 +124,7 @@ export default function EditRequest() {
       pageTitle={PAGE_TITLE}
       onSubmit={handleSubmit}
       submitButtonName="送出修改請求"
+      orderData={orderData}
       // submitStatus={submitStatus}
     >
       <LabeledField
@@ -90,11 +141,11 @@ export default function EditRequest() {
           placeholder="例如：文字需要調整"
           className={cn(
             textareaStyle,
-            errors.reason &&
+            error.reason &&
               'border-destructive focus-visible:ring-destructive/40'
           )}
         />
-        {errors.reason && <ErrorMessage>{errors.reason}</ErrorMessage>}
+        {error.reason && <ErrorMessage>{error.reason}</ErrorMessage>}
       </LabeledField>
       <LabeledField
         id={detailsId}
@@ -110,11 +161,11 @@ export default function EditRequest() {
           placeholder="請詳細描述您希望調整的地方及期望結果"
           className={cn(
             textareaStyle,
-            errors.details &&
+            error.details &&
               'border-destructive focus-visible:ring-destructive/40'
           )}
         />
-        {errors.details && <ErrorMessage>{errors.details}</ErrorMessage>}
+        {error.details && <ErrorMessage>{error.details}</ErrorMessage>}
       </LabeledField>
       <Instructions
         title="重要提醒"
