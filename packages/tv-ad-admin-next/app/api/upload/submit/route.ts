@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+import { ALLOWED_IMAGE_FILE_TYPES, MAX_IMAGE_FILE_SIZE } from '@/constants'
 import { deletePhotoMutation } from '@/graphql/delete/photo'
 import {
   OrderRecordForUploadMutation,
@@ -87,7 +88,29 @@ export async function POST(req: NextRequest) {
 
       // --- Step 1-2. Query existing image (for later cleanup if replaced) ---
       if (file) {
-       oldImageId = order?.image?.id
+        // --- Validate image file type and size on the server before upload ---
+        if (!ALLOWED_IMAGE_FILE_TYPES.includes(file.type)) {
+          return NextResponse.json<ApiResponse>(
+            {
+              success: false,
+              message:
+                'Invalid file type. Only JPG and PNG formats are allowed.',
+            },
+            { status: 400 }
+          )
+        }
+
+        if (file.size > MAX_IMAGE_FILE_SIZE) {
+          return NextResponse.json<ApiResponse>(
+            {
+              success: false,
+              message: 'File size exceeds 5MB limit.',
+            },
+            { status: 400 }
+          )
+        }
+
+        oldImageId = order?.image?.id
 
         // --- Step 1-3. Upload new image (create Photo record in Keystone) ---
         const cleanName = file.name.replace(/\.[^/.]+$/, '')

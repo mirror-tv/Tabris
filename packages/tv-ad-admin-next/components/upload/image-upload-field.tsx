@@ -6,6 +6,7 @@ import { FormState } from './upload-template'
 
 import { LabeledField } from '@/components/custom-ui/labeled-field'
 import { Button } from '@/components/ui/button'
+import { ALLOWED_IMAGE_FILE_TYPES, MAX_IMAGE_FILE_SIZE } from '@/constants'
 import ImageIcon from '@/public/icons/image.svg'
 import { cn } from '@/utils'
 
@@ -31,13 +32,13 @@ export default function ImageUploadField({
   const [imagePreview, setImagePreview] = useState<string | null>(null)
 
   function _validateAndSetFile(adImageFile: File) {
-    if (!['image/jpeg', 'image/png'].includes(adImageFile.type)) {
+    if (!ALLOWED_IMAGE_FILE_TYPES.includes(adImageFile.type)) {
       setErrors((prev) => ({ ...prev, adImageFile: '僅支援 JPG 或 PNG 格式' }))
       setImage(null)
       return
     }
 
-    if (adImageFile.size > 5 * 1024 * 1024) {
+    if (adImageFile.size > MAX_IMAGE_FILE_SIZE) {
       setErrors((prev) => ({
         ...prev,
         adImageFile: '檔案超過 5MB，請重新上傳',
