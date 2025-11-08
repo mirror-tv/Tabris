@@ -47,12 +47,14 @@ export default function LoginPage() {
     setLoadingMessage(LOADING_MESSAGES.CHECKING_MEMBER)
 
     try {
+      // 驗證輸入
       const validation = validateEmail(email)
       if (!validation.isValid) {
         setError(validation.error || AUTH_MESSAGES.EMAIL_INVALID)
         return
       }
 
+      // 呼叫 Next.js API Route 發送 OTP
       const response = await fetch('/api/auth/send-otp', {
         method: 'POST',
         headers: {
@@ -70,11 +72,25 @@ export default function LoginPage() {
         return
       }
 
+      // 會員驗證通過，開始發送 OTP
       setLoadingMessage(LOADING_MESSAGES.SENDING_OTP)
 
-      // dev：在瀏覽器 Console 顯示驗證碼
+      // 開發環境：在瀏覽器 Console 顯示驗證碼（帶顏色）
       if (process.env.NODE_ENV === 'development' && data.data?.otp) {
-        console.log(`[OTP] ${email}: ${data.data.otp}`)
+        console.log(
+          '%c🔐 ========== OTP 驗證碼 ==========',
+          'color: #10b981; font-size: 14px; font-weight: bold;'
+        )
+        console.log(`%c📧 ${email}`, 'color: #3b82f6; font-size: 12px;')
+        console.log(
+          `%c🔢 驗證碼: ${data.data.otp}`,
+          'color: #ef4444; font-size: 16px; font-weight: bold;'
+        )
+        console.log('%c⏰ 有效期: 5 分鐘', 'color: #f59e0b; font-size: 12px;')
+        console.log(
+          '%c=====================================',
+          'color: #10b981; font-size: 14px;'
+        )
       }
 
       setShowOtpForm(true)
@@ -89,6 +105,7 @@ export default function LoginPage() {
     }
   }
 
+  // 倒數計時效果
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>
     if (countdown > 0) {
@@ -101,17 +118,20 @@ export default function LoginPage() {
     return () => clearTimeout(timer)
   }, [countdown])
 
+  // 驗證碼驗證
   const handleOtpSubmit = async (value?: string) => {
     setError('')
     setIsLoading(true)
 
     try {
+      // 驗證 OTP 格式
       const otpValue = value
       if (!otpValue?.trim()) {
         setError(AUTH_MESSAGES.OTP_REQUIRED)
         return
       }
 
+      // 呼叫 Next.js API Route 驗證 OTP
       const response = await fetch('/api/auth/verify-otp', {
         method: 'POST',
         headers: {
@@ -164,6 +184,7 @@ export default function LoginPage() {
     setLoadingMessage(LOADING_MESSAGES.CHECKING_MEMBER)
 
     try {
+      // 呼叫 Next.js API Route 重新發送 OTP
       const response = await fetch('/api/auth/send-otp', {
         method: 'POST',
         headers: {
@@ -181,11 +202,25 @@ export default function LoginPage() {
         return
       }
 
+      // 會員驗證通過，開始發送 OTP
       setLoadingMessage(LOADING_MESSAGES.SENDING_OTP)
 
-      // 開發環境：在瀏覽器 Console 顯示驗證碼
+      // 開發環境：在瀏覽器 Console 顯示驗證碼（帶顏色）
       if (process.env.NODE_ENV === 'development' && data.data?.otp) {
-        console.log(`[OTP] ${email}: ${data.data.otp}`)
+        console.log(
+          '%c🔐 ========== 重新發送 OTP ==========',
+          'color: #10b981; font-size: 14px; font-weight: bold;'
+        )
+        console.log(`%c📧 ${email}`, 'color: #3b82f6; font-size: 12px;')
+        console.log(
+          `%c🔢 驗證碼: ${data.data.otp}`,
+          'color: #ef4444; font-size: 16px; font-weight: bold;'
+        )
+        console.log('%c⏰ 有效期: 5 分鐘', 'color: #f59e0b; font-size: 12px;')
+        console.log(
+          '%c=====================================',
+          'color: #10b981; font-size: 14px;'
+        )
       }
 
       setCountdown(60)
