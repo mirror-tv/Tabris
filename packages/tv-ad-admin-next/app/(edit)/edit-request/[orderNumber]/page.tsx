@@ -18,7 +18,7 @@ import TextFormatIcon from '@/public/icons/text-format.svg'
 import TextIcon from '@/public/icons/text.svg'
 import TriangleExclamationIcon from '@/public/icons/triangle-exclamation.svg'
 import { cn } from '@/utils'
-
+import { handleUnauthorized } from '@/utils/handle-unauthorized'
 
 const textareaStyle = [
   'w-full resize-none rounded-md bg-gray-2 p-3 placeholder:!text-text-tertiary placeholder:text-h6',
@@ -61,7 +61,11 @@ export default function EditRequest({
       try {
         const res = await fetch(`/api/order/${orderNumber}/edit-request`)
         if (!res.ok) {
-          if (res.status === 404 || res.status === 401) {
+          if (res.status === 401) {
+            await handleUnauthorized(router)
+            return
+          }
+          if (res.status === 404) {
             router.push('/not-found/404')
             return
           }

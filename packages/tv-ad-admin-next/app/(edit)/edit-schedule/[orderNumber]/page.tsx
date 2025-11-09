@@ -14,7 +14,7 @@ import PopoverCalendar from '@/components/shared/popover-calendar'
 import SubmitResult from '@/components/shared/submit-result'
 import { useSubmitStatus } from '@/hooks/useSubmitStatus'
 import TriangleExclamationIcon from '@/public/icons/triangle-exclamation.svg'
-
+import { handleUnauthorized } from '@/utils/handle-unauthorized'
 
 const PAGE_TITLE = '設定排播日期'
 
@@ -39,7 +39,11 @@ export default function EditSchedule({
       try {
         const res = await fetch(`/api/order/${orderNumber}/schedule`)
         if (!res.ok) {
-          if (res.status === 404 || res.status === 401) {
+          if (res.status === 401) {
+            await handleUnauthorized(router)
+            return
+          }
+          if (res.status === 404) {
             router.push('/not-found/404')
             return
           }
@@ -107,7 +111,10 @@ export default function EditSchedule({
       })
 
       if (!res.ok) {
-        // 如果是 404，重定向到 404 頁面
+        if (res.status === 401) {
+          await handleUnauthorized(router)
+          return
+        }
         if (res.status === 404) {
           router.push('/not-found/404')
           return

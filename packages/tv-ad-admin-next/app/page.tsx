@@ -33,7 +33,7 @@ export default function HomePage() {
     initialize()
   }, [initialize])
 
-  // 如果已登入，重定向到 dashboard
+  // 如果已登入，重導向 dashboard
   useEffect(() => {
     if (isAuthenticated) {
       router.push('/dashboard')

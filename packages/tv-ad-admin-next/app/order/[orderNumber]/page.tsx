@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from 'react'
 
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 
 import { OrderActions } from '@/components/order/order-actions'
 import { OrderDetails } from '@/components/order/order-details'
@@ -14,9 +14,11 @@ import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
 import { ORDER_STATE_CONFIG, ORDER_STYLES } from '@/constants'
 import { type OrderRecordForOrderNumber } from '@/graphql/queries/orders'
+import { handleUnauthorized } from '@/utils/handle-unauthorized'
 
 export default function OrderPage() {
   const params = useParams()
+  const router = useRouter()
   const orderNumber = params?.orderNumber as string
   const [order, setOrder] = useState<OrderRecordForOrderNumber | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -31,6 +33,15 @@ export default function OrderPage() {
       try {
         const res = await fetch(`/api/order/${orderNumber}`)
         if (!res.ok) {
+          // 404 在這裡顯示錯誤訊息而不是重導向
+          if (res.status === 404) {
+            setError(`Order not found: ${orderNumber}`)
+            return
+          }
+          if (res.status === 401) {
+            await handleUnauthorized(router)
+            return
+          }
           throw new Error(
             `Failed to fetch order by order number: ${orderNumber}: ${res.statusText}`
           )

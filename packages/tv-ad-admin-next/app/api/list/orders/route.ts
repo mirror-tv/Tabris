@@ -9,7 +9,7 @@ import { createErrorLogger } from '@/utils/error-handler'
 
 export async function GET() {
   const user = await getCurrentUser()
-  if (!user || !user.memberId) {
+  if (!user || !user.userId || !user.memberId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
   try {

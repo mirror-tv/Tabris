@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from 'react'
 
-import {  useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 import SubmitResult from '@/components/shared/submit-result'
 import UploadTemplate from '@/components/upload/upload-template'
 import { OrderRecordForUpload } from '@/graphql/queries/orders'
 import { useSubmitStatus } from '@/hooks/useSubmitStatus'
+import { handleUnauthorized } from '@/utils/handle-unauthorized'
 
 const pageTitle = '上傳廣告素材'
 
@@ -26,6 +27,10 @@ export default function UploadPage() {
         const res = await fetch(`/api/upload/2/orders`)
 
         if (!res.ok) {
+          if (res.status === 401) {
+            await handleUnauthorized(router)
+            return
+          }
           // If the API returns an error, redirect to not-found page with status code
           router.push(`/not-found/${res.status}`)
           return

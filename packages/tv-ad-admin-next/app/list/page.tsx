@@ -10,6 +10,7 @@ import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
 import { type OrderState } from '@/constants'
 import { type OrderRecordForList } from '@/graphql/queries/orders'
+import { handleUnauthorized } from '@/utils/handle-unauthorized'
 import { groupOrders } from '@/utils/order-grouping'
 
 function ListContent() {
@@ -26,6 +27,14 @@ function ListContent() {
       try {
         const res = await fetch('/api/list/orders')
         if (!res.ok) {
+          if (res.status === 401) {
+            await handleUnauthorized(router)
+            return
+          }
+          if (res.status === 404) {
+            router.push('/not-found/404')
+            return
+          }
           throw new Error(`Failed to fetch orders: ${res.statusText}`)
         }
         const data = await res.json()
