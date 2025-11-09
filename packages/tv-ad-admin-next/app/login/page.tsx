@@ -47,14 +47,12 @@ export default function LoginPage() {
     setLoadingMessage(LOADING_MESSAGES.CHECKING_MEMBER)
 
     try {
-      // 驗證輸入
       const validation = validateEmail(email)
       if (!validation.isValid) {
         setError(validation.error || AUTH_MESSAGES.EMAIL_INVALID)
         return
       }
 
-      // 呼叫 Next.js API Route 發送 OTP
       const response = await fetch('/api/auth/send-otp', {
         method: 'POST',
         headers: {
@@ -72,7 +70,6 @@ export default function LoginPage() {
         return
       }
 
-      // 會員驗證通過，開始發送 OTP
       setLoadingMessage(LOADING_MESSAGES.SENDING_OTP)
 
       // 開發環境：在瀏覽器 Console 顯示驗證碼（帶顏色）
@@ -105,7 +102,6 @@ export default function LoginPage() {
     }
   }
 
-  // 倒數計時效果
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>
     if (countdown > 0) {
@@ -118,20 +114,17 @@ export default function LoginPage() {
     return () => clearTimeout(timer)
   }, [countdown])
 
-  // 驗證碼驗證
   const handleOtpSubmit = async (value?: string) => {
     setError('')
     setIsLoading(true)
 
     try {
-      // 驗證 OTP 格式
       const otpValue = value
       if (!otpValue?.trim()) {
         setError(AUTH_MESSAGES.OTP_REQUIRED)
         return
       }
 
-      // 呼叫 Next.js API Route 驗證 OTP
       const response = await fetch('/api/auth/verify-otp', {
         method: 'POST',
         headers: {
@@ -184,7 +177,6 @@ export default function LoginPage() {
     setLoadingMessage(LOADING_MESSAGES.CHECKING_MEMBER)
 
     try {
-      // 呼叫 Next.js API Route 重新發送 OTP
       const response = await fetch('/api/auth/send-otp', {
         method: 'POST',
         headers: {
@@ -202,7 +194,6 @@ export default function LoginPage() {
         return
       }
 
-      // 會員驗證通過，開始發送 OTP
       setLoadingMessage(LOADING_MESSAGES.SENDING_OTP)
 
       // 開發環境：在瀏覽器 Console 顯示驗證碼（帶顏色）
