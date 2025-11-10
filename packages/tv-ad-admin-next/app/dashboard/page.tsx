@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 import StateCard from '@/components/dashboard/state-card'
 import PageHeader from '@/components/shared/page-header'
@@ -18,11 +19,13 @@ import {
 import { OrderStateMap } from '@/constants'
 import FileIcon from '@/public/icons/file.svg'
 import UploadIcon from '@/public/icons/upload.svg'
+import { handleUnauthorized } from '@/utils/handle-unauthorized'
 import { getOrdersState } from '@/utils/order-grouping'
 
 const ERROR_MESSAGE = '載入訂單失敗，請稍後再試'
 
 export default function DashboardPage() {
+  const router = useRouter()
   const [ordersState, setOrdersState] = useState<
     { state: keyof typeof OrderStateMap; count: number }[]
   >([])
@@ -64,6 +67,10 @@ export default function DashboardPage() {
       }
 
       if (!res.ok) {
+        if (res.status === 401) {
+          await handleUnauthorized(router)
+          return
+        }
         // API 回傳了錯誤 JSON，記錄完整的 debug 資訊
         console.error('[Dashboard Stats API] 請求失敗:', {
           status: res.status,
@@ -94,7 +101,7 @@ export default function DashboardPage() {
     } finally {
       setIsLoading(false)
     }
-  }, [])
+  }, [router])
 
   useEffect(() => {
     fetchOrders()

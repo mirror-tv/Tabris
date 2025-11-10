@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 
-import type { OrderRecordForSchedule } from '@/graphql/queries/orders'
+import type { OrderRecordForEdit } from '@/graphql/queries/orders'
 
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
@@ -15,7 +15,7 @@ type EditPageLayoutProps = {
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
   submitButtonName: string
   cardTitle?: string
-  orderData?: OrderRecordForSchedule | null
+  orderData?: OrderRecordForEdit | null
 }
 
 const Mock_Order_Number = 'B7H8M3'

@@ -9,7 +9,6 @@ import type { NextRequest } from 'next/server'
 
 import { verifyToken } from '@/utils/auth'
 
-
 // 需要登入才能訪問的路由
 const protectedRoutes = ['/list', '/order', '/dashboard', '/upload']
 
@@ -24,7 +23,7 @@ export async function middleware(request: NextRequest) {
   // 從 cookie 取得 token
   const token = request.cookies.get('auth_token')?.value
 
-  // 如果是受保護的路由但沒有 token，重定向到登入頁
+  // 如果是受保護的路由但沒有 token，重導向登入頁
   if (isProtectedRoute && !token) {
     const loginUrl = new URL('/', request.url)
     loginUrl.searchParams.set('redirect', pathname)
@@ -47,7 +46,7 @@ export async function middleware(request: NextRequest) {
       return response
     }
 
-    // 如果已登入且訪問登入頁，重定向到 dashboard
+    // 如果已登入且訪問登入頁，重導向 dashboard
     if (payload && pathname === '/') {
       return NextResponse.redirect(new URL('/dashboard', request.url))
     }
