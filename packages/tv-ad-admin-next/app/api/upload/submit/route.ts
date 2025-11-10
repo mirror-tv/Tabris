@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import { ALLOWED_IMAGE_FILE_TYPES, MAX_IMAGE_FILE_SIZE } from '@/constants'
+import {
+  ALLOWED_IMAGE_FILE_TYPES,
+  getNextState,
+  MAX_IMAGE_FILE_SIZE,
+  OrderState,
+} from '@/constants'
 import { deletePhotoMutation } from '@/graphql/delete/photo'
 import {
   OrderRecordForUploadMutation,
@@ -33,7 +38,7 @@ export async function POST(req: NextRequest) {
       const formData = await req.formData()
 
       const orderNumber = formData.get('orderNumber') as string
-      const state = formData.get(
+      const currentState = formData.get(
         'state'
       ) as OrderRecordForUploadMutation['state']
       const name = formData.get('name') as string | null
@@ -83,6 +88,17 @@ export async function POST(req: NextRequest) {
             message: 'Unauthorized: Order does not belong to this member.',
           },
           { status: 403 }
+        )
+      }
+
+      // Verify order state consistency before image upload
+      if (order.state !== currentState) {
+        return NextResponse.json<ApiResponse>(
+          {
+            success: false,
+            message: `Invalid or outdated state. Expected ${order.state}, but received ${currentState}.`,
+          },
+          { status: 409 }
         )
       }
 
@@ -136,6 +152,17 @@ export async function POST(req: NextRequest) {
           )
         }
 
+        // ensure photo ID is returned
+        if (!uploadData?.createPhoto?.id) {
+          return NextResponse.json<ApiResponse>(
+            {
+              success: false,
+              message: 'Image upload failed: no photo ID returned.',
+            },
+            { status: 500 }
+          )
+        }
+
         imageId = uploadData?.createPhoto?.id
       }
 
@@ -147,7 +174,7 @@ export async function POST(req: NextRequest) {
       > & {
         image?: { connect: { id: string } }
       } = {
-        state,
+        state: currentState,
         ...(name && { name }),
         ...(paragraphOne && { paragraphOne }),
         ...(paragraphTwo && { paragraphTwo }),
@@ -159,7 +186,9 @@ export async function POST(req: NextRequest) {
       const { data: result, errors: updateErrors } = await client.mutate({
         mutation: updateOrderForUploadSubmit,
         variables: {
-          where: { orderNumber },
+          where: {
+            orderNumber,
+          },
           data: updateData,
         },
         errorPolicy: 'all',
@@ -222,7 +251,7 @@ export async function POST(req: NextRequest) {
 
     // Case 2: fallback for JSON-only requests
     const body = await req.json()
-    const { orderNumber, ...updateData } = body
+    const { orderNumber, state: currentState, ...updateData } = body
 
     // --- Step 2-1. Validate required input fields (basic sanity check) ---
     if (!orderNumber) {
@@ -244,8 +273,8 @@ export async function POST(req: NextRequest) {
       variables: { orderNumber, memberId: currentUser.memberId },
       fetchPolicy: 'no-cache',
     })
-
-    if (!existingOrder?.orders?.length) {
+    const order = existingOrder?.orders?.[0]
+    if (!order || order.member?.id !== currentUser.memberId) {
       return NextResponse.json<ApiResponse>(
         {
           success: false,
@@ -255,12 +284,40 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // --- Step 2-3. Perform the order update mutation ---
+    // Prevent if DB state no longer matches client’s expected state.
+    if (order.state !== currentState) {
+      return NextResponse.json<ApiResponse>(
+        {
+          success: false,
+          message: `Invalid or outdated state. Expected ${order.state}, but received ${currentState}.`,
+        },
+        { status: 409 }
+      )
+    }
+
+    // --- Step 2-3. Determine next state dynamically ---
+    const nextState = getNextState(currentState as OrderState)
+    if (!nextState) {
+      return NextResponse.json<ApiResponse>(
+        {
+          success: false,
+          message: 'Cannot determine next state for current order state.',
+        },
+        { status: 400 }
+      )
+    }
+
+    // --- Step 2-4. Perform the order update mutation ---
     const { data: result, errors } = await client.mutate({
       mutation: updateOrderForUploadSubmit,
       variables: {
-        where: { orderNumber },
-        data: updateData,
+        where: {
+          orderNumber,
+        },
+        data: {
+          state: nextState,
+          ...updateData,
+        },
       },
       errorPolicy: 'all',
     })
@@ -276,7 +333,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // --- Step 2-4. Return success response ---
+    // --- Step 2-5. Return success response ---
     return NextResponse.json<ApiResponse>({
       success: true,
       message: 'Order updated successfully',

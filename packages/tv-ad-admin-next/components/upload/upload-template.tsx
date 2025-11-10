@@ -101,24 +101,14 @@ export default function UploadTemplate({
 
   const { adName, adText1, adText2, adRange, adImage } = formState
 
-  // mode: 'upload' | 'reupload'
+  // mode: 'upload' | 'reupload' | null
   // Derived from selectedOrder.state. Used only for UI rendering (labels, buttons, editable fields), not for business or server logic.
-  const { mode, nextState } =
-    useMemo(() => {
-      if (selectedOrder?.state === ORDER_STATE.PENDING_UPLOAD) {
-        return {
-          mode: 'upload' as const,
-          nextState: ORDER_STATE.MATERIAL_UPLOADED,
-        }
-      }
-
-      if (selectedOrder?.state === ORDER_STATE.PENDING_QUOTE_CONFIRMATION) {
-        return {
-          mode: 'reupload' as const,
-          nextState: ORDER_STATE.TRANSFERRED,
-        }
-      }
-    }, [selectedOrder]) ?? {}
+  const mode = useMemo(() => {
+    if (selectedOrder?.state === ORDER_STATE.PENDING_UPLOAD) return 'upload'
+    if (selectedOrder?.state === ORDER_STATE.PENDING_QUOTE_CONFIRMATION)
+      return 'reupload'
+    return null
+  }, [selectedOrder])
 
   function handleOrderSelect(value: string) {
     const currentOrder = orders.find((o) => o.orderNumber === value)
@@ -205,20 +195,12 @@ export default function UploadTemplate({
     setErrors(newErrors)
     if (Object.keys(newErrors).length > 0) return
 
-    if (!selectedOrder || !nextState) {
-      console.warn('[UploadTemplate] Missing required data for submission:', {
-        selectedOrder,
-        nextState,
-      })
-      return
-    }
-
     // Build a complete GraphQL mutation payload in one step.
     // Use conditional spread syntax to include only editable fields.
     // This approach avoids later object mutations and ensures a clean, immutable data structure.
     const mutationData: OrderRecordForUploadMutation = {
-      orderNumber: selectedOrder.orderNumber,
-      state: nextState,
+      orderNumber: selectedOrder!.orderNumber,
+      state: selectedOrder!.state,
       ...(fields.nameEditable && { name: adName }),
       ...(fields.paragraphOneEditable && { paragraphOne: adText1 }),
       ...(fields.paragraphTwoEditable && { paragraphTwo: adText2 }),
@@ -396,7 +378,7 @@ export default function UploadTemplate({
           open={isDialogOpen}
           onOpenChange={setIsDialogOpen}
           previewData={previewData}
-          onConfirm={()=>uploadData && onSubmit(uploadData)}
+          onConfirm={() => uploadData && onSubmit(uploadData)}
         />
       )}
     </>
