@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from 'react'
 
-import {  useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 import SubmitResult from '@/components/shared/submit-result'
 import UploadTemplate from '@/components/upload/upload-template'
-import { OrderRecordForUpload } from '@/graphql/queries/orders'
+import { OrderRecordForUploadMutation } from '@/graphql/mutations/order'
+import { OrderRecordForUploadQuery } from '@/graphql/queries/orders'
 import { useSubmitStatus } from '@/hooks/useSubmitStatus'
+import { ApiResponse } from '@/types'
 
 const pageTitle = '上傳廣告素材'
 
@@ -15,25 +17,26 @@ export default function UploadPage() {
   const { submitStatus, setSubmitStatus } = useSubmitStatus()
   const router = useRouter()
 
-  const [orders, setOrders] = useState<OrderRecordForUpload[]>([])
+  const [orders, setOrders] = useState<OrderRecordForUploadQuery[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        // TODO: 待改成 auth 後得到的會員資訊, 目前是寫死的會員 id
-        // const res = await fetch(`/api/upload/${memberId}/orders`)
-        const res = await fetch(`/api/upload/2/orders`)
+        // TODO: consider pagination or lazy loading if performance becomes an issue
+        const res = await fetch(`/api/upload/orders`)
+        const payload: ApiResponse<OrderRecordForUploadQuery[]> =
+          await res.json()
 
-        if (!res.ok) {
+        if (!res.ok || !payload?.success) {
+          console.error('Failed to fetch orders:', payload?.message)
+
           // If the API returns an error, redirect to not-found page with status code
           router.push(`/not-found/${res.status}`)
           return
         }
 
-        const data = await res.json()
-
-        setOrders(data.orders || [])
+        setOrders(payload?.data || [])
       } catch (err) {
         console.error('Failed to fetch orders for upload:', err)
         router.push(`/not-found/500`)
@@ -45,16 +48,49 @@ export default function UploadPage() {
     fetchOrders()
   }, [router])
 
-  function handleConfirmUpload(data: unknown) {
-    console.log('送出上傳資料', data)
+  async function handleConfirmUpload(data: OrderRecordForUploadMutation) {
+    try {
+      const formData = new FormData()
 
-    // Demo alert to choose result
-    const isSuccess = window.confirm(
-      '是否要模擬「送出成功」？按「取消」則模擬失敗。'
-    )
+      formData.append('orderNumber', data.orderNumber)
+      formData.append('state', data.state)
 
-    // Update status based on result
-    setSubmitStatus(isSuccess ? 'success' : 'failure')
+      if ('name' in data && data.name) formData.append('name', data.name)
+      if ('paragraphOne' in data && data.paragraphOne)
+        formData.append('paragraphOne', data.paragraphOne)
+      if ('paragraphTwo' in data && data.paragraphTwo)
+        formData.append('paragraphTwo', data.paragraphTwo)
+      if ('scheduleStartDate' in data && data.scheduleStartDate)
+        formData.append('scheduleStartDate', data.scheduleStartDate)
+      if ('scheduleEndDate' in data && data.scheduleEndDate)
+        formData.append('scheduleEndDate', data.scheduleEndDate)
+
+      // Attach image file if present
+      if ('image' in data && data.image?.data) {
+        if (data.image.data instanceof File) {
+          formData.append('file', data.image.data)
+        } else {
+          // Log an error if image.data exists but is not a valid File instance.
+          console.error('Invalid image file type:', data.image.data)
+        }
+      }
+
+      const res = await fetch('/api/upload/submit', {
+        method: 'POST',
+        body: formData,
+      })
+
+      const payload: ApiResponse = await res.json()
+
+      if (!res.ok || !payload?.success) {
+        throw new Error(payload?.message || 'Upload failed')
+      }
+
+      setSubmitStatus('success')
+    } catch (error) {
+      console.error('Upload page submit error:', error)
+      setSubmitStatus('failure')
+    }
   }
 
   if (submitStatus === 'success') {
