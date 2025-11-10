@@ -9,8 +9,8 @@ import UploadTemplate from '@/components/upload/upload-template'
 import { OrderRecordForUploadMutation } from '@/graphql/mutations/order'
 import { OrderRecordForUploadQuery } from '@/graphql/queries/orders'
 import { useSubmitStatus } from '@/hooks/useSubmitStatus'
-import { handleUnauthorized } from '@/utils/handle-unauthorized'
 import { ApiResponse } from '@/types'
+import { handleUnauthorized } from '@/utils/handle-unauthorized'
 
 const pageTitle = '上傳廣告素材'
 
@@ -31,6 +31,7 @@ export default function UploadPage() {
 
         if (!res.ok || !payload?.success) {
           console.error('Failed to fetch orders:', payload?.message)
+        }
 
         if (!res.ok) {
           if (res.status === 401) {

@@ -12,8 +12,6 @@ import { verifyToken } from '@/utils/auth'
 // 公開 route（不需要登入即可訪問）
 const publicRoutes = ['/login']
 const publicApiRoutes = ['/api/auth/send-otp', '/api/auth/verify-otp']
-// 需要登入才能訪問的路由
-const protectedRoutes = ['/list', '/order', '/upload']
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -22,10 +20,6 @@ export async function middleware(request: NextRequest) {
   const isPublicApiRoute = publicApiRoutes.some((route) =>
     pathname.startsWith(route)
   )
-  // 檢查是否是受保護的路由（首頁 / 現在是 dashboard，也需要保護）
-  const isProtectedRoute =
-    pathname === '/' ||
-    protectedRoutes.some((route) => pathname.startsWith(route))
 
   if (isPublicRoute || isPublicApiRoute) {
     const token = request.cookies.get('auth_token')?.value
@@ -40,8 +34,7 @@ export async function middleware(request: NextRequest) {
 
   const token = request.cookies.get('auth_token')?.value
 
-  // 如果是受保護的路由但沒有 token，重導向登入頁
-  if (isProtectedRoute && !token) {
+  if (!token) {
     if (pathname.startsWith('/api/')) {
       return NextResponse.json(
         { success: false, message: '未登入' },
@@ -53,13 +46,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
-  if (!token) {
-    return NextResponse.next()
-  }
-
   const payload = await verifyToken(token)
 
-  // Token 無效或過期
   if (!payload) {
     if (pathname.startsWith('/api/')) {
       const response = NextResponse.json(
@@ -69,16 +57,13 @@ export async function middleware(request: NextRequest) {
       response.cookies.delete('auth_token')
       return response
     }
-    if (isProtectedRoute) {
-      const loginUrl = new URL('/login', request.url)
-      loginUrl.searchParams.set('redirect', pathname)
-      loginUrl.searchParams.set('expired', 'true')
+    const loginUrl = new URL('/login', request.url)
+    loginUrl.searchParams.set('redirect', pathname)
+    loginUrl.searchParams.set('expired', 'true')
 
-      // 清除 cookie
-      const response = NextResponse.redirect(loginUrl)
-      response.cookies.delete('auth_token')
-      return response
-    }
+    const response = NextResponse.redirect(loginUrl)
+    response.cookies.delete('auth_token')
+    return response
   }
 
   // 如果已登入且訪問登入頁，重定向到首頁（dashboard）
