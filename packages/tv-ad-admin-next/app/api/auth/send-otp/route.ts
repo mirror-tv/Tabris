@@ -9,6 +9,7 @@ import type { SendOtpResponse } from '@/types/api'
 
 import { AUTH_MESSAGES, formatMessage } from '@/constants/messages'
 import { checkMemberByEmail } from '@/utils/member'
+import { sendEmailOTP } from '@/utils/otp-sender'
 import { generateOTP, storeOTP } from '@/utils/otp-storage'
 import {
   checkRateLimit,
@@ -95,12 +96,14 @@ export async function POST(request: NextRequest) {
     const otp = generateOTP()
     storeOTP(email, otp)
 
+    const emailResult = await sendEmailOTP(email, otp)
+
     // 開發環境：返回 OTP 到前端（方便在瀏覽器 Console 查看）
     const isDev = process.env.NODE_ENV === 'development'
 
     const response: SendOtpResponse = {
-      success: true,
-      message: isDev ? AUTH_MESSAGES.OTP_SENT_DEV : AUTH_MESSAGES.OTP_SENT,
+      success: emailResult.success,
+      message: emailResult.success ? AUTH_MESSAGES.OTP_SENT : emailResult.message,
       data: {
         expiresIn: 300,
         ...(isDev && { otp }), // 開發環境才返回 OTP
