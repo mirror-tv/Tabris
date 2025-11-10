@@ -13,7 +13,7 @@ export async function POST(
 ) {
   const { orderNumber } = params ?? {}
   const user = await getCurrentUser()
-  if (!user || !user.memberId) {
+  if (!user || !user.userId || !user.memberId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
   if (!orderNumber) {

@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 import { format, parseISO } from 'date-fns'
 import { useRouter } from 'next/navigation'
 
-import type { OrderRecordForSchedule } from '@/graphql/queries/orders'
+import type { OrderRecordForEdit } from '@/graphql/queries/orders'
 import type { DateRange } from 'react-day-picker'
 
 import EditPageLayout from '@/components/edit/edit-page-layout'
@@ -14,6 +14,7 @@ import PopoverCalendar from '@/components/shared/popover-calendar'
 import SubmitResult from '@/components/shared/submit-result'
 import { useSubmitStatus } from '@/hooks/useSubmitStatus'
 import TriangleExclamationIcon from '@/public/icons/triangle-exclamation.svg'
+import { handleUnauthorized } from '@/utils/handle-unauthorized'
 
 const PAGE_TITLE = '設定排播日期'
 
@@ -28,9 +29,7 @@ export default function EditSchedule({
 
   const [range, setRange] = useState<DateRange | undefined>(undefined)
   const [error, setError] = useState<string | null>(null)
-  const [orderData, setOrderData] = useState<OrderRecordForSchedule | null>(
-    null
-  )
+  const [orderData, setOrderData] = useState<OrderRecordForEdit | null>(null)
   useEffect(() => {
     const fetchSchedule = async () => {
       if (!orderNumber) {
@@ -40,7 +39,11 @@ export default function EditSchedule({
       try {
         const res = await fetch(`/api/order/${orderNumber}/schedule`)
         if (!res.ok) {
-          if (res.status === 404 || res.status === 401) {
+          if (res.status === 401) {
+            await handleUnauthorized(router)
+            return
+          }
+          if (res.status === 404) {
             router.push('/not-found/404')
             return
           }
@@ -76,6 +79,10 @@ export default function EditSchedule({
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    if (!orderData) {
+      setError('訂單資料還沒完全顯示，請稍等。')
+      return
+    }
 
     if (!orderNumber) {
       setError('訂單編號不存在')
@@ -104,7 +111,10 @@ export default function EditSchedule({
       })
 
       if (!res.ok) {
-        // 如果是 404，重定向到 404 頁面
+        if (res.status === 401) {
+          await handleUnauthorized(router)
+          return
+        }
         if (res.status === 404) {
           router.push('/not-found/404')
           return

@@ -9,6 +9,7 @@ import UploadTemplate from '@/components/upload/upload-template'
 import { OrderRecordForUploadMutation } from '@/graphql/mutations/order'
 import { OrderRecordForUploadQuery } from '@/graphql/queries/orders'
 import { useSubmitStatus } from '@/hooks/useSubmitStatus'
+import { handleUnauthorized } from '@/utils/handle-unauthorized'
 import { ApiResponse } from '@/types'
 
 const pageTitle = '上傳廣告素材'
@@ -31,6 +32,11 @@ export default function UploadPage() {
         if (!res.ok || !payload?.success) {
           console.error('Failed to fetch orders:', payload?.message)
 
+        if (!res.ok) {
+          if (res.status === 401) {
+            await handleUnauthorized(router)
+            return
+          }
           // If the API returns an error, redirect to not-found page with status code
           router.push(`/not-found/${res.status}`)
           return

@@ -7,20 +7,14 @@ import { getCurrentUser } from '@/utils/auth'
 import { createErrorLogger } from '@/utils/error-handler'
 import { getMemberById } from '@/utils/member'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   try {
     const currentUser = await getCurrentUser()
 
-    if (!currentUser) {
+    if (!currentUser || !currentUser.userId || !currentUser.memberId) {
       return NextResponse.json({ error: '找不到使用者資料' }, { status: 401 })
-    }
-
-    // 必須要有 memberId
-    if (!currentUser.memberId) {
-      return NextResponse.json(
-        { error: '使用者驗證失敗，請重新登錄。' },
-        { status: 401 }
-      )
     }
 
     // 取得完整的 Member 資料（使用 memberId）

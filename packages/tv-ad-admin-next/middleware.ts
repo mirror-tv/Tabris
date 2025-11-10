@@ -12,12 +12,17 @@ import { verifyToken } from '@/utils/auth'
 // 公開 route（不需要登入即可訪問）
 const publicRoutes = ['/login']
 const publicApiRoutes = ['/api/auth/send-otp', '/api/auth/verify-otp']
+// 需要登入才能訪問的路由
+const protectedRoutes = ['/list', '/order', '/dashboard', '/upload']
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   const isPublicRoute = publicRoutes.includes(pathname)
   const isPublicApiRoute = publicApiRoutes.some((route) =>
+    pathname.startsWith(route)
+  )
+  const isProtectedRoute = protectedRoutes.some((route) =>
     pathname.startsWith(route)
   )
 
@@ -64,6 +69,11 @@ export async function middleware(request: NextRequest) {
     const response = NextResponse.redirect(loginUrl)
     response.cookies.delete('auth_token')
     return response
+  }
+
+  // 如果已登入且訪問登入頁，重導向 dashboard
+  if (payload && pathname === '/login') {
+    return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
   return NextResponse.next()

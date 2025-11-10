@@ -173,7 +173,7 @@ export const getOrdersForUpload = gql`
   }
 `
 
-export type OrderRecordForSchedule = Pick<
+export type OrderRecordForEdit = Pick<
   OrderSchema,
   | 'id'
   | 'orderNumber'
@@ -185,8 +185,8 @@ export type OrderRecordForSchedule = Pick<
   | 'scheduleEndDateString'
 >
 
-export const getOrderScheduleQuery = gql`
-  query getOrderSchedule($where: OrderWhereInput!) {
+export const getOrderForEditQuery = gql`
+  query getOrderForEdit($where: OrderWhereInput!) {
     orders(where: $where) {
       id
       orderNumber
