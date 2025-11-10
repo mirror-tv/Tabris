@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
 
     // 生成並存儲 OTP
     const otp = generateOTP()
-    storeOTP(email, otp)
+    await storeOTP(email, otp)
 
     const emailResult = await sendEmailOTP(email, otp)
 
