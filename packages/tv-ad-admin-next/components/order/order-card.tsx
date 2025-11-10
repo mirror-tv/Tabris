@@ -1,4 +1,4 @@
-import { StateBadge } from '@/components/ui/state-badge'
+import { StateBadge } from '@/components/custom-ui/state-badge'
 import { OrderStateMap, ORDER_STATE } from '@/constants'
 import { type OrderRecord } from '@/mocks/mockData'
 

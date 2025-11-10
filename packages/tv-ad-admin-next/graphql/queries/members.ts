@@ -22,13 +22,3 @@ export const checkMemberByEmailQuery = gql`
     }
   }
 `
-
-export const checkMemberByPhoneQuery = gql`
-  query checkMemberByPhone($where: MemberWhereInput) {
-    members(where: $where) {
-      id
-      mobile
-      state
-    }
-  }
-`

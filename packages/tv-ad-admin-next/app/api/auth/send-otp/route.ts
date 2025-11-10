@@ -1,35 +1,29 @@
 /**
  * POST /api/auth/send-otp
- * 發送 OTP 驗證碼到信箱或手機
+ * 發送 OTP 驗證碼到信箱
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+
+import type { SendOtpResponse } from '@/types/api'
+
+import { AUTH_MESSAGES, formatMessage } from '@/constants/messages'
+import { checkMemberByEmail } from '@/utils/member'
+import { sendEmailOTP } from '@/utils/otp-sender'
 import { generateOTP, storeOTP } from '@/utils/otp-storage'
-import { checkMemberByEmail, checkMemberByPhone } from '@/utils/member'
-import { validateEmail, validatePhone } from '@/utils/validation'
 import {
   checkRateLimit,
   getClientIp,
   RATE_LIMIT_CONFIGS,
 } from '@/utils/rate-limit'
-import { AUTH_MESSAGES, formatMessage } from '@/constants/messages'
-import type { SendOtpResponse } from '@/types/api'
+import { validateEmail } from '@/utils/validation'
+
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, phone, type } = await request.json()
+    const { email } = await request.json()
 
-    // 驗證參數
-    if (!type || (type !== 'email' && type !== 'phone')) {
-      return NextResponse.json(
-        { success: false, message: AUTH_MESSAGES.INVALID_TYPE },
-        { status: 400 }
-      )
-    }
-
-    const identifier = type === 'email' ? email : phone
-
-    if (!identifier) {
+    if (!email) {
       return NextResponse.json(
         {
           success: false,
@@ -40,24 +34,12 @@ export async function POST(request: NextRequest) {
     }
 
     // 驗證格式
-    if (type === 'email') {
-      const validation = validateEmail(email)
-      if (!validation.isValid) {
-        return NextResponse.json(
-          { success: false, message: validation.error },
-          { status: 400 }
-        )
-      }
-    }
-
-    if (type === 'phone') {
-      const validation = validatePhone(phone)
-      if (!validation.isValid) {
-        return NextResponse.json(
-          { success: false, message: validation.error },
-          { status: 400 }
-        )
-      }
+    const validation = validateEmail(email)
+    if (!validation.isValid) {
+      return NextResponse.json(
+        { success: false, message: validation.error },
+        { status: 400 }
+      )
     }
 
     // Rate Limiting - 檢查 IP
@@ -81,7 +63,7 @@ export async function POST(request: NextRequest) {
 
     // Rate Limiting - 檢查 identifier
     const identifierRateLimit = checkRateLimit(
-      `send-otp:${identifier}`,
+      `send-otp:${email}`,
       RATE_LIMIT_CONFIGS.SEND_OTP
     )
 
@@ -98,10 +80,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 檢查使用者是否在 CMS member 中存在
-    const memberCheck =
-      type === 'email'
-        ? await checkMemberByEmail(email)
-        : await checkMemberByPhone(phone)
+    const memberCheck = await checkMemberByEmail(email)
 
     if (!memberCheck.exists) {
       return NextResponse.json(
@@ -115,14 +94,16 @@ export async function POST(request: NextRequest) {
 
     // 生成並存儲 OTP
     const otp = generateOTP()
-    storeOTP(identifier, otp)
+    await storeOTP(email, otp)
+
+    const emailResult = await sendEmailOTP(email, otp)
 
     // 開發環境：返回 OTP 到前端（方便在瀏覽器 Console 查看）
     const isDev = process.env.NODE_ENV === 'development'
 
     const response: SendOtpResponse = {
-      success: true,
-      message: isDev ? AUTH_MESSAGES.OTP_SENT_DEV : AUTH_MESSAGES.OTP_SENT,
+      success: emailResult.success,
+      message: emailResult.success ? AUTH_MESSAGES.OTP_SENT : emailResult.message,
       data: {
         expiresIn: 300,
         ...(isDev && { otp }), // 開發環境才返回 OTP

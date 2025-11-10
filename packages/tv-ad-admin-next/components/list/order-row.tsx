@@ -1,12 +1,12 @@
-import ArrowRightDownIcon from '@/assets/icons/arrow-right-sown.svg'
-import DetailIcon from '@/assets/icons/detail.svg'
+import { StateBadge } from '@/components/custom-ui/state-badge'
 import { Button } from '@/components/ui/button'
-import { StateBadge } from '@/components/ui/state-badge'
-import { type OrderRecordForList } from '@/types/order'
+import { type OrderRecordForList } from '@/graphql/queries/orders'
+import ArrowRightDownIcon from '@/public/icons/arrow-right-sown.svg'
+import DetailIcon from '@/public/icons/detail.svg'
 
 type OrderRowProps = {
   order: OrderRecordForList
-  onViewOrder: (orderId: number) => void
+  onViewOrder: (orderNumber: string) => void
   isRelated?: boolean
 }
 
@@ -25,7 +25,6 @@ export function OrderRow({
     scheduleStartDateString,
     scheduleEndDateString,
   } = order
-  console.log(order)
   const rowContent = [
     {
       key: 'number',
@@ -48,7 +47,15 @@ export function OrderRow({
     {
       key: 'moreBtn',
       content: (
-        <Button onClick={() => onViewOrder(order.id)} variant="outline">
+        <Button
+          onClick={() => {
+            if (order.orderNumber) {
+              onViewOrder(order.orderNumber)
+            }
+          }}
+          variant="outline"
+          disabled={!order.orderNumber}
+        >
           <DetailIcon className="h-4 w-4" />
           查看
         </Button>

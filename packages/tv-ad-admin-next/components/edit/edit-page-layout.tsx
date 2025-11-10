@@ -1,12 +1,13 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
+
+import type { OrderRecordForEdit } from '@/graphql/queries/orders'
+
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
-import SubmitResult from '@/components/shared/submit-result'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardTitle } from '@/components/ui/card'
-
-export type SubmitStatus = 'idle' | 'success' | 'failure'
 
 type EditPageLayoutProps = {
   pageTitle: string
@@ -14,7 +15,7 @@ type EditPageLayoutProps = {
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
   submitButtonName: string
   cardTitle?: string
-  submitStatus: SubmitStatus
+  orderData?: OrderRecordForEdit | null
 }
 
 const Mock_Order_Number = 'B7H8M3'
@@ -27,26 +28,26 @@ export default function EditPageLayout({
   onSubmit,
   submitButtonName,
   cardTitle,
-  submitStatus,
+  orderData,
 }: EditPageLayoutProps) {
-  const orderInfo = [
-    { title: '訂單編號', value: '#' + Mock_Order_Number },
-    { title: '廣告名稱', value: Mock_Order_Name },
-    { title: '排播日期', value: Mock_Order_Date },
-  ]
+  const router = useRouter()
 
-  if (submitStatus === 'success') {
-    return (
-      <SubmitResult
-        pageTitle={pageTitle}
-        status="success"
-        heading="送出成功"
-        message="業務會寄信給您溝通後續修改事宜，再請密切注意"
-      />
-    )
-  } else if (submitStatus === 'failure') {
-    return <SubmitResult pageTitle={pageTitle} />
-  }
+  const orderInfo = [
+    {
+      title: '訂單編號',
+      value: '#' + orderData?.orderNumber || Mock_Order_Number,
+    },
+    { title: '廣告名稱', value: orderData?.name || Mock_Order_Name },
+    {
+      title: '排播日期',
+      value:
+        orderData?.scheduleStartDateString && orderData?.scheduleEndDateString
+          ? orderData.scheduleStartDateString +
+            '-' +
+            orderData.scheduleEndDateString
+          : Mock_Order_Date,
+    },
+  ]
 
   return (
     <>
@@ -69,17 +70,20 @@ export default function EditPageLayout({
         <form onSubmit={onSubmit}>
           <Card>
             {!!cardTitle && <CardTitle>{cardTitle}</CardTitle>}
-            <CardContent className="space-y-3xl">{children}</CardContent>
+            <CardContent className="space-y-4xl">{children}</CardContent>
             <CardFooter className="justify-end gap-2">
               <Button
                 variant="outline"
                 intent="secondary"
                 type="button"
-                onClick={() => alert('取消')}
+                size="lg"
+                onClick={() => router.back()}
               >
                 取消
               </Button>
-              <Button type="submit">{submitButtonName}</Button>
+              <Button type="submit" size="lg">
+                {submitButtonName}
+              </Button>
             </CardFooter>
           </Card>
         </form>

@@ -50,7 +50,6 @@ export default function StoryPageLayout({
 
       <section className={styles.ads}>
         <GPTAd pageKey="story" adKey="MB_M1" />
-        <GPTAd pageKey="fs" adKey="MB_NEWS" />
         <GPTAd pageKey="all" adKey="PC_HD" />
       </section>
       <section className={styles.story}>

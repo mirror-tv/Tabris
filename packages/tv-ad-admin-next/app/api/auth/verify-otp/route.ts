@@ -4,12 +4,14 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { verifyOTP } from '@/utils/otp-storage'
+
 import { generateToken } from '@/utils/auth'
+import { getMemberByEmail } from '@/utils/member'
+import { verifyOTP } from '@/utils/otp-storage'
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, phone, otp, type } = await request.json()
+    const { email, otp } = await request.json()
 
     if (!otp) {
       return NextResponse.json(
@@ -18,17 +20,15 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const identifier = type === 'email' ? email : phone
-
-    if (!identifier) {
+    if (!email) {
       return NextResponse.json(
-        { success: false, message: '請提供 Email 或手機號碼' },
+        { success: false, message: '請提供電子信箱' },
         { status: 400 }
       )
     }
 
     // 驗證 OTP
-    const result = verifyOTP(identifier, otp)
+    const result = await verifyOTP(email, otp)
 
     if (!result.success) {
       return NextResponse.json(
@@ -38,23 +38,31 @@ export async function POST(request: NextRequest) {
     }
 
     // 生成使用者 ID
-    const userId = Buffer.from(identifier).toString('base64')
+    const userId = Buffer.from(email).toString('base64')
 
-    // 生成 JWT token
-    const token = await generateToken({
+    // 取得 member id（登入時就取得，之後可以直接用 id 查詢）
+    const member = await getMemberByEmail(email)
+
+    if (!member?.id) {
+      return NextResponse.json(
+        { success: false, message: '無法取得會員資料，請重新登入' },
+        { status: 404 }
+      )
+    }
+
+    const userPayload = {
       userId,
-      email: type === 'email' ? email : undefined,
-      phone: type === 'phone' ? phone : undefined,
-    })
+      memberId: member.id,
+      email,
+    }
+
+    // 生成 JWT token（必須包含 memberId）
+    const token = await generateToken(userPayload)
 
     const response = NextResponse.json({
       success: true,
       message: '登入成功',
-      user: {
-        userId,
-        email: type === 'email' ? email : undefined,
-        phone: type === 'phone' ? phone : undefined,
-      },
+      user: userPayload,
     })
 
     // 使用 Next.js 推薦的方式設定 cookie

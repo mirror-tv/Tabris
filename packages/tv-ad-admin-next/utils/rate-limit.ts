@@ -6,6 +6,8 @@
 import fs from 'fs'
 import path from 'path'
 
+import { OTP_MAX_ATTEMPTS } from '@/constants'
+
 const RATE_LIMIT_DIR = path.join(process.cwd(), '.cache', 'rate-limit')
 
 // 確保緩存目錄存在
@@ -31,7 +33,7 @@ type RateLimitConfig = {
 export const RATE_LIMIT_CONFIGS = {
   // 發送 OTP：每個 identifier 每分鐘最多 3 次
   SEND_OTP: {
-    maxAttempts: 3,
+    maxAttempts: OTP_MAX_ATTEMPTS,
     windowMs: 60 * 1000, // 1 分鐘
     blockDurationMs: 5 * 60 * 1000, // 封鎖 5 分鐘
   },
@@ -198,7 +200,7 @@ export function cleanupExpiredRateLimits(): void {
         if (isExpired) {
           fs.unlinkSync(filePath)
         }
-      } catch (error) {
+      } catch {
         // 如果文件損壞，也刪除
         fs.unlinkSync(filePath)
       }

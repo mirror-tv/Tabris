@@ -16,11 +16,8 @@
 
   @include media-breakpoint-up(xl) {
     height: 73px;
-    max-width: $header-max-width-xl;
-    padding: 0;
-  }
-  @include media-breakpoint-up(xxl) {
-    max-width: $header-max-width-xxl;
+    max-width: $header-max-width-xxxl;
+    padding: 0 $header-padding-xl;
   }
 }
 

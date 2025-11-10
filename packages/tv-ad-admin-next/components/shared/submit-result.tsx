@@ -2,10 +2,10 @@ import { useRouter } from 'next/navigation'
 
 import { Button } from '../ui/button'
 
-import CloseCircleIcon from '@/assets/icons/close-circle.svg'
-import DoneCircleIcon from '@/assets/icons/done-circle.svg'
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
+import CloseCircleIcon from '@/public/icons/close-circle.svg'
+import DoneCircleIcon from '@/public/icons/done-circle.svg'
 
 type SubmitResultProps =
   | {
@@ -44,7 +44,7 @@ export default function SubmitResult({
             <>
               <CloseCircleIcon className="size-12 text-gray-5" />
               <h4>抱歉，出了點問題</h4>
-              <span className="text-gray-6">
+              <span className="text-gray-6 text-center">
                 請重新嘗試，或聯繫客服信箱 mirror@mirrormedia.mg
               </span>
             </>

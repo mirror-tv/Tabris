@@ -1,3 +1,4 @@
+import { StateBadge } from '@/components/custom-ui/state-badge'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -6,13 +7,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { StateBadge } from '@/components/ui/state-badge'
 import { OrderStateMap } from '@/constants'
 import { type OrderRecord } from '@/mocks/mockData'
 
 type TestModalProps = {
   orders: OrderRecord[]
-  onOrderSelect: (orderId: string) => void
+  onOrderSelect: (orderNumber: string) => void
   currentOrderId?: string
 }
 
@@ -21,8 +21,8 @@ export function TestModal({
   onOrderSelect,
   currentOrderId,
 }: TestModalProps) {
-  const handleOrderClick = (orderId: string) => {
-    onOrderSelect(orderId)
+  const handleOrderClick = (orderNumber: string) => {
+    onOrderSelect(orderNumber)
   }
 
   return (
@@ -64,12 +64,12 @@ export function TestModal({
             {orders.map((order) => {
               const stateConfig =
                 OrderStateMap[order.state as keyof typeof OrderStateMap]
-              const isSelected = currentOrderId === order.id
+              const isSelected = currentOrderId === order.orderNumber
 
               return (
                 <button
                   key={order.id}
-                  onClick={() => handleOrderClick(order.id)}
+                  onClick={() => handleOrderClick(order.orderNumber)}
                   className={`flex items-center justify-between rounded-lg border p-3 text-left transition-all ${
                     isSelected
                       ? 'border-blue-6 bg-blue-1'
@@ -125,7 +125,7 @@ export function TestModal({
           <div className="pt-2">
             <Button
               variant="outline"
-              onClick={() => handleOrderClick('1')}
+              onClick={() => handleOrderClick('MM-00001')}
               className="w-full"
             >
               重置為預設訂單
