@@ -6,6 +6,8 @@
 import fs from 'fs'
 import path from 'path'
 
+import { OTP_MAX_ATTEMPTS } from '@/constants'
+
 const OTP_CACHE_DIR = path.join(process.cwd(), '.cache', 'otp')
 
 // 確保緩存目錄存在
@@ -126,7 +128,7 @@ export function verifyOTP(
     return { success: false, message: '驗證碼已過期' }
   }
 
-  if (stored.attempts >= 3) {
+  if (stored.attempts >= OTP_MAX_ATTEMPTS) {
     deleteOTPFile(identifier)
     return { success: false, message: '嘗試次數過多' }
   }
@@ -136,7 +138,7 @@ export function verifyOTP(
     writeOTPToFile(identifier, stored) // 更新嘗試次數
     return {
       success: false,
-      message: `驗證碼錯誤，還剩 ${5 - stored.attempts} 次機會`,
+      message: `驗證碼錯誤，還剩 ${OTP_MAX_ATTEMPTS - stored.attempts} 次機會`,
     }
   }
 

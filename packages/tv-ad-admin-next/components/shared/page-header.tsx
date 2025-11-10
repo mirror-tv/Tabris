@@ -37,7 +37,7 @@ export default function PageHeader({
     try {
       // 使用 store 的 logout 方法（會清除 store 和 cookie）
       await logout()
-      router.push('/')
+      router.push('/login')
     } catch (error) {
       console.error('登出失敗:', error)
       setIsLoggingOut(false)
