@@ -11,6 +11,7 @@ import { OrderRecordForUploadQuery } from '@/graphql/queries/orders'
 import { useSubmitStatus } from '@/hooks/useSubmitStatus'
 import { ApiResponse } from '@/types'
 import { handleUnauthorized } from '@/utils/handle-unauthorized'
+import { handleUnauthorized } from '@/utils/handle-unauthorized'
 
 const pageTitle = '上傳廣告素材'
 
