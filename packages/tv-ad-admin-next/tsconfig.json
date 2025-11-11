@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "lib": ["dom", "dom.iterable", "es6"],
+    "target": "es2020",
+    "lib": ["dom", "dom.iterable", "es2020"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -30,6 +30,7 @@
     ".next/types/**/*.ts",
     "types/**/*.d.ts",
     "*.config.cjs", // Explicitly include the Prettier config
+    "next.config.js",
     ".eslintrc.cjs"
   ],
   "exclude": ["node_modules"]

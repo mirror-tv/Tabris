@@ -1,9 +1,10 @@
 import { ProgressSteps } from './progress-steps'
 
-import { type OrderRecord } from '@/types/order'
+import { type OrderRecordForOrderNumber } from '@/graphql/queries/orders'
+import { formatTaiwanDate } from '@/utils/date'
 
 type OrderStateProps = {
-  order: OrderRecord
+  order: OrderRecordForOrderNumber
   className?: string
 }
 
@@ -25,11 +26,15 @@ export function OrderState({ order, className = '' }: OrderStateProps) {
               </div>
               <div>
                 <label className={labelClassName}>建立日期</label>
-                <p className={valueClassName}>2024-12-02</p>
+                <p className={valueClassName}>
+                  {formatTaiwanDate(order.createdAt) || '-'}
+                </p>
               </div>
               <div>
                 <label className={labelClassName}>最後更新</label>
-                <p className={valueClassName}>{order.updatedAt}</p>
+                <p className={valueClassName}>
+                  {formatTaiwanDate(order.updatedAt) || '-'}
+                </p>
               </div>
             </div>
           </div>

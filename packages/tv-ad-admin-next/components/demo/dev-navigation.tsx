@@ -20,9 +20,6 @@ export default function DevNavigation() {
       </span>
 
       <div className="flex w-full flex-wrap items-center justify-center gap-2">
-        <Link href="/preview" className="hover:text-blue-400">
-          Preview
-        </Link>
         <Link href="/demo" className="hover:text-green-400">
           Demo
         </Link>
@@ -30,7 +27,7 @@ export default function DevNavigation() {
         <Link href="/login" className="hover:text-purple-400">
           Login
         </Link>
-        <Link href="/dashboard" className="hover:text-indigo-400">
+        <Link href="/" className="hover:text-indigo-400">
           Dashboard
         </Link>
         <Link href="/upload" className="hover:text-pink-400">

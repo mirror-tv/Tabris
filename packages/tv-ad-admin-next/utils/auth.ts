@@ -6,17 +6,32 @@
 import { SignJWT, jwtVerify } from 'jose'
 import { cookies } from 'next/headers'
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'dev-secret-change-in-production'
-)
+import { JWT_SECRET, ENV } from '@/constants/environment-variables'
+
+const getJwtSecret = () => {
+  const secret = JWT_SECRET
+  const isProduction = ENV === 'prod'
+
+  if (
+    isProduction &&
+    (!secret || secret === 'dev-secret-change-in-production')
+  ) {
+    throw new Error(
+      'JWT_SECRET 必須在生產環境中設定，不能使用預設值。請檢查環境變數設定。'
+    )
+  }
+
+  return new TextEncoder().encode(secret || 'dev-secret-change-in-production')
+}
 
 export type UserPayload = {
   userId: string
-  email?: string
-  phone?: string
+  memberId: string // CMS member id（必填）
+  email: string
 }
 
 export async function generateToken(payload: UserPayload): Promise<string> {
+  const JWT_SECRET = getJwtSecret()
   return await new SignJWT(payload as Record<string, unknown>)
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
@@ -26,6 +41,7 @@ export async function generateToken(payload: UserPayload): Promise<string> {
 
 export async function verifyToken(token: string): Promise<UserPayload | null> {
   try {
+    const JWT_SECRET = getJwtSecret()
     const { payload } = await jwtVerify(token, JWT_SECRET)
     return payload as UserPayload
   } catch {

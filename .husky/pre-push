@@ -1,0 +1,47 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "Determining changed packages for this push..."
+
+# Read information provided by Git pre-push hook from STDIN.
+# Format: <local_ref> <local_sha> <remote_ref> <remote_sha>
+read local_ref local_sha remote_ref remote_sha
+
+# Detect base commit from remote branch — works even if local and remote names differ
+if [ "$remote_sha" = "0000000000000000000000000000000000000000" ]; then
+  echo "New branch detected. Using the previous local commit as the base for comparison."
+  BASE_COMMIT="HEAD~1"
+else
+  # Otherwise, compare against the remote branch’s latest commit.
+  BASE_COMMIT="$remote_sha"
+fi
+
+# Collect all changed files between the remote and local commits.
+CHANGED_FILES=$(git diff --name-only "$BASE_COMMIT" "$local_sha")
+
+# Filter only files located under the 'packages/' directory and extract unique package names.
+CHANGED_PACKAGES=$(echo "$CHANGED_FILES" | grep '^packages/' | cut -d'/' -f2 | sort -u)
+
+# If no packages were modified, skip the type check.
+if [ -z "$CHANGED_PACKAGES" ]; then
+  echo "No package changes detected. Skipping TypeScript check."
+  exit 0
+fi
+
+# Loop through all changed packages and run TypeScript checks individually.
+for pkg in $CHANGED_PACKAGES; do
+  PKG_PATH="packages/$pkg"
+
+  # Only check packages that have a tsconfig.json file.
+  if [ -d "$PKG_PATH" ] && [ -f "$PKG_PATH/tsconfig.json" ]; then
+    echo "Running TypeScript check for $PKG_PATH..."
+    (cd "$PKG_PATH" && yarn tsc --noEmit) || {
+      echo "Type check failed in $PKG_PATH"
+      exit 1
+    }
+  else
+    echo "Skipping $PKG_PATH (no tsconfig.json found)."
+  fi
+done
+
+echo "All TypeScript checks completed successfully."

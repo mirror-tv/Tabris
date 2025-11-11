@@ -3,10 +3,11 @@ import { ComponentPropsWithoutRef, ElementRef, forwardRef } from 'react'
 import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
 
+import { layout } from '@/constants'
 import { cn } from '@/utils'
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:bg-gray-3 disabled:text-gray-5 disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
   {
     variants: {
       // NOTE: Use `intent` instead of `color` to avoid TypeScript conflicts with the native HTML <button> "color" attribute.
@@ -72,7 +73,11 @@ const Button = forwardRef<ElementRef<'button'>, ButtonProps>(
       <Comp
         ref={ref}
         data-slot="button"
-        className={cn(buttonVariants({ variant, intent, size, className }))}
+        className={cn(
+          buttonVariants({ variant, intent, size }),
+          layout.disabled,
+          className
+        )}
         {...props}
       />
     )

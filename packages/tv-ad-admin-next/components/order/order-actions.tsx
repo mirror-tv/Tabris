@@ -1,16 +1,18 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
-import DoneCircleIcon from '@/assets/icons/done-circle.svg'
-import EditIcon from '@/assets/icons/edit.svg'
-import UploadIcon from '@/assets/icons/upload.svg'
+import LoadingSpinner from '@/components/shared/loading-spinner'
 import { Button } from '@/components/ui/button'
 import { ORDER_STATE } from '@/constants'
-import { type OrderRecord } from '@/mocks/mockData'
+import { type OrderRecordForOrderNumber } from '@/graphql/queries/orders'
+import DoneCircleIcon from '@/public/icons/done-circle.svg'
+import EditIcon from '@/public/icons/edit.svg'
+import UploadIcon from '@/public/icons/upload.svg'
 
 type OrderActionsProps = {
-  order: OrderRecord
+  order: OrderRecordForOrderNumber
   className?: string
 }
 
@@ -140,24 +142,11 @@ const ACTION_MAP: Record<string, ActionConfig> = {
 }
 
 export function OrderActions({ order, className = '' }: OrderActionsProps) {
-  const [isUploading, setIsUploading] = useState(false)
+  const [isUploading] = useState(false)
   const [isConfirming, setIsConfirming] = useState(false)
-
+  const router = useRouter()
   const handleUploadClick = async () => {
-    if (isUploading) return
-
-    setIsUploading(true)
-
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 5000))
-
-      alert('上傳完成，進入下一個階段')
-      // 可以 trigger parent component 的 cb 來更新訂單狀態
-    } catch (error) {
-      console.error('上傳失敗:', error)
-    } finally {
-      setIsUploading(false)
-    }
+    router.push(`/order/re-upload/${order.orderNumber}`)
   }
 
   const handleConfirmClick = async () => {
@@ -166,32 +155,46 @@ export function OrderActions({ order, className = '' }: OrderActionsProps) {
     setIsConfirming(true)
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 5000))
+      const response = await fetch(`/api/order/${order.orderNumber}/confirm`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
 
-      alert('確認完成，進入下一個階段')
-      // 可以 trigger parent component 的 cb 來更新訂單狀態
+      const data = await response.json()
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || '確認失敗')
+      }
+      window.location.reload()
     } catch (error) {
       console.error('確認失敗:', error)
+      alert(
+        error instanceof Error
+          ? `確認失敗: ${error.message}`
+          : '確認失敗，請稍後再試'
+      )
     } finally {
       setIsConfirming(false)
     }
   }
 
   const handleSettingScheduleClick = () => {
-    alert('進入排定日程頁面')
-    // 跳轉到排播頁面
+    router.push(`/order/${order.orderNumber}/schedule`)
   }
 
   const handleModifyClick = () => {
-    alert('進入修改頁面，俊昕交給你了')
-    // 跳轉到修改頁面
+    router.push(`/order/edit-request/${order.orderNumber}`)
   }
 
-  const actionContent =
-    ACTION_MAP[order.state] ?? ACTION_MAP[ORDER_STATE.PENDING_UPLOAD]
+  const actionContent = useMemo(() => {
+    return ACTION_MAP[order.state] ?? ACTION_MAP[ORDER_STATE.PENDING_UPLOAD]
+  }, [order.state])
 
   return (
-    <section className={`${styles.container} ${className}`}>
+    <section className={`${styles.container} ${className} relative`}>
+      {isConfirming && <LoadingSpinner message="確認中..." overlay />}
       <h5 className={styles.title}>訂單操作</h5>
       <div className={styles.buttonContainer}>
         {actionContent.buttonText && (

@@ -6,7 +6,10 @@ $aside-width-xl: 384px;
 
 $header-max-width-xl: 1000px;
 $header-max-width-xxl: 1200px;
+$header-max-width-xxxl: 1640px; // 1440px(content) + 2 * 100px (left & right padding)
 $header-padding-md: 40px;
+$header-padding-xl: 100px;
+$footer-max-width: 1568px; // 1440px(content) + 45 px(left padding) + 83 px(right padding)
 
 $story-max-width-md: 688px;
 $story-wrapper-max-width-md: 600px;

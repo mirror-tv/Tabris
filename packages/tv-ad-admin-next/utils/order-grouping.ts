@@ -1,6 +1,10 @@
 import { formatTaiwanDate } from './date'
 
-import { type OrderRecordForList } from '@/types/order'
+import { OrderStateMap, ORDER_STATE } from '@/constants'
+import {
+  type OrderRecordForList,
+  type OrderRecordForDashboard,
+} from '@/graphql/queries/orders'
 
 type RelatedOrder = { id: string } | Array<{ id: string }>
 
@@ -41,8 +45,7 @@ export function groupOrders(
 
     chain.push(order)
     processed[order.id] = true
-    const children =
-      parentMap.get(order.id.toString()) || ([] as OrderRecordForList[])
+    const children = parentMap.get(order.id) || ([] as OrderRecordForList[])
 
     for (const child of children) {
       if (!processed[child.id]) {
@@ -76,8 +79,8 @@ export function groupOrders(
 
       // 子訂單排序：非「已轉移」的排在前面，全部按 createdAt 從新到舊
       childOrders.sort((a, b) => {
-        const isTransferredA = a.state === 'transferred'
-        const isTransferredB = b.state === 'transferred'
+        const isTransferredA = a.state === ORDER_STATE.TRANSFERRED
+        const isTransferredB = b.state === ORDER_STATE.TRANSFERRED
 
         // 非「已轉移」的排在前面
         if (isTransferredA && !isTransferredB) return 1
@@ -104,4 +107,21 @@ export function groupOrders(
   })
 
   return groupedOrders
+}
+
+export function getOrdersState(
+  orders: OrderRecordForDashboard[]
+): { state: keyof typeof OrderStateMap; count: number }[] {
+  const stateCount = orders.reduce(
+    (acc, order) => {
+      acc[order.state] = (acc[order.state] || 0) + 1
+      return acc
+    },
+    {} as Partial<Record<keyof typeof OrderStateMap, number>>
+  )
+
+  return Object.entries(stateCount).map(([state, count]) => ({
+    state: state as keyof typeof OrderStateMap,
+    count: count,
+  }))
 }

@@ -8,10 +8,11 @@ import { useRouter } from 'next/navigation'
 
 import { Button } from '../ui/button'
 
-import ArrowBackIcon from '@/assets/icons/arrow-back.svg'
-import LogoutIcon from '@/assets/icons/log-out.svg'
-import LogoIcon from '@/assets/icons/mnews-logo.svg'
 import { layout } from '@/constants'
+import ArrowBackIcon from '@/public/icons/arrow-back.svg'
+import LogoutIcon from '@/public/icons/log-out.svg'
+import LogoIcon from '@/public/icons/mnews-logo.svg'
+import { useAuthStore } from '@/store'
 import { cn } from '@/utils'
 
 type PageHeaderProps =
@@ -24,6 +25,7 @@ export default function PageHeader({
   variant = 'default',
 }: PageHeaderProps) {
   const router = useRouter()
+  const { logout } = useAuthStore()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
 
   const isDefault = variant === 'default'
@@ -33,11 +35,9 @@ export default function PageHeader({
   const handleLogout = async () => {
     setIsLoggingOut(true)
     try {
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-        credentials: 'include',
-      })
-      router.push('/')
+      // 使用 store 的 logout 方法（會清除 store 和 cookie）
+      await logout()
+      router.push('/login')
     } catch (error) {
       console.error('登出失敗:', error)
       setIsLoggingOut(false)
