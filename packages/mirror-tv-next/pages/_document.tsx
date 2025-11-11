@@ -1,13 +1,9 @@
 import Document, {
   DocumentContext,
   DocumentInitialProps,
-  Head,
   Main,
-  NextScript,
 } from 'next/document'
 import { ServerStyleSheet } from 'styled-components'
-// import Script from 'next/script'
-import { GTM_ID } from '~/constants/environment-variables'
 
 export default class MyDocument extends Document {
   static async getInitialProps(
@@ -39,34 +35,9 @@ export default class MyDocument extends Document {
   }
 
   render() {
-    return (
-      <html lang="zh-Hant">
-        <Head>
-          {/* Google Tag Manager */}
-          <amp-analytics
-            config={`https://www.googletagmanager.com/amp.json?id=${GTM_ID}`}
-            data-credentials="include"
-          ></amp-analytics>
-          <script
-            async
-            custom-element="amp-analytics"
-            src="https://cdn.ampproject.org/v0/amp-analytics-0.1.js"
-          ></script>
-        </Head>
-        <body>
-          {/* Google Tag Manager (noscript) */}
-          <noscript>
-            <iframe
-              src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
-              height="0"
-              width="0"
-              style={{ display: 'none', visibility: 'hidden' }}
-            />
-          </noscript>
-          <Main />
-          <NextScript />
-        </body>
-      </html>
-    )
+    // Since this project only has AMP pages that return full HTML,
+    // we return just Main and let the page component's
+    // full HTML structure (with head and body) take over
+    return <Main />
   }
 }
