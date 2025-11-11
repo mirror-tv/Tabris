@@ -24,7 +24,6 @@ export default function PageHeader({
   title,
   variant = 'default',
 }: PageHeaderProps) {
-  const router = useRouter()
   const { logout } = useAuthStore()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
 
@@ -34,14 +33,17 @@ export default function PageHeader({
 
   const handleLogout = async () => {
     setIsLoggingOut(true)
+
     try {
-      // 使用 store 的 logout 方法（會清除 store 和 cookie）
-      await logout()
-      router.push('/login')
+      const logoutPromise = logout()
+      const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 2000))
+
+      await Promise.race([logoutPromise, timeoutPromise])
     } catch (error) {
-      console.error('登出失敗:', error)
-      setIsLoggingOut(false)
+      console.error('登出 API 錯誤:', error)
     }
+
+    window.location.href = '/login'
   }
 
   return (
