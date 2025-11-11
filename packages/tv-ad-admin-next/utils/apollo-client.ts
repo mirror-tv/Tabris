@@ -1,5 +1,7 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client'
+import { setContext } from '@apollo/client/link/context'
 import { createUploadLink } from 'apollo-upload-client'
+import { GoogleAuth } from 'google-auth-library'
 
 import { GQL_ENDPOINT } from '@/constants/environment-variables'
 
@@ -13,6 +15,30 @@ const isServer = (): boolean => {
   return typeof window === 'undefined'
 }
 
+const createAuthLink = () => {
+  return setContext(async (_, { headers }) => {
+    if (!isServer() || !GQL_ENDPOINT) {
+      return { headers }
+    }
+
+    try {
+      const auth = new GoogleAuth()
+      const client = await auth.getIdTokenClient(GQL_ENDPOINT)
+      const idToken = await client.idTokenProvider.fetchIdToken(GQL_ENDPOINT)
+
+      return {
+        headers: {
+          ...headers,
+          authorization: `Bearer ${idToken}`,
+        },
+      }
+    } catch (error) {
+      console.warn('Failed to fetch GCP ID Token:', error)
+      return { headers }
+    }
+  })
+}
+
 export const getClient = () => {
   if (!GQL_ENDPOINT) {
     throw new Error(
@@ -23,11 +49,15 @@ export const getClient = () => {
   // creat a new client if there's no existing one
   // or if we are running on the server.
   if (!client || isServer()) {
+    const uploadLink = createUploadLink({
+      uri: GQL_ENDPOINT,
+      fetch: globalThis.fetch,
+    })
+
+    const link = createAuthLink().concat(uploadLink)
+
     client = new ApolloClient({
-      link: createUploadLink({
-        uri: GQL_ENDPOINT,
-        fetch: globalThis.fetch,
-      }),
+      link,
       cache: new InMemoryCache(),
       defaultOptions: {
         query: {
