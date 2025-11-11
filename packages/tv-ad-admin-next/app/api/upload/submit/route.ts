@@ -267,35 +267,32 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       )
     }
-    // --- Step 2-2. Verify ownership before updating ---
-    const { data: existingOrder } = await client.query({
-      query: getOrderImageQuery,
-      variables: { orderNumber, memberId: currentUser.memberId },
-      fetchPolicy: 'no-cache',
-    })
-    const order = existingOrder?.orders?.[0]
-    if (!order || order.member?.id !== currentUser.memberId) {
+    // --- Step 2-2. Verify member ownership ---
+    if (!updateData.memberId) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, message: 'Missing memberId in payload.' },
+        { status: 400 }
+      )
+    }
+
+    if (updateData.memberId !== currentUser.memberId) {
       return NextResponse.json<ApiResponse>(
         {
           success: false,
-          message: 'Unauthorized: order not found or access denied.',
+          message: 'Unauthorized: Member ID does not match current user.',
         },
         { status: 403 }
       )
     }
 
-    // Prevent if DB state no longer matches client’s expected state.
-    if (order.state !== currentState) {
+    // --- Step 2-3. Prevent if the state is outdated and determine next state dynamically ---
+    if (!currentState) {
       return NextResponse.json<ApiResponse>(
-        {
-          success: false,
-          message: `Invalid or outdated state. Expected ${order.state}, but received ${currentState}.`,
-        },
-        { status: 409 }
+        { success: false, message: 'Missing currentState in payload.' },
+        { status: 400 }
       )
     }
 
-    // --- Step 2-3. Determine next state dynamically ---
     const nextState = getNextState(currentState as OrderState)
     if (!nextState) {
       return NextResponse.json<ApiResponse>(
