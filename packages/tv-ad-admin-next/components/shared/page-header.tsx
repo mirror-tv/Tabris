@@ -43,7 +43,14 @@ export default function PageHeader({
       console.error('登出 API 錯誤:', error)
     }
 
-    window.location.href = '/login'
+    setTimeout(() => {
+      window.location.href = '/login'
+      setTimeout(() => {
+        if (window.location.pathname !== '/login') {
+          setIsLoggingOut(false)
+        }
+      }, 3000)
+    }, 0)
   }
 
   return (
