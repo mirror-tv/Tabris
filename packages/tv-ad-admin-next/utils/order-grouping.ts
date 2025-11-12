@@ -4,6 +4,7 @@ import { OrderStateMap, ORDER_STATE } from '@/constants'
 import {
   type OrderRecordForList,
   type OrderRecordForDashboard,
+  type OrderRecordForUploadQuery,
 } from '@/graphql/queries/orders'
 
 type RelatedOrder = { id: string } | Array<{ id: string }>
@@ -124,4 +125,60 @@ export function getOrdersState(
     state: state as keyof typeof OrderStateMap,
     count: count,
   }))
+}
+
+/**
+  1. newOrders: 狀態為 PENDING_UPLOAD 且沒有 price 的訂單
+  2. reuploadOrders: 
+    - 狀態為 PENDING_QUOTE_CONFIRMATION
+    - 有其他「狀態為 PENDING_UPLOAD、且 price 與自身的 modificationPrice 一樣」的訂單，則放入 reuploadOrders，並將對應訂單的 orderNumber 記錄 canRelatedOrders
+ */
+export function groupOrdersForUpload(orders: OrderRecordForUploadQuery[]): {
+  newOrders: OrderRecordForUploadQuery[]
+  reuploadOrders: (OrderRecordForUploadQuery & {
+    canRelatedOrders: OrderRecordForUploadQuery['orderNumber'][]
+  })[]
+} {
+  const newOrders: OrderRecordForUploadQuery[] = []
+  const reuploadOrders: (OrderRecordForUploadQuery & {
+    canRelatedOrders: OrderRecordForUploadQuery['orderNumber'][]
+  })[] = []
+
+  const pendingUploadOrdersByPrice = new Map<
+    number | null,
+    OrderRecordForUploadQuery[]
+  >()
+
+  for (const order of orders) {
+    if (order.state === ORDER_STATE.PENDING_UPLOAD) {
+      if (!order.price) {
+        newOrders.push(order)
+      } else {
+        const price = order.price ?? null
+        if (!pendingUploadOrdersByPrice.has(price)) {
+          pendingUploadOrdersByPrice.set(price, [])
+        }
+        pendingUploadOrdersByPrice.get(price)!.push(order)
+      }
+    }
+  }
+
+  for (const order of orders) {
+    if (order.state === ORDER_STATE.PENDING_QUOTE_CONFIRMATION) {
+      const matchingOrders =
+        pendingUploadOrdersByPrice.get(order.modificationPrice ?? null) || []
+      if (matchingOrders.length) {
+        const canRelatedOrders = matchingOrders.map((o) => o.orderNumber)
+        reuploadOrders.push({
+          ...order,
+          canRelatedOrders,
+        })
+      }
+    }
+  }
+
+  return {
+    newOrders,
+    reuploadOrders,
+  }
 }

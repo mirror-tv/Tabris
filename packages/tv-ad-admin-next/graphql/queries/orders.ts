@@ -132,6 +132,8 @@ export type OrderRecordForUploadQuery = Pick<
   | 'image'
   | 'imageEditable'
   | 'state'
+  | 'price'
+  | 'modificationPrice'
 > & {
   orderNumber: string
 }
@@ -169,6 +171,8 @@ export const getOrdersForUpload = gql`
       }
       imageEditable
       state
+      price
+      modificationPrice
     }
   }
 `
