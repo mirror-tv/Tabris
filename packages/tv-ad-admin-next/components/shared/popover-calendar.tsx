@@ -23,9 +23,10 @@ import { cn } from '@/utils'
 
 type PopoverCalendarProps = {
   range: DateRange | undefined
-  setRange: (range: DateRange | undefined) => void 
+  setRange: (range: DateRange | undefined) => void
   error?: string | null
   disabled?: boolean
+  minOffsetDays?: number
   className?: string
 }
 
@@ -36,11 +37,12 @@ export default function PopoverCalendar({
   setRange,
   error,
   disabled = false,
+  minOffsetDays = 0,
   className,
   ...props
 }: PopoverCalendarProps) {
   const today = startOfToday()
-  const minDate = addDays(today, 0)
+  const minDate = addDays(today, minOffsetDays)
   const dateFormat = 'yyyy/M/d'
 
   const hasValue = !!(range?.from && range?.to)

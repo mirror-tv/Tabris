@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 
-import { format, formatISO, parseISO } from 'date-fns'
+import { addDays, format, formatISO, parseISO, startOfToday } from 'date-fns'
 import { DateRange } from 'react-day-picker'
 
 import ImageUploadField from './image-upload-field'
@@ -81,6 +81,8 @@ const adNameLabelId = 'ad-name-label'
 const adText1LabelId = 'ad-text1-label'
 const adText2LabelId = 'ad-text2-label'
 
+const SCHEDULE_MIN_OFFSET_DAYS = 7
+
 export default function UploadTemplate({
   pageTitle,
   onSubmit,
@@ -126,6 +128,15 @@ export default function UploadTemplate({
 
     setErrors({})
     setSelectedOrder(currentOrder)
+
+    // Determine field editability and form value depending on the order state
+    if (
+      currentOrder?.state === ORDER_STATE.PENDING_UPLOAD // upload mode
+    ) {
+      setFormState(initialFormState)
+      setFields(initialFieldsEditability)
+      return
+    }
 
     const image = currentOrder.image
     const photoData =
@@ -196,8 +207,13 @@ export default function UploadTemplate({
 
     if (fields.scheduleEditable && (!adRange?.from || !adRange?.to)) {
       newErrors.adRange = '請選擇完整的排播起訖日期'
+    } else {
+      const minAllowedDate = addDays(startOfToday(), SCHEDULE_MIN_OFFSET_DAYS)
+      if (adRange!.from! < minAllowedDate) {
+        newErrors.adRange = `排播起始日須在 ${SCHEDULE_MIN_OFFSET_DAYS} 天後`
+      }
     }
-
+    
     if (fields.imageEditable && !adImage) {
       newErrors.adImage = '請上傳圖片檔案'
     }
@@ -303,6 +319,7 @@ export default function UploadTemplate({
                       }
                       error={errors.adRange}
                       disabled={!fields.scheduleEditable}
+                      minOffsetDays={SCHEDULE_MIN_OFFSET_DAYS}
                     />
                   </div>
 
@@ -396,7 +413,7 @@ export default function UploadTemplate({
           open={isDialogOpen}
           onOpenChange={setIsDialogOpen}
           previewData={previewData}
-          onConfirm={()=>uploadData && onSubmit(uploadData)}
+          onConfirm={() => uploadData && onSubmit(uploadData)}
         />
       )}
     </>
