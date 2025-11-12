@@ -224,27 +224,6 @@ export default function AmpPage({
     <html lang="zh-Hant" amp="">
       <head>
         <meta charSet="utf-8" />
-        <meta
-          name="viewport"
-          content="width=device-width,minimum-scale=1,initial-scale=1"
-        />
-        <script async src="https://cdn.ampproject.org/v0.js"></script>
-        <link rel="canonical" href={pageUrl} />
-        {/* Google Tag Manager */}
-        <amp-analytics
-          config={`https://www.googletagmanager.com/amp.json?id=${GTM_ID}`}
-          data-credentials="include"
-        ></amp-analytics>
-        <script
-          async
-          custom-element="amp-analytics"
-          src="https://cdn.ampproject.org/v0/amp-analytics-0.1.js"
-        ></script>
-        <script
-          async
-          custom-element="amp-ad"
-          src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"
-        ></script>
         <style
           amp-custom=""
           dangerouslySetInnerHTML={{
@@ -394,6 +373,27 @@ export default function AmpPage({
         `,
           }}
         />
+        <meta
+          name="viewport"
+          content="width=device-width,minimum-scale=1,initial-scale=1"
+        />
+        <script async src="https://cdn.ampproject.org/v0.js"></script>
+        <link rel="canonical" href={pageUrl} />
+        {/* Google Tag Manager */}
+        <amp-analytics
+          config={`https://www.googletagmanager.com/amp.json?id=${GTM_ID}`}
+          data-credentials="include"
+        ></amp-analytics>
+        <script
+          async
+          custom-element="amp-analytics"
+          src="https://cdn.ampproject.org/v0/amp-analytics-0.1.js"
+        ></script>
+        <script
+          async
+          custom-element="amp-ad"
+          src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"
+        ></script>
         {headContent}
       </head>
       <body>
