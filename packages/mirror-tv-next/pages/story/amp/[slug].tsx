@@ -240,6 +240,11 @@ export default function AmpPage({
           custom-element="amp-analytics"
           src="https://cdn.ampproject.org/v0/amp-analytics-0.1.js"
         ></script>
+        <script
+          async
+          custom-element="amp-ad"
+          src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"
+        ></script>
         <style
           amp-custom=""
           dangerouslySetInnerHTML={{
