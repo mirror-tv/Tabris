@@ -5,6 +5,7 @@ import {
   getNextState,
   MAX_IMAGE_FILE_SIZE,
   OrderState,
+  ORDER_STATE,
 } from '@/constants'
 import { deletePhotoMutation } from '@/graphql/delete/photo'
 import {
@@ -12,6 +13,7 @@ import {
   updateOrderForUploadSubmit,
 } from '@/graphql/mutations/order'
 import { uploadImageMutation } from '@/graphql/mutations/photo'
+import { getAddonOrdersQuery } from '@/graphql/queries/addon-orders'
 import { getOrderImageQuery } from '@/graphql/queries/photo'
 import { ApiResponse } from '@/types'
 import { getClient } from '@/utils/apollo-client'
@@ -241,6 +243,93 @@ export async function POST(req: NextRequest) {
         { success: false, message: 'Missing currentState in payload.' },
         { status: 400 }
       )
+    }
+
+    if (currentState === ORDER_STATE.PENDING_QUOTE_CONFIRMATION) {
+      const { data: currentOrderData, errors: currentOrderErrors } =
+        await client.query({
+          query: getAddonOrdersQuery,
+          variables: {
+            where: {
+              orderNumber: { equals: orderNumber },
+              member: { id: { equals: currentUser.memberId } },
+            },
+          },
+          fetchPolicy: 'no-cache',
+        })
+
+      if (currentOrderErrors?.length) {
+        const message = currentOrderErrors.map((e) => e.message).join(', ')
+        createErrorLogger('Failed to fetch current order for addon check')(
+          new Error(message)
+        )
+        return NextResponse.json<ApiResponse>(
+          { success: false, message },
+          { status: 500 }
+        )
+      }
+
+      const currentOrder = currentOrderData?.orders?.[0]
+      if (!currentOrder) {
+        return NextResponse.json<ApiResponse>(
+          { success: false, message: 'Current order not found.' },
+          { status: 404 }
+        )
+      }
+
+      const isUrgent = updateData.isUrgent ?? currentOrder.isUrgent ?? false
+
+      type AddonWhereConditions = {
+        member: { id: { equals: string } }
+        needsModification: { equals: boolean }
+        isUrgent: { equals: boolean }
+        relatedOrderBy: { none: Record<string, never> }
+        OR?: Array<{ price: { equals: number } }>
+      }
+
+      const addonWhereConditions: AddonWhereConditions = {
+        member: { id: { equals: currentUser.memberId } },
+        needsModification: { equals: true },
+        isUrgent: { equals: isUrgent },
+        relatedOrderBy: { none: {} },
+      }
+
+      if (currentOrder.isReviewed === true) {
+        addonWhereConditions.OR = [
+          { price: { equals: 1600 } },
+          { price: { equals: 600 } },
+        ]
+      }
+
+      const { data: addonData, errors: addonErrors } = await client.query({
+        query: getAddonOrdersQuery,
+        variables: {
+          where: addonWhereConditions,
+        },
+        fetchPolicy: 'no-cache',
+      })
+
+      if (addonErrors?.length) {
+        const message = addonErrors.map((e) => e.message).join(', ')
+        createErrorLogger('Failed to check addon orders')(new Error(message))
+        return NextResponse.json<ApiResponse>(
+          { success: false, message },
+          { status: 500 }
+        )
+      }
+
+      if (!addonData?.orders || addonData.orders.length === 0) {
+        return NextResponse.json<ApiResponse>(
+          {
+            success: false,
+            message: 'NO_ADDON_ORDER_AVAILABLE',
+            data: {
+              reason: '沒有符合條件的加購訂單。請先購買加購訂單才能修改此訂單。',
+            },
+          },
+          { status: 400 }
+        )
+      }
     }
 
     const nextState = getNextState(currentState as OrderState)

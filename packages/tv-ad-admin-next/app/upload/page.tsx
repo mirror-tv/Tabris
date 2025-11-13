@@ -92,6 +92,14 @@ export default function UploadPage() {
       const payload: ApiResponse = await res.json()
 
       if (!res.ok || !payload?.success) {
+        if (payload?.message === 'NO_ADDON_ORDER_AVAILABLE') {
+          const errorData = payload?.data as { reason?: string } | undefined
+          const reason =
+            errorData?.reason ||
+            '沒有符合條件的加購訂單。請先購買加購訂單才能修改此訂單。'
+          alert(reason)
+          return
+        }
         throw new Error(payload?.message || 'Upload failed')
       }
 
