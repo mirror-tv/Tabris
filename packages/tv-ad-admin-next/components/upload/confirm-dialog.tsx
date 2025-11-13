@@ -25,6 +25,7 @@ export type PreviewData = {
     to: string
   }
   adImageName: string
+  isUrgent?: boolean
 }
 
 type ConfirmDialogProps = {
@@ -42,7 +43,7 @@ export default function ConfirmDialog({
 }: ConfirmDialogProps) {
   const [isUploading, setIsUploading] = useState(false)
 
-  const { orderNumber, adName, adRange, adText1, adText2, adImageName } =
+  const { orderNumber, adName, adRange, adText1, adText2, adImageName, isUrgent } =
     previewData
 
   async function handleConfirm() {
@@ -69,6 +70,9 @@ export default function ConfirmDialog({
 
         <div className="space-y-1 rounded-lg bg-gray-2 p-3">
           <InfoRow label="訂單編號：">{orderNumber}</InfoRow>
+          {isUrgent !== undefined && (
+            <InfoRow label="這是急件訂單：">{isUrgent ? '是' : '否'}</InfoRow>
+          )}
           <InfoRow label="廣告名稱：">{adName}</InfoRow>
           <InfoRow label="排播日期：">
             {`${adRange.from} - ${adRange.to}`}

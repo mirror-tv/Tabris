@@ -56,6 +56,7 @@ export async function POST(req: NextRequest) {
         | string
         | null
       const scheduleEndDate = formData.get('scheduleEndDate') as string | null
+      const isUrgent = formData.get('isUrgent') as string | null
       const file = formData.get('file') as File | null
 
       // --- Step 1-1. Validate order number presence ---
@@ -184,6 +185,7 @@ export async function POST(req: NextRequest) {
         ...(paragraphTwo && { paragraphTwo }),
         ...(scheduleStartDate && { scheduleStartDate }),
         ...(scheduleEndDate && { scheduleEndDate }),
+        ...(isUrgent && { isUrgent: isUrgent === 'true' }),
         ...(imageId && { image: { connect: { id: imageId } } }),
       }
 

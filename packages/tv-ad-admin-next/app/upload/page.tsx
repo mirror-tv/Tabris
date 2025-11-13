@@ -71,6 +71,8 @@ export default function UploadPage() {
         formData.append('scheduleStartDate', data.scheduleStartDate)
       if ('scheduleEndDate' in data && data.scheduleEndDate)
         formData.append('scheduleEndDate', data.scheduleEndDate)
+      if ('isUrgent' in data && data.isUrgent !== undefined)
+        formData.append('isUrgent', String(data.isUrgent))
 
       // Attach image file if present
       if ('image' in data && data.image?.data) {

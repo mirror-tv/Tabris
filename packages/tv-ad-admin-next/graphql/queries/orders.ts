@@ -131,6 +131,7 @@ export type OrderRecordForUploadQuery = Pick<
   | 'paragraphTwo'
   | 'image'
   | 'state'
+  | 'isUrgent'
 > & {
   orderNumber: string
 }
@@ -163,6 +164,7 @@ export const getOrdersForUpload = gql`
         }
       }
       state
+      isUrgent
     }
   }
 `

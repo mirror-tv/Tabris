@@ -42,6 +42,7 @@ export type FormState = {
   adImage:
     | (Pick<PhotoSchema, 'id' | 'name' | 'url'> & { data: File | null })
     | null
+  isUrgent: boolean
 }
 
 type FieldEditability = {
@@ -65,6 +66,7 @@ const initialFormState: FormState = {
   adText2: '',
   adRange: undefined,
   adImage: null,
+  isUrgent: false,
 }
 
 const initialFieldsEditability: FieldEditability = {
@@ -153,6 +155,7 @@ export default function UploadTemplate({
       adRange:
         startDate && endDate ? { from: startDate, to: endDate } : undefined,
       adImage: photoData,
+      isUrgent: currentOrder.isUrgent ?? false,
     })
 
     setFields(initialFieldsEditability)
@@ -212,6 +215,7 @@ export default function UploadTemplate({
           scheduleEndDate: formatISO(adRange.to),
         }),
       ...(fields.imageEditable && adImage && { image: { data: adImage.data } }),
+      ...(mode === 'reupload' && { isUrgent: formState.isUrgent }),
     }
 
     // Build dialog preview data (for UI only)
@@ -225,6 +229,7 @@ export default function UploadTemplate({
         from: format(adRange!.from!, 'yyyy/MM/dd'),
         to: format(adRange!.to!, 'yyyy/MM/dd'),
       },
+      ...(mode === 'reupload' && { isUrgent: formState.isUrgent }),
     }
 
     setPreviewData(dialogPreviewData)
@@ -249,6 +254,29 @@ export default function UploadTemplate({
                 error={errors.order}
                 onSelect={handleOrderSelect}
               />
+
+              {!!selectedOrder && mode === 'reupload' && (
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="isUrgent"
+                    checked={formState.isUrgent}
+                    onChange={(e) =>
+                      setFormState((prev) => ({
+                        ...prev,
+                        isUrgent: e.target.checked,
+                      }))
+                    }
+                    className="h-4 w-4 rounded border-gray-4 text-blue-6 focus:ring-2 focus:ring-blue-6 focus:ring-offset-2"
+                  />
+                  <label
+                    htmlFor="isUrgent"
+                    className="cursor-pointer text-sm font-medium text-text-primary"
+                  >
+                    這是急件訂單
+                  </label>
+                </div>
+              )}
 
               {!!selectedOrder && (
                 <>
