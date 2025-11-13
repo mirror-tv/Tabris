@@ -1,4 +1,5 @@
 import { ProgressSteps } from './progress-steps'
+import { StateBadge } from '../custom-ui/state-badge'
 
 import { type OrderRecordForOrderNumber } from '@/graphql/queries/orders'
 import { formatTaiwanDate } from '@/utils/date'
@@ -41,6 +42,7 @@ export function OrderState({ order, className = '' }: OrderStateProps) {
 
           <div className="mt-6 border-t border-border-default pt-6 md:mt-0 md:flex-1 md:border-t-0 md:pt-0 xl:mt-6 xl:border-t xl:pt-6">
             <ProgressSteps currentStatus={order.state} />
+            {order.isUrgent && <StateBadge className="mt-2" state="urgent" />}
           </div>
         </div>
       </div>

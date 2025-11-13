@@ -185,7 +185,7 @@ export function OrderActions({ order, className = '' }: OrderActionsProps) {
   }
 
   const handleModifyClick = () => {
-    router.push(`/order/edit-request/${order.orderNumber}`)
+    router.push(`/edit-request/${order.orderNumber}`)
   }
 
   const actionContent = useMemo(() => {

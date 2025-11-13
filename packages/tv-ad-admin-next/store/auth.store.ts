@@ -53,21 +53,19 @@ export const useAuthStore = create<AuthStore>()(
       },
 
       logout: async () => {
+        set({
+          ...initialState,
+          isInitialized: true,
+        })
         try {
-          // 呼叫登出 API（清除 cookie）
           await fetch('/api/auth/logout', {
             method: 'POST',
             credentials: 'include',
+            keepalive: true, // 確保請求在頁面關閉後仍能完成
           })
         } catch (error) {
           console.error('登出 API 錯誤:', error)
-        } finally {
-          // 即使 API 失敗，也清除 localStorage 中的使用者資訊
-          // 清除 store 狀態
-          set({
-            ...initialState,
-            isInitialized: true,
-          })
+          // API 錯誤不影響登出流程，因為本地狀態已清除
         }
       },
       // 檢查認證狀態（從 API 獲取當前使用者）
@@ -114,18 +112,32 @@ export const useAuthStore = create<AuthStore>()(
       }),
       // hydration 後需要重新驗證 token（因為 cookie 才是真實來源）
       onRehydrateStorage: () => (state) => {
-        // hydration 後，如果從 localStorage 恢復了使用者資訊，仍需要驗證
-        // 因為 cookie 可能已過期
         // 注意：onRehydrateStorage 的回調不支援 async，所以不 await
-        // checkAuth 會自己管理狀態，包括設置 isInitialized
-        if (state?.isAuthenticated && typeof window !== 'undefined') {
-          // 在開始驗證前，先設置 loading 狀態，避免畫面閃爍
-          state.setLoading(true)
-          // 非同步執行驗證（不 await，因為 onRehydrateStorage 不支援 async）
-          // checkAuth 會自動設置 isInitialized 和 loading 狀態
-          state.checkAuth()
+        if (typeof window !== 'undefined') {
+          // 如果 localStorage 顯示未登入，但 cookie 可能還存在（登出時沒清乾淨）
+          // 清除可能的殘留 cookie
+          if (!state?.isAuthenticated) {
+            fetch('/api/auth/logout', {
+              method: 'POST',
+              credentials: 'include',
+              keepalive: true,
+            }).catch(() => {
+              // 忽略錯誤，因為可能 cookie 已經不存在了
+            })
+            if (state) {
+              state.setLoading(false)
+              useAuthStore.setState({ isInitialized: true })
+            }
+          } else {
+            // 如果 localStorage 顯示已登入，需要驗證 cookie 的真實狀態
+            // 在開始驗證前，先設置 loading 狀態，避免畫面閃爍
+            state?.setLoading(true)
+            // 非同步執行驗證（不 await，因為 onRehydrateStorage 不支援 async）
+            // checkAuth 會自動設置 isInitialized 和 loading 狀態
+            state?.checkAuth()
+          }
         } else {
-          // 如果沒有使用者資訊，直接設置為已初始化
+          // 如果沒有 window 對象，直接設置為已初始化
           if (state) {
             useAuthStore.setState({ isInitialized: true })
           }

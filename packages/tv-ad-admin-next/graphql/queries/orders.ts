@@ -14,6 +14,7 @@ export type OrderRecordForList = Pick<
   | 'scheduleEndDateString'
   | 'createdAt'
   | 'updatedAt'
+  | 'isUrgent'
 > & {
   relatedOrder?: { id: OrderSchema['id'] }[]
 }
@@ -32,6 +33,7 @@ export const getOrdersQuery = gql`
       relatedOrder {
         id
       }
+      isUrgent
     }
   }
 `
@@ -72,6 +74,7 @@ export type OrderRecordForOrderNumber = Pick<
   | 'demoImage'
   | 'videoDuration'
   | 'scheduleConfirmDeadline'
+  | 'isUrgent'
 >
 
 export const getOrdersByOrderNumberQuery = gql`
@@ -89,6 +92,7 @@ export const getOrdersByOrderNumberQuery = gql`
       createdAt
       updatedAt
       videoDuration
+      isUrgent
       attachment {
         id
         url

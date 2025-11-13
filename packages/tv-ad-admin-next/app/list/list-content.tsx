@@ -28,19 +28,15 @@ export default function ListContent({
   const filteredOrders = useMemo(() => {
     return initialOrders
       .map((group) => {
-        // 先篩選狀態
         if (orderState !== 'all') {
           group = group.filter((order) => order.state === orderState)
         }
-
-        // 再篩選關鍵字
         if (searchKeyword) {
           const keyword = searchKeyword.toLowerCase()
           group = group.filter((order) =>
             order.id.toLowerCase().includes(keyword)
           )
         }
-
         return group
       })
       .filter((group) => group.length > 0)
