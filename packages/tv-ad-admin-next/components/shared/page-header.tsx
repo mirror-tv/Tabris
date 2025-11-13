@@ -55,13 +55,19 @@ export default function PageHeader({
           'm-auto flex w-full items-center',
           layout.maxWidthResponsive,
           isCentered && 'justify-center',
-          isSpread && 'justify-between'
+          (isSpread || isDefault) && 'justify-between'
         )}
       >
         {isDefault && (
           <>
-            <ArrowButton />
-            <Title>{title}</Title>
+            <div className="flex items-center gap-2">
+              <ArrowButton />
+              <Title>{title}</Title>
+            </div>
+            <Button variant="outline" intent="secondary" onClick={handleLogout}>
+              <LogoutIcon className="size-4" />
+              登出
+            </Button>
           </>
         )}
         {isCentered && (
