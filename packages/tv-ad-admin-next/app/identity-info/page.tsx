@@ -1,9 +1,10 @@
 'use client'
 
-import { ReactNode, useState } from 'react'
+import { ChangeEvent, ReactNode, useState } from 'react'
 
 import { CustomInput } from '@/components/custom-ui/custom-input'
 import { LabeledField } from '@/components/custom-ui/labeled-field'
+import { validateTaiwanId } from '@/components/identity-info/validation'
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
 import { Button } from '@/components/ui/button'
@@ -16,35 +17,6 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 
-// Taiwan ID validation
-function validateTaiwanId(id: string): boolean {
-  const idPattern = /^[A-Z][12]\d{8}$/
-  if (!idPattern.test(id)) return false
-
-  const regionLetterMapping = 'ABCDEFGHJKLMNPQRSTUVXYWZIO'
-  const firstLetter = id[0]
-  const regionIndex = regionLetterMapping.indexOf(firstLetter)
-  if (regionIndex === -1) return false
-
-  const regionNumericCode = regionIndex + 10
-  const regionCodeDigits = [
-    Math.floor(regionNumericCode / 10),
-    regionNumericCode % 10,
-  ]
-  const idNumberDigits = id.slice(1).split('').map(Number)
-
-  const allDigits = [...regionCodeDigits, ...idNumberDigits]
-
-  const weightFactors = [1, 9, 8, 7, 6, 5, 4, 3, 2, 1, 1]
-
-  const weightedSum = allDigits.reduce(
-    (sum, digit, index) => sum + digit * weightFactors[index],
-    0
-  )
-
-  return weightedSum % 10 === 0
-}
-
 // ===== Label / Input Element IDs =====
 const idLabelId = 'id-number-label'
 const addressLabelId = 'address-label'
@@ -56,11 +28,20 @@ export default function IdentityInfo() {
   const [address, setAddress] = useState('')
   const [errors, setErrors] = useState<Record<string, string>>({})
 
+  function handleValueChange(e: ChangeEvent<HTMLInputElement>) {
+    let value = e.target.value
+    // Ensure first letter is uppercase and others stay as entered
+    if (value.length > 0) {
+      const firstChar = value[0].toUpperCase()
+      value = firstChar + value.slice(1)
+    }
+    setIdNumber(value)
+  }
+
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
     const newErrors: Record<string, string> = {}
-
     if (!idNumber.trim()) newErrors.idNumber = '請輸入身分證字號'
     else if (!validateTaiwanId(idNumber.trim().toUpperCase()))
       newErrors.idNumber = '身分證字號格式不正確'
@@ -95,7 +76,7 @@ export default function IdentityInfo() {
                   placeholder="A012345678"
                   value={idNumber}
                   maxLength={10}
-                  onChange={(e) => setIdNumber(e.target.value.toUpperCase())}
+                  onChange={handleValueChange}
                   error={errors.idNumber}
                   errorMessage={errors.idNumber}
                 />
