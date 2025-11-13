@@ -31,6 +31,7 @@ export async function GET() {
       variables: {
         where: {
           member: { id: { equals: currentUser.memberId } },
+          needsModification: { equals: false },
           OR: [
             { state: { equals: ORDER_STATE.PENDING_UPLOAD } },
             { state: { equals: ORDER_STATE.PENDING_QUOTE_CONFIRMATION } },
