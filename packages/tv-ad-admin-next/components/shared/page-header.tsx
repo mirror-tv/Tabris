@@ -1,7 +1,6 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import { useState } from 'react'
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -24,24 +23,24 @@ export default function PageHeader({
   title,
   variant = 'default',
 }: PageHeaderProps) {
-  const router = useRouter()
   const { logout } = useAuthStore()
-  const [isLoggingOut, setIsLoggingOut] = useState(false)
 
   const isDefault = variant === 'default'
   const isCentered = variant === 'centered'
   const isSpread = variant === 'spread'
 
   const handleLogout = async () => {
-    setIsLoggingOut(true)
     try {
-      // 使用 store 的 logout 方法（會清除 store 和 cookie）
-      await logout()
-      router.push('/login')
+      const logoutPromise = logout()
+      const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 2000))
+
+      await Promise.race([logoutPromise, timeoutPromise])
     } catch (error) {
-      console.error('登出失敗:', error)
-      setIsLoggingOut(false)
+      console.error('登出 API 錯誤:', error)
     }
+
+    alert('登出成功')
+    window.location.href = '/login'
   }
 
   return (
@@ -74,14 +73,9 @@ export default function PageHeader({
           <>
             <Logo className="hidden md:block" />
             <Title>{title}</Title>
-            <Button
-              variant="outline"
-              intent="secondary"
-              onClick={handleLogout}
-              disabled={isLoggingOut}
-            >
+            <Button variant="outline" intent="secondary" onClick={handleLogout}>
               <LogoutIcon className="size-4" />
-              {isLoggingOut ? '登出中...' : '登出'}
+              登出
             </Button>
           </>
         )}
