@@ -6,6 +6,7 @@ import { format } from 'date-fns'
 import { notFound } from 'next/navigation'
 
 import { CustomInput } from '@/components/custom-ui/custom-input'
+import { DotLoader } from '@/components/custom-ui/dot-loader'
 import { Badge, badgeVariants } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -272,6 +273,13 @@ export default function Demo() {
             <Spinner className="size-4" />
             <span>Loading...</span>
           </div>
+        </div>
+        <div className="flex flex-col gap-4">
+          <DotLoader /> {/* default 3 dots */}
+          <DotLoader count={5} /> {/* five dots */}
+          <DotLoader className="text-brand-primary" /> {/* brand color */}
+          <DotLoader dotClassName="h-3 w-3" /> {/* larger dots */}
+          <DotLoader intervalMs={300} /> {/* slower sequence */}
         </div>
       </section>
 
