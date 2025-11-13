@@ -146,7 +146,8 @@ export function OrderActions({ order, className = '' }: OrderActionsProps) {
   const [isConfirming, setIsConfirming] = useState(false)
   const router = useRouter()
   const handleUploadClick = async () => {
-    router.push(`/order/re-upload/${order.orderNumber}`)
+    // TODO: add order number to query params
+    router.push(`/order/upload`)
   }
 
   const handleConfirmClick = async () => {
