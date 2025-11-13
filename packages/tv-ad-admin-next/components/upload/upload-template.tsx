@@ -44,14 +44,13 @@ export type FormState = {
     | null
 }
 
-type FieldEditability = Pick<
-  OrderRecordForUploadQuery,
-  | 'nameEditable'
-  | 'scheduleEditable'
-  | 'paragraphOneEditable'
-  | 'paragraphTwoEditable'
-  | 'imageEditable'
->
+type FieldEditability = {
+  nameEditable: boolean
+  scheduleEditable: boolean
+  paragraphOneEditable: boolean
+  paragraphTwoEditable: boolean
+  imageEditable: boolean
+}
 
 type UploadTemplateProps = {
   pageTitle: string
@@ -156,21 +155,7 @@ export default function UploadTemplate({
       adImage: photoData,
     })
 
-    const {
-      nameEditable,
-      scheduleEditable,
-      paragraphOneEditable,
-      paragraphTwoEditable,
-      imageEditable,
-    } = currentOrder
-
-    setFields({
-      nameEditable,
-      scheduleEditable,
-      paragraphOneEditable,
-      paragraphTwoEditable,
-      imageEditable,
-    })
+    setFields(initialFieldsEditability)
   }
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {

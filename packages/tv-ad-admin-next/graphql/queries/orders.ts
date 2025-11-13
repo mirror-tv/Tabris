@@ -122,19 +122,14 @@ export type OrderRecordForUploadQuery = Pick<
   | 'id'
   | 'name'
   | 'member'
-  | 'nameEditable'
   | 'scheduleStartDate'
   | 'scheduleEndDate'
   | 'scheduleStartDateString'
   | 'scheduleEndDateString'
   | 'schedule'
-  | 'scheduleEditable'
   | 'paragraphOne'
-  | 'paragraphOneEditable'
   | 'paragraphTwo'
-  | 'paragraphTwoEditable'
   | 'image'
-  | 'imageEditable'
   | 'state'
 > & {
   orderNumber: string
@@ -152,17 +147,13 @@ export const getOrdersForUpload = gql`
       id
       orderNumber
       name
-      nameEditable
       member {
         id
       }
       scheduleStartDate
       scheduleEndDate
-      scheduleEditable
       paragraphOne
-      paragraphOneEditable
       paragraphTwo
-      paragraphTwoEditable
       image {
         id
         url
@@ -171,7 +162,6 @@ export const getOrdersForUpload = gql`
           extension
         }
       }
-      imageEditable
       state
     }
   }

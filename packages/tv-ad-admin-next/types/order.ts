@@ -27,12 +27,6 @@ export type OrderSchema = {
   createdAt: string | null
   updatedAt: string | null
 
-  nameEditable?: boolean
-  scheduleEditable?: boolean
-  paragraphOneEditable?: boolean
-  paragraphTwoEditable?: boolean
-  imageEditable?: boolean
-
   price?: number | null
   videoDuration?: number | null
   isUrgent?: boolean | null
