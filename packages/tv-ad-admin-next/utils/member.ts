@@ -20,6 +20,8 @@ export type MemberData = {
   name?: string
   mobile?: string
   state?: string
+  nationalId?: string | null
+  residentialAddress?: string | null
 }
 
 /**

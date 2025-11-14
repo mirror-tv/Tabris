@@ -11,7 +11,41 @@ import { verifyToken } from '@/utils/auth'
 
 // 公開 route（不需要登入即可訪問）
 const publicRoutes = ['/login']
-const publicApiRoutes = ['/api/auth/send-otp', '/api/auth/verify-otp']
+const publicApiRoutes = [
+  '/api/auth/send-otp',
+  '/api/auth/verify-otp',
+  '/api/auth/me', // 允許 middleware 內部調用
+  '/api/member/identity-info',
+]
+
+// 通過內部 API 獲取用戶資訊（包含 hasIdentified）
+// 注意：在 Edge Runtime 中無法直接使用 GraphQL，因此使用內部 API 調用
+const getUserWithIdentity = async (
+  baseUrl: string,
+  cookie: string
+): Promise<{ hasIdentified?: boolean } | null> => {
+  try {
+    const response = await fetch(`${baseUrl}/api/auth/me`, {
+      method: 'GET',
+      headers: {
+        cookie,
+      },
+    })
+
+    if (!response.ok) {
+      return null
+    }
+
+    const data = await response.json()
+    if (data.success && data.user) {
+      return { hasIdentified: data.user.hasIdentified }
+    }
+    return null
+  } catch (error) {
+    console.error('Failed to fetch user identity:', error)
+    return null
+  }
+}
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -66,7 +100,46 @@ export async function middleware(request: NextRequest) {
     return response
   }
 
-  // 如果已登入且訪問登入頁，重定向到首頁（dashboard）
+  if (!payload.memberId) {
+    if (pathname.startsWith('/api/')) {
+      return NextResponse.json(
+        { success: false, message: '缺少會員資訊' },
+        { status: 401 }
+      )
+    }
+    const loginUrl = new URL('/login', request.url)
+    loginUrl.searchParams.set('redirect', pathname)
+    return NextResponse.redirect(loginUrl)
+  }
+
+  try {
+    const baseUrl = request.nextUrl.origin
+    const cookie = request.headers.get('cookie') || ''
+    const userInfo = await getUserWithIdentity(baseUrl, cookie)
+
+    if (userInfo) {
+      const hasIdentified = userInfo.hasIdentified === true
+
+      if (hasIdentified && pathname === '/identity-info') {
+        return NextResponse.redirect(new URL('/', request.url))
+      }
+
+      if (!hasIdentified && pathname !== '/identity-info') {
+        if (pathname.startsWith('/api/')) {
+          return NextResponse.json(
+            { success: false, message: '請先完成身份驗證' },
+            { status: 403 }
+          )
+        }
+        const identityUrl = new URL('/identity-info', request.url)
+        identityUrl.searchParams.set('redirect', pathname)
+        return NextResponse.redirect(identityUrl)
+      }
+    }
+  } catch (error) {
+    console.error('Middleware: Failed to check member identity:', error)
+  }
+
   if (payload && pathname === '/login') {
     return NextResponse.redirect(new URL('/', request.url))
   }
