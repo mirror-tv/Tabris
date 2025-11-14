@@ -30,6 +30,8 @@ export type OrderSchema = {
   price?: number | null
   videoDuration?: number | null
   isUrgent?: boolean | null
+  needsModification?: boolean | null
+  isReviewed?: boolean | null
 }
 
 export type MemberSchema = {

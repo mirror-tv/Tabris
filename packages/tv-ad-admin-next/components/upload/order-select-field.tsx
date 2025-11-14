@@ -85,30 +85,36 @@ export default function OrderSelectField({
           />
         </SelectTrigger>
         <SelectContent>
-          {orderedSelectItems.map((item) =>
-            item.type === 'label' ? (
-              <SelectItem
-                key={item.label}
-                value={item.label!}
-                disabled
-                className={cn(
-                  'relative cursor-default text-sm text-gray-10 select-none',
-                  'flex items-center justify-center',
-                  "before:mr-2 before:flex-1 before:border-t before:border-gray-5 before:content-['']",
-                  "after:ml-2 after:flex-1 after:border-t after:border-gray-5 after:content-['']"
-                )}
-              >
-                {item.label}
-              </SelectItem>
-            ) : (
-              <SelectItem
-                key={item.order!.orderNumber}
-                value={item.order!.orderNumber}
-                className="cursor-pointer"
-              >
-                {item.order!.orderNumber}
-                {item.order!.name ? ` - ${item.order!.name}` : ' - 未命名'}
-              </SelectItem>
+          {orderedSelectItems.length === 0 ? (
+            <SelectItem value="no-orders" disabled className="cursor-default text-gray-7">
+              目前沒有可上傳或修改的訂單
+            </SelectItem>
+          ) : (
+            orderedSelectItems.map((item) =>
+              item.type === 'label' ? (
+                <SelectItem
+                  key={item.label}
+                  value={item.label!}
+                  disabled
+                  className={cn(
+                    'relative cursor-default text-sm text-gray-10 select-none',
+                    'flex items-center justify-center',
+                    "before:mr-2 before:flex-1 before:border-t before:border-gray-5 before:content-['']",
+                    "after:ml-2 after:flex-1 after:border-t after:border-gray-5 after:content-['']"
+                  )}
+                >
+                  {item.label}
+                </SelectItem>
+              ) : (
+                <SelectItem
+                  key={item.order!.orderNumber}
+                  value={item.order!.orderNumber}
+                  className="cursor-pointer"
+                >
+                  {item.order!.orderNumber}
+                  {item.order!.name ? ` - ${item.order!.name}` : ' - 未命名'}
+                </SelectItem>
+              )
             )
           )}
         </SelectContent>
