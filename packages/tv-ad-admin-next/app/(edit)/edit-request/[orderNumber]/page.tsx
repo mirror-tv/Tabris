@@ -93,7 +93,6 @@ export default function EditRequest({
     fetchEditRequest()
   }, [router, orderNumber])
 
-
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
@@ -120,6 +119,18 @@ export default function EditRequest({
       })
 
       if (!res.ok) throw new Error(`Response status: ${res.status}`)
+
+      // TODO: 應該要有根據寄信成功/失敗來顯示狀態或是避免前一支 API state 切換
+      await fetch('/api/edit-request/send-notify-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderNumber: orderData.orderNumber,
+          reason,
+          details,
+        }),
+      })
+
       setSubmitStatus('success')
     } catch (err) {
       console.error('Failed to submit edit request:', err)
