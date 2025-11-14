@@ -147,7 +147,7 @@ export function OrderActions({ order, className = '' }: OrderActionsProps) {
   const router = useRouter()
   const handleUploadClick = async () => {
     // TODO: add order number to query params
-    router.push(`/order/upload`)
+    router.push(`/upload`)
   }
 
   const handleConfirmClick = async () => {
