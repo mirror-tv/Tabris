@@ -61,15 +61,10 @@ export async function POST(
       mutation: updateOrderStateMutation,
       variables: {
         where: {
-          orderNumber: orderNumber,
+          orderNumber,
         },
         data: {
           state: nextState,
-          member: {
-            id: {
-              equals: user.memberId,
-            },
-          },
         },
       },
       errorPolicy: 'all',
@@ -89,9 +84,14 @@ export async function POST(
       )
     }
 
+    // 如果沒有更新到訂單，表示訂單不存在或不符合條件
+    if (!data?.updateOrder) {
+      return NextResponse.json({ error: 'Order not found' }, { status: 404 })
+    }
+
     return NextResponse.json({
       success: true,
-      order: data?.updateOrder,
+      order: data.updateOrder,
     })
   } catch (error) {
     createErrorLogger(`Failed to confirm order: ${orderNumber}`)(error)
