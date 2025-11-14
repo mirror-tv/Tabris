@@ -89,9 +89,6 @@ export default function IdentityInfo() {
         throw new Error(data.message || '更新失敗，請稍後再試')
       }
 
-      setIdNumber('')
-      setAddress('')
-
       await checkAuth()
     } catch (error) {
       console.error('更新身份資訊失敗:', error)
