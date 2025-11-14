@@ -28,6 +28,7 @@ export type UserPayload = {
   userId: string
   memberId: string // CMS member id（必填）
   email: string
+  hasIdentified?: boolean // 是否已完成身份驗證（有填寫 nationalId 和 residentialAddress）
 }
 
 export async function generateToken(payload: UserPayload): Promise<string> {

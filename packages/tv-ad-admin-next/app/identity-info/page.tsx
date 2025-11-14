@@ -4,7 +4,6 @@ import { ChangeEvent, ReactNode, useState } from 'react'
 
 import { CustomInput } from '@/components/custom-ui/custom-input'
 import { LabeledField } from '@/components/custom-ui/labeled-field'
-import { validateTaiwanId } from '@/components/identity-info/validation'
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
 import { Button } from '@/components/ui/button'
@@ -16,6 +15,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { useAuthStore } from '@/store/auth.store'
+import { validateTaiwanNationalId } from '@/utils/validation'
 
 // ===== Label / Input Element IDs =====
 const idLabelId = 'id-number-label'
@@ -27,6 +28,8 @@ export default function IdentityInfo() {
   const [idNumber, setIdNumber] = useState('')
   const [address, setAddress] = useState('')
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [isLoading, setIsLoading] = useState(false)
+  const { checkAuth } = useAuthStore()
 
   function handleValueChange(e: ChangeEvent<HTMLInputElement>) {
     let value = e.target.value
@@ -36,22 +39,62 @@ export default function IdentityInfo() {
       value = firstChar + value.slice(1)
     }
     setIdNumber(value)
+    // 清除該欄位的錯誤訊息
+    if (errors.idNumber) {
+      setErrors((prev) => ({ ...prev, idNumber: '' }))
+    }
   }
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function handleAddressChange(e: ChangeEvent<HTMLInputElement>) {
+    setAddress(e.target.value)
+    // 清除該欄位的錯誤訊息
+    if (errors.address) {
+      setErrors((prev) => ({ ...prev, address: '' }))
+    }
+  }
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
+    const trimmedIdNumber = idNumber.trim().toUpperCase()
+    const trimmedAddress = address.trim()
+
     const newErrors: Record<string, string> = {}
-    if (!idNumber.trim()) newErrors.idNumber = '請輸入身分證字號'
-    else if (!validateTaiwanId(idNumber.trim().toUpperCase()))
+    if (!trimmedIdNumber) newErrors.idNumber = '請輸入身分證字號'
+    else if (!validateTaiwanNationalId(trimmedIdNumber))
       newErrors.idNumber = '身分證字號格式不正確'
 
-    if (!address.trim()) newErrors.address = '請輸入完整戶籍地址'
+    if (!trimmedAddress) newErrors.address = '請輸入完整戶籍地址'
 
     setErrors(newErrors)
     if (Object.keys(newErrors).length > 0) return
 
-    console.log('Form submitted:', { idNumber, address })
+    setIsLoading(true)
+
+    try {
+      const response = await fetch('/api/member/identity-info', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          idNumber: trimmedIdNumber,
+          address: trimmedAddress,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || '更新失敗，請稍後再試')
+      }
+
+      await checkAuth()
+    } catch (error) {
+      console.error('更新身份資訊失敗:', error)
+    } finally {
+      setIsLoading(false)
+    }
   }
   return (
     <>
@@ -89,15 +132,20 @@ export default function IdentityInfo() {
                   type="text"
                   placeholder="請輸入完整地址"
                   value={address}
-                  onChange={(e) => setAddress(e.target.value)}
+                  onChange={handleAddressChange}
                   error={errors.address}
                   errorMessage={errors.address}
                 />
               </LabeledField>
             </CardContent>
             <CardFooter className="p-0">
-              <Button type="submit" size="lg" className="w-full">
-                送出
+              <Button
+                type="submit"
+                size="lg"
+                className="w-full"
+                disabled={isLoading}
+              >
+                {isLoading ? '送出中...' : '送出'}
               </Button>
             </CardFooter>
           </Card>

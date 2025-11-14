@@ -9,6 +9,8 @@ export const getMembersQuery = gql`
       name
       mobile
       state
+      nationalId
+      residentialAddress
     }
   }
 `

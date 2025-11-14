@@ -5,7 +5,8 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 
-import { verifyToken } from '@/utils/auth'
+import { verifyToken, type UserPayload } from '@/utils/auth'
+import { getMemberById } from '@/utils/member'
 
 export const dynamic = 'force-dynamic'
 
@@ -29,9 +30,18 @@ export async function GET(request: NextRequest) {
       )
     }
 
+    // 查詢 member 資料以判斷是否已完成身份驗證
+    const member = await getMemberById(user.memberId)
+    const hasIdentified = !!member?.nationalId && !!member?.residentialAddress
+
+    const userWithIdentified: UserPayload = {
+      ...user,
+      hasIdentified,
+    }
+
     return NextResponse.json({
       success: true,
-      user,
+      user: userWithIdentified,
     })
   } catch (error) {
     console.error('取得使用者資訊錯誤:', error)
