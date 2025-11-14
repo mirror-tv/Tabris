@@ -68,7 +68,7 @@ const ACTION_MAP: Record<string, ActionConfig> = {
     buttonClassName: '',
     helpText: '需要協助？',
     helpLinkText: '申請退款',
-    statusMessage: '請等待業務確認素材，如沒問題便會繼續製作影片。',
+    statusMessage: '影片製作中，請耐心等待完成通知',
   },
   [ORDER_STATE.PENDING_SCHEDULE]: {
     buttonText: null,
