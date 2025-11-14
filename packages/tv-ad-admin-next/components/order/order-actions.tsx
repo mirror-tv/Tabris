@@ -35,8 +35,6 @@ type ActionConfig = {
   buttonText: string | null
   buttonIcon: React.ReactElement | null
   buttonClassName: string
-  helpText: string
-  helpLinkText: string
   statusMessage: string | null
   secondaryButton?: {
     text: string
@@ -50,56 +48,43 @@ const ACTION_MAP: Record<string, ActionConfig> = {
     buttonText: '上傳素材',
     buttonIcon: <UploadIcon />,
     buttonClassName: 'bg-blue-6 text-white hover:bg-blue-7',
-    helpText: '需要協助？',
-    helpLinkText: '申請退款',
     statusMessage: null,
   },
   [ORDER_STATE.MATERIAL_UPLOADED]: {
     buttonText: null,
     buttonIcon: null,
     buttonClassName: '',
-    helpText: '需要協助？',
-    helpLinkText: '申請退款',
     statusMessage: '請等待業務確認素材，如沒問題便會繼續製作影片。',
   },
   [ORDER_STATE.VIDEO_PRODUCTION]: {
     buttonText: null,
     buttonIcon: null,
     buttonClassName: '',
-    helpText: '需要協助？',
-    helpLinkText: '申請退款',
     statusMessage: '影片製作中，請耐心等待完成通知',
   },
   [ORDER_STATE.PENDING_SCHEDULE]: {
     buttonText: null,
     buttonIcon: null,
     buttonClassName: '',
-    helpText: '需要協助？',
-    helpLinkText: '申請退款',
+
     statusMessage: '排播時間已設定，正在等待廣告播出。',
   },
   [ORDER_STATE.BROADCASTED]: {
     buttonText: null,
     buttonIcon: null,
     buttonClassName: '',
-    helpText: '需要協助？',
-    helpLinkText: '申請退款',
     statusMessage: '廣告已成功播出。',
   },
   [ORDER_STATE.PENDING_BROADCAST_DATE]: {
     buttonText: '設定排播日期',
     buttonIcon: <EditIcon />,
     buttonClassName: styles.primaryButton,
-    helpText: '需要協助？',
-    helpLinkText: '申請退款',
     statusMessage: null,
   },
   [ORDER_STATE.PENDING_CONFIRMATION]: {
     buttonText: '確認',
     buttonIcon: <DoneCircleIcon />,
     buttonClassName: styles.primaryButton,
-    helpText: '需要協助？',
-    helpLinkText: '申請退款',
     statusMessage: null,
     secondaryButton: {
       text: '提出修改',
@@ -111,32 +96,24 @@ const ACTION_MAP: Record<string, ActionConfig> = {
     buttonText: null,
     buttonIcon: null,
     buttonClassName: '',
-    helpText: '需要協助？',
-    helpLinkText: '申請退款',
     statusMessage: '本訂單已作廢。',
   },
   [ORDER_STATE.TRANSFERRED]: {
     buttonText: null,
     buttonIcon: null,
     buttonClassName: '',
-    helpText: '需要協助？',
-    helpLinkText: '申請退款',
     statusMessage: '此訂單已轉移至新訂單，請到新訂單進行操作。',
   },
   [ORDER_STATE.PENDING_QUOTE_CONFIRMATION]: {
     buttonText: null,
     buttonIcon: null,
     buttonClassName: '',
-    helpText: '需要協助？',
-    helpLinkText: '申請退款',
     statusMessage: '請至信箱確認修改報價並完成付款，以繼續製作廣告。',
   },
   [ORDER_STATE.MODIFICATION_REQUEST]: {
     buttonText: null,
     buttonIcon: null,
     buttonClassName: '',
-    helpText: '需要協助？',
-    helpLinkText: '申請退款',
     statusMessage: '修改要求已提出，等待業務回應。',
   },
 }
@@ -237,17 +214,18 @@ export function OrderActions({ order, className = '' }: OrderActionsProps) {
           <p className={styles.statusMessage}>{actionContent.statusMessage}</p>
         )}
         <div className={styles.helpContainer}>
-          <h6 className={styles.helpText}>{actionContent.helpText}</h6>
-          {actionContent.helpLinkText && (
+          <h6 className={styles.helpText}>
+            如需退款，請登入
             <Link
               className={styles.helpLink}
-              href="#"
+              href="https://mnews.oen.tw/"
               target="_blank"
               rel="noreferrer"
             >
-              {actionContent.helpLinkText}
+              應援平台
             </Link>
-          )}
+            ，查看我的訂單進行退款
+          </h6>
         </div>
       </div>
     </section>
