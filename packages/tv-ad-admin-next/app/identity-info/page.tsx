@@ -56,12 +56,15 @@ export default function IdentityInfo() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
+    const trimmedIdNumber = idNumber.trim().toUpperCase()
+    const trimmedAddress = address.trim()
+
     const newErrors: Record<string, string> = {}
-    if (!idNumber.trim()) newErrors.idNumber = '請輸入身分證字號'
-    else if (!validateTaiwanNationalId(idNumber.trim().toUpperCase()))
+    if (!trimmedIdNumber) newErrors.idNumber = '請輸入身分證字號'
+    else if (!validateTaiwanNationalId(trimmedIdNumber))
       newErrors.idNumber = '身分證字號格式不正確'
 
-    if (!address.trim()) newErrors.address = '請輸入完整戶籍地址'
+    if (!trimmedAddress) newErrors.address = '請輸入完整戶籍地址'
 
     setErrors(newErrors)
     if (Object.keys(newErrors).length > 0) return
@@ -75,8 +78,8 @@ export default function IdentityInfo() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          idNumber: idNumber.trim().toUpperCase(),
-          address: address.trim(),
+          idNumber: trimmedIdNumber,
+          address: trimmedAddress,
         }),
       })
 
@@ -86,11 +89,9 @@ export default function IdentityInfo() {
         throw new Error(data.message || '更新失敗，請稍後再試')
       }
 
-      // 清空表單
       setIdNumber('')
       setAddress('')
 
-      // 刷新認證狀態以更新 hasIdentified
       await checkAuth()
     } catch (error) {
       console.error('更新身份資訊失敗:', error)
