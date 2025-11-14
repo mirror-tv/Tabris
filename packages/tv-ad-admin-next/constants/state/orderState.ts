@@ -24,7 +24,7 @@ export const OrderStateMap = {
     progressColor: 'red',
   },
   [ORDER_STATE.MATERIAL_UPLOADED]: {
-    label: '已上傳檔案',
+    label: '素材已上傳',
     colors: COLOR_THEMES.label.yellow,
     progressColor: 'yellow',
   },
@@ -39,9 +39,9 @@ export const OrderStateMap = {
     progressColor: 'red',
   },
   [ORDER_STATE.PENDING_SCHEDULE]: {
-    label: '排播',
+    label: '待排播',
     colors: COLOR_THEMES.label.blue,
-    progressColor: 'green',
+    progressColor: 'blue',
   },
   [ORDER_STATE.BROADCASTED]: {
     label: '已播出',
@@ -112,9 +112,9 @@ export const getStatesByFlow = (flow: StateFlow): OrderState[] => {
     setTime: [
       ...basicFlow.slice(0, 3),
       ORDER_STATE.PENDING_BROADCAST_DATE,
-      ORDER_STATE.DATE_RESET,
       ORDER_STATE.PENDING_CONFIRMATION,
       ORDER_STATE.PENDING_SCHEDULE,
+      ORDER_STATE.DATE_RESET,
       ORDER_STATE.BROADCASTED,
     ],
     cancel: [ORDER_STATE.CANCELLED],
@@ -127,12 +127,10 @@ export const getCurrentFlow = (state: OrderState): StateFlow => {
   if (state === ORDER_STATE.CANCELLED) {
     return 'cancel'
   }
-  if (state === ORDER_STATE.TRANSFERRED) {
-    return 'transferred'
-  }
   if (
     state === ORDER_STATE.MODIFICATION_REQUEST ||
-    state === ORDER_STATE.PENDING_QUOTE_CONFIRMATION
+    state === ORDER_STATE.PENDING_QUOTE_CONFIRMATION ||
+    state === ORDER_STATE.TRANSFERRED
   ) {
     return 'edit'
   }
