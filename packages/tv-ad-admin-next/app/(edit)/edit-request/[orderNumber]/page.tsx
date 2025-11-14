@@ -20,6 +20,7 @@ import TriangleExclamationIcon from '@/public/icons/triangle-exclamation.svg'
 import { cn } from '@/utils'
 import { handleUnauthorized } from '@/utils/handle-unauthorized'
 
+
 const textareaStyle = [
   'w-full resize-none rounded-md bg-gray-2 p-3 placeholder:!text-text-tertiary placeholder:text-h6',
   layout.hoverBorder,
@@ -92,22 +93,38 @@ export default function EditRequest({
     fetchEditRequest()
   }, [router, orderNumber])
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
+
+    if (!orderData) {
+      setError({ reason: '訂單尚未載入完成' })
+      return
+    }
+
     const newError: typeof error = {}
     if (!reason.trim()) newError.reason = '請輸入修改原因'
     if (!details.trim()) newError.details = '請輸入修改詳情'
     setError(newError)
 
     if (Object.keys(newError).length > 0) return
-    // eslint-disable-next-line no-console
-    console.log({ reason, details })
 
-    // Demo alert to choose result
-    const isSuccess = window.confirm(
-      '是否要模擬「送出成功」？按「取消」則模擬失敗。'
-    )
-    setSubmitStatus(isSuccess ? 'success' : 'failure')
+    try {
+      const res = await fetch('/api/edit-request/order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          state: orderData.state,
+          orderNumber: orderData.orderNumber,
+        }),
+      })
+
+      if (!res.ok) throw new Error(`Response status: ${res.status}`)
+      setSubmitStatus('success')
+    } catch (err) {
+      console.error('Failed to submit edit request:', err)
+      setSubmitStatus('failure')
+    }
   }
 
   if (submitStatus === 'success') {
@@ -129,7 +146,6 @@ export default function EditRequest({
       onSubmit={handleSubmit}
       submitButtonName="送出修改請求"
       orderData={orderData}
-      // submitStatus={submitStatus}
     >
       <LabeledField
         id={reasonId}
