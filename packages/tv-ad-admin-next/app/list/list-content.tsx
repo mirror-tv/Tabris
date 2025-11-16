@@ -8,6 +8,7 @@ import { OrderTable } from '@/components/list/order-table'
 import { SearchAndFilter } from '@/components/list/search-and-filter'
 import { type OrderState } from '@/constants'
 import { type OrderRecordForList } from '@/graphql/queries/orders'
+import { normalizeOrderState } from '@/utils/state'
 
 export default function ListContent({
   initialOrders,
@@ -29,7 +30,10 @@ export default function ListContent({
     return initialOrders
       .map((group) => {
         if (orderState !== 'all') {
-          group = group.filter((order) => order.state === orderState)
+          group = group.filter((order) => {
+            const normalizedState = normalizeOrderState(order.state)
+            return normalizedState === orderState
+          })
         }
         if (searchKeyword) {
           const keyword = searchKeyword.toLowerCase()

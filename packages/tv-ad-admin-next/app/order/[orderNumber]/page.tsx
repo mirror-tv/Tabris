@@ -15,6 +15,7 @@ import PageMain from '@/components/shared/page-main'
 import { ORDER_STATE_CONFIG, ORDER_STYLES } from '@/constants'
 import { type OrderRecordForOrderNumber } from '@/graphql/queries/orders'
 import { handleUnauthorized } from '@/utils/handle-unauthorized'
+import { normalizeOrderState } from '@/utils/state'
 
 export default function OrderPage() {
   const params = useParams()
@@ -66,8 +67,9 @@ export default function OrderPage() {
 
   const shouldShowPreview = useMemo(() => {
     if (!order) return false
+    const normalizedState = normalizeOrderState(order.state)
     return ORDER_STATE_CONFIG.PREVIEW_REQUIRED_STATUSES.includes(
-      order.state as (typeof ORDER_STATE_CONFIG.PREVIEW_REQUIRED_STATUSES)[number]
+      normalizedState as (typeof ORDER_STATE_CONFIG.PREVIEW_REQUIRED_STATUSES)[number]
     )
   }, [order])
 

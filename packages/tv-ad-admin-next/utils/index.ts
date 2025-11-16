@@ -1,4 +1,5 @@
 import { type OrderState } from '../constants'
+import { normalizeOrderState } from './state'
 import { type OrderRecord } from '../mocks/mockData'
 
 function filterOrders(
@@ -12,7 +13,8 @@ function filterOrders(
       order.productName.toLowerCase().includes(searchKeyword.toLowerCase()) ||
       order.orderNumber.toLowerCase().includes(searchKeyword.toLowerCase())
 
-    const matchesStatus = state === 'all' ? true : order.state === state
+    const normalizedState = normalizeOrderState(order.state)
+    const matchesStatus = state === 'all' ? true : normalizedState === state
 
     return matchesKeyword && matchesStatus
   })
@@ -22,8 +24,8 @@ function getStateGroups(orders: OrderRecord[]) {
   const total = orders.length
   const stateCounts = orders.reduce(
     (acc, order) => {
-      const key = order.state as OrderState
-      acc[key] = (acc[key] || 0) + 1
+      const normalizedState = normalizeOrderState(order.state)
+      acc[normalizedState] = (acc[normalizedState] || 0) + 1
       return acc
     },
     {} as Partial<Record<OrderState, number>>

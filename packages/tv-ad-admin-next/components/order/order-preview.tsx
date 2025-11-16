@@ -7,6 +7,7 @@ import { Instructions } from '../shared/instructions'
 import { ORDER_STATE, ORDER_STYLES } from '@/constants'
 import { type OrderRecordForOrderNumber } from '@/graphql/queries/orders'
 import { formatTaiwanDate } from '@/utils/date'
+import { normalizeOrderState } from '@/utils/state'
 
 type OrderPreviewProps = {
   order: OrderRecordForOrderNumber
@@ -14,6 +15,7 @@ type OrderPreviewProps = {
 }
 
 export function OrderPreview({ order, className = '' }: OrderPreviewProps) {
+  const normalizedState = normalizeOrderState(order.state)
   const deadline = useMemo(() => {
     return order.scheduleConfirmDeadline
       ? formatTaiwanDate(order.scheduleConfirmDeadline)
@@ -26,14 +28,14 @@ export function OrderPreview({ order, className = '' }: OrderPreviewProps) {
       <ProductionPreview order={order} />
       <hr className="my-6 border-gray-3" />
       {order.attachment && <RelatedDocuments attachment={order.attachment} />}
-      {order.state === ORDER_STATE.PENDING_BROADCAST_DATE && (
+      {normalizedState === ORDER_STATE.PENDING_BROADCAST_DATE && (
         <Instructions
           wordings={[
             `由於您未在 ${deadline} 23:59前完成確認，原始排播日期已作廢，請重新設定`,
           ]}
         />
       )}
-      {order.state === ORDER_STATE.PENDING_CONFIRMATION && (
+      {normalizedState === ORDER_STATE.PENDING_CONFIRMATION && (
         <Instructions
           title="說明"
           wordings={[

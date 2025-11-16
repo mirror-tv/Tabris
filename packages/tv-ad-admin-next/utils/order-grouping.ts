@@ -1,4 +1,5 @@
 import { formatTaiwanDate } from './date'
+import { normalizeOrderState } from './state'
 
 import { OrderStateMap, ORDER_STATE } from '@/constants'
 import {
@@ -79,8 +80,10 @@ export function groupOrders(
 
       // 子訂單排序：非「已轉移」的排在前面，全部按 createdAt 從新到舊
       childOrders.sort((a, b) => {
-        const isTransferredA = a.state === ORDER_STATE.TRANSFERRED
-        const isTransferredB = b.state === ORDER_STATE.TRANSFERRED
+        const normalizedStateA = normalizeOrderState(a.state)
+        const normalizedStateB = normalizeOrderState(b.state)
+        const isTransferredA = normalizedStateA === ORDER_STATE.TRANSFERRED
+        const isTransferredB = normalizedStateB === ORDER_STATE.TRANSFERRED
 
         // 非「已轉移」的排在前面
         if (isTransferredA && !isTransferredB) return 1
@@ -114,7 +117,8 @@ export function getOrdersState(
 ): { state: keyof typeof OrderStateMap; count: number }[] {
   const stateCount = orders.reduce(
     (acc, order) => {
-      acc[order.state] = (acc[order.state] || 0) + 1
+      const normalizedState = normalizeOrderState(order.state)
+      acc[normalizedState] = (acc[normalizedState] || 0) + 1
       return acc
     },
     {} as Partial<Record<keyof typeof OrderStateMap, number>>
