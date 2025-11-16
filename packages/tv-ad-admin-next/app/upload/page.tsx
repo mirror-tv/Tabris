@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 import SubmitResult from '@/components/shared/submit-result'
 import UploadTemplate from '@/components/upload/upload-template'
@@ -17,9 +17,12 @@ const pageTitle = '上傳廣告素材'
 export default function UploadPage() {
   const { submitStatus, setSubmitStatus } = useSubmitStatus()
   const router = useRouter()
+  const searchParams = useSearchParams()
 
   const [orders, setOrders] = useState<OrderRecordForUploadQuery[]>([])
   const [loading, setLoading] = useState(true)
+
+  const orderNumberFromQuery = searchParams.get('orderNumber')
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -129,6 +132,7 @@ export default function UploadPage() {
       onSubmit={handleConfirmUpload}
       orders={orders}
       loading={loading}
+      initialOrderNumber={orderNumberFromQuery || undefined}
     />
   )
 }

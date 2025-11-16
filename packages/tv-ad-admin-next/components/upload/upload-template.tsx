@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { addDays, format, formatISO, parseISO, startOfToday } from 'date-fns'
 import { DateRange } from 'react-day-picker'
@@ -33,7 +33,6 @@ import TriangleExclamationIcon from '@/public/icons/triangle-exclamation.svg'
 import { PhotoSchema } from '@/types/photo'
 import { cn } from '@/utils'
 
-
 export type FormState = {
   adName: string
   adText1: string
@@ -58,6 +57,7 @@ type UploadTemplateProps = {
   onSubmit: (data: OrderRecordForUploadMutation) => void
   orders: OrderRecordForUploadQuery[]
   loading: boolean
+  initialOrderNumber?: string
 }
 
 const initialFormState: FormState = {
@@ -89,6 +89,7 @@ export default function UploadTemplate({
   onSubmit,
   orders,
   loading,
+  initialOrderNumber,
 }: UploadTemplateProps) {
   const [selectedOrder, setSelectedOrder] =
     useState<OrderRecordForUploadQuery | null>(null)
@@ -161,6 +162,19 @@ export default function UploadTemplate({
     setFields(initialFieldsEditability)
   }
 
+  // Auto-select order from query parameter
+  useEffect(() => {
+    if (initialOrderNumber && !loading && orders.length > 0 && !selectedOrder) {
+      const orderToSelect = orders.find(
+        (o) => o.orderNumber === initialOrderNumber
+      )
+      if (orderToSelect) {
+        handleOrderSelect(initialOrderNumber)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialOrderNumber, loading, orders, selectedOrder])
+
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
@@ -191,7 +205,7 @@ export default function UploadTemplate({
         newErrors.adRange = `排播起始日須在 ${SCHEDULE_MIN_OFFSET_DAYS} 天後`
       }
     }
-    
+
     if (fields.imageEditable && !adImage) {
       newErrors.adImage = '請上傳圖片檔案'
     }
@@ -253,6 +267,8 @@ export default function UploadTemplate({
                 loading={loading}
                 error={errors.order}
                 onSelect={handleOrderSelect}
+                value={selectedOrder?.orderNumber}
+                disabled={!!initialOrderNumber}
               />
 
               {!!selectedOrder && mode === 'reupload' && (

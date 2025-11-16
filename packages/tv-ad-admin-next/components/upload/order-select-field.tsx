@@ -21,6 +21,8 @@ type OrderSelectFieldProps = {
   loading: boolean
   error?: string
   onSelect: (orderNumber: string) => void
+  value?: string
+  disabled?: boolean
 }
 
 type SelectGroupItem =
@@ -34,6 +36,8 @@ export default function OrderSelectField({
   loading,
   error,
   onSelect,
+  value,
+  disabled = false,
 }: OrderSelectFieldProps) {
   const orderedSelectItems = useMemo(() => {
     const items: SelectGroupItem[] = []
@@ -69,7 +73,11 @@ export default function OrderSelectField({
       labelIcon={<FileIcon />}
       className="relative"
     >
-      <Select onValueChange={onSelect} disabled={loading}>
+      <Select
+        onValueChange={onSelect}
+        value={value}
+        disabled={loading || disabled}
+      >
         <SelectTrigger
           id={labelId}
           className={cn(
@@ -86,7 +94,11 @@ export default function OrderSelectField({
         </SelectTrigger>
         <SelectContent>
           {orderedSelectItems.length === 0 ? (
-            <SelectItem value="no-orders" disabled className="cursor-default text-gray-7">
+            <SelectItem
+              value="no-orders"
+              disabled
+              className="cursor-default text-gray-7"
+            >
               目前沒有可上傳或修改的訂單
             </SelectItem>
           ) : (
