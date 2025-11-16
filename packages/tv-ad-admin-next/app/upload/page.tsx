@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { useRouter, useSearchParams } from 'next/navigation'
 
@@ -23,6 +23,14 @@ export default function UploadPage() {
   const [loading, setLoading] = useState(true)
 
   const orderNumberFromQuery = searchParams.get('orderNumber')
+
+  const validOrderNumber = useMemo(() => {
+    if (!orderNumberFromQuery) return undefined
+    if (orders.length === 0) return undefined
+    return orders.some((o) => o.orderNumber === orderNumberFromQuery)
+      ? orderNumberFromQuery
+      : undefined
+  }, [orderNumberFromQuery, orders])
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -132,7 +140,7 @@ export default function UploadPage() {
       onSubmit={handleConfirmUpload}
       orders={orders}
       loading={loading}
-      initialOrderNumber={orderNumberFromQuery || undefined}
+      initialOrderNumber={validOrderNumber}
     />
   )
 }
