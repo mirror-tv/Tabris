@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 import { getCurrentUser } from '@/utils/auth'
-import { sendOrderEditRequestEmail } from '@/utils/edit-request-email-sender'
+import {
+  sendOrderEditRequestEmailToSales,
+  sendOrderEditRequestEmailToUser,
+} from '@/utils/edit-request-email-sender'
 
 export async function POST(req: NextRequest) {
   try {
@@ -22,13 +25,30 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Decide recipients
-    const recipients = [currentUser.email]
+    await sendOrderEditRequestEmailToUser(
+      currentUser.email,
+      orderNumber,
+      reason,
+      details
+    )
 
-    //TODO: 小米
-    // 1. 目前只有寄信給使用者，未寄信給業務。
-    // 2. 應該要有根據寄信成功/失敗來顯示狀態或是避免下一個 API fetch CMS state 切換，目前寄信 API 的錯誤判別可能不夠完整
-    await sendOrderEditRequestEmail(recipients, orderNumber, reason, details)
+    const salesTeamEmail = process.env.SALES_TEAM_EMAIL
+    if (salesTeamEmail) {
+      const salesEmails = salesTeamEmail
+        .split(',')
+        .map((email) => email.trim())
+        .filter((email) => email.length > 0)
+
+      if (salesEmails.length > 0) {
+        await sendOrderEditRequestEmailToSales(
+          salesEmails,
+          orderNumber,
+          reason,
+          details,
+          currentUser.email
+        )
+      }
+    }
 
     return NextResponse.json({
       success: true,

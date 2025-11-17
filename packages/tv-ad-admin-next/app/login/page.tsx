@@ -159,8 +159,8 @@ export default function LoginPage() {
 
       // 登入成功，更新 store
       if (data.user) {
-        // login 是同步函數，只是更新 zustand store 的 state，不需要 await
         login(data.user)
+        await new Promise((resolve) => setTimeout(resolve, 0))
 
         if (data.user.hasIdentified === true) {
           router.push('/')
