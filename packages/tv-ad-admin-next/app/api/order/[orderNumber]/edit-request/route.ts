@@ -11,10 +11,13 @@ export async function GET(
   { params }: { params: { orderNumber?: string } }
 ) {
   const { orderNumber } = params ?? {}
-  const user = await getCurrentUser()
+  const currentUser = await getCurrentUser()
 
-  if (!user || !user.userId || !user.memberId) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (!currentUser || !currentUser.userId || !currentUser.memberId) {
+    return NextResponse.json(
+      { error: 'Unauthorized or missing memberId.' },
+      { status: 401 }
+    )
   }
 
   if (!orderNumber) {
@@ -35,7 +38,7 @@ export async function GET(
           },
           member: {
             id: {
-              equals: user.memberId,
+              equals: currentUser.memberId,
             },
           },
           state: {
@@ -43,6 +46,7 @@ export async function GET(
           },
         },
       },
+      fetchPolicy: 'no-cache',
       errorPolicy: 'all',
     })
 
