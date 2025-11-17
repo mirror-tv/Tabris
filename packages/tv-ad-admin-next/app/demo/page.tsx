@@ -5,6 +5,7 @@ import { DialogClose } from '@radix-ui/react-dialog'
 import { format } from 'date-fns'
 import { notFound } from 'next/navigation'
 
+import { ButtonLoadingText } from '@/components/custom-ui/button-loading-text'
 import { CustomInput } from '@/components/custom-ui/custom-input'
 import { DotLoader } from '@/components/custom-ui/dot-loader'
 import { Badge, badgeVariants } from '@/components/ui/badge'
@@ -281,6 +282,8 @@ export default function Demo() {
           <DotLoader dotClassName="h-3 w-3" /> {/* larger dots */}
           <DotLoader intervalMs={300} /> {/* slower sequence */}
         </div>
+
+        <ButtonLoadingText dotClassName='bg-gray-9' text="讀取中" />
       </section>
 
       {/* Skeleton Demo */}

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 
+import { ButtonLoadingText } from '../custom-ui/button-loading-text'
 import { LabeledField } from '../custom-ui/labeled-field'
 import { ShakeInput } from '../custom-ui/shake-input'
 
@@ -7,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { useDebounce } from '@/hooks/useDebounce'
 import MailIcon from '@/public/icons/mail.svg'
 import { validateEmail } from '@/utils/validation'
+
 
 type EmailFormProps = {
   email: string
@@ -88,7 +90,11 @@ export default function EmailForm({
           size="lg"
           className="w-full"
         >
-          {isLoading ? loadingMessage || '發送中...' : '發送驗證碼'}
+          {isLoading ? (
+            <ButtonLoadingText text={loadingMessage || '發送中'} />
+          ) : (
+            '發送驗證碼'
+          )}
         </Button>
       </form>
     </>

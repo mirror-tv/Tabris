@@ -3,6 +3,8 @@ import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
+import { ButtonLoadingText } from '../custom-ui/button-loading-text'
+
 import LoadingSpinner from '@/components/shared/loading-spinner'
 import { Button } from '@/components/ui/button'
 import { ORDER_STATE } from '@/constants'
@@ -10,6 +12,7 @@ import { type OrderRecordForOrderNumber } from '@/graphql/queries/orders'
 import DoneCircleIcon from '@/public/icons/done-circle.svg'
 import EditIcon from '@/public/icons/edit.svg'
 import UploadIcon from '@/public/icons/upload.svg'
+
 
 type OrderActionsProps = {
   order: OrderRecordForOrderNumber
@@ -188,11 +191,13 @@ export function OrderActions({ order, className = '' }: OrderActionsProps) {
             disabled={isUploading || isConfirming}
           >
             {actionContent.buttonIcon}
-            {isUploading && actionContent.buttonText === '上傳素材'
-              ? '上傳中...'
-              : isConfirming && actionContent.buttonText === '確認'
-                ? '確認中...'
-                : actionContent.buttonText}
+            {isUploading && actionContent.buttonText === '上傳素材' ? (
+              <ButtonLoadingText text="上傳中" />
+            ) : isConfirming && actionContent.buttonText === '確認' ? (
+              <ButtonLoadingText text="確認中" />
+            ) : (
+              actionContent.buttonText
+            )}
           </Button>
         )}
         {actionContent.secondaryButton && (

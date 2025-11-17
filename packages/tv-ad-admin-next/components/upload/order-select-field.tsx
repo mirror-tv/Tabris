@@ -2,6 +2,8 @@
 
 import { useMemo } from 'react'
 
+import { ButtonLoadingText } from '../custom-ui/button-loading-text'
+
 import { ErrorMessage } from '@/components/custom-ui/error-message'
 import { LabeledField } from '@/components/custom-ui/labeled-field'
 import {
@@ -15,6 +17,7 @@ import { layout, ORDER_STATE } from '@/constants'
 import { OrderRecordForUploadQuery } from '@/graphql/queries/orders'
 import FileIcon from '@/public/icons/file.svg'
 import { cn } from '@/utils'
+
 
 type OrderSelectFieldProps = {
   orders: OrderRecordForUploadQuery[]
@@ -88,7 +91,11 @@ export default function OrderSelectField({
         >
           <SelectValue
             placeholder={
-              loading ? '讀取資料中...' : '請選擇要上傳 / 修改素材的訂單'
+              loading ? (
+                <ButtonLoadingText text="讀取資料中" />
+              ) : (
+                '請選擇要上傳 / 修改素材的訂單'
+              )
             }
           />
         </SelectTrigger>

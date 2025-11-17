@@ -48,26 +48,8 @@ export const AUTH_MESSAGES = {
 } as const
 
 export const LOADING_MESSAGES = {
-  CHECKING_MEMBER: '正在檢查會員資料...',
-  SENDING_OTP: '發送驗證碼中...',
-  VERIFYING_OTP: '驗證中...',
-  LOGGING_OUT: '登出中...',
-} as const
-
-export const UI_MESSAGES = {
-  LOGIN_TITLE: '鏡新聞個人廣告系統',
-  LOGIN_SUBTITLE: '請輸入您註冊應援科技使用的電子信箱',
-  OTP_TITLE: '輸入驗證碼',
-  OTP_SUBTITLE: '驗證碼已發送到 {identifier}，請輸入您收到的六位數驗證碼',
-  OTP_VALIDITY: '有效期: 5 分鐘',
-  RESEND_COUNTDOWN: '重新發送 ({seconds}s)',
-  NO_OTP_RECEIVED: '沒收到驗證碼？',
-  RESEND_OTP: '重新發送',
-  SEND_OTP: '發送驗證碼',
-  LOGIN: '登入',
-  LOGOUT: '登出',
-  LOCKED: '已鎖定',
-  BACK_TO_EDIT: '重新填寫',
+  CHECKING_MEMBER: '正在檢查會員資料',
+  SENDING_OTP: '發送驗證碼中',
 } as const
 
 /**
