@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { Suspense, useEffect, useMemo, useState } from 'react'
 
 import { useRouter, useSearchParams } from 'next/navigation'
 
@@ -14,7 +14,7 @@ import { handleUnauthorized } from '@/utils/handle-unauthorized'
 
 const pageTitle = '上傳廣告素材'
 
-export default function UploadPage() {
+function UploadContent() {
   const { submitStatus, setSubmitStatus } = useSubmitStatus()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -142,5 +142,13 @@ export default function UploadPage() {
       loading={loading}
       initialOrderNumber={validOrderNumber}
     />
+  )
+}
+
+export default function UploadPage() {
+  return (
+    <Suspense fallback={<div>載入中...</div>}>
+      <UploadContent />
+    </Suspense>
   )
 }
