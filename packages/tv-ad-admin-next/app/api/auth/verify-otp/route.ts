@@ -50,10 +50,13 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    const hasIdentified = !!member.nationalId && !!member.residentialAddress
+
     const userPayload = {
       userId,
       memberId: member.id,
       email,
+      hasIdentified,
     }
 
     // 生成 JWT token（必須包含 memberId）

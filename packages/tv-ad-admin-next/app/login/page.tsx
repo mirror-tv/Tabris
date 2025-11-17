@@ -17,7 +17,7 @@ import { validateEmail } from '@/utils/validation'
 
 export default function LoginPage() {
   const router = useRouter()
-  const { isAuthenticated, login, initialize } = useAuthStore()
+  const { user, login, initialize, setUser } = useAuthStore()
 
   const [showOtpForm, setShowOtpForm] = useState(false)
   const [email, setEmail] = useState('')
@@ -33,12 +33,18 @@ export default function LoginPage() {
     initialize()
   }, [initialize])
 
-  // 如果已登入，重定向到首頁（dashboard）
+  // 如果已登入，根據身份驗證狀態 redirect
   useEffect(() => {
-    if (isAuthenticated) {
-      router.push('/')
+    if (user) {
+      if (user.hasIdentified === true) {
+        router.push('/')
+      } else {
+        // 如果未完成身份驗證，清除用戶狀態允許重新登入
+        // （關閉瀏覽器重開後可以重新登入，不需要正式登出）
+        setUser(null)
+      }
     }
-  }, [isAuthenticated, router])
+  }, [user, router, setUser])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -155,11 +161,13 @@ export default function LoginPage() {
       if (data.user) {
         // login 是同步函數，只是更新 zustand store 的 state，不需要 await
         login(data.user)
-      }
 
-      // 登入成功，跳轉到首頁（dashboard）
-      // Cookie 已在 API 響應時設定，狀態更新是同步的，可直接跳轉
-      router.push('/')
+        if (data.user.hasIdentified === true) {
+          router.push('/')
+        } else {
+          router.push('/identity-info')
+        }
+      }
     } catch (err) {
       console.error(err)
       setError(AUTH_MESSAGES.NETWORK_ERROR)

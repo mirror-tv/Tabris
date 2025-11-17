@@ -38,7 +38,7 @@ export const useAuthStore = create<AuthStore>()(
       setUser: (user) => {
         set({
           user,
-          isAuthenticated: !!user,
+          isAuthenticated: !!user && user.hasIdentified === true,
         })
       },
       setLoading: (loading) => {
@@ -47,7 +47,7 @@ export const useAuthStore = create<AuthStore>()(
       login: (user) => {
         set({
           user,
-          isAuthenticated: true,
+          isAuthenticated: user.hasIdentified === true,
           isLoading: false,
         })
       },

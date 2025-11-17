@@ -16,6 +16,7 @@ const publicApiRoutes = [
   '/api/auth/verify-otp',
   '/api/auth/me', // 允許 middleware 內部調用
   '/api/member/identity-info',
+  '/api/auth/logout',
 ]
 
 // 通過內部 API 獲取用戶資訊（包含 hasIdentified）
@@ -57,10 +58,31 @@ export async function middleware(request: NextRequest) {
 
   if (isPublicRoute || isPublicApiRoute) {
     const token = request.cookies.get('auth_token')?.value
-    if (token && isPublicRoute) {
+    if (token && isPublicRoute && pathname === '/login') {
       const payload = await verifyToken(token)
-      if (payload && pathname === '/login') {
-        return NextResponse.redirect(new URL('/', request.url))
+      if (payload && payload.memberId) {
+        // 檢查身份驗證狀態
+        try {
+          const baseUrl = request.nextUrl.origin
+          const cookie = request.headers.get('cookie') || ''
+          const userInfo = await getUserWithIdentity(baseUrl, cookie)
+
+          if (userInfo) {
+            const hasIdentified = userInfo.hasIdentified === true
+
+            // 如果已完成身份驗證，重定向到首頁
+            if (hasIdentified) {
+              return NextResponse.redirect(new URL('/', request.url))
+            }
+            // 如果未完成身份驗證，清除 token 允許重新登入
+            // （關閉瀏覽器重開後可以重新登入，不需要正式登出）
+            const response = NextResponse.next()
+            response.cookies.delete('auth_token')
+            return response
+          }
+        } catch (error) {
+          console.error('Middleware: Failed to check member identity:', error)
+        }
       }
     }
     return NextResponse.next()
@@ -69,6 +91,13 @@ export async function middleware(request: NextRequest) {
   const token = request.cookies.get('auth_token')?.value
 
   if (!token) {
+    // /identity-info 需要 token，沒有 token 要重定向到登入頁
+    if (pathname === '/identity-info') {
+      const loginUrl = new URL('/login', request.url)
+      loginUrl.searchParams.set('redirect', pathname)
+      return NextResponse.redirect(loginUrl)
+    }
+
     if (pathname.startsWith('/api/')) {
       return NextResponse.json(
         { success: false, message: '未登入' },
