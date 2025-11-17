@@ -55,6 +55,7 @@ export default function EditRequest({
 
   useEffect(() => {
     const fetchEditRequest = async () => {
+      // TODO: 待更新 loading 指示狀態
       if (!orderNumber) {
         router.push('/not-found/404')
         return
@@ -109,19 +110,8 @@ export default function EditRequest({
     if (Object.keys(newError).length > 0) return
 
     try {
-      const res = await fetch('/api/edit-request/order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          state: orderData.state,
-          orderNumber: orderData.orderNumber,
-        }),
-      })
-
-      if (!res.ok) throw new Error(`Response status: ${res.status}`)
-
-      // TODO: 應該要有根據寄信成功/失敗來顯示狀態或是避免前一支 API state 切換
-      await fetch('/api/edit-request/send-notify-email', {
+      // Step 1: send email first
+      const emailRes = await fetch('/api/edit-request/send-notify-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -130,6 +120,22 @@ export default function EditRequest({
           details,
         }),
       })
+
+      if (!emailRes.ok) {
+        throw new Error(`Email failed: ${emailRes.status}`)
+      }
+
+      // Step 2: update state only if email succeeded
+      const updateRes = await fetch('/api/edit-request/order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          state: orderData.state,
+          orderNumber: orderData.orderNumber,
+        }),
+      })
+
+      if (!updateRes.ok) throw new Error(`Response status: ${updateRes.status}`)
 
       setSubmitStatus('success')
     } catch (err) {
