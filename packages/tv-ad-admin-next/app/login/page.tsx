@@ -183,7 +183,7 @@ export default function LoginPage() {
                 login(verifyData.user)
                 break
               }
-            } catch (err) {
+            } catch {
               console.log('驗證 cookie 失敗，重試中...', retries)
             }
 
