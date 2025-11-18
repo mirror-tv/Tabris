@@ -11,6 +11,7 @@ import OptForm from '@/components/login/opt-form'
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
 import { OTP_MAX_ATTEMPTS } from '@/constants'
+import { ENV } from '@/constants/environment-variables'
 import { AUTH_MESSAGES, LOADING_MESSAGES } from '@/constants/messages'
 import { useAuthStore } from '@/store'
 import { validateEmail } from '@/utils/validation'
@@ -79,11 +80,7 @@ export default function LoginPage() {
       setLoadingMessage(LOADING_MESSAGES.SENDING_OTP)
 
       // 開發環境：在瀏覽器 Console 顯示驗證碼（帶顏色）
-      if (
-        (process.env.NODE_ENV === 'development' ||
-          process.env.GCS_BUCKET === 'tv-advertising-dev') &&
-        data.data?.otp
-      ) {
+      if ((ENV === 'dev' || ENV === 'local') && data.data?.otp) {
         console.log(
           '%c🔐 ========== OTP 驗證碼 ==========',
           'color: #10b981; font-size: 14px; font-weight: bold;'
@@ -209,7 +206,7 @@ export default function LoginPage() {
       setLoadingMessage(LOADING_MESSAGES.SENDING_OTP)
 
       // 開發環境：在瀏覽器 Console 顯示驗證碼（帶顏色）
-      if (process.env.NODE_ENV === 'development' && data.data?.otp) {
+      if ((ENV === 'dev' || ENV === 'local') && data.data?.otp) {
         console.log(
           '%c🔐 ========== 重新發送 OTP ==========',
           'color: #10b981; font-size: 14px; font-weight: bold;'

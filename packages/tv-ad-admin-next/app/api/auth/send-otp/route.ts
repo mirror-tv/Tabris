@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import type { SendOtpResponse } from '@/types/api'
 
+import { ENV } from '@/constants/environment-variables'
 import { AUTH_MESSAGES, formatMessage } from '@/constants/messages'
 import { createErrorLogger } from '@/utils/error-handler'
 import { checkMemberByEmail } from '@/utils/member'
@@ -99,9 +100,7 @@ export async function POST(request: NextRequest) {
     const emailResult = await sendEmailOTP(email, otp)
 
     // 開發環境：返回 OTP 到前端（方便在瀏覽器 Console 查看）
-    const isDev =
-      process.env.NODE_ENV === 'development' ||
-      process.env.GCS_BUCKET === 'tv-advertising-dev'
+    const isDev = ENV === 'dev' || ENV === 'local'
 
     const response: SendOtpResponse = {
       success: emailResult.success,
