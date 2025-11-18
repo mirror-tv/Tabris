@@ -153,6 +153,8 @@ export default function LoginPage() {
         return
       }
 
+      console.log('data', data)
+
       // 登入成功，更新 store
       if (data.user) {
         login(data.user)
