@@ -15,8 +15,8 @@ export async function POST(request: NextRequest) {
   try {
     const { email, otp } = await request.json()
 
-    // 開發環境：直接繞過驗證，使用固定的 memberId
-    if (ENV === 'dev') {
+    // 開發/本地環境：直接繞過驗證，使用固定的 memberId
+    if (ENV === 'dev' || ENV === 'local') {
       const userId = Buffer.from(email || 'dev@example.com').toString('base64')
       const userPayload = {
         userId,

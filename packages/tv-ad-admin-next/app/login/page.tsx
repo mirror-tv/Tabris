@@ -60,8 +60,8 @@ export default function LoginPage() {
         return
       }
 
-      // 開發環境：直接繞過 OTP 驗證，自動登入
-      if (ENV === 'dev') {
+      // 開發/本地環境：直接繞過 OTP 驗證，自動登入
+      if (ENV === 'dev' || ENV === 'local') {
         setLoadingMessage('開發環境：自動登入中...')
         const response = await fetch('/api/auth/verify-otp', {
           method: 'POST',

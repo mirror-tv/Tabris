@@ -3,12 +3,60 @@
  * 保護所有 route 和 API，只有登入相關的 route 可以公開訪問
  */
 
+import { SignJWT } from 'jose'
 import { NextResponse } from 'next/server'
 
 import type { NextRequest } from 'next/server'
 
-import { verifyToken } from '@/utils/auth'
+import { ENV, JWT_SECRET } from '@/constants/environment-variables'
+import { verifyToken, type UserPayload } from '@/utils/auth'
 import { createEdgeErrorLogger } from '@/utils/edge-error-handler'
+
+// Edge Runtime 兼容的 base64 編碼
+function base64Encode(str: string): string {
+  const encoder = new TextEncoder()
+  const bytes = encoder.encode(str)
+  let binary = ''
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i])
+  }
+  return btoa(binary)
+}
+
+// 獲取 JWT Secret（與 utils/auth.ts 保持一致）
+function getJwtSecret() {
+  const secret = JWT_SECRET
+  const isProduction = ENV === 'prod'
+
+  if (
+    isProduction &&
+    (!secret || secret === 'dev-secret-change-in-production')
+  ) {
+    throw new Error(
+      'JWT_SECRET 必須在生產環境中設定，不能使用預設值。請檢查環境變數設定。'
+    )
+  }
+
+  return new TextEncoder().encode(secret || 'dev-secret-change-in-production')
+}
+
+// 開發環境：生成開發用 token
+async function generateDevToken(): Promise<string> {
+  const JWT_SECRET = getJwtSecret()
+
+  const payload: UserPayload = {
+    userId: base64Encode('dev@example.com'),
+    memberId: '12',
+    email: 'dev@example.com',
+    hasIdentified: true,
+  }
+
+  return await new SignJWT(payload as Record<string, unknown>)
+    .setProtectedHeader({ alg: 'HS256' })
+    .setIssuedAt()
+    .setExpirationTime('7d')
+    .sign(JWT_SECRET)
+}
 
 // 公開 route（不需要登入即可訪問）
 const publicRoutes = ['/login']
@@ -51,6 +99,53 @@ const getUserWithIdentity = async (
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
+
+  // 開發/本地環境：完全繞過登入檢查，自動設置 token
+  if (ENV === 'dev' || ENV === 'local') {
+    const token = request.cookies.get('auth_token')?.value
+    let needsNewToken = false
+
+    // 驗證 token 是否有效
+    if (token) {
+      const payload = await verifyToken(token)
+      // 如果 token 無效或 memberId 不是 '12'，需要重新生成
+      if (!payload || payload.memberId !== '12') {
+        needsNewToken = true
+      }
+    } else {
+      needsNewToken = true
+    }
+
+    // 如果沒有 token 或 token 無效，自動生成並設置
+    if (needsNewToken) {
+      const devToken = await generateDevToken()
+      const response = NextResponse.next()
+      response.cookies.set({
+        name: 'auth_token',
+        value: devToken,
+        httpOnly: true,
+        secure: false,
+        sameSite: 'lax',
+        maxAge: 60 * 60 * 24 * 7, // 7 天
+        path: '/',
+      })
+
+      // 如果訪問登入頁，redirect 到首頁
+      if (pathname === '/login') {
+        return NextResponse.redirect(new URL('/', request.url))
+      }
+
+      return response
+    }
+
+    // 如果有 token 但訪問登入頁，redirect 到首頁
+    if (pathname === '/login') {
+      return NextResponse.redirect(new URL('/', request.url))
+    }
+
+    // 其他情況直接通過
+    return NextResponse.next()
+  }
 
   const isPublicRoute = publicRoutes.includes(pathname)
   const isPublicApiRoute = publicApiRoutes.some((route) =>

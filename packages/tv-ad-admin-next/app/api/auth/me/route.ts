@@ -32,8 +32,8 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // 開發環境：直接返回固定的 memberId 和已通過身份驗證的狀態
-    if (ENV === 'dev') {
+    // 開發/本地環境：直接返回固定的 memberId 和已通過身份驗證的狀態
+    if (ENV === 'dev' || ENV === 'local') {
       const userWithIdentified: UserPayload = {
         ...user,
         memberId: '12',
