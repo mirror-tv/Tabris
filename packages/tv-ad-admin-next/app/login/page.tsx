@@ -2,8 +2,6 @@
 
 import { useState, useEffect } from 'react'
 
-import { useRouter } from 'next/navigation'
-
 import type { SendOtpResponse } from '@/types/api'
 
 import EmailForm from '@/components/login/email-form'
@@ -18,7 +16,6 @@ import { useAuthStore } from '@/store'
 import { validateEmail } from '@/utils/validation'
 
 export default function LoginPage() {
-  const router = useRouter()
   const { user, login, initialize } = useAuthStore()
 
   const [stage, setStage] = useState<'email' | 'otp' | 'identity-info'>('email')
@@ -40,11 +37,12 @@ export default function LoginPage() {
     if (!user) return
     console.log('user change', user)
     if (user.hasIdentified === true) {
-      router.push('/')
+      // 使用 window.location 確保完整重載，讓 cookie 能正確攜帶
+      window.location.href = '/'
     } else {
       setStage('identity-info')
     }
-  }, [user, router])
+  }, [user])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
