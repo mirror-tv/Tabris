@@ -32,6 +32,7 @@ export default function EditSchedule({
   const [error, setError] = useState<string | null>(null)
   const [orderData, setOrderData] = useState<OrderRecordForEdit | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [isUploading, setIsUploading] = useState(false)
 
   useEffect(() => {
     const fetchSchedule = async () => {
@@ -101,6 +102,7 @@ export default function EditSchedule({
     }
 
     setError(null)
+    setIsUploading(true)
 
     const formattedRange = {
       scheduleStartDate: format(range.from, 'yyyy-MM-dd'),
@@ -129,6 +131,7 @@ export default function EditSchedule({
       }
 
       setSubmitStatus('success')
+      setIsUploading(false)
     } catch (error) {
       console.error('Failed to update order schedule:', error)
       setError(
@@ -159,6 +162,7 @@ export default function EditSchedule({
       submitButtonName="送出"
       cardTitle="重新設定排播日期"
       isLoading={isLoading}
+      isUploading={isUploading}
     >
       <PopoverCalendar
         range={range}

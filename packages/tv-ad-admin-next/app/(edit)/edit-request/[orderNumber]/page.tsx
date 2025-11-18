@@ -53,6 +53,7 @@ export default function EditRequest({
   }>({})
   const [orderData, setOrderData] = useState<OrderRecordForEdit | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [isUploading, setIsUploading] = useState(false)
 
   useEffect(() => {
     const fetchEditRequest = async () => {
@@ -105,6 +106,7 @@ export default function EditRequest({
       setError({ reason: '訂單尚未載入完成' })
       return
     }
+    setIsUploading(true)
 
     const newError: typeof error = {}
     if (!reason.trim()) newError.reason = '請輸入修改原因'
@@ -142,6 +144,7 @@ export default function EditRequest({
       if (!updateRes.ok) throw new Error(`Response status: ${updateRes.status}`)
 
       setSubmitStatus('success')
+      setIsUploading(false)
     } catch (err) {
       console.error('Failed to submit edit request:', err)
       setSubmitStatus('failure')
@@ -168,6 +171,7 @@ export default function EditRequest({
       submitButtonName="送出修改請求"
       orderData={orderData}
       isLoading={isLoading}
+      isUploading={isUploading}
     >
       <LabeledField
         id={reasonId}

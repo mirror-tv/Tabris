@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 
 import { Skeleton } from '../ui/skeleton'
+import { Spinner } from '../ui/spinner'
 
 import type { OrderRecordForEdit } from '@/graphql/queries/orders'
 
@@ -21,6 +22,7 @@ type EditPageLayoutProps = {
   cardTitle?: string
   orderData?: OrderRecordForEdit | null
   isLoading?: boolean
+  isUploading?: boolean
 }
 
 const Mock_Order_Number = 'B7H8M3'
@@ -34,7 +36,8 @@ export default function EditPageLayout({
   submitButtonName,
   cardTitle,
   orderData,
-  isLoading,
+  isLoading = false,
+  isUploading = false,
 }: EditPageLayoutProps) {
   const router = useRouter()
 
@@ -91,8 +94,13 @@ export default function EditPageLayout({
               >
                 取消
               </Button>
-              <Button type="submit" size="lg" disabled={isLoading}>
+              <Button
+                type="submit"
+                size="lg"
+                disabled={isLoading || isUploading}
+              >
                 {submitButtonName}
+                {isUploading && <Spinner className="text-gray-5" />}
               </Button>
             </CardFooter>
           </Card>
