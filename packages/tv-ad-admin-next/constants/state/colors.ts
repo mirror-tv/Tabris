@@ -64,6 +64,12 @@ export const COLOR_THEMES = {
       border: 'border-green-7',
       dot: 'bg-green-7',
     },
+    blue: {
+      bg: 'bg-blue-7',
+      text: 'text-blue-7',
+      border: 'border-blue-7',
+      dot: 'bg-blue-7',
+    },
   },
 } as const
 

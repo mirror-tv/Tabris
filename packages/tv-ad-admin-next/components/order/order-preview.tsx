@@ -41,7 +41,7 @@ export function OrderPreview({ order, className = '' }: OrderPreviewProps) {
           wordings={[
             `確認無誤，請於 ${deadline} 23:59 前，於下方訂單操作區點選「確認」按鈕`,
             '如需修改，請點選「提出修改」按鈕',
-            `若操作未在 ${deadline} 23:59 前完成，原始排播日期將會作廢，需重新設定`,
+            `若操作未在 ${deadline} 23:59 前完成，此訂單將自動進入排播程序，無法再修改`,
           ]}
           isDot
         />

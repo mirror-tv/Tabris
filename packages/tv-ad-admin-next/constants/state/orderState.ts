@@ -117,6 +117,12 @@ export const getStatesByFlow = (flow: StateFlow): OrderState[] => {
   return flowOrderMap[flow] || []
 }
 
+const NORMAL_FLOW_STATES = new Set<OrderState>([
+  ...basicFlow,
+  ORDER_STATE.PENDING_SCHEDULE,
+  ORDER_STATE.BROADCASTED,
+])
+
 const EDIT_FLOW_STATES = new Set<OrderState>([
   ORDER_STATE.MODIFICATION_REQUEST,
   ORDER_STATE.PENDING_QUOTE_CONFIRMATION,
@@ -134,8 +140,8 @@ const SET_TIME_FLOW_STATES = new Set<OrderState>([
  * @returns 對應的流程類型
  */
 export const getCurrentFlow = (state: OrderState): StateFlow => {
-  if (state === ORDER_STATE.CANCELLED) {
-    return 'cancel'
+  if (NORMAL_FLOW_STATES.has(state)) {
+    return 'normal'
   }
   if (EDIT_FLOW_STATES.has(state)) {
     return 'edit'
@@ -143,7 +149,7 @@ export const getCurrentFlow = (state: OrderState): StateFlow => {
   if (SET_TIME_FLOW_STATES.has(state)) {
     return 'setTime'
   }
-  return 'normal'
+  return 'cancel'
 }
 
 /**
