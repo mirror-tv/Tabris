@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/card'
 import { OrderStateMap } from '@/constants'
 import FileIcon from '@/public/icons/file.svg'
+import FileDuplicateIcon from '@/public/icons/file-duplicate.svg'
 import UploadIcon from '@/public/icons/upload.svg'
 import { useAuthStore } from '@/store'
 import { getOrdersState } from '@/utils/order-grouping'
@@ -149,7 +150,7 @@ export default function HomePage() {
             <Card className="cursor-pointer items-center justify-center gap-3 hover:shadow-[0_4px_8px_0_rgba(0,0,0,0.10)]">
               <UploadIcon className="size-10 text-blue-7" />
               <CardTitle className="flex flex-col items-center gap-1">
-                <span>上傳廣告素材</span>
+                <h4 className='font-normal'>上傳/修改廣告素材</h4>
                 <CardDescription>上傳後即可進入製作流程</CardDescription>
               </CardTitle>
             </Card>
@@ -158,9 +159,9 @@ export default function HomePage() {
           {/* history Card */}
           <Link href="/list">
             <Card className="cursor-pointer items-center justify-center gap-3 hover:shadow-[0_4px_8px_0_rgba(0,0,0,0.10)]">
-              <FileIcon className="size-10 text-blue-7" />
+              <FileDuplicateIcon className="size-10 text-blue-7" />
               <CardTitle className="flex flex-col items-center gap-1">
-                <span>訂單紀錄</span>
+                <h4 className='font-normal'>訂單紀錄</h4>
                 <CardDescription>查看與管理所有訂單</CardDescription>
               </CardTitle>
             </Card>
