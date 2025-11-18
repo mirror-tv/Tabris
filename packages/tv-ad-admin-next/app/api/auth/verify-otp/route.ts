@@ -5,7 +5,6 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 
-import { ENV } from '@/constants/environment-variables'
 import { generateToken } from '@/utils/auth'
 import { createErrorLogger } from '@/utils/error-handler'
 import { getMemberByEmail } from '@/utils/member'
@@ -14,37 +13,6 @@ import { verifyOTP } from '@/utils/otp-storage'
 export async function POST(request: NextRequest) {
   try {
     const { email, otp } = await request.json()
-
-    // 開發/本地環境：直接繞過驗證，使用固定的 memberId
-    if (ENV === 'dev' || ENV === 'local') {
-      const userId = Buffer.from(email || 'dev@example.com').toString('base64')
-      const userPayload = {
-        userId,
-        memberId: '12',
-        email: email || 'dev@example.com',
-        hasIdentified: true, // 已通過身份驗證
-      }
-
-      const token = await generateToken(userPayload)
-
-      const response = NextResponse.json({
-        success: true,
-        message: '登入成功（開發環境繞過）',
-        user: userPayload,
-      })
-
-      response.cookies.set({
-        name: 'auth_token',
-        value: token,
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 7, // 7 天
-        path: '/',
-      })
-
-      return response
-    }
 
     if (!otp) {
       return NextResponse.json(

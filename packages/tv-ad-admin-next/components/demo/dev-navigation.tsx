@@ -27,9 +27,6 @@ export default function DevNavigation() {
         <Link href="/login" className="hover:text-purple-400">
           Login
         </Link>
-        <Link href="/identity-info" className="hover:text-orange-400">
-          Identity-Info
-        </Link>
         <Link href="/" className="hover:text-indigo-400">
           Dashboard
         </Link>

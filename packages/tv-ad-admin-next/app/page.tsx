@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 import StateCard from '@/components/dashboard/state-card'
 import PageHeader from '@/components/shared/page-header'
@@ -18,17 +19,34 @@ import {
 import { OrderStateMap } from '@/constants'
 import FileIcon from '@/public/icons/file.svg'
 import UploadIcon from '@/public/icons/upload.svg'
+import { useAuthStore } from '@/store'
 import { getOrdersState } from '@/utils/order-grouping'
 
 const ERROR_MESSAGE = '載入訂單失敗，請稍後再試'
 
 export default function HomePage() {
+  const router = useRouter()
+  const { user, isInitialized, initialize } = useAuthStore()
   const [ordersState, setOrdersState] = useState<
     { state: keyof typeof OrderStateMap; count: number }[]
   >([])
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const abortControllerRef = useRef<AbortController | null>(null)
+
+  // 初始化認證狀態
+  useEffect(() => {
+    initialize()
+  }, [initialize])
+
+  // 檢查身份驗證狀態，未完成身份驗證則重定向到登入頁
+  useEffect(() => {
+    if (isInitialized) {
+      if (!user || user.hasIdentified !== true) {
+        router.push('/login')
+      }
+    }
+  }, [user, isInitialized, router])
 
   const fetchOrders = useCallback(async () => {
     // 取消之前的請求
@@ -97,13 +115,28 @@ export default function HomePage() {
   }, [])
 
   useEffect(() => {
-    fetchOrders()
+    // 只有在已初始化且用戶已完成身份驗證時才載入訂單
+    if (isInitialized && user && user.hasIdentified === true) {
+      fetchOrders()
+    }
     return () => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort()
       }
     }
-  }, [fetchOrders])
+  }, [fetchOrders, isInitialized, user])
+
+  // 如果尚未初始化或未完成身份驗證，不渲染內容（會重定向）
+  if (!isInitialized || !user || user.hasIdentified !== true) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="size-8 animate-spin rounded-full border-4 border-gray-3 border-t-blue-6" />
+          <p className="text-sm text-gray-7">載入中...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <>

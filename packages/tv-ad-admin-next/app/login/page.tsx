@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import type { SendOtpResponse } from '@/types/api'
 
 import EmailForm from '@/components/login/email-form'
+import IdentityInfo from '@/components/login/identity-info'
 import OptForm from '@/components/login/opt-form'
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
@@ -18,9 +19,9 @@ import { validateEmail } from '@/utils/validation'
 
 export default function LoginPage() {
   const router = useRouter()
-  const { user, login, initialize, setUser } = useAuthStore()
+  const { user, login, initialize } = useAuthStore()
 
-  const [showOtpForm, setShowOtpForm] = useState(false)
+  const [stage, setStage] = useState<'email' | 'otp' | 'identity-info'>('email')
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [loadingMessage, setLoadingMessage] = useState('')
@@ -34,18 +35,12 @@ export default function LoginPage() {
     initialize()
   }, [initialize])
 
-  // 如果已登入，根據身份驗證狀態 redirect
+  // 如果已登入且已完成身份驗證，redirect 到首頁
   useEffect(() => {
-    if (user) {
-      if (user.hasIdentified === true) {
-        router.push('/')
-      } else {
-        // 如果未完成身份驗證，清除用戶狀態允許重新登入
-        // （關閉瀏覽器重開後可以重新登入，不需要正式登出）
-        setUser(null)
-      }
+    if (user && user.hasIdentified === true) {
+      router.push('/')
     }
-  }, [user, router, setUser])
+  }, [user, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -57,42 +52,6 @@ export default function LoginPage() {
       const validation = validateEmail(email)
       if (!validation.isValid) {
         setError(validation.error || AUTH_MESSAGES.EMAIL_INVALID)
-        return
-      }
-
-      // 開發/本地環境：直接繞過 OTP 驗證，自動登入
-      if (ENV === 'dev' || ENV === 'local') {
-        setLoadingMessage('開發環境：自動登入中...')
-        const response = await fetch('/api/auth/verify-otp', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include',
-          body: JSON.stringify({
-            email,
-            otp: 'dev-bypass', // 任意值，開發環境會繞過驗證
-          }),
-        })
-
-        const data = await response.json()
-
-        if (!data.success) {
-          setError(data.message || AUTH_MESSAGES.NETWORK_ERROR)
-          return
-        }
-
-        // 登入成功，更新 store
-        if (data.user) {
-          login(data.user)
-          await new Promise((resolve) => setTimeout(resolve, 0))
-
-          if (data.user.hasIdentified === true) {
-            router.push('/')
-          } else {
-            router.push('/identity-info')
-          }
-        }
         return
       }
 
@@ -115,7 +74,6 @@ export default function LoginPage() {
 
       setLoadingMessage(LOADING_MESSAGES.SENDING_OTP)
 
-      // 開發環境：在瀏覽器 Console 顯示驗證碼（帶顏色）
       if ((ENV === 'dev' || ENV === 'local') && data.data?.otp) {
         console.log(
           '%c🔐 ========== OTP 驗證碼 ==========',
@@ -133,7 +91,7 @@ export default function LoginPage() {
         )
       }
 
-      setShowOtpForm(true)
+      setStage('otp')
       setCountdown(60)
       setCanResend(false)
     } catch (err) {
@@ -202,7 +160,7 @@ export default function LoginPage() {
         if (data.user.hasIdentified === true) {
           router.push('/')
         } else {
-          router.push('/identity-info')
+          setStage('identity-info')
         }
       }
     } catch (err) {
@@ -274,31 +232,35 @@ export default function LoginPage() {
     <>
       <PageHeader variant="centered" />
       <PageMain className="flex justify-center py-5 md:py-10">
-        <div className="flex h-fit max-w-[288px] flex-col items-center rounded-xl border border-border-default bg-surface-primary p-4 shadow-lg md:max-w-[448px] md:min-w-[448px] md:p-6">
-          {!showOtpForm ? (
-            <EmailForm
-              email={email}
-              setEmail={setEmail}
-              handleSubmit={handleSubmit}
-              isLoading={isLoading}
-              loadingMessage={loadingMessage}
-              error={error}
-            />
-          ) : (
-            <OptForm
-              email={email}
-              error={error}
-              isLoading={isLoading}
-              countdown={countdown}
-              canResend={canResend}
-              failedAttempts={failedAttempts}
-              maxAttempts={OTP_MAX_ATTEMPTS}
-              handleOtpSubmit={handleOtpSubmit}
-              handleResendOtp={handleResendOtp}
-              setShowOtpForm={setShowOtpForm}
-            />
-          )}
-        </div>
+        {stage !== 'identity-info' && (
+          <div className="flex h-fit max-w-[288px] flex-col items-center rounded-xl border border-border-default bg-surface-primary p-4 shadow-lg md:max-w-[448px] md:min-w-[448px] md:p-6">
+            {stage === 'email' && (
+              <EmailForm
+                email={email}
+                setEmail={setEmail}
+                handleSubmit={handleSubmit}
+                isLoading={isLoading}
+                loadingMessage={loadingMessage}
+                error={error}
+              />
+            )}
+            {stage === 'otp' && (
+              <OptForm
+                email={email}
+                error={error}
+                isLoading={isLoading}
+                countdown={countdown}
+                canResend={canResend}
+                failedAttempts={failedAttempts}
+                maxAttempts={OTP_MAX_ATTEMPTS}
+                handleOtpSubmit={handleOtpSubmit}
+                handleResendOtp={handleResendOtp}
+                setStage={setStage}
+              />
+            )}
+          </div>
+        )}
+        <div> {stage === 'identity-info' && <IdentityInfo />}</div>
       </PageMain>
     </>
   )

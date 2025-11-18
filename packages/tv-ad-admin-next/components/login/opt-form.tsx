@@ -13,7 +13,7 @@ type OptFormProps = {
   maxAttempts: number
   handleOtpSubmit: (value?: string) => void
   handleResendOtp: () => void
-  setShowOtpForm: (show: boolean) => void
+  setStage: (stage: 'email' | 'otp' | 'identity-info') => void
 }
 
 export default function OptForm({
@@ -26,7 +26,7 @@ export default function OptForm({
   maxAttempts,
   handleOtpSubmit,
   handleResendOtp,
-  setShowOtpForm,
+  setStage,
 }: OptFormProps) {
   const [otpValue, setOtpValue] = useState('')
   const isLocked = failedAttempts >= maxAttempts
@@ -85,7 +85,7 @@ export default function OptForm({
         </div>
         <p
           className="-mt-2 text-center text-sm leading-normal font-medium text-brand-primary hover:cursor-pointer hover:font-bold"
-          onClick={() => setShowOtpForm(false)}
+          onClick={() => setStage('email')}
         >
           重新填寫電子信箱
         </p>
