@@ -70,11 +70,14 @@ export async function POST(request: NextRequest) {
     })
 
     // 使用 Next.js 推薦的方式設定 cookie
+    // 檢查請求是否為 HTTPS（Google Cloud Run 即使是 dev 環境也是 HTTPS）
+    const isSecure = request.url.startsWith('https://')
+
     response.cookies.set({
       name: 'auth_token',
       value: token,
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: isSecure,
       sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 7, // 7 天
       path: '/',
