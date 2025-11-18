@@ -19,7 +19,7 @@ import { validateEmail } from '@/utils/validation'
 
 export default function LoginPage() {
   const router = useRouter()
-  const { user, initialize, setUser } = useAuthStore()
+  const { user, login, initialize } = useAuthStore()
 
   const [stage, setStage] = useState<'email' | 'otp' | 'identity-info'>('email')
   const [email, setEmail] = useState('')
@@ -156,11 +156,8 @@ export default function LoginPage() {
 
       // 登入成功，更新 store
       if (data.user) {
-        // 直接更新 store 中的 user 資料
-        setUser(data.user)
-
-        // 確保 store 更新後再進行跳轉
-        await new Promise((resolve) => setTimeout(resolve, 0))
+        login(data.user)
+        console.log('data.user', data.user)
 
         if (data.user.hasIdentified === true) {
           // 使用 window.location 確保完整重載，讓 middleware 能正確檢查
