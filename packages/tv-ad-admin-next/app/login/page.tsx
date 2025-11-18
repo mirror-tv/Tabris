@@ -47,6 +47,7 @@ export default function LoginPage() {
     setError('')
     setIsLoading(true)
     setLoadingMessage(LOADING_MESSAGES.CHECKING_MEMBER)
+    console.log('handleSubmit', email)
 
     try {
       const validation = validateEmail(email)
@@ -156,6 +157,7 @@ export default function LoginPage() {
       if (data.user) {
         login(data.user)
         await new Promise((resolve) => setTimeout(resolve, 0))
+        console.log('data.user', data.user)
 
         if (data.user.hasIdentified === true) {
           router.push('/')
