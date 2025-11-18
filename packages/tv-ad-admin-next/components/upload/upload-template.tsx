@@ -11,7 +11,6 @@ import OrderSelectField from './order-select-field'
 import { CustomInput } from '@/components/custom-ui/custom-input'
 import { LabeledField } from '@/components/custom-ui/labeled-field'
 import { Instructions } from '@/components/shared/instructions'
-import LoadingSpinner from '@/components/shared/loading-spinner'
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
 import PopoverCalendar from '@/components/shared/popover-calendar'
@@ -33,6 +32,7 @@ import TextIcon from '@/public/icons/text.svg'
 import TriangleExclamationIcon from '@/public/icons/triangle-exclamation.svg'
 import { PhotoSchema } from '@/types/photo'
 import { cn } from '@/utils'
+
 
 export type FormState = {
   adName: string
@@ -261,168 +261,162 @@ export default function UploadTemplate({
             <CardTitle>{pageTitle}</CardTitle>
             <CardDescription>請完整填寫以下資訊，以便製作廣告</CardDescription>
           </CardHeader>
-          {loading ? (
-            <CardContent className="flex items-center justify-center py-8">
-              <LoadingSpinner />
-            </CardContent>
-          ) : (
-            <form onSubmit={handleSubmit}>
-              <CardContent className="flex flex-col justify-between gap-8">
-                <OrderSelectField
-                  orders={orders}
-                  loading={loading}
-                  error={errors.order}
-                  onSelect={handleOrderSelect}
-                  value={selectedOrder?.orderNumber}
-                  disabled={!!initialOrderNumber}
-                />
+          <form onSubmit={handleSubmit}>
+            <CardContent className="flex flex-col justify-between gap-8">
+              <OrderSelectField
+                orders={orders}
+                loading={loading}
+                error={errors.order}
+                onSelect={handleOrderSelect}
+                value={selectedOrder?.orderNumber}
+                disabled={!!initialOrderNumber}
+              />
 
-                {!!selectedOrder && mode === 'reupload' && (
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      id="isUrgent"
-                      checked={formState.isUrgent}
+              {!!selectedOrder && mode === 'reupload' && (
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="isUrgent"
+                    checked={formState.isUrgent}
+                    onChange={(e) =>
+                      setFormState((prev) => ({
+                        ...prev,
+                        isUrgent: e.target.checked,
+                      }))
+                    }
+                    className="h-4 w-4 rounded border-gray-4 text-blue-6 focus:ring-2 focus:ring-blue-6 focus:ring-offset-2"
+                  />
+                  <label
+                    htmlFor="isUrgent"
+                    className="cursor-pointer text-sm font-medium text-text-primary"
+                  >
+                    這是急件訂單
+                  </label>
+                </div>
+              )}
+
+              {!!selectedOrder && (
+                <>
+                  {/* 廣告名稱 + 排播日期 */}
+                  <div className="grid gap-8 md:grid-cols-2 md:gap-4">
+                    <LabeledField
+                      id={adNameLabelId}
+                      label="廣告名稱"
+                      labelIcon={<TextIcon />}
+                    >
+                      <CustomInput
+                        id={adNameLabelId}
+                        type="text"
+                        placeholder="請輸入廣告名稱"
+                        value={adName}
+                        disabled={!fields.nameEditable}
+                        onChange={(e) =>
+                          setFormState((prev) => ({
+                            ...prev,
+                            adName: e.target.value,
+                          }))
+                        }
+                        error={errors.adName}
+                        errorMessage={errors.adName}
+                      />
+                    </LabeledField>
+
+                    <PopoverCalendar
+                      range={adRange}
+                      setRange={(newRange) =>
+                        setFormState((prev) => ({
+                          ...prev,
+                          adRange: newRange,
+                        }))
+                      }
+                      error={errors.adRange}
+                      disabled={!fields.scheduleEditable}
+                      minOffsetDays={SCHEDULE_MIN_OFFSET_DAYS}
+                    />
+                  </div>
+
+                  {/* 文字素材一、二 */}
+                  <LabeledField
+                    id={adText1LabelId}
+                    label="文字素材一 (10字內)"
+                    labelIcon={<TextFormatIcon />}
+                  >
+                    <CustomInput
+                      id={adText1LabelId}
+                      type="text"
+                      placeholder="請輸入第一段文字素材"
+                      className={cn(
+                        !fields.paragraphOneEditable &&
+                          'cursor-not-allowed bg-gray-3 text-gray-5'
+                      )}
+                      value={adText1}
                       onChange={(e) =>
                         setFormState((prev) => ({
                           ...prev,
-                          isUrgent: e.target.checked,
+                          adText1: e.target.value,
                         }))
                       }
-                      className="h-4 w-4 rounded border-gray-4 text-blue-6 focus:ring-2 focus:ring-blue-6 focus:ring-offset-2"
+                      disabled={!fields.paragraphOneEditable}
+                      error={errors.adText1}
+                      errorMessage={errors.adText1}
                     />
-                    <label
-                      htmlFor="isUrgent"
-                      className="cursor-pointer text-sm font-medium text-text-primary"
-                    >
-                      這是急件訂單
-                    </label>
-                  </div>
-                )}
+                  </LabeledField>
 
-                {!!selectedOrder && (
-                  <>
-                    {/* 廣告名稱 + 排播日期 */}
-                    <div className="grid gap-8 md:grid-cols-2 md:gap-4">
-                      <LabeledField
-                        id={adNameLabelId}
-                        label="廣告名稱"
-                        labelIcon={<TextIcon />}
-                      >
-                        <CustomInput
-                          id={adNameLabelId}
-                          type="text"
-                          placeholder="請輸入廣告名稱"
-                          value={adName}
-                          disabled={!fields.nameEditable}
-                          onChange={(e) =>
-                            setFormState((prev) => ({
-                              ...prev,
-                              adName: e.target.value,
-                            }))
-                          }
-                          error={errors.adName}
-                          errorMessage={errors.adName}
-                        />
-                      </LabeledField>
-
-                      <PopoverCalendar
-                        range={adRange}
-                        setRange={(newRange) =>
-                          setFormState((prev) => ({
-                            ...prev,
-                            adRange: newRange,
-                          }))
-                        }
-                        error={errors.adRange}
-                        disabled={!fields.scheduleEditable}
-                        minOffsetDays={SCHEDULE_MIN_OFFSET_DAYS}
-                      />
-                    </div>
-
-                    {/* 文字素材一、二 */}
-                    <LabeledField
-                      id={adText1LabelId}
-                      label="文字素材一 (10字內)"
-                      labelIcon={<TextFormatIcon />}
-                    >
-                      <CustomInput
-                        id={adText1LabelId}
-                        type="text"
-                        placeholder="請輸入第一段文字素材"
-                        className={cn(
-                          !fields.paragraphOneEditable &&
-                            'cursor-not-allowed bg-gray-3 text-gray-5'
-                        )}
-                        value={adText1}
-                        onChange={(e) =>
-                          setFormState((prev) => ({
-                            ...prev,
-                            adText1: e.target.value,
-                          }))
-                        }
-                        disabled={!fields.paragraphOneEditable}
-                        error={errors.adText1}
-                        errorMessage={errors.adText1}
-                      />
-                    </LabeledField>
-
-                    <LabeledField
+                  <LabeledField
+                    id={adText2LabelId}
+                    label="文字素材二 (10字內)"
+                    labelIcon={<TextFormatIcon />}
+                  >
+                    <CustomInput
                       id={adText2LabelId}
-                      label="文字素材二 (10字內)"
-                      labelIcon={<TextFormatIcon />}
-                    >
-                      <CustomInput
-                        id={adText2LabelId}
-                        type="text"
-                        placeholder="請輸入第二段文字素材"
-                        value={adText2}
-                        onChange={(e) =>
-                          setFormState((prev) => ({
-                            ...prev,
-                            adText2: e.target.value,
-                          }))
-                        }
-                        disabled={!fields.paragraphTwoEditable}
-                        error={errors.adText2}
-                        errorMessage={errors.adText2}
-                      />
-                    </LabeledField>
-
-                    {/* 上傳圖片 */}
-                    <ImageUploadField
-                      adImage={adImage}
-                      setImage={(newImage) =>
+                      type="text"
+                      placeholder="請輸入第二段文字素材"
+                      value={adText2}
+                      onChange={(e) =>
                         setFormState((prev) => ({
                           ...prev,
-                          adImage: newImage,
+                          adText2: e.target.value,
                         }))
                       }
-                      setErrors={setErrors}
-                      error={errors.adImage}
-                      disabled={!fields.imageEditable}
+                      disabled={!fields.paragraphTwoEditable}
+                      error={errors.adText2}
+                      errorMessage={errors.adText2}
                     />
+                  </LabeledField>
 
-                    {/* 提示文字 */}
-                    <Instructions
-                      title="重要提醒"
-                      icon={<TriangleExclamationIcon />}
-                      wordings={[
-                        '素材送出後將無法編輯、修改，請確認所有上傳內容正確無誤。',
-                      ]}
-                    />
-                  </>
-                )}
-              </CardContent>
-              {!!selectedOrder && (
-                <CardFooter className="mt-6 justify-center">
-                  <Button type="submit" size="lg">
-                    {mode === 'reupload' ? '重新上傳 ' : '上傳素材'}
-                  </Button>
-                </CardFooter>
+                  {/* 上傳圖片 */}
+                  <ImageUploadField
+                    adImage={adImage}
+                    setImage={(newImage) =>
+                      setFormState((prev) => ({
+                        ...prev,
+                        adImage: newImage,
+                      }))
+                    }
+                    setErrors={setErrors}
+                    error={errors.adImage}
+                    disabled={!fields.imageEditable}
+                  />
+
+                  {/* 提示文字 */}
+                  <Instructions
+                    title="重要提醒"
+                    icon={<TriangleExclamationIcon />}
+                    wordings={[
+                      '素材送出後將無法編輯、修改，請確認所有上傳內容正確無誤。',
+                    ]}
+                  />
+                </>
               )}
-            </form>
-          )}
+            </CardContent>
+            {!!selectedOrder && (
+              <CardFooter className="mt-6 justify-center">
+                <Button type="submit" size="lg">
+                  {mode === 'reupload' ? '重新上傳 ' : '上傳素材'}
+                </Button>
+              </CardFooter>
+            )}
+          </form>
         </Card>
       </PageMain>
 

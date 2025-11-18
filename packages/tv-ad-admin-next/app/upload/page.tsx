@@ -5,6 +5,7 @@ import { Suspense, useEffect, useMemo, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import SubmitResult from '@/components/shared/submit-result'
+import { Spinner } from '@/components/ui/spinner'
 import UploadTemplate from '@/components/upload/upload-template'
 import { OrderRecordForUploadMutation } from '@/graphql/mutations/order'
 import { OrderRecordForUploadQuery } from '@/graphql/queries/orders'
@@ -147,7 +148,7 @@ function UploadContent() {
 
 export default function UploadPage() {
   return (
-    <Suspense fallback={<div>載入中...</div>}>
+    <Suspense fallback={<Spinner className="size-15" />}>
       <UploadContent />
     </Suspense>
   )
