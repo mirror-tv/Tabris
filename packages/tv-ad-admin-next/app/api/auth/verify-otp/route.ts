@@ -70,8 +70,10 @@ export async function POST(request: NextRequest) {
     })
 
     // 使用 Next.js 推薦的方式設定 cookie
-    // 檢查請求是否為 HTTPS（Google Cloud Run 即使是 dev 環境也是 HTTPS）
-    const isSecure = request.url.startsWith('https://')
+    // 檢查請求是否為 HTTPS（考慮 Google Cloud Run 的代理情況）
+    const forwardedProto = request.headers.get('x-forwarded-proto')
+    const protocol = forwardedProto || request.nextUrl.protocol.replace(':', '')
+    const isSecure = protocol === 'https'
 
     response.cookies.set({
       name: 'auth_token',
