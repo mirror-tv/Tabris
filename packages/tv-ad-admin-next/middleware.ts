@@ -70,7 +70,7 @@ export async function middleware(request: NextRequest) {
           if (userInfo) {
             const hasIdentified = userInfo.hasIdentified === true
 
-            // 如果已完成身份驗證，重定向到首頁
+            // 如果已完成身份驗證，redirect 到首頁
             if (hasIdentified) {
               return NextResponse.redirect(new URL('/', request.url))
             }
@@ -91,7 +91,7 @@ export async function middleware(request: NextRequest) {
   const token = request.cookies.get('auth_token')?.value
 
   if (!token) {
-    // /identity-info 需要 token，沒有 token 要重定向到登入頁
+    // /identity-info 需要 token，沒有 token 要 redirect 到登入頁
     if (pathname === '/identity-info') {
       const loginUrl = new URL('/login', request.url)
       loginUrl.searchParams.set('redirect', pathname)
@@ -141,6 +141,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
+  // 檢查用戶身份驗證狀態
+  // 所有需要認證的路由都必須先完成身份驗證（除了 /identity-info）
   try {
     const baseUrl = request.nextUrl.origin
     const cookie = request.headers.get('cookie') || ''
@@ -149,11 +151,27 @@ export async function middleware(request: NextRequest) {
     if (userInfo) {
       const hasIdentified = userInfo.hasIdentified === true
 
+      // 如果已完成身份驗證，訪問 /identity-info 時 redirect 到首頁
       if (hasIdentified && pathname === '/identity-info') {
         return NextResponse.redirect(new URL('/', request.url))
       }
 
+      // 如果未完成身份驗證，所有非 /identity-info 的路由都必須 redirect 到身份驗證頁
       if (!hasIdentified && pathname !== '/identity-info') {
+        if (pathname.startsWith('/api/')) {
+          return NextResponse.json(
+            { success: false, message: '請先完成身份驗證' },
+            { status: 403 }
+          )
+        }
+        const identityUrl = new URL('/identity-info', request.url)
+        identityUrl.searchParams.set('redirect', pathname)
+        return NextResponse.redirect(identityUrl)
+      }
+    } else {
+      // 無法獲取用戶資訊，視為未完成身份驗證
+      // 如果不在身份驗證頁，則 redirect 到身份驗證頁
+      if (pathname !== '/identity-info') {
         if (pathname.startsWith('/api/')) {
           return NextResponse.json(
             { success: false, message: '請先完成身份驗證' },
@@ -167,6 +185,18 @@ export async function middleware(request: NextRequest) {
     }
   } catch (error) {
     console.error('Middleware: Failed to check member identity:', error)
+    // 發生錯誤時，為了安全起見，如果不在身份驗證頁，則 redirect 到身份驗證頁
+    if (pathname !== '/identity-info') {
+      if (pathname.startsWith('/api/')) {
+        return NextResponse.json(
+          { success: false, message: '身份驗證檢查失敗，請先完成身份驗證' },
+          { status: 403 }
+        )
+      }
+      const identityUrl = new URL('/identity-info', request.url)
+      identityUrl.searchParams.set('redirect', pathname)
+      return NextResponse.redirect(identityUrl)
+    }
   }
 
   if (payload && pathname === '/login') {
