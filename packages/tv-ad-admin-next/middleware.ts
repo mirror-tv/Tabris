@@ -8,6 +8,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 import { verifyToken } from '@/utils/auth'
+import { createErrorLogger } from '@/utils/error-handler'
 
 // 公開 route（不需要登入即可訪問）
 const publicRoutes = ['/login']
@@ -43,7 +44,7 @@ const getUserWithIdentity = async (
     }
     return null
   } catch (error) {
-    console.error('Failed to fetch user identity:', error)
+    createErrorLogger('Failed to fetch user identity')(error)
     return null
   }
 }
@@ -81,7 +82,9 @@ export async function middleware(request: NextRequest) {
             return response
           }
         } catch (error) {
-          console.error('Middleware: Failed to check member identity:', error)
+          createErrorLogger('Middleware: Failed to check member identity')(
+            error
+          )
         }
       }
     }
@@ -184,7 +187,7 @@ export async function middleware(request: NextRequest) {
       }
     }
   } catch (error) {
-    console.error('Middleware: Failed to check member identity:', error)
+    createErrorLogger('Middleware: Failed to check member identity')(error)
     // 發生錯誤時，為了安全起見，如果不在身份驗證頁，則 redirect 到身份驗證頁
     if (pathname !== '/identity-info') {
       if (pathname.startsWith('/api/')) {

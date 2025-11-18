@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 import { verifyToken, type UserPayload } from '@/utils/auth'
+import { createErrorLogger } from '@/utils/error-handler'
 import { getMemberById } from '@/utils/member'
 
 export const dynamic = 'force-dynamic'
@@ -44,7 +45,7 @@ export async function GET(request: NextRequest) {
       user: userWithIdentified,
     })
   } catch (error) {
-    console.error('取得使用者資訊錯誤:', error)
+    createErrorLogger('取得使用者資訊錯誤')(error)
     return NextResponse.json(
       { success: false, message: '伺服器錯誤' },
       { status: 500 }

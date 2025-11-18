@@ -5,6 +5,7 @@ import {
   sendOrderEditRequestEmailToSales,
   sendOrderEditRequestEmailToUser,
 } from '@/utils/edit-request-email-sender'
+import { createErrorLogger } from '@/utils/error-handler'
 
 export async function POST(req: NextRequest) {
   try {
@@ -55,7 +56,7 @@ export async function POST(req: NextRequest) {
       message: 'Edit request email sent',
     })
   } catch (err) {
-    console.error('edit-request-email error:', err)
+    createErrorLogger('edit-request-email error')(err)
     return NextResponse.json(
       { success: false, message: 'Server error' },
       { status: 500 }

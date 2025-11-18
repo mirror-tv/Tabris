@@ -1,5 +1,7 @@
 import { GoogleAuth } from 'google-auth-library'
 
+import { createErrorLogger } from '@/utils/error-handler'
+
 type EditRequestEmailPayload = {
   receiver: string[]
   subject: string
@@ -20,10 +22,9 @@ async function sendEmail(payload: EditRequestEmailPayload, category: string) {
       timeout: 10000,
     })
   } catch (error) {
-    console.error(`Error sending ${category} email:`, {
-      error: error instanceof Error ? error.message : String(error),
+    createErrorLogger(`Error sending ${category} email`, {
       receiver: payload.receiver,
-    })
+    })(error)
   }
 }
 

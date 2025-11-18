@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 import { generateToken } from '@/utils/auth'
+import { createErrorLogger } from '@/utils/error-handler'
 import { getMemberByEmail } from '@/utils/member'
 import { verifyOTP } from '@/utils/otp-storage'
 
@@ -81,7 +82,7 @@ export async function POST(request: NextRequest) {
 
     return response
   } catch (error) {
-    console.error('驗證 OTP 錯誤:', error)
+    createErrorLogger('驗證 OTP 錯誤')(error)
     return NextResponse.json(
       { success: false, message: '伺服器錯誤' },
       { status: 500 }

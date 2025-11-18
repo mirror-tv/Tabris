@@ -5,6 +5,8 @@
 
 import { NextResponse } from 'next/server'
 
+import { createErrorLogger } from '@/utils/error-handler'
+
 export async function POST() {
   try {
     const response = NextResponse.json({
@@ -17,7 +19,7 @@ export async function POST() {
 
     return response
   } catch (error) {
-    console.error('登出錯誤:', error)
+    createErrorLogger('登出錯誤')(error)
     return NextResponse.json(
       { success: false, message: '伺服器錯誤' },
       { status: 500 }
