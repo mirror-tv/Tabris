@@ -172,34 +172,34 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(identityUrl)
       }
     } else {
-      // 無法獲取用戶資訊，視為未完成身份驗證
-      // 如果不在身份驗證頁，則 redirect 到身份驗證頁
-      if (pathname !== '/identity-info') {
-        if (pathname.startsWith('/api/')) {
-          return NextResponse.json(
-            { success: false, message: '請先完成身份驗證' },
-            { status: 403 }
-          )
-        }
-        const identityUrl = new URL('/identity-info', request.url)
-        identityUrl.searchParams.set('redirect', pathname)
-        return NextResponse.redirect(identityUrl)
+      // 無法獲取用戶資訊，視為未登入或 token 無效
+      // 必須 redirect 到登入頁
+      if (pathname.startsWith('/api/')) {
+        return NextResponse.json(
+          { success: false, message: '請先登入' },
+          { status: 401 }
+        )
       }
+      const loginUrl = new URL('/login', request.url)
+      loginUrl.searchParams.set('redirect', pathname)
+      const response = NextResponse.redirect(loginUrl)
+      response.cookies.delete('auth_token')
+      return response
     }
   } catch (error) {
     createErrorLogger('Middleware: Failed to check member identity')(error)
-    // 發生錯誤時，為了安全起見，如果不在身份驗證頁，則 redirect 到身份驗證頁
-    if (pathname !== '/identity-info') {
-      if (pathname.startsWith('/api/')) {
-        return NextResponse.json(
-          { success: false, message: '身份驗證檢查失敗，請先完成身份驗證' },
-          { status: 403 }
-        )
-      }
-      const identityUrl = new URL('/identity-info', request.url)
-      identityUrl.searchParams.set('redirect', pathname)
-      return NextResponse.redirect(identityUrl)
+    // 發生錯誤時，為了安全起見，redirect 到登入頁
+    if (pathname.startsWith('/api/')) {
+      return NextResponse.json(
+        { success: false, message: '身份驗證檢查失敗，請先登入' },
+        { status: 401 }
+      )
     }
+    const loginUrl = new URL('/login', request.url)
+    loginUrl.searchParams.set('redirect', pathname)
+    const response = NextResponse.redirect(loginUrl)
+    response.cookies.delete('auth_token')
+    return response
   }
 
   if (payload && pathname === '/login') {

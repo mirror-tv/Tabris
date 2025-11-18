@@ -258,6 +258,7 @@ export default function LoginPage() {
               maxAttempts={OTP_MAX_ATTEMPTS}
               handleOtpSubmit={handleOtpSubmit}
               handleResendOtp={handleResendOtp}
+              setShowOtpForm={setShowOtpForm}
             />
           )}
         </div>

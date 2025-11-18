@@ -1,7 +1,5 @@
 import { useState } from 'react'
 
-import Link from 'next/link'
-
 import RadixInspiredOTP from '@/components/custom-ui/radix-inspired-otp'
 import { Button } from '@/components/ui/button'
 
@@ -15,6 +13,7 @@ type OptFormProps = {
   maxAttempts: number
   handleOtpSubmit: (value?: string) => void
   handleResendOtp: () => void
+  setShowOtpForm: (show: boolean) => void
 }
 
 export default function OptForm({
@@ -27,6 +26,7 @@ export default function OptForm({
   maxAttempts,
   handleOtpSubmit,
   handleResendOtp,
+  setShowOtpForm,
 }: OptFormProps) {
   const [otpValue, setOtpValue] = useState('')
   const isLocked = failedAttempts >= maxAttempts
@@ -83,12 +83,12 @@ export default function OptForm({
             重新發送{canResend ? '' : `(${countdown}s)`}
           </Button>
         </div>
-        <Link
-          href={`/`}
-          className="-mt-2 text-center text-sm leading-normal font-medium text-brand-primary hover:font-bold"
+        <p
+          className="-mt-2 text-center text-sm leading-normal font-medium text-brand-primary hover:cursor-pointer hover:font-bold"
+          onClick={() => setShowOtpForm(false)}
         >
           重新填寫電子信箱
-        </Link>
+        </p>
       </div>
     </>
   )
