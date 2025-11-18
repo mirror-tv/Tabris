@@ -52,14 +52,17 @@ export default function EditRequest({
     details?: string
   }>({})
   const [orderData, setOrderData] = useState<OrderRecordForEdit | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const fetchEditRequest = async () => {
-      // TODO: 待更新 loading 指示狀態
+      setIsLoading(true)
+
       if (!orderNumber) {
         router.push('/not-found/404')
         return
       }
+
       try {
         const res = await fetch(`/api/order/${orderNumber}/edit-request`)
         if (!res.ok) {
@@ -85,6 +88,7 @@ export default function EditRequest({
         setOrderData(order)
 
         setError({})
+        setIsLoading(false)
       } catch (error) {
         console.error('Failed to fetch edit request:', error)
         router.push('/not-found/404')
@@ -163,6 +167,7 @@ export default function EditRequest({
       onSubmit={handleSubmit}
       submitButtonName="送出修改請求"
       orderData={orderData}
+      isLoading={isLoading}
     >
       <LabeledField
         id={reasonId}

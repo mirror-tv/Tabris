@@ -16,6 +16,7 @@ import { useSubmitStatus } from '@/hooks/useSubmitStatus'
 import TriangleExclamationIcon from '@/public/icons/triangle-exclamation.svg'
 import { handleUnauthorized } from '@/utils/handle-unauthorized'
 
+
 const PAGE_TITLE = '設定排播日期'
 
 export default function EditSchedule({
@@ -30,8 +31,12 @@ export default function EditSchedule({
   const [range, setRange] = useState<DateRange | undefined>(undefined)
   const [error, setError] = useState<string | null>(null)
   const [orderData, setOrderData] = useState<OrderRecordForEdit | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+
   useEffect(() => {
     const fetchSchedule = async () => {
+      setIsLoading(true)
+
       if (!orderNumber) {
         setError('Order number is required')
         return
@@ -69,6 +74,7 @@ export default function EditSchedule({
         }
 
         setError(null)
+        setIsLoading(false)
       } catch (error) {
         console.error('Failed to fetch orders:', error)
         setError(error instanceof Error ? error.message : '載入訂單失敗')
@@ -152,12 +158,14 @@ export default function EditSchedule({
       onSubmit={handleSubmit}
       submitButtonName="送出"
       cardTitle="重新設定排播日期"
+      isLoading={isLoading}
     >
       <PopoverCalendar
         range={range}
         setRange={setRange}
         error={error}
         className="md:w-[360px]"
+        isLoading={isLoading}
       />
       <Instructions
         title="重要提醒"
