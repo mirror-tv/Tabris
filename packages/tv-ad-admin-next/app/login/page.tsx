@@ -79,7 +79,11 @@ export default function LoginPage() {
       setLoadingMessage(LOADING_MESSAGES.SENDING_OTP)
 
       // 開發環境：在瀏覽器 Console 顯示驗證碼（帶顏色）
-      if (process.env.NODE_ENV === 'development' && data.data?.otp) {
+      if (
+        (process.env.NODE_ENV === 'development' ||
+          process.env.GCS_BUCKET === 'tv-advertising-dev') &&
+        data.data?.otp
+      ) {
         console.log(
           '%c🔐 ========== OTP 驗證碼 ==========',
           'color: #10b981; font-size: 14px; font-weight: bold;'

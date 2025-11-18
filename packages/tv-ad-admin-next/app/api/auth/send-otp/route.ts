@@ -99,7 +99,9 @@ export async function POST(request: NextRequest) {
     const emailResult = await sendEmailOTP(email, otp)
 
     // 開發環境：返回 OTP 到前端（方便在瀏覽器 Console 查看）
-    const isDev = process.env.NODE_ENV === 'development'
+    const isDev =
+      process.env.NODE_ENV === 'development' ||
+      process.env.GCS_BUCKET === 'tv-advertising-dev'
 
     const response: SendOtpResponse = {
       success: emailResult.success,

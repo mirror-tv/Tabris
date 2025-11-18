@@ -8,7 +8,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 import { verifyToken } from '@/utils/auth'
-import { createErrorLogger } from '@/utils/error-handler'
+import { createEdgeErrorLogger } from '@/utils/edge-error-handler'
 
 // 公開 route（不需要登入即可訪問）
 const publicRoutes = ['/login']
@@ -44,7 +44,7 @@ const getUserWithIdentity = async (
     }
     return null
   } catch (error) {
-    createErrorLogger('Failed to fetch user identity')(error)
+    createEdgeErrorLogger('Failed to fetch user identity')(error)
     return null
   }
 }
@@ -82,7 +82,7 @@ export async function middleware(request: NextRequest) {
             return response
           }
         } catch (error) {
-          createErrorLogger('Middleware: Failed to check member identity')(
+          createEdgeErrorLogger('Middleware: Failed to check member identity')(
             error
           )
         }
@@ -187,7 +187,7 @@ export async function middleware(request: NextRequest) {
       return response
     }
   } catch (error) {
-    createErrorLogger('Middleware: Failed to check member identity')(error)
+    createEdgeErrorLogger('Middleware: Failed to check member identity')(error)
     // 發生錯誤時，為了安全起見，redirect 到登入頁
     if (pathname.startsWith('/api/')) {
       return NextResponse.json(
