@@ -37,10 +37,14 @@ export default function LoginPage() {
 
   // 如果已登入且已完成身份驗證，redirect 到首頁
   useEffect(() => {
-    if (user && user.hasIdentified === true) {
+    if (!user?.memberId) return
+    console.log('user change', user?.hasIdentified)
+    if (user.hasIdentified === true) {
       router.push('/')
+    } else {
+      setStage('identity-info')
     }
-  }, [user, router])
+  }, [user?.memberId, user?.hasIdentified, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -152,19 +156,9 @@ export default function LoginPage() {
         return
       }
 
-      console.log('data', data)
-
       // 登入成功，更新 store
       if (data.user) {
         login(data.user)
-        console.log('data.user', data.user)
-
-        if (data.user.hasIdentified === true) {
-          // 使用 window.location 確保完整重載，讓 middleware 能正確檢查
-          window.location.href = '/'
-        } else {
-          setStage('identity-info')
-        }
       }
     } catch (err) {
       console.error(err)
