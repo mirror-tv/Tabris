@@ -157,9 +157,12 @@ export const getCurrentFlow = (state: OrderState): StateFlow => {
  * @param currentState 當前狀態
  * @returns 下一個狀態，如果已經是最後一個狀態或找不到則返回 null
  */
-export const getNextState = (currentState: OrderState): OrderState | null => {
-  const flow = getCurrentFlow(currentState)
-  const states = getStatesByFlow(flow)
+export const getNextState = (
+  currentState: OrderState,
+  flow?: StateFlow
+): OrderState | null => {
+  const searchedflow = flow ? flow : getCurrentFlow(currentState)
+  const states = getStatesByFlow(searchedflow)
   const currentIndex = states.indexOf(currentState)
 
   if (currentIndex === -1 || currentIndex === states.length - 1) {
