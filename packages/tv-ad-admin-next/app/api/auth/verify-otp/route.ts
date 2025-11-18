@@ -83,7 +83,13 @@ export async function POST(request: NextRequest) {
       sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 7, // 7 天
       path: '/',
+      // 不設置 domain，讓瀏覽器自動處理（適用於當前域名和子域名）
     })
+
+    // 同時設置響應頭，確保 cookie 被正確設置
+    response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate')
+    response.headers.set('Pragma', 'no-cache')
+    response.headers.set('Expires', '0')
 
     return response
   } catch (error) {

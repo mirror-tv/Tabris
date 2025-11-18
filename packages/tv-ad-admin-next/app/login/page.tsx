@@ -160,11 +160,40 @@ export default function LoginPage() {
       if (data.user) {
         login(data.user)
 
-        // 如果已完成身份驗證，等待 cookie 被保存後再跳轉
+        // 如果已完成身份驗證，確保 cookie 被保存後再跳轉
         if (data.user.hasIdentified === true) {
-          // 等待一個 tick 確保 cookie 被瀏覽器保存
-          await new Promise((resolve) => setTimeout(resolve, 100))
-          // 使用 window.location 確保完整重載，讓 cookie 能正確攜帶
+          // 方法 1: 等待瀏覽器保存 cookie
+          await new Promise((resolve) => setTimeout(resolve, 300))
+
+          // 方法 2: 驗證 cookie 是否可用（最多重試 3 次）
+          let retries = 3
+          let cookieVerified = false
+
+          while (retries > 0 && !cookieVerified) {
+            try {
+              const verifyResponse = await fetch('/api/auth/me', {
+                method: 'GET',
+                credentials: 'include',
+              })
+              const verifyData = await verifyResponse.json()
+
+              if (verifyData.success && verifyData.user) {
+                cookieVerified = true
+                // 更新 store 以確保狀態一致
+                login(verifyData.user)
+                break
+              }
+            } catch (err) {
+              console.log('驗證 cookie 失敗，重試中...', retries)
+            }
+
+            retries--
+            if (retries > 0) {
+              await new Promise((resolve) => setTimeout(resolve, 200))
+            }
+          }
+
+          // 方法 3: 使用 window.location 確保完整重載，讓 cookie 能正確攜帶
           window.location.href = '/'
           return
         }
