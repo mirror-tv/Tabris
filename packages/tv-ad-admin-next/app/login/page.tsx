@@ -47,7 +47,6 @@ export default function LoginPage() {
     setError('')
     setIsLoading(true)
     setLoadingMessage(LOADING_MESSAGES.CHECKING_MEMBER)
-    console.log('handleSubmit', email)
 
     try {
       const validation = validateEmail(email)
@@ -158,11 +157,11 @@ export default function LoginPage() {
       // 登入成功，更新 store
       if (data.user) {
         login(data.user)
-        await new Promise((resolve) => setTimeout(resolve, 0))
         console.log('data.user', data.user)
 
         if (data.user.hasIdentified === true) {
-          router.push('/')
+          // 使用 window.location 確保完整重載，讓 middleware 能正確檢查
+          window.location.href = '/'
         } else {
           setStage('identity-info')
         }
