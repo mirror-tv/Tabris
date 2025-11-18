@@ -38,7 +38,7 @@ export default function LoginPage() {
   // 如果已登入且已完成身份驗證，redirect 到首頁
   useEffect(() => {
     if (!user) return
-    console.log('user change', user?.hasIdentified)
+    console.log('user change', user)
     if (user.hasIdentified === true) {
       router.push('/')
     } else {
