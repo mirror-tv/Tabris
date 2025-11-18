@@ -60,6 +60,42 @@ export default function LoginPage() {
         return
       }
 
+      // 開發環境：直接繞過 OTP 驗證，自動登入
+      if (ENV === 'dev') {
+        setLoadingMessage('開發環境：自動登入中...')
+        const response = await fetch('/api/auth/verify-otp', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            email,
+            otp: 'dev-bypass', // 任意值，開發環境會繞過驗證
+          }),
+        })
+
+        const data = await response.json()
+
+        if (!data.success) {
+          setError(data.message || AUTH_MESSAGES.NETWORK_ERROR)
+          return
+        }
+
+        // 登入成功，更新 store
+        if (data.user) {
+          login(data.user)
+          await new Promise((resolve) => setTimeout(resolve, 0))
+
+          if (data.user.hasIdentified === true) {
+            router.push('/')
+          } else {
+            router.push('/identity-info')
+          }
+        }
+        return
+      }
+
       const response = await fetch('/api/auth/send-otp', {
         method: 'POST',
         headers: {
