@@ -37,14 +37,14 @@ export default function LoginPage() {
 
   // 如果已登入且已完成身份驗證，redirect 到首頁
   useEffect(() => {
-    if (!user?.memberId) return
+    if (!user) return
     console.log('user change', user?.hasIdentified)
     if (user.hasIdentified === true) {
       router.push('/')
     } else {
       setStage('identity-info')
     }
-  }, [user?.memberId, user?.hasIdentified, router])
+  }, [user, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
