@@ -30,7 +30,7 @@ const getUserWithIdentity = async (
     const response = await fetch(`${baseUrl}/api/auth/me`, {
       method: 'GET',
       headers: {
-        cookie,
+        Cookie: cookie,
       },
     })
 
@@ -49,6 +49,12 @@ const getUserWithIdentity = async (
   }
 }
 
+const getBaseUrl = (request: NextRequest): string => {
+  const forwardedProto = request.headers.get('x-forwarded-proto') || 'https'
+  const host = request.headers.get('host') || request.nextUrl.host
+  return `${forwardedProto}://${host}`
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
@@ -64,7 +70,7 @@ export async function middleware(request: NextRequest) {
       if (payload && payload.memberId) {
         // 檢查身份驗證狀態
         try {
-          const baseUrl = request.nextUrl.origin
+          const baseUrl = getBaseUrl(request)
           const cookie = request.headers.get('cookie') || ''
           const userInfo = await getUserWithIdentity(baseUrl, cookie)
 
@@ -137,7 +143,7 @@ export async function middleware(request: NextRequest) {
   // 檢查用戶身份驗證狀態
   // 所有需要認證的路由都必須先完成身份驗證
   try {
-    const baseUrl = request.nextUrl.origin
+    const baseUrl = getBaseUrl(request)
     const cookie = request.headers.get('cookie') || ''
     const userInfo = await getUserWithIdentity(baseUrl, cookie)
 
