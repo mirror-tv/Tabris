@@ -12,8 +12,6 @@ import PageMain from '@/components/shared/page-main'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardTitle } from '@/components/ui/card'
 
-
-
 type EditPageLayoutProps = {
   pageTitle: string
   children: React.ReactNode

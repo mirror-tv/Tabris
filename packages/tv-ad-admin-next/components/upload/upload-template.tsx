@@ -33,7 +33,6 @@ import TextIcon from '@/public/icons/text.svg'
 import TriangleExclamationIcon from '@/public/icons/triangle-exclamation.svg'
 import { PhotoSchema } from '@/types/photo'
 
-
 export type FormState = {
   adName: string
   adText1: string

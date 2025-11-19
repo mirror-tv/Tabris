@@ -20,8 +20,6 @@ import { layout } from '@/constants'
 import CalendarIcon from '@/public/icons/calender.svg'
 import { cn } from '@/utils'
 
-
-
 type PopoverCalendarProps = {
   range: DateRange | undefined
   setRange: (range: DateRange | undefined) => void
@@ -68,6 +66,7 @@ export default function PopoverCalendar({
     <LabeledField
       id={calendarId}
       label="排播日期"
+      labelDescription="最早可排播時間為<br class='md:hidden'/>上傳素材 4 個工作天"
       labelIcon={<CalendarIcon />}
       className="relative flex gap-2"
     >
