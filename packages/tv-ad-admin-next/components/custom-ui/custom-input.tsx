@@ -28,7 +28,7 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
             'disabled:opacity-100', // overwrite base input style
             'md:text-sm dark:bg-input/30',
             // Padding based on icon presence and maxLength
-            icon ? 'pr-3 pl-10' : maxLength ? 'pr-12 pl-3' : 'px-3',
+            icon ? 'pr-3 pl-10' : maxLength ? 'pr-13 pl-3' : 'px-3',
             // Background - common to all states
             'bg-surface-tertiary',
             // Border states - use transparent border to prevent layout shift

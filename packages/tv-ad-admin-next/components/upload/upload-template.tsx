@@ -291,7 +291,7 @@ export default function UploadTemplate({
                         }))
                       }
                       error={errors.adRange}
-                      minOffsetDays={SCHEDULE_MIN_OFFSET_DAYS}
+                      minWorkingDays={3}
                     />
                   </div>
 
