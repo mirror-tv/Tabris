@@ -28,7 +28,6 @@ const addressLabelId = 'address-label'
 const ulStyle = 'list-disc pl-5 text-text-secondary marker:text-xs'
 
 export default function IdentityInfo() {
-  const router = useRouter()
   const [idNumber, setIdNumber] = useState('')
   const [address, setAddress] = useState('')
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -100,10 +99,6 @@ export default function IdentityInfo() {
           hasIdentified: true,
         })
       }
-
-      await new Promise((resolve) => setTimeout(resolve, 0))
-
-      router.push('/')
     } catch (error) {
       console.error('更新身份資訊失敗:', error)
     } finally {

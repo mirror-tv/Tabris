@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const nextState = getNextState(currentState)
+    const nextState = getNextState(currentState, 'edit')
     if (!nextState) {
       return NextResponse.json(
         { error: 'No next state for current state' },

@@ -31,7 +31,6 @@ import TextFormatIcon from '@/public/icons/text-format.svg'
 import TextIcon from '@/public/icons/text.svg'
 import TriangleExclamationIcon from '@/public/icons/triangle-exclamation.svg'
 import { PhotoSchema } from '@/types/photo'
-import { cn } from '@/utils'
 
 
 export type FormState = {
@@ -43,14 +42,6 @@ export type FormState = {
     | (Pick<PhotoSchema, 'id' | 'name' | 'url'> & { data: File | null })
     | null
   isUrgent: boolean
-}
-
-type FieldEditability = {
-  nameEditable: boolean
-  scheduleEditable: boolean
-  paragraphOneEditable: boolean
-  paragraphTwoEditable: boolean
-  imageEditable: boolean
 }
 
 type UploadTemplateProps = {
@@ -70,14 +61,6 @@ const initialFormState: FormState = {
   isUrgent: false,
 }
 
-const initialFieldsEditability: FieldEditability = {
-  nameEditable: true,
-  scheduleEditable: true,
-  paragraphOneEditable: true,
-  paragraphTwoEditable: true,
-  imageEditable: true,
-}
-
 // ===== Label / Input Element IDs =====
 const adNameLabelId = 'ad-name-label'
 const adText1LabelId = 'ad-text1-label'
@@ -95,9 +78,7 @@ export default function UploadTemplate({
   const [selectedOrder, setSelectedOrder] =
     useState<OrderRecordForUploadQuery | null>(null)
   const [formState, setFormState] = useState<FormState>(initialFormState)
-  const [fields, setFields] = useState<FieldEditability>(
-    initialFieldsEditability
-  )
+
   const [uploadData, setUploadData] =
     useState<OrderRecordForUploadMutation | null>(null)
   const [previewData, setPreviewData] = useState<PreviewData | null>(null)
@@ -127,7 +108,6 @@ export default function UploadTemplate({
       currentOrder?.state === ORDER_STATE.PENDING_UPLOAD // upload mode
     ) {
       setFormState(initialFormState)
-      setFields(initialFieldsEditability)
       return
     }
 
@@ -159,8 +139,6 @@ export default function UploadTemplate({
       adImage: photoData,
       isUrgent: currentOrder.isUrgent ?? false,
     })
-
-    setFields(initialFieldsEditability)
   }
 
   // Auto-select order from query parameter
@@ -185,20 +163,17 @@ export default function UploadTemplate({
     if (!selectedOrder) newErrors.order = '請選擇訂單'
 
     // Skip validation if the field is disabled in reupload page
-    if (fields.nameEditable && !adName.trim()) {
+    if (!adName.trim()) {
       newErrors.adName = '請輸入廣告名稱'
     }
 
-    if (fields.paragraphOneEditable) {
-      if (adText1.trim().length === 0 || adText1.trim().length > 10) {
-        newErrors.adText1 = '請輸入 1 - 10 字以內的文字素材'
-      }
+    if (adText1.trim().length === 0 || adText1.trim().length > 50) {
+      newErrors.adText1 = '請輸入 1 - 50 字以內的文字素材'
     }
 
-    if (fields.paragraphTwoEditable && adText2.trim().length > 10)
-      newErrors.adText2 = '文字素材二最多 10 字'
+    if (adText2.trim().length > 50) newErrors.adText2 = '文字素材二最多 50 字'
 
-    if (fields.scheduleEditable && (!adRange?.from || !adRange?.to)) {
+    if (!adRange?.from || !adRange?.to) {
       newErrors.adRange = '請選擇完整的排播起訖日期'
     } else {
       const minAllowedDate = addDays(startOfToday(), SCHEDULE_MIN_OFFSET_DAYS)
@@ -207,7 +182,7 @@ export default function UploadTemplate({
       }
     }
 
-    if (fields.imageEditable && !adImage) {
+    if (!adImage) {
       newErrors.adImage = '請上傳圖片檔案'
     }
 
@@ -220,16 +195,15 @@ export default function UploadTemplate({
     const mutationData: OrderRecordForUploadMutation = {
       orderNumber: selectedOrder!.orderNumber,
       state: selectedOrder!.state,
-      ...(fields.nameEditable && { name: adName }),
-      ...(fields.paragraphOneEditable && { paragraphOne: adText1 }),
-      ...(fields.paragraphTwoEditable && { paragraphTwo: adText2 }),
-      ...(fields.scheduleEditable &&
-        adRange?.from &&
+      name: adName,
+      paragraphOne: adText1,
+      paragraphTwo: adText2,
+      ...(adRange?.from &&
         adRange?.to && {
           scheduleStartDate: formatISO(adRange.from),
           scheduleEndDate: formatISO(adRange.to),
         }),
-      ...(fields.imageEditable && adImage && { image: { data: adImage.data } }),
+      ...(adImage && { image: { data: adImage.data } }),
       ...(mode === 'reupload' && { isUrgent: formState.isUrgent }),
     }
 

@@ -2,8 +2,6 @@
 
 import { useState, useEffect } from 'react'
 
-import { useRouter } from 'next/navigation'
-
 import type { SendOtpResponse } from '@/types/api'
 
 import EmailForm from '@/components/login/email-form'
@@ -19,7 +17,6 @@ import { validateEmail } from '@/utils/validation'
 
 
 export default function LoginPage() {
-  const router = useRouter()
   const { user, login, initialize } = useAuthStore()
 
   const [stage, setStage] = useState<'email' | 'otp' | 'identity-info'>('email')
@@ -37,11 +34,18 @@ export default function LoginPage() {
   }, [initialize])
 
   // 如果已登入且已完成身份驗證，redirect 到首頁
+  // 注意：這個 useEffect 主要處理從其他頁面進入登入頁的情況
+  // 登入成功後的跳轉在 handleOtpSubmit 中處理
   useEffect(() => {
-    if (user && user.hasIdentified === true) {
-      router.push('/')
+    if (!user) return
+    console.log('user change', user)
+    if (user.hasIdentified === true) {
+      // 使用 window.location 確保完整重載，讓 cookie 能正確攜帶
+      window.location.href = '/'
+    } else if (user.hasIdentified === false) {
+      setStage('identity-info')
     }
-  }, [user, router])
+  }, [user])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -156,12 +160,43 @@ export default function LoginPage() {
       // 登入成功，更新 store
       if (data.user) {
         login(data.user)
-        await new Promise((resolve) => setTimeout(resolve, 0))
 
+        // 如果已完成身份驗證，確保 cookie 被保存後再跳轉
         if (data.user.hasIdentified === true) {
-          router.push('/')
-        } else {
-          setStage('identity-info')
+          // 方法 1: 等待瀏覽器保存 cookie
+          await new Promise((resolve) => setTimeout(resolve, 300))
+
+          // 方法 2: 驗證 cookie 是否可用（最多重試 3 次）
+          let retries = 3
+          let cookieVerified = false
+
+          while (retries > 0 && !cookieVerified) {
+            try {
+              const verifyResponse = await fetch('/api/auth/me', {
+                method: 'GET',
+                credentials: 'include',
+              })
+              const verifyData = await verifyResponse.json()
+
+              if (verifyData.success && verifyData.user) {
+                cookieVerified = true
+                // 更新 store 以確保狀態一致
+                login(verifyData.user)
+                break
+              }
+            } catch {
+              console.log('驗證 cookie 失敗，重試中...', retries)
+            }
+
+            retries--
+            if (retries > 0) {
+              await new Promise((resolve) => setTimeout(resolve, 200))
+            }
+          }
+
+          // 方法 3: 使用 window.location 確保完整重載，讓 cookie 能正確攜帶
+          window.location.href = '/'
+          return
         }
       }
     } catch (err) {

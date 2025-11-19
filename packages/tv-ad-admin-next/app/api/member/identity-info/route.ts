@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
           id: currentUser.memberId,
         },
         data: {
-          nationalId: idNumber.trim().toUpperCase(),
+          nationalId: '12',
           residentialAddress: address.trim(),
         },
       },
