@@ -6,6 +6,7 @@ import { zhTW } from 'date-fns/locale/zh-TW'
 import { ErrorMessage } from '../custom-ui/error-message'
 import { LabeledField } from '../custom-ui/labeled-field'
 import { Button } from '../ui/button'
+import { Skeleton } from '../ui/skeleton'
 
 import type { DateRange } from 'react-day-picker'
 
@@ -27,6 +28,7 @@ type PopoverCalendarProps = {
   error?: string | null
   disabled?: boolean
   minOffsetDays?: number
+  isLoading?: boolean
   className?: string
 }
 
@@ -38,6 +40,7 @@ export default function PopoverCalendar({
   error,
   disabled = false,
   minOffsetDays = 0,
+  isLoading = false,
   className,
   ...props
 }: PopoverCalendarProps) {
@@ -69,23 +72,27 @@ export default function PopoverCalendar({
       className="relative flex gap-2"
     >
       <Popover>
-        <PopoverTrigger asChild>
-          <Button
-            id={calendarId}
-            variant="ghost"
-            className={cn(
-              'h-[45px] w-full justify-start gap-2 rounded-md bg-gray-2 tracking-widest md:gap-3',
-              layout.hoverBorder,
-              hasValue ? 'text-text-primary' : 'text-gray-5',
-              error && ['border border-red-7', 'focus:border-red-8'],
-              className
-            )}
-            disabled={disabled}
-          >
-            {CalendarText}
-            <CalendarIcon className="ml-auto text-text-tertiary" />
-          </Button>
-        </PopoverTrigger>
+        {isLoading ? (
+          <Skeleton className="h-[45px] w-90" />
+        ) : (
+          <PopoverTrigger asChild>
+            <Button
+              id={calendarId}
+              variant="ghost"
+              className={cn(
+                'h-[45px] w-full justify-start gap-2 rounded-md bg-gray-2 tracking-widest md:gap-3',
+                layout.hoverBorder,
+                hasValue ? 'text-text-primary' : 'text-gray-5',
+                error && ['border border-red-7', 'focus:border-red-8'],
+                className
+              )}
+              disabled={disabled}
+            >
+              {CalendarText}
+              <CalendarIcon className="ml-auto text-text-tertiary" />
+            </Button>
+          </PopoverTrigger>
+        )}
         <PopoverContent align="start" className="w-auto p-0">
           <Calendar
             mode="range"

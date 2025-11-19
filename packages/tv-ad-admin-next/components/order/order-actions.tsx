@@ -3,6 +3,8 @@ import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
+import { Spinner } from '../ui/spinner'
+
 import LoadingSpinner from '@/components/shared/loading-spinner'
 import { Button } from '@/components/ui/button'
 import { ORDER_STATE } from '@/constants'
@@ -10,6 +12,7 @@ import { type OrderRecordForOrderNumber } from '@/graphql/queries/orders'
 import DoneCircleIcon from '@/public/icons/done-circle.svg'
 import EditIcon from '@/public/icons/edit.svg'
 import UploadIcon from '@/public/icons/upload.svg'
+
 
 type OrderActionsProps = {
   order: OrderRecordForOrderNumber
@@ -119,10 +122,11 @@ const ACTION_MAP: Record<string, ActionConfig> = {
 }
 
 export function OrderActions({ order, className = '' }: OrderActionsProps) {
-  const [isUploading] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
   const [isConfirming, setIsConfirming] = useState(false)
   const router = useRouter()
-  const handleUploadClick = async () => {
+  const handleUploadClick = () => {
+    setIsUploading(true)
     router.push(`/upload?orderNumber=${order.orderNumber}`)
   }
 
@@ -158,10 +162,12 @@ export function OrderActions({ order, className = '' }: OrderActionsProps) {
   }
 
   const handleSettingScheduleClick = () => {
-    router.push(`/order/${order.orderNumber}/schedule`)
+    setIsUploading(true)
+    router.push(`/edit-schedule/${order.orderNumber}`)
   }
 
   const handleModifyClick = () => {
+    setIsUploading(true)
     router.push(`/edit-request/${order.orderNumber}`)
   }
 
@@ -189,10 +195,11 @@ export function OrderActions({ order, className = '' }: OrderActionsProps) {
           >
             {actionContent.buttonIcon}
             {isUploading && actionContent.buttonText === '上傳素材'
-              ? '上傳中...'
+              ? '上傳中'
               : isConfirming && actionContent.buttonText === '確認'
-                ? '確認中...'
+                ? '確認中'
                 : actionContent.buttonText}
+            {isUploading && <Spinner className="text-gray-5" />}
           </Button>
         )}
         {actionContent.secondaryButton && (

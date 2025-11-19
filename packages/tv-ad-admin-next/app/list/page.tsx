@@ -8,6 +8,7 @@ import { OrderTable } from '@/components/list/order-table'
 import { SearchAndFilter } from '@/components/list/search-and-filter'
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
+import { Spinner } from '@/components/ui/spinner'
 import { type OrderState } from '@/constants'
 import { type OrderRecordForList } from '@/graphql/queries/orders'
 import { handleUnauthorized } from '@/utils/handle-unauthorized'
@@ -96,13 +97,14 @@ function ListContent() {
           onSearchChange={setSearchKeyword}
           orderState={orderState}
           onStateChange={setOrderState as (state: OrderState | 'all') => void}
+          isLoading={isLoading}
         />
 
         <div className="mb-6 flex flex-col gap-6 rounded-xl border border-border-default bg-surface-primary p-6">
           <h4 className="text-text-primary">訂單列表 ({totalOrders}筆記錄)</h4>
 
           {isLoading ? (
-            <div className="py-8 text-center">載入中...</div>
+              <Spinner className="size-15 mx-auto my-0" />
           ) : error ? (
             <div className="py-8 text-center text-red-500">{error}</div>
           ) : !totalOrders ? (
@@ -118,7 +120,7 @@ function ListContent() {
 
 export default function ListPage() {
   return (
-    <Suspense fallback={<div>載入中...</div>}>
+    <Suspense fallback={<Spinner className="size-15" />}>
       <ListContent />
     </Suspense>
   )

@@ -2,6 +2,8 @@
 
 import { ReactNode, useState } from 'react'
 
+import { Spinner } from '../ui/spinner'
+
 import { Instructions } from '@/components/shared/instructions'
 import { Button } from '@/components/ui/button'
 import {
@@ -14,6 +16,7 @@ import {
   DialogClose,
 } from '@/components/ui/dialog'
 import TriangleExclamationIcon from '@/public/icons/triangle-exclamation.svg'
+
 
 export type PreviewData = {
   orderNumber: string
@@ -43,8 +46,15 @@ export default function ConfirmDialog({
 }: ConfirmDialogProps) {
   const [isUploading, setIsUploading] = useState(false)
 
-  const { orderNumber, adName, adRange, adText1, adText2, adImageName, isUrgent } =
-    previewData
+  const {
+    orderNumber,
+    adName,
+    adRange,
+    adText1,
+    adText2,
+    adImageName,
+    isUrgent,
+  } = previewData
 
   async function handleConfirm() {
     try {
@@ -96,8 +106,20 @@ export default function ConfirmDialog({
               取消
             </Button>
           </DialogClose>
-          <Button size="lg" onClick={handleConfirm} disabled={isUploading}>
-            {isUploading ? '上傳中…' : '確認上傳'}
+          <Button
+            size="lg"
+            className="w-22 gap-1"
+            onClick={handleConfirm}
+            disabled={isUploading}
+          >
+            {isUploading ? (
+              <>
+                上傳中
+                <Spinner className="text-gray-5" />
+              </>
+            ) : (
+              '確認上傳'
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

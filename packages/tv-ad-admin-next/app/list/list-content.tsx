@@ -10,6 +10,7 @@ import { type OrderState } from '@/constants'
 import { type OrderRecordForList } from '@/graphql/queries/orders'
 import { normalizeOrderState } from '@/utils/state'
 
+// TODO: 依軒：待確認這個元件有無作用是否刪除
 export default function ListContent({
   initialOrders,
 }: {

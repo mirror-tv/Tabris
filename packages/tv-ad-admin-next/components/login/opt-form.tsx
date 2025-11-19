@@ -3,6 +3,8 @@ import { useState } from 'react'
 import RadixInspiredOTP from '@/components/custom-ui/radix-inspired-otp'
 import { Button } from '@/components/ui/button'
 
+import { ButtonLoadingText } from '../custom-ui/button-loading-text'
+
 type OptFormProps = {
   email: string
   error: string
@@ -62,7 +64,13 @@ export default function OptForm({
           size="lg"
           className="w-full"
         >
-          {isLoading ? '驗證中...' : isLocked ? '已鎖定' : '登入'}
+          {isLoading ? (
+            <ButtonLoadingText text="驗證中" />
+          ) : isLocked ? (
+            '已鎖定'
+          ) : (
+            '登入'
+          )}
         </Button>
 
         <div className="flex items-center justify-center text-sm">

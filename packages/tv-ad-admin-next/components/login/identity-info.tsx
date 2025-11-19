@@ -2,6 +2,10 @@
 
 import { ChangeEvent, ReactNode, useState } from 'react'
 
+import { useRouter } from 'next/navigation'
+
+import { ButtonLoadingText } from '../custom-ui/button-loading-text'
+
 import { CustomInput } from '@/components/custom-ui/custom-input'
 import { LabeledField } from '@/components/custom-ui/labeled-field'
 import { Button } from '@/components/ui/button'
@@ -15,6 +19,7 @@ import {
 } from '@/components/ui/card'
 import { useAuthStore } from '@/store/auth.store'
 import { validateTaiwanNationalId } from '@/utils/validation'
+
 
 // ===== Label / Input Element IDs =====
 const idLabelId = 'id-number-label'
@@ -148,7 +153,7 @@ export default function IdentityInfo() {
               className="w-full"
               disabled={isLoading}
             >
-              {isLoading ? '送出中...' : '送出'}
+              {isLoading ? <ButtonLoadingText text="送出中" /> : '送出'}
             </Button>
           </CardFooter>
         </Card>

@@ -16,8 +16,9 @@ import {
   CardDescription,
   CardContent,
 } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 import { OrderStateMap } from '@/constants'
-import FileIcon from '@/public/icons/file.svg'
+import FileDuplicateIcon from '@/public/icons/file-duplicate.svg'
 import UploadIcon from '@/public/icons/upload.svg'
 import { useAuthStore } from '@/store'
 import { getOrdersState } from '@/utils/order-grouping'
@@ -95,6 +96,7 @@ export default function HomePage() {
 
       // 成功：設定資料
       setOrdersState(getOrdersState(data.orders || []))
+      setIsLoading(false)
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') {
         return // 請求被取消，不更新狀態
@@ -109,8 +111,6 @@ export default function HomePage() {
       // 只顯示友善的錯誤訊息給使用者，避免顯示技術細節
       // 技術細節已記錄在 console，供工程師 debug 使用
       setError(ERROR_MESSAGE)
-    } finally {
-      setIsLoading(false)
     }
   }, [])
 
@@ -149,7 +149,10 @@ export default function HomePage() {
             <Card className="cursor-pointer items-center justify-center gap-3 hover:shadow-[0_4px_8px_0_rgba(0,0,0,0.10)]">
               <UploadIcon className="size-10 text-blue-7" />
               <CardTitle className="flex flex-col items-center gap-1">
-                <span>上傳廣告素材</span>
+                {/* Use typography-h4 to avoid layout shift from the default <h4> line-height.*/}
+                <span className="typography-h4 font-normal">
+                  上傳/修改廣告素材
+                </span>
                 <CardDescription>上傳後即可進入製作流程</CardDescription>
               </CardTitle>
             </Card>
@@ -158,9 +161,9 @@ export default function HomePage() {
           {/* history Card */}
           <Link href="/list">
             <Card className="cursor-pointer items-center justify-center gap-3 hover:shadow-[0_4px_8px_0_rgba(0,0,0,0.10)]">
-              <FileIcon className="size-10 text-blue-7" />
+              <FileDuplicateIcon className="size-10 text-blue-7" />
               <CardTitle className="flex flex-col items-center gap-1">
-                <span>訂單紀錄</span>
+                <span className="typography-h4 font-normal">訂單紀錄</span>
                 <CardDescription>查看與管理所有訂單</CardDescription>
               </CardTitle>
             </Card>
@@ -175,12 +178,11 @@ export default function HomePage() {
 
           <CardContent className="grid grid-cols-1 gap-2 md:grid-cols-4 md:gap-4 xl:grid-cols-6">
             {isLoading ? (
-              <div className="col-span-full flex items-center justify-center py-8">
-                <div className="flex flex-col items-center gap-3">
-                  <div className="size-8 animate-spin rounded-full border-4 border-gray-3 border-t-blue-6" />
-                  <p className="text-sm text-gray-7">載入中...</p>
-                </div>
-              </div>
+              <>
+                {Array.from({ length: 4 }, (_, index) => (
+                  <Skeleton key={index} className="h-19 w-full" />
+                ))}
+              </>
             ) : error ? (
               <div className="col-span-full flex flex-col items-center justify-center gap-4 py-8">
                 <p className="text-sm text-red-9">{error}</p>

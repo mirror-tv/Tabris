@@ -15,6 +15,7 @@ import { AUTH_MESSAGES, LOADING_MESSAGES } from '@/constants/messages'
 import { useAuthStore } from '@/store'
 import { validateEmail } from '@/utils/validation'
 
+
 export default function LoginPage() {
   const { user, login, initialize } = useAuthStore()
 
