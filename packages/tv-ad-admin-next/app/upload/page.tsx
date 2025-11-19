@@ -1,8 +1,8 @@
 'use client'
 
-import { Suspense, useEffect, useMemo, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 import SubmitResult from '@/components/shared/submit-result'
 import { Spinner } from '@/components/ui/spinner'
@@ -18,20 +18,9 @@ const pageTitle = '上傳廣告素材'
 function UploadContent() {
   const { submitStatus, setSubmitStatus } = useSubmitStatus()
   const router = useRouter()
-  const searchParams = useSearchParams()
 
   const [orders, setOrders] = useState<OrderRecordForUploadQuery[]>([])
   const [loading, setLoading] = useState(true)
-
-  const orderNumberFromQuery = searchParams.get('orderNumber')
-
-  const validOrderNumber = useMemo(() => {
-    if (!orderNumberFromQuery) return undefined
-    if (orders.length === 0) return undefined
-    return orders.some((o) => o.orderNumber === orderNumberFromQuery)
-      ? orderNumberFromQuery
-      : undefined
-  }, [orderNumberFromQuery, orders])
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -141,7 +130,6 @@ function UploadContent() {
       onSubmit={handleConfirmUpload}
       orders={orders}
       loading={loading}
-      initialOrderNumber={validOrderNumber}
     />
   )
 }

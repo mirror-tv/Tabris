@@ -1,12 +1,13 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import { addDays, format, formatISO, parseISO, startOfToday } from 'date-fns'
 import { DateRange } from 'react-day-picker'
 
 import ImageUploadField from './image-upload-field'
 import OrderSelectField from './order-select-field'
+import { Checkbox } from '../ui/checkbox'
 
 import { CustomInput } from '@/components/custom-ui/custom-input'
 import { LabeledField } from '@/components/custom-ui/labeled-field'
@@ -49,7 +50,6 @@ type UploadTemplateProps = {
   onSubmit: (data: OrderRecordForUploadMutation) => void
   orders: OrderRecordForUploadQuery[]
   loading: boolean
-  initialOrderNumber?: string
 }
 
 const initialFormState: FormState = {
@@ -62,6 +62,7 @@ const initialFormState: FormState = {
 }
 
 // ===== Label / Input Element IDs =====
+const adUrgentLabelId = 'ad-urgent-label'
 const adNameLabelId = 'ad-name-label'
 const adText1LabelId = 'ad-text1-label'
 const adText2LabelId = 'ad-text2-label'
@@ -73,7 +74,6 @@ export default function UploadTemplate({
   onSubmit,
   orders,
   loading,
-  initialOrderNumber,
 }: UploadTemplateProps) {
   const [selectedOrder, setSelectedOrder] =
     useState<OrderRecordForUploadQuery | null>(null)
@@ -141,19 +141,6 @@ export default function UploadTemplate({
     })
   }
 
-  // Auto-select order from query parameter
-  useEffect(() => {
-    if (initialOrderNumber && !loading && orders.length > 0 && !selectedOrder) {
-      const orderToSelect = orders.find(
-        (o) => o.orderNumber === initialOrderNumber
-      )
-      if (orderToSelect) {
-        handleOrderSelect(initialOrderNumber)
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialOrderNumber, loading, orders, selectedOrder])
-
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
@@ -204,7 +191,9 @@ export default function UploadTemplate({
           scheduleEndDate: formatISO(adRange.to),
         }),
       ...(adImage && { image: { data: adImage.data } }),
-      ...(mode === 'reupload' && { isUrgent: formState.isUrgent }),
+      ...(selectedOrder?.state === ORDER_STATE.PENDING_QUOTE_CONFIRMATION && {
+        isUrgent: formState.isUrgent,
+      }),
     }
 
     // Build dialog preview data (for UI only)
@@ -218,7 +207,9 @@ export default function UploadTemplate({
         from: format(adRange!.from!, 'yyyy/MM/dd'),
         to: format(adRange!.to!, 'yyyy/MM/dd'),
       },
-      ...(mode === 'reupload' && { isUrgent: formState.isUrgent }),
+      ...(selectedOrder?.state === ORDER_STATE.PENDING_QUOTE_CONFIRMATION && {
+        isUrgent: formState.isUrgent,
+      }),
     }
 
     setPreviewData(dialogPreviewData)
@@ -243,34 +234,32 @@ export default function UploadTemplate({
                 error={errors.order}
                 onSelect={handleOrderSelect}
                 value={selectedOrder?.orderNumber}
-                disabled={!!initialOrderNumber}
               />
-
-              {!!selectedOrder && mode === 'reupload' && (
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    id="isUrgent"
-                    checked={formState.isUrgent}
-                    onChange={(e) =>
-                      setFormState((prev) => ({
-                        ...prev,
-                        isUrgent: e.target.checked,
-                      }))
-                    }
-                    className="h-4 w-4 rounded border-gray-4 text-blue-6 focus:ring-2 focus:ring-blue-6 focus:ring-offset-2"
-                  />
-                  <label
-                    htmlFor="isUrgent"
-                    className="cursor-pointer text-sm font-medium text-text-primary"
-                  >
-                    這是急件訂單
-                  </label>
-                </div>
-              )}
 
               {!!selectedOrder && (
                 <>
+                  {/* 急件訂單 */}
+                  {mode === 'reupload' && (
+                    <div className="-mt-4 flex items-center gap-2">
+                      <Checkbox
+                        id={adUrgentLabelId}
+                        checked={formState.isUrgent}
+                        onCheckedChange={(value) =>
+                          setFormState((prev) => ({
+                            ...prev,
+                            isUrgent: Boolean(value),
+                          }))
+                        }
+                      />
+                      <label
+                        htmlFor={adUrgentLabelId}
+                        className="cursor-pointer text-sm font-medium text-text-primary"
+                      >
+                        這是急件訂單
+                      </label>
+                    </div>
+                  )}
+
                   {/* 廣告名稱 + 排播日期 */}
                   <div className="grid gap-8 md:grid-cols-2 md:gap-4">
                     <LabeledField
@@ -310,7 +299,7 @@ export default function UploadTemplate({
                   {/* 文字素材一、二 */}
                   <LabeledField
                     id={adText1LabelId}
-                    label="文字素材一 (10字內)"
+                    label="文字素材一 (50字內)"
                     labelIcon={<TextFormatIcon />}
                   >
                     <CustomInput
@@ -324,6 +313,7 @@ export default function UploadTemplate({
                           adText1: e.target.value,
                         }))
                       }
+                      maxLength={50}
                       error={errors.adText1}
                       errorMessage={errors.adText1}
                     />
@@ -331,7 +321,7 @@ export default function UploadTemplate({
 
                   <LabeledField
                     id={adText2LabelId}
-                    label="文字素材二 (10字內)"
+                    label="文字素材二 (50字內)"
                     labelIcon={<TextFormatIcon />}
                   >
                     <CustomInput
@@ -345,6 +335,7 @@ export default function UploadTemplate({
                           adText2: e.target.value,
                         }))
                       }
+                      maxLength={50}
                       error={errors.adText2}
                       errorMessage={errors.adText2}
                     />
