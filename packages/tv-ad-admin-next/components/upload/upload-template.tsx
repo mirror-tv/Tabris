@@ -283,7 +283,6 @@ export default function UploadTemplate({
                         type="text"
                         placeholder="請輸入廣告名稱"
                         value={adName}
-                        disabled={!fields.nameEditable}
                         onChange={(e) =>
                           setFormState((prev) => ({
                             ...prev,
@@ -304,7 +303,6 @@ export default function UploadTemplate({
                         }))
                       }
                       error={errors.adRange}
-                      disabled={!fields.scheduleEditable}
                       minOffsetDays={SCHEDULE_MIN_OFFSET_DAYS}
                     />
                   </div>
@@ -319,10 +317,6 @@ export default function UploadTemplate({
                       id={adText1LabelId}
                       type="text"
                       placeholder="請輸入第一段文字素材"
-                      className={cn(
-                        !fields.paragraphOneEditable &&
-                          'cursor-not-allowed bg-gray-3 text-gray-5'
-                      )}
                       value={adText1}
                       onChange={(e) =>
                         setFormState((prev) => ({
@@ -330,7 +324,6 @@ export default function UploadTemplate({
                           adText1: e.target.value,
                         }))
                       }
-                      disabled={!fields.paragraphOneEditable}
                       error={errors.adText1}
                       errorMessage={errors.adText1}
                     />
@@ -352,7 +345,6 @@ export default function UploadTemplate({
                           adText2: e.target.value,
                         }))
                       }
-                      disabled={!fields.paragraphTwoEditable}
                       error={errors.adText2}
                       errorMessage={errors.adText2}
                     />
@@ -369,7 +361,6 @@ export default function UploadTemplate({
                     }
                     setErrors={setErrors}
                     error={errors.adImage}
-                    disabled={!fields.imageEditable}
                   />
 
                   {/* 提示文字 */}

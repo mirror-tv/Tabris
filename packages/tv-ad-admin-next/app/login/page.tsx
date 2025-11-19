@@ -236,7 +236,7 @@ export default function LoginPage() {
       setLoadingMessage(LOADING_MESSAGES.SENDING_OTP)
 
       // 開發環境：在瀏覽器 Console 顯示驗證碼（帶顏色）
-      if ((ENV === 'dev' || ENV === 'local') && data.data?.otp) {
+      if ((ENV.startsWith('dev') || ENV.startsWith('local')) && data.data?.otp) {
         console.log(
           '%c🔐 ========== 重新發送 OTP ==========',
           'color: #10b981; font-size: 14px; font-weight: bold;'

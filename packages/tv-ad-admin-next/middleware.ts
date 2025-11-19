@@ -7,8 +7,7 @@ import { NextResponse } from 'next/server'
 
 import type { NextRequest } from 'next/server'
 
-import { ENV } from '@/constants/environment-variables'
-import { generateToken, verifyToken } from '@/utils/auth'
+import { verifyToken } from '@/utils/auth'
 import { createEdgeErrorLogger } from '@/utils/edge-error-handler'
 
 // 公開 route（不需要登入即可訪問）
@@ -31,7 +30,7 @@ const getUserWithIdentity = async (
     const response = await fetch(`${baseUrl}/api/auth/me`, {
       method: 'GET',
       headers: {
-        cookie,
+        Cookie: cookie,
       },
     })
 
@@ -50,6 +49,12 @@ const getUserWithIdentity = async (
   }
 }
 
+const getBaseUrl = (request: NextRequest): string => {
+  const forwardedProto = request.headers.get('x-forwarded-proto') || 'https'
+  const host = request.headers.get('host') || request.nextUrl.host
+  return `${forwardedProto}://${host}`
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
@@ -65,7 +70,7 @@ export async function middleware(request: NextRequest) {
       if (payload && payload.memberId) {
         // 檢查身份驗證狀態
         try {
-          const baseUrl = request.nextUrl.origin
+          const baseUrl = getBaseUrl(request)
           const cookie = request.headers.get('cookie') || ''
           const userInfo = await getUserWithIdentity(baseUrl, cookie)
 
@@ -89,20 +94,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  let token = request.cookies.get('auth_token')?.value
-  let mockTokenGenerated = false
-
-  // 開發環境：如果沒有 token，自動生成一個 mock token（僅用於 PM 驗收）
-  if (!token && (ENV === 'local' || ENV === 'dev')) {
-    const mockUserPayload = {
-      userId: Buffer.from('dev@example.com').toString('base64'),
-      memberId: '12', // 使用您指定的 memberId
-      email: 'dev@example.com',
-      hasIdentified: true, // 設為已完成身份驗證
-    }
-    token = await generateToken(mockUserPayload)
-    mockTokenGenerated = true
-  }
+  const token = request.cookies.get('auth_token')?.value
 
   if (!token) {
     if (pathname.startsWith('/api/')) {
@@ -119,29 +111,6 @@ export async function middleware(request: NextRequest) {
   const payload = await verifyToken(token)
 
   if (!payload) {
-    // 開發環境：如果 token 無效但我們剛生成了 mock token，不應該發生這種情況
-    // 但如果發生了，重新生成一個
-    if ((ENV === 'local' || ENV === 'dev') && !mockTokenGenerated) {
-      const mockUserPayload = {
-        userId: Buffer.from('dev@example.com').toString('base64'),
-        memberId: '12',
-        email: 'dev@example.com',
-        hasIdentified: true,
-      }
-      const newToken = await generateToken(mockUserPayload)
-      const response = NextResponse.next()
-      response.cookies.set({
-        name: 'auth_token',
-        value: newToken,
-        httpOnly: true,
-        secure: false,
-        sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 7,
-        path: '/',
-      })
-      return response
-    }
-    
     if (pathname.startsWith('/api/')) {
       const response = NextResponse.json(
         { success: false, message: 'Token 無效或已過期' },
@@ -160,28 +129,6 @@ export async function middleware(request: NextRequest) {
   }
 
   if (!payload.memberId) {
-    // 開發環境：如果沒有 memberId，使用 mock 資料
-    if (ENV === 'local' || ENV === 'dev') {
-      const mockUserPayload = {
-        userId: Buffer.from('dev@example.com').toString('base64'),
-        memberId: '12',
-        email: 'dev@example.com',
-        hasIdentified: true,
-      }
-      const newToken = await generateToken(mockUserPayload)
-      const response = NextResponse.next()
-      response.cookies.set({
-        name: 'auth_token',
-        value: newToken,
-        httpOnly: true,
-        secure: false,
-        sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 7,
-        path: '/',
-      })
-      return response
-    }
-    
     if (pathname.startsWith('/api/')) {
       return NextResponse.json(
         { success: false, message: '缺少會員資訊' },
@@ -195,57 +142,17 @@ export async function middleware(request: NextRequest) {
 
   // 檢查用戶身份驗證狀態
   // 所有需要認證的路由都必須先完成身份驗證
-  // 開發環境：跳過身份驗證檢查（僅用於 PM 驗收）
-  if (ENV === 'local' || ENV === 'dev') {
-    // 開發環境直接通過，使用 token 中的 hasIdentified
-    if (payload.hasIdentified === false && pathname !== '/login') {
-      // 如果 token 中標記為未完成身份驗證，但我們在開發環境，強制設為已完成
-      // 這樣可以跳過身份驗證流程
-    }
-  } else {
-    // 生產環境：正常檢查身份驗證狀態
-    try {
-      const baseUrl = request.nextUrl.origin
-      const cookie = request.headers.get('cookie') || ''
-      const userInfo = await getUserWithIdentity(baseUrl, cookie)
+  try {
+    const baseUrl = getBaseUrl(request)
+    const cookie = request.headers.get('cookie') || ''
+    const userInfo = await getUserWithIdentity(baseUrl, cookie)
 
-      if (!userInfo) {
-        // 無法獲取用戶資訊，視為未登入或 token 無效
-        // 必須 redirect 到登入頁
-        if (pathname.startsWith('/api/')) {
-          return NextResponse.json(
-            { success: false, message: '請先登入' },
-            { status: 401 }
-          )
-        }
-        const loginUrl = new URL('/login', request.url)
-        loginUrl.searchParams.set('redirect', pathname)
-        const response = NextResponse.redirect(loginUrl)
-        response.cookies.delete('auth_token')
-        return response
-      }
-
-      // 檢查是否已完成身份驗證
-      const hasIdentified = userInfo.hasIdentified === true
-
-      // 如果未完成身份驗證，所有路由都必須 redirect 到登入頁（身份驗證在登入頁內完成）
-      if (!hasIdentified && pathname !== '/login') {
-        if (pathname.startsWith('/api/')) {
-          return NextResponse.json(
-            { success: false, message: '請先完成身份驗證' },
-            { status: 403 }
-          )
-        }
-        const loginUrl = new URL('/login', request.url)
-        loginUrl.searchParams.set('redirect', pathname)
-        return NextResponse.redirect(loginUrl)
-      }
-    } catch (error) {
-      createEdgeErrorLogger('Middleware: Failed to check member identity')(error)
-      // 發生錯誤時，為了安全起見，redirect 到登入頁
+    if (!userInfo) {
+      // 無法獲取用戶資訊，視為未登入或 token 無效
+      // 必須 redirect 到登入頁
       if (pathname.startsWith('/api/')) {
         return NextResponse.json(
-          { success: false, message: '身份驗證檢查失敗，請先登入' },
+          { success: false, message: '請先登入' },
           { status: 401 }
         )
       }
@@ -255,40 +162,44 @@ export async function middleware(request: NextRequest) {
       response.cookies.delete('auth_token')
       return response
     }
+
+    // 檢查是否已完成身份驗證
+    const hasIdentified = userInfo.hasIdentified === true
+
+    // 如果未完成身份驗證，所有路由都必須 redirect 到登入頁（身份驗證在登入頁內完成）
+    if (!hasIdentified && pathname !== '/login') {
+      if (pathname.startsWith('/api/')) {
+        return NextResponse.json(
+          { success: false, message: '請先完成身份驗證' },
+          { status: 403 }
+        )
+      }
+      const loginUrl = new URL('/login', request.url)
+      loginUrl.searchParams.set('redirect', pathname)
+      return NextResponse.redirect(loginUrl)
+    }
+  } catch (error) {
+    createEdgeErrorLogger('Middleware: Failed to check member identity')(error)
+    // 發生錯誤時，為了安全起見，redirect 到登入頁
+    if (pathname.startsWith('/api/')) {
+      return NextResponse.json(
+        { success: false, message: '身份驗證檢查失敗，請先登入' },
+        { status: 401 }
+      )
+    }
+    const loginUrl = new URL('/login', request.url)
+    loginUrl.searchParams.set('redirect', pathname)
+    const response = NextResponse.redirect(loginUrl)
+    response.cookies.delete('auth_token')
+    return response
   }
 
   // 如果已完成身份驗證且訪問登入頁，redirect 到首頁
   if (pathname === '/login') {
-    const response = NextResponse.redirect(new URL('/', request.url))
-    // 如果生成了 mock token，設置 cookie
-    if (mockTokenGenerated && token) {
-      response.cookies.set({
-        name: 'auth_token',
-        value: token,
-        httpOnly: true,
-        secure: false,
-        sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 7, // 7 天
-        path: '/',
-      })
-    }
-    return response
+    return NextResponse.redirect(new URL('/', request.url))
   }
 
-  const response = NextResponse.next()
-  // 如果生成了 mock token，設置 cookie
-  if (mockTokenGenerated && token) {
-    response.cookies.set({
-      name: 'auth_token',
-      value: token,
-      httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7, // 7 天
-      path: '/',
-    })
-  }
-  return response
+  return NextResponse.next()
 }
 
 export const config = {
