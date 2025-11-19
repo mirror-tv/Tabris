@@ -11,7 +11,7 @@ import { verifyToken } from '@/utils/auth'
 import { createEdgeErrorLogger } from '@/utils/edge-error-handler'
 
 // 公開 route（不需要登入即可訪問）
-const publicRoutes = ['/login']
+const publicRoutes = ['/login', '/robots.txt']
 const publicApiRoutes = [
   '/api/auth/send-otp',
   '/api/auth/verify-otp',
