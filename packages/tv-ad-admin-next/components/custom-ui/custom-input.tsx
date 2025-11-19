@@ -7,25 +7,15 @@ import { Input as BaseInput } from '../ui/input'
 import { layout } from '@/constants'
 import { cn } from '@/utils'
 
+
 export type CustomInputProps = ComponentProps<'input'> & {
   error?: string
   errorMessage?: string
   icon?: ReactNode
-  limit?: number
 }
 
 const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
-  (
-    { className, error, errorMessage, icon, limit, onChange, ...props },
-    ref
-  ) => {
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (limit && e.target.value.length > limit) {
-        return
-      }
-      onChange?.(e)
-    }
-
+  ({ className, error, errorMessage, icon, ...props }, ref) => {
     return (
       <div className="relative">
         <BaseInput
@@ -47,8 +37,6 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
             error && ['border border-red-7', 'focus:border-red-8'],
             className
           )}
-          maxLength={limit}
-          onChange={handleChange}
           {...props}
         />
         {icon && (
