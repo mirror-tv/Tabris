@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
           id: currentUser.memberId,
         },
         data: {
-          nationalId: '12',
+          nationalId: idNumber.trim(),
           residentialAddress: address.trim(),
         },
       },
