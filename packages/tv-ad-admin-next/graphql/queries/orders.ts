@@ -179,6 +179,7 @@ export type OrderRecordForEdit = Pick<
   | 'scheduleEndDate'
   | 'scheduleStartDateString'
   | 'scheduleEndDateString'
+  | 'isUrgent'
 >
 
 export const getOrderForEditQuery = gql`
@@ -190,6 +191,7 @@ export const getOrderForEditQuery = gql`
       state
       scheduleStartDate
       scheduleEndDate
+      isUrgent
     }
   }
 `

@@ -16,7 +16,6 @@ import { useSubmitStatus } from '@/hooks/useSubmitStatus'
 import TriangleExclamationIcon from '@/public/icons/triangle-exclamation.svg'
 import { handleUnauthorized } from '@/utils/handle-unauthorized'
 
-
 const PAGE_TITLE = '設定排播日期'
 
 export default function EditSchedule({
@@ -33,6 +32,8 @@ export default function EditSchedule({
   const [orderData, setOrderData] = useState<OrderRecordForEdit | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isUploading, setIsUploading] = useState(false)
+
+  const minWorkingDays = orderData?.isUrgent ? 2 : 3
 
   useEffect(() => {
     const fetchSchedule = async () => {
@@ -170,6 +171,9 @@ export default function EditSchedule({
         error={error}
         className="md:w-[360px]"
         isLoading={isLoading}
+        minWorkingDays={minWorkingDays}
+        labelDescription={`最早可排播時間為<br class="md:hidden"/>重新排播 ${minWorkingDays} 個工作天後`}
+        upgradeHint={`如需在 2 個工作天內排播請聯繫客服信箱洽詢購買急件服務：<a href="mailto:mnews_sales@mnews.tw"><span class="text-blue-600 underline hover:text-blue-700">mnews_sales@mnews.tw</span></a>`}
       />
       <Instructions
         title="重要提醒"

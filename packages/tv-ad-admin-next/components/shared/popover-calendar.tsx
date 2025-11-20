@@ -23,8 +23,6 @@ import { layout } from '@/constants'
 import CalendarIcon from '@/public/icons/calender.svg'
 import { cn, getAllHolidaysForYear } from '@/utils'
 
-
-
 function parseDateString(dateStr: string): Date {
   const year = parseInt(dateStr.substring(0, 4))
   const month = parseInt(dateStr.substring(4, 6)) - 1
@@ -49,6 +47,8 @@ type PopoverCalendarProps = {
   minWorkingDays?: number
   isLoading?: boolean
   className?: string
+  labelDescription?: string
+  upgradeHint?: string
 }
 
 const calendarId = 'schedule'
@@ -62,6 +62,8 @@ export default function PopoverCalendar({
   minWorkingDays,
   isLoading = false,
   className,
+  labelDescription,
+  upgradeHint,
   ...props
 }: PopoverCalendarProps) {
   // 使用 useMemo 穩定 today 的值，避免每次渲染都建立新物件
@@ -196,11 +198,16 @@ export default function PopoverCalendar({
     </>
   )
 
+  const defaultLabelDescription =
+    minWorkingDays !== undefined && minWorkingDays > 0
+      ? `最早可排播時間為<br class='md:hidden'/>上傳素材 ${minWorkingDays} 個工作天後`
+      : undefined
+
   return (
     <LabeledField
       id={calendarId}
       label="排播日期"
-      labelDescription="最早可排播時間為<br class='md:hidden'/>上傳素材 3 個工作天"
+      labelDescription={labelDescription ?? defaultLabelDescription}
       labelIcon={<CalendarIcon />}
       className="relative flex gap-2"
     >
@@ -240,6 +247,12 @@ export default function PopoverCalendar({
           />
         </PopoverContent>
       </Popover>
+      {!!upgradeHint && (
+        <span
+          className="absolute bottom-[-24px] text-sm text-gray-7"
+          dangerouslySetInnerHTML={{ __html: upgradeHint }}
+        ></span>
+      )}
       {!!error && <ErrorMessage>{error}</ErrorMessage>}
     </LabeledField>
   )

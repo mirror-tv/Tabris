@@ -84,7 +84,8 @@ export default function UploadTemplate({
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
-  const { adName, adText1, adText2, adRange, adImage } = formState
+  const { adName, adText1, adText2, adRange, adImage, isUrgent } = formState
+  const calculatedMinWorkingDays = isUrgent ? 2 : 5
 
   // mode: 'upload' | 'reupload' | null
   // Derived from selectedOrder.state. Used only for UI rendering (labels, buttons, editable fields), not for business or server logic.
@@ -291,7 +292,8 @@ export default function UploadTemplate({
                         }))
                       }
                       error={errors.adRange}
-                      minWorkingDays={3}
+                      minWorkingDays={calculatedMinWorkingDays}
+                      labelDescription={`最早可排播時間為<br class="md:hidden"/>上傳素材 ${calculatedMinWorkingDays} 個工作天後`}
                     />
                   </div>
 
