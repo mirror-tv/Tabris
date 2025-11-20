@@ -23,6 +23,8 @@ import { layout } from '@/constants'
 import CalendarIcon from '@/public/icons/calender.svg'
 import { cn, getAllHolidaysForYear } from '@/utils'
 
+
+
 function parseDateString(dateStr: string): Date {
   const year = parseInt(dateStr.substring(0, 4))
   const month = parseInt(dateStr.substring(4, 6)) - 1
@@ -170,7 +172,8 @@ export default function PopoverCalendar({
           {...props}
           className={cn(
             props.className,
-            isHolidayDate && 'font-semibold !text-red-900 dark:!text-red-700'
+            isHolidayDate &&
+              'font-semibold text-red-6! disabled:decoration-red-6 dark:text-red-6!'
           )}
         />
       )
