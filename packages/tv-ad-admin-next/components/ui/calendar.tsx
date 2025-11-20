@@ -109,7 +109,7 @@ function Calendar({
         range_middle: cn('rounded-none', defaultClassNames.range_middle),
         range_end: cn('rounded-r-md bg-accent', defaultClassNames.range_end),
         today: cn(
-          'bg-accent text-accent-foreground rounded-md data-[selected=true]:rounded-none',
+          'text-accent-foreground rounded-md data-[selected=true]:rounded-none',
           defaultClassNames.today
         ),
         outside: cn(
@@ -117,7 +117,7 @@ function Calendar({
           defaultClassNames.outside
         ),
         disabled: cn(
-          'text-muted-foreground opacity-50',
+          'text-muted-foreground opacity-70',
           defaultClassNames.disabled
         ),
         hidden: cn('invisible', defaultClassNames.hidden),
@@ -171,6 +171,24 @@ function Calendar({
   )
 }
 
+const pastDateStyle =
+  'disabled:bg-transparent disabled:line-through disabled:text-gray-5  disabled:decoration-gray-5'
+
+const todayDotStyle = `
+  relative text-blue-7 bg-transparent
+  after:content-['']
+  after:absolute
+  after:left-1/2
+  after:-translate-x-1/2
+  after:bottom-0.5
+  after:size-1.5
+  after:rounded-full
+  after:bg-blue-7
+  data-[selected-single=true]:after:bg-white
+  data-[range-start=true]:after:bg-white
+  data-[range-end=true]:after:bg-white
+`
+
 function CalendarDayButton({
   className,
   day,
@@ -200,8 +218,12 @@ function CalendarDayButton({
       data-range-end={modifiers.range_end}
       data-range-middle={modifiers.range_middle}
       className={cn(
-        'flex aspect-square size-auto w-full min-w-(--cell-size) flex-col gap-1 leading-none font-normal group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:border-ring group-data-[focused=true]/day:ring-[3px] group-data-[focused=true]/day:ring-ring/50 data-[range-end=true]:rounded-md data-[range-end=true]:rounded-r-md data-[range-end=true]:bg-primary data-[range-end=true]:text-primary-foreground data-[range-middle=true]:rounded-none data-[range-middle=true]:bg-accent data-[range-middle=true]:text-accent-foreground data-[range-start=true]:rounded-md data-[range-start=true]:rounded-l-md data-[range-start=true]:bg-primary data-[range-start=true]:text-primary-foreground data-[selected-single=true]:bg-primary data-[selected-single=true]:text-primary-foreground dark:hover:text-accent-foreground [&>span]:text-xs [&>span]:opacity-70',
+        'flex aspect-square size-auto w-full min-w-(--cell-size) flex-col gap-1 leading-none font-normal group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:border-ring group-data-[focused=true]/day:ring-[3px] group-data-[focused=true]/day:ring-ring/50 data-[range-end=true]:rounded-md data-[range-end=true]:rounded-r-md data-[range-end=true]:bg-primary data-[range-end=true]:text-primary-foreground data-[range-middle=true]:rounded-none data-[range-middle=true]:bg-blue-1 data-[range-middle=true]:text-accent-foreground data-[range-start=true]:rounded-md data-[range-start=true]:rounded-l-md data-[range-start=true]:bg-primary data-[range-start=true]:text-primary-foreground data-[selected-single=true]:bg-primary data-[selected-single=true]:text-primary-foreground dark:hover:text-accent-foreground [&>span]:text-xs [&>span]:opacity-70',
         defaultClassNames.day,
+        // outside dates (but only when not selected)
+        modifiers.outside && !modifiers.selected && 'opacity-50',
+        modifiers.disabled && pastDateStyle,
+        modifiers.today && todayDotStyle,
         className
       )}
       {...props}
