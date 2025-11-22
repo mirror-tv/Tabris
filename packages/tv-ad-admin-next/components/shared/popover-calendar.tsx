@@ -2,7 +2,13 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 
-import { addDays, format, startOfToday } from 'date-fns'
+import {
+  addDays,
+  format,
+  startOfToday,
+  endOfYear,
+  startOfMonth,
+} from 'date-fns'
 import { zhTW } from 'date-fns/locale/zh-TW'
 import { DayButton } from 'react-day-picker'
 
@@ -21,7 +27,7 @@ import {
 } from '@/components/ui/popover'
 import { layout } from '@/constants'
 import CalendarIcon from '@/public/icons/calender.svg'
-import { cn, getAllHolidaysForYear } from '@/utils'
+import { cn, getAllHolidaysForYear, getYearData } from '@/utils'
 
 function parseDateString(dateStr: string): Date {
   const year = parseInt(dateStr.substring(0, 4))
@@ -80,6 +86,13 @@ export default function PopoverCalendar({
     }
     return addDays(startOfToday(), minOffsetDays)
   })
+  // 最大日期：預設為明年年底（例如今年2025，預設限制到2026/12/31）
+  // 如果系統有下一年度的假日資料，則開放到下一年度年底
+  const [maxDate, setMaxDate] = useState<Date>(() => {
+    const currentYear = today.getFullYear()
+    // 預設限制到明年年底
+    return endOfYear(new Date(currentYear + 1, 11, 31))
+  })
 
   const hasValue = !!(range?.from && range?.to)
 
@@ -93,15 +106,45 @@ export default function PopoverCalendar({
       isLoadingRef.current = true
       try {
         const currentYear = today.getFullYear()
-        const holidays = [
-          ...(await getAllHolidaysForYear(currentYear)),
-          ...(await getAllHolidaysForYear(currentYear + 1)),
-        ]
+        const nextYear = currentYear + 1
+        const yearAfterNext = currentYear + 2
+
+        // 取得今年和明年的假日資料
+        const [currentYearHolidays, nextYearHolidays] = await Promise.all([
+          getAllHolidaysForYear(currentYear),
+          getAllHolidaysForYear(nextYear),
+        ])
+
+        // 取得下一年度（yearAfterNext）的完整行事曆資料（工作天/非工作天）
+        const yearAfterNextData = await getYearData(yearAfterNext)
 
         if (cancelled) return
 
-        const holidayDateObjects = holidays.map(parseDateString)
+        // 合併所有假日資料（用於顯示假日標記）
+        const allHolidays = [...currentYearHolidays, ...nextYearHolidays]
+        // 如果有下一年度的資料，也加入其假日資料
+        if (yearAfterNextData) {
+          const yearAfterNextHolidays = yearAfterNextData
+            .filter((item) => item.isholiday === '是')
+            .map((item) => item.date)
+          allHolidays.push(...yearAfterNextHolidays)
+        }
+
+        const holidayDateObjects = allHolidays.map(parseDateString)
         setHolidayDates(holidayDateObjects)
+
+        // 設定最大日期：
+        // - 如果有下一年度的完整行事曆資料，開放到下一年度年底
+        // - 如果沒有，限制到明年年底
+        if (!cancelled) {
+          if (yearAfterNextData) {
+            // 有下一年度的資料，開放到下一年度年底
+            setMaxDate(endOfYear(new Date(yearAfterNext, 11, 31)))
+          } else {
+            // 沒有下一年度的資料，限制到明年年底
+            setMaxDate(endOfYear(new Date(nextYear, 11, 31)))
+          }
+        }
 
         // 如果有指定工作日數，計算最小日期
         if (minWorkingDays !== undefined && minWorkingDays > 0) {
@@ -238,8 +281,10 @@ export default function PopoverCalendar({
             mode="range"
             selected={range}
             onSelect={setRange}
-            disabled={{ before: minDate }}
+            disabled={{ before: minDate, after: maxDate }}
             defaultMonth={minDate}
+            fromMonth={startOfMonth(minDate)}
+            toMonth={startOfMonth(maxDate)}
             components={{
               DayButton: HolidayDayButton,
             }}
