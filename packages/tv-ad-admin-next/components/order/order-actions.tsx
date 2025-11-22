@@ -13,7 +13,6 @@ import DoneCircleIcon from '@/public/icons/done-circle.svg'
 import EditIcon from '@/public/icons/edit.svg'
 import UploadIcon from '@/public/icons/upload.svg'
 
-
 type OrderActionsProps = {
   order: OrderRecordForOrderNumber
   className?: string
@@ -69,7 +68,6 @@ const ACTION_MAP: Record<string, ActionConfig> = {
     buttonText: null,
     buttonIcon: null,
     buttonClassName: '',
-
     statusMessage: '排播時間已設定，正在等待廣告播出。',
   },
   [ORDER_STATE.BROADCASTED]: {
@@ -83,6 +81,12 @@ const ACTION_MAP: Record<string, ActionConfig> = {
     buttonIcon: <EditIcon />,
     buttonClassName: styles.primaryButton,
     statusMessage: null,
+  },
+  [ORDER_STATE.DATE_RESET]: {
+    buttonText: null,
+    buttonIcon: null,
+    buttonClassName: '',
+    statusMessage: '排播時間已設定，正在等待廣告播出。',
   },
   [ORDER_STATE.PENDING_CONFIRMATION]: {
     buttonText: '確認',
