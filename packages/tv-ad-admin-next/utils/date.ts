@@ -1,8 +1,9 @@
-import { parseISO, addHours, format } from 'date-fns'
+import { parseISO } from 'date-fns'
 
 /**
  * Convert UTC time to Taiwan time (+8 hours)
  * 將 UTC 時間轉換為台灣時間（+8 小時）
+ * Returns a Date object representing Taiwan time in UTC
  */
 export function toTaiwanTime(
   dateInput: string | Date | null | undefined
@@ -12,20 +13,47 @@ export function toTaiwanTime(
   // Parse string into Date object if necessary
   const date = typeof dateInput === 'string' ? parseISO(dateInput) : dateInput
 
-  // Taiwan is UTC+8, so add 8 hours to UTC time
-  return addHours(date, 8)
+  // Get UTC time in milliseconds and add 8 hours for Taiwan time
+  const utcTime = date.getTime()
+  const taiwanTime = utcTime + 8 * 60 * 60 * 1000 // Add 8 hours in milliseconds
+
+  // Create a new Date object (this will be displayed in local timezone when formatted)
+  // But we'll use UTC methods to extract components for Taiwan time
+  return new Date(taiwanTime)
 }
 
 /**
  * Format date as YYYY/MM/DD (Taiwan timezone)
  * 將日期格式化為 YYYY/MM/DD（台灣時區）
+ * Uses UTC methods to format Taiwan time correctly regardless of local timezone
  */
 export function formatTaiwanDate(
-  dateInput: string | Date | null | undefined
+  dateInput: string | Date | null | undefined,
+  rule: string = 'yyyy/MM/dd'
 ): string {
-  const date = toTaiwanTime(dateInput)
-  if (!date) return ''
-  return format(date, 'yyyy/MM/dd')
+  if (!dateInput) return ''
+
+  const date = typeof dateInput === 'string' ? parseISO(dateInput) : dateInput
+  const taiwanDate = new Date(date.getTime() + 8 * 60 * 60 * 1000)
+
+  // Extract components using UTC methods (Taiwan time = UTC + 8 hours)
+  const components = {
+    yyyy: String(taiwanDate.getUTCFullYear()),
+    MM: String(taiwanDate.getUTCMonth() + 1).padStart(2, '0'),
+    dd: String(taiwanDate.getUTCDate()).padStart(2, '0'),
+    HH: String(taiwanDate.getUTCHours()).padStart(2, '0'),
+    mm: String(taiwanDate.getUTCMinutes()).padStart(2, '0'),
+    ss: String(taiwanDate.getUTCSeconds()).padStart(2, '0'),
+  }
+
+  // Replace time components first (to avoid MM/mm conflict), then date components
+  return rule
+    .replace(/yyyy/g, components.yyyy)
+    .replace(/HH/g, components.HH)
+    .replace(/mm/g, components.mm) // Replace minutes before month
+    .replace(/ss/g, components.ss)
+    .replace(/MM/g, components.MM) // Replace month after minutes
+    .replace(/dd/g, components.dd)
 }
 
 type HolidayData = {

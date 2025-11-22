@@ -17,8 +17,9 @@ type OrderPreviewProps = {
 export function OrderPreview({ order, className = '' }: OrderPreviewProps) {
   const normalizedState = normalizeOrderState(order.state)
   const deadline = useMemo(() => {
+    console.log(order.scheduleConfirmDeadline)
     return order.scheduleConfirmDeadline
-      ? formatTaiwanDate(order.scheduleConfirmDeadline)
+      ? formatTaiwanDate(order.scheduleConfirmDeadline, 'yyyy/MM/dd HH:mm')
       : formatTaiwanDate(new Date())
   }, [order.scheduleConfirmDeadline])
   return (
@@ -31,7 +32,7 @@ export function OrderPreview({ order, className = '' }: OrderPreviewProps) {
       {normalizedState === ORDER_STATE.PENDING_BROADCAST_DATE && (
         <Instructions
           wordings={[
-            `由於您未在 ${deadline} 23:59前完成確認，原始排播日期已作廢，請重新設定`,
+            `由於您未在 ${deadline} 前完成確認，原始排播日期已作廢，請重新設定`,
           ]}
         />
       )}
@@ -39,9 +40,9 @@ export function OrderPreview({ order, className = '' }: OrderPreviewProps) {
         <Instructions
           title="說明"
           wordings={[
-            `確認無誤，請於 ${deadline} 23:59 前，於下方訂單操作區點選「確認」按鈕`,
+            `確認無誤，請於 ${deadline} 前，於下方訂單操作區點選「確認」按鈕`,
             '如需修改，請點選「提出修改」按鈕',
-            `若操作未在 ${deadline} 23:59 前完成，此訂單將自動進入排播程序，無法再修改`,
+            `若操作未在 ${deadline} 前完成，此訂單將不排播，需重新設定排播時間`,
           ]}
           isDot
         />
