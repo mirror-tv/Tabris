@@ -249,7 +249,7 @@ export default function PopoverCalendar({
       </Popover>
       {!!upgradeHint && (
         <span
-          className="absolute bottom-[-24px] text-sm text-gray-7"
+          className="text-sm text-gray-7 md:absolute md:bottom-[-24px]"
           dangerouslySetInnerHTML={{ __html: upgradeHint }}
         ></span>
       )}
