@@ -5,9 +5,13 @@ import { OrderStateMap, ORDER_STATE } from '@/constants'
 import {
   type OrderRecordForList,
   type OrderRecordForDashboard,
+  type OrderRecordForUploadQuery,
 } from '@/graphql/queries/orders'
 
 type RelatedOrder = { id: string } | Array<{ id: string }>
+
+const REVIEWED_ORDER_PRICE = 400
+const UNREVIEWED_ORDER_PRICE = 600
 
 /**
  * 將訂單分組並排序
@@ -128,4 +132,8 @@ export function getOrdersState(
     state: state as keyof typeof OrderStateMap,
     count: count,
   }))
+}
+
+export const getOldOrderPrice = (order: OrderRecordForUploadQuery) => {
+  return order.isReviewed ? REVIEWED_ORDER_PRICE : UNREVIEWED_ORDER_PRICE
 }

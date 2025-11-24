@@ -132,6 +132,9 @@ export type OrderRecordForUploadQuery = Pick<
   | 'image'
   | 'state'
   | 'isUrgent'
+  | 'isReviewed'
+  | 'needsModification'
+  | 'price'
 > & {
   orderNumber: string
 }
@@ -148,6 +151,7 @@ export const getOrdersForUpload = gql`
       id
       orderNumber
       name
+      price
       member {
         id
       }
@@ -165,6 +169,8 @@ export const getOrdersForUpload = gql`
       }
       state
       isUrgent
+      needsModification
+      isReviewed
     }
   }
 `
