@@ -81,7 +81,7 @@ export default function LatestPostListHandler({
       {(renderList) => (
         <ol className={styles.list}>
           {renderList.map((postItem) => (
-            <ol key={postItem.slug} className={`${styles.item} list-latest`}>
+            <li key={postItem.slug} className={`${styles.item} list-latest`}>
               <UiPostCardHomepage
                 href={postItem.href}
                 images={postItem.images}
@@ -91,7 +91,7 @@ export default function LatestPostListHandler({
                 label={postItem.label}
                 exclusive={postItem.exclusive ?? false}
               />
-            </ol>
+            </li>
           ))}
         </ol>
       )}
