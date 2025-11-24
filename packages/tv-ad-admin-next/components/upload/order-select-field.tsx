@@ -17,7 +17,7 @@ import { layout, ORDER_STATE } from '@/constants'
 import { OrderRecordForUploadQuery } from '@/graphql/queries/orders'
 import FileIcon from '@/public/icons/file.svg'
 import { cn } from '@/utils'
-
+import { getOldOrderPrice } from '@/utils/order-grouping'
 
 type OrderSelectFieldProps = {
   orders: OrderRecordForUploadQuery[]
@@ -46,11 +46,27 @@ export default function OrderSelectField({
     const items: SelectGroupItem[] = []
 
     const uploadOrders = orders.filter(
-      (o) => o.state === ORDER_STATE.PENDING_UPLOAD
+      (o) =>
+        o.state === ORDER_STATE.PENDING_UPLOAD && o.needsModification === false
     )
-    const reuploadOrders = orders.filter(
-      (o) => o.state === ORDER_STATE.PENDING_QUOTE_CONFIRMATION
-    )
+    const reuploadPrice = [
+      ...new Set(
+        orders
+          .filter(
+            (o) => o.state === ORDER_STATE.PENDING_UPLOAD && o.needsModification
+          )
+          .map((o: OrderRecordForUploadQuery) =>
+            o.price && o.price > 1000 ? o.price - 1000 : o.price
+          )
+      ),
+    ]
+
+    const reuploadOrders = orders.filter((o) => {
+      return (
+        o.state === ORDER_STATE.PENDING_QUOTE_CONFIRMATION &&
+        reuploadPrice.includes(getOldOrderPrice(o))
+      )
+    })
 
     if (uploadOrders.length > 0) {
       items.push({ type: 'label', label: '新訂單' })
