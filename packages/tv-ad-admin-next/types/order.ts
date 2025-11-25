@@ -15,7 +15,7 @@ export type OrderSchema = {
   schedule?: string | null
 
   member?: MemberSchema | null
-  relatedOrder?: { id: string }[]
+  parentOrder?: { id: string }
 
   attachment?: AttachmentSchema | null
   image?: ImageSchema | null
