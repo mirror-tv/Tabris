@@ -1,32 +1,4 @@
-import { GoogleAuth } from 'google-auth-library'
-
-import { createErrorLogger } from '@/utils/error-handler'
-
-type EditRequestEmailPayload = {
-  receiver: string[]
-  subject: string
-  body: string
-}
-
-async function sendEmail(payload: EditRequestEmailPayload, category: string) {
-  const emailApiUrl = process.env.EMAIL_API_URL as string
-  try {
-    const auth = new GoogleAuth()
-    const client = await auth.getIdTokenClient(emailApiUrl)
-
-    await client.request({
-      url: emailApiUrl,
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      data: payload,
-      timeout: 10000,
-    })
-  } catch (error) {
-    createErrorLogger(`Error sending ${category} email`, {
-      receiver: payload.receiver,
-    })(error)
-  }
-}
+import { sendEmail, EmailPayload } from './mail-sender'
 
 export async function sendOrderEditRequestEmailToUser(
   userEmail: string,
@@ -70,7 +42,7 @@ export async function sendOrderEditRequestEmailToUser(
   `.trim()
 
   await sendEmail(
-    { receiver: [userEmail], subject, body },
+    { receiver: [userEmail], subject, body } as EmailPayload,
     'order-edit-request-to-user'
   )
 }
