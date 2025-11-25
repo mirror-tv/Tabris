@@ -105,7 +105,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    if (addonOrder.relatedOrderBy && addonOrder.relatedOrderBy.length > 0) {
+    if (addonOrder.parentOrder != null) {
       return NextResponse.json<ApiResponse>(
         {
           success: false,

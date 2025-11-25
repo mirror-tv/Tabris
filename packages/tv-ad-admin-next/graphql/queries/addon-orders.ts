@@ -14,7 +14,7 @@ export type AddonOrderQuery = Pick<
   | 'isReviewed'
   | 'createdAt'
 > & {
-  relatedOrderBy?: { id: string }[]
+  parentOrder?: { id: string }
 }
 
 export const getAddonOrdersQuery = gql`
@@ -32,7 +32,7 @@ export const getAddonOrdersQuery = gql`
       needsModification
       isReviewed
       createdAt
-      relatedOrderBy {
+      parentOrder {
         id
       }
     }
