@@ -69,7 +69,7 @@ export const OrderStateMap = {
     progressColor: 'red',
   },
   [ORDER_STATE.DATE_RESET]: {
-    label: '已重新設定排播日期',
+    label: '已重設排播日期',
     colors: COLOR_THEMES.label.yellow,
     progressColor: 'yellow',
   },
