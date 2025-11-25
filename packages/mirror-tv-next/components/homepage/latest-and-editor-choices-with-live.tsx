@@ -13,6 +13,7 @@ import LatestPostListHandler from './latest-post-list-handler'
 import EditorChoicesSwiper from './editor-choices-swiper'
 import Live from './live'
 import dynamic from 'next/dynamic'
+import AdTvAdminMobileBanner from '../shared/ad-tv-admin-mobile-banner'
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 
 type LatestAndEditorChoicesWithLiveProps = {
@@ -95,6 +96,7 @@ export default async function LatestAndEditorChoicesWithLive({
         <EditorChoicesSwiper editorChoices={editorChoices} />
       </section>
       <GPTAd pageKey="home" adKey="MB_M2" />
+      <AdTvAdminMobileBanner />
       <section className={styles.latest}>
         <UiHeadingBordered
           title={latestListTitle}
