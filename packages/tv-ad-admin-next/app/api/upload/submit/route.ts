@@ -19,6 +19,10 @@ import { ApiResponse } from '@/types'
 import { getClient } from '@/utils/apollo-client'
 import { getCurrentUser } from '@/utils/auth'
 import { createErrorLogger } from '@/utils/error-handler'
+import {
+  sendTransferEmailToUser,
+  sendTransferEmailToSales,
+} from '@/utils/transferr-sender'
 
 type UploadMergedBody = OrderRecordForUploadMutation & {
   memberId: string
@@ -284,6 +288,7 @@ export async function POST(req: NextRequest) {
         needsModification: { equals: boolean }
         isUrgent: { equals: boolean }
         parentOrder: null
+        state: { equals: string }
         OR?: Array<{ price: { equals: number } }>
       }
 
@@ -292,6 +297,7 @@ export async function POST(req: NextRequest) {
         needsModification: { equals: true },
         isUrgent: { equals: isUrgent },
         parentOrder: null,
+        state: { equals: ORDER_STATE.PENDING_UPLOAD },
       }
 
       if (currentOrder.isReviewed === true) {
@@ -330,6 +336,127 @@ export async function POST(req: NextRequest) {
           { status: 400 }
         )
       }
+
+      const addonOrder = addonData.orders[0]
+
+      type AddonUpdateData = {
+        name?: string | null
+        paragraphOne?: string | null
+        paragraphTwo?: string | null
+        scheduleStartDate?: string | null
+        scheduleEndDate?: string | null
+        isUrgent?: boolean | null
+        parentOrder: { connect: { id: string } }
+        state: string
+        needsModification: boolean
+        image?: { connect: { id: string } }
+      }
+
+      const addonUpdateData: AddonUpdateData = {
+        name: updateData.name ?? currentOrder.name,
+        paragraphOne: updateData.paragraphOne ?? currentOrder.paragraphOne,
+        paragraphTwo: updateData.paragraphTwo ?? currentOrder.paragraphTwo,
+        scheduleStartDate:
+          updateData.scheduleStartDate ?? currentOrder.scheduleStartDate,
+        scheduleEndDate:
+          updateData.scheduleEndDate ?? currentOrder.scheduleEndDate,
+        isUrgent: updateData.isUrgent ?? currentOrder.isUrgent,
+        parentOrder: { connect: { id: currentOrder.id } },
+        state: ORDER_STATE.MATERIAL_UPLOADED,
+        needsModification: false,
+      }
+
+      if (image?.connect?.id) {
+        addonUpdateData.image = image
+      } else if (currentOrder.image?.id) {
+        addonUpdateData.image = { connect: { id: currentOrder.image.id } }
+      }
+
+      const { data: updateAddonResult, errors: updateAddonErrors } =
+        await client.mutate({
+          mutation: updateOrderForUploadSubmit,
+          variables: {
+            where: { id: addonOrder.id },
+            data: addonUpdateData,
+          },
+          errorPolicy: 'all',
+        })
+
+      if (updateAddonErrors?.length) {
+        if (image?.connect?.id) {
+          try {
+            await client.mutate({
+              mutation: deletePhotoMutation,
+              variables: { where: { id: image.connect.id } },
+              context: {
+                headers: { 'x-apollo-operation-name': 'deleteFailedNewPhoto' },
+              },
+            })
+          } catch (cleanupError) {
+            createErrorLogger(
+              `Failed to delete new photo after addon update failure ${image.connect.id}`
+            )(cleanupError)
+          }
+        }
+
+        const errorMsg = updateAddonErrors.map((e) => e.message).join(', ')
+        createErrorLogger(`Failed to update addon order ${addonOrder.id}`)(
+          new Error(errorMsg)
+        )
+        return NextResponse.json<ApiResponse>(
+          { success: false, message: errorMsg },
+          { status: 500 }
+        )
+      }
+
+      const updatedAddonOrder = updateAddonResult?.updateOrder
+
+      const memberEmail = currentOrder.member?.email
+      const memberName = currentOrder.member?.name || '客戶'
+      const originalOrderNumber = currentOrder.orderNumber || ''
+      const newOrderNumber = updatedAddonOrder?.orderNumber || ''
+      const newOrderName = updatedAddonOrder?.name || ''
+
+      if (memberEmail) {
+        try {
+          await sendTransferEmailToUser(
+            [memberEmail],
+            originalOrderNumber,
+            newOrderNumber,
+            newOrderName,
+            memberName
+          )
+
+          await sendTransferEmailToSales(
+            originalOrderNumber,
+            newOrderNumber,
+            newOrderName,
+            memberName
+          )
+        } catch (emailError) {
+          createErrorLogger('Failed to send transfer email')(emailError)
+        }
+      }
+
+      if (oldImageId && image?.connect?.id) {
+        try {
+          await client.mutate({
+            mutation: deletePhotoMutation,
+            variables: { where: { id: oldImageId } },
+            context: { headers: { 'x-apollo-operation-name': 'deleteOldPhoto' } },
+          })
+        } catch (cleanupError) {
+          createErrorLogger(
+            `Failed to delete previous image record ${oldImageId}`
+          )(cleanupError)
+        }
+      }
+
+      return NextResponse.json<ApiResponse>({
+        success: true,
+        message: 'Order transferred successfully',
+        data: updatedAddonOrder,
+      })
     }
 
     const nextState = getNextState(currentState as OrderState)

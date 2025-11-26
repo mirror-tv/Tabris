@@ -159,11 +159,19 @@ export default function UploadTemplate({
           }
         : null
 
+    const dateRange: DateRange | undefined =
+      currentOrder.scheduleStartDate && currentOrder.scheduleEndDate
+        ? {
+            from: new Date(currentOrder.scheduleStartDate),
+            to: new Date(currentOrder.scheduleEndDate),
+          }
+        : undefined
+
     setFormState({
       adName: currentOrder.name ?? '',
       adText1: currentOrder.paragraphOne ?? '',
       adText2: currentOrder.paragraphTwo ?? '',
-      adRange: undefined,
+      adRange: dateRange,
       adImage: photoData,
       isUrgent: currentOrder.isUrgent ?? false,
     })

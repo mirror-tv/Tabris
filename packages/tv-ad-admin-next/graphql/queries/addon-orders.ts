@@ -13,9 +13,14 @@ export type AddonOrderQuery = Pick<
   | 'needsModification'
   | 'isReviewed'
   | 'createdAt'
+  | 'paragraphOne'
+  | 'paragraphTwo'
+  | 'scheduleStartDate'
+  | 'scheduleEndDate'
 > & {
   member?: { id: string; email?: string; name?: string }
   parentOrder?: { id: string }
+  image?: { id: string; name?: string }
 }
 
 export const getAddonOrdersQuery = gql`
@@ -33,6 +38,10 @@ export const getAddonOrdersQuery = gql`
       needsModification
       isReviewed
       createdAt
+      paragraphOne
+      paragraphTwo
+      scheduleStartDate
+      scheduleEndDate
       member {
         id
         email
@@ -40,6 +49,10 @@ export const getAddonOrdersQuery = gql`
       }
       parentOrder {
         id
+      }
+      image {
+        id
+        name
       }
     }
   }
