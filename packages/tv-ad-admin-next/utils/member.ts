@@ -20,6 +20,8 @@ export type MemberData = {
   name?: string
   mobile?: string
   state?: string
+  nationalId?: string | null
+  residentialAddress?: string | null
 }
 
 /**
@@ -71,7 +73,10 @@ export async function checkMemberByEmail(email: string): Promise<{
   const members = await queryMembers(
     checkMemberByEmailQuery,
     {
-      where: { email: { equals: email }, state: { equals: 'active' } },
+      where: {
+        email: { equals: email, mode: 'insensitive' },
+        state: { equals: 'active' },
+      },
     },
     'checkMemberByEmail'
   )

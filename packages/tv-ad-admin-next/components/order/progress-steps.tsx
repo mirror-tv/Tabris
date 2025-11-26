@@ -58,12 +58,13 @@ export function ProgressSteps({
     const completedStyle = PROGRESS_COLOR_RULES.getCompletedStyle()
     const currentIndex = progressSteps.indexOf(currentStatus)
 
-    const isTransferredFlow = currentFlow === 'transferred'
-    const isCompleted = isTransferredFlow ? true : index < currentIndex
+    // 當訂單狀態為 TRANSFERRED 時，所有步驟都顯示為已完成
+    const isTransferred = currentStatus === ORDER_STATE.TRANSFERRED
+    const isCompleted = isTransferred ? true : index < currentIndex
 
     return {
       isCompleted: isCompleted,
-      isActive: isActive && !isTransferredFlow,
+      isActive: isActive && !isTransferred,
       style: completedStyle,
     }
   }

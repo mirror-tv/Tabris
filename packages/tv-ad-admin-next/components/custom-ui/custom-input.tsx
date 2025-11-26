@@ -7,7 +7,6 @@ import { Input as BaseInput } from '../ui/input'
 import { layout } from '@/constants'
 import { cn } from '@/utils'
 
-
 export type CustomInputProps = ComponentProps<'input'> & {
   error?: string
   errorMessage?: string
@@ -15,7 +14,7 @@ export type CustomInputProps = ComponentProps<'input'> & {
 }
 
 const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
-  ({ className, error, errorMessage, icon, ...props }, ref) => {
+  ({ className, error, errorMessage, icon, maxLength, ...props }, ref) => {
     return (
       <div className="relative">
         <BaseInput
@@ -28,8 +27,8 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
             layout.disabled,
             'disabled:opacity-100', // overwrite base input style
             'md:text-sm dark:bg-input/30',
-            // Padding based on icon presence
-            icon ? 'pr-3 pl-10' : 'px-3',
+            // Padding based on icon presence and maxLength
+            icon ? 'pr-3 pl-10' : maxLength ? 'pr-13 pl-3' : 'px-3',
             // Background - common to all states
             'bg-surface-tertiary',
             // Border states - use transparent border to prevent layout shift
@@ -37,6 +36,7 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
             error && ['border border-red-7', 'focus:border-red-8'],
             className
           )}
+          maxLength={maxLength}
           {...props}
         />
         {icon && (

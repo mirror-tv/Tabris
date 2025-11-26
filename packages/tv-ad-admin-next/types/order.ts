@@ -15,7 +15,7 @@ export type OrderSchema = {
   schedule?: string | null
 
   member?: MemberSchema | null
-  relatedOrder?: { id: string }[]
+  parentOrder?: { id: string }
 
   attachment?: AttachmentSchema | null
   image?: ImageSchema | null
@@ -27,14 +27,11 @@ export type OrderSchema = {
   createdAt: string | null
   updatedAt: string | null
 
-  nameEditable?: boolean
-  scheduleEditable?: boolean
-  paragraphOneEditable?: boolean
-  paragraphTwoEditable?: boolean
-  imageEditable?: boolean
-
   price?: number | null
   videoDuration?: number | null
+  isUrgent?: boolean | null
+  needsModification?: boolean | null
+  isReviewed?: boolean | null
 }
 
 export type MemberSchema = {

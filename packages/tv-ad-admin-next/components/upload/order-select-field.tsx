@@ -2,6 +2,8 @@
 
 import { useMemo } from 'react'
 
+import { ButtonLoadingText } from '../custom-ui/button-loading-text'
+
 import { ErrorMessage } from '@/components/custom-ui/error-message'
 import { LabeledField } from '@/components/custom-ui/labeled-field'
 import {
@@ -15,12 +17,16 @@ import { layout, ORDER_STATE } from '@/constants'
 import { OrderRecordForUploadQuery } from '@/graphql/queries/orders'
 import FileIcon from '@/public/icons/file.svg'
 import { cn } from '@/utils'
+import { getOldOrderPrice } from '@/utils/order-grouping'
 
 type OrderSelectFieldProps = {
   orders: OrderRecordForUploadQuery[]
   loading: boolean
   error?: string
   onSelect: (orderNumber: string) => void
+  value?: string
+  disabled?: boolean
+  reuploadPrice: number[]
 }
 
 type SelectGroupItem =
@@ -34,16 +40,28 @@ export default function OrderSelectField({
   loading,
   error,
   onSelect,
+  value,
+  disabled = false,
+  reuploadPrice,
 }: OrderSelectFieldProps) {
   const orderedSelectItems = useMemo(() => {
     const items: SelectGroupItem[] = []
 
+    const priceForFilter = [
+      ...new Set(reuploadPrice.map((p) => (p > 1000 ? p - 1000 : p))),
+    ]
+
     const uploadOrders = orders.filter(
-      (o) => o.state === ORDER_STATE.PENDING_UPLOAD
+      (o) =>
+        o.state === ORDER_STATE.PENDING_UPLOAD && o.needsModification === false
     )
-    const reuploadOrders = orders.filter(
-      (o) => o.state === ORDER_STATE.PENDING_QUOTE_CONFIRMATION
-    )
+
+    const reuploadOrders = orders.filter((o) => {
+      return (
+        o.state === ORDER_STATE.PENDING_QUOTE_CONFIRMATION &&
+        priceForFilter.includes(getOldOrderPrice(o))
+      )
+    })
 
     if (uploadOrders.length > 0) {
       items.push({ type: 'label', label: '新訂單' })
@@ -60,7 +78,7 @@ export default function OrderSelectField({
     }
 
     return items
-  }, [orders])
+  }, [orders, reuploadPrice])
 
   return (
     <LabeledField
@@ -69,7 +87,11 @@ export default function OrderSelectField({
       labelIcon={<FileIcon />}
       className="relative"
     >
-      <Select onValueChange={onSelect} disabled={loading}>
+      <Select
+        onValueChange={onSelect}
+        value={value}
+        disabled={loading || disabled}
+      >
         <SelectTrigger
           id={labelId}
           className={cn(
@@ -80,35 +102,49 @@ export default function OrderSelectField({
         >
           <SelectValue
             placeholder={
-              loading ? '讀取資料中...' : '請選擇要上傳 / 修改素材的訂單'
+              loading ? (
+                <ButtonLoadingText text="讀取資料中" />
+              ) : (
+                '請選擇要上傳 / 修改素材的訂單'
+              )
             }
           />
         </SelectTrigger>
         <SelectContent>
-          {orderedSelectItems.map((item) =>
-            item.type === 'label' ? (
-              <SelectItem
-                key={item.label}
-                value={item.label!}
-                disabled
-                className={cn(
-                  'relative cursor-default text-sm text-gray-10 select-none',
-                  'flex items-center justify-center',
-                  "before:mr-2 before:flex-1 before:border-t before:border-gray-5 before:content-['']",
-                  "after:ml-2 after:flex-1 after:border-t after:border-gray-5 after:content-['']"
-                )}
-              >
-                {item.label}
-              </SelectItem>
-            ) : (
-              <SelectItem
-                key={item.order!.orderNumber}
-                value={item.order!.orderNumber}
-                className="cursor-pointer"
-              >
-                {item.order!.orderNumber}
-                {item.order!.name ? ` - ${item.order!.name}` : ' - 未命名'}
-              </SelectItem>
+          {orderedSelectItems.length === 0 ? (
+            <SelectItem
+              value="no-orders"
+              disabled
+              className="cursor-default text-gray-7"
+            >
+              目前沒有可上傳或修改的訂單
+            </SelectItem>
+          ) : (
+            orderedSelectItems.map((item) =>
+              item.type === 'label' ? (
+                <SelectItem
+                  key={item.label}
+                  value={item.label!}
+                  disabled
+                  className={cn(
+                    'relative cursor-default text-sm text-gray-10 select-none',
+                    'flex items-center justify-center',
+                    "before:mr-2 before:flex-1 before:border-t before:border-gray-5 before:content-['']",
+                    "after:ml-2 after:flex-1 after:border-t after:border-gray-5 after:content-['']"
+                  )}
+                >
+                  {item.label}
+                </SelectItem>
+              ) : (
+                <SelectItem
+                  key={item.order!.orderNumber}
+                  value={item.order!.orderNumber}
+                  className="cursor-pointer"
+                >
+                  {item.order!.orderNumber}
+                  {item.order!.name ? ` - ${item.order!.name}` : ' - 未命名'}
+                </SelectItem>
+              )
             )
           )}
         </SelectContent>

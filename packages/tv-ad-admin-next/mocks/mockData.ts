@@ -7,7 +7,7 @@ export type OrderRecord = {
   broadcastDate: string
   state: OrderState
   updatedAt: string
-  relatedOrder?: OrderRecord
+  relatedOrder?: OrderRecord // TODO: use parentOrder instead
   createdAt: string
 }
 

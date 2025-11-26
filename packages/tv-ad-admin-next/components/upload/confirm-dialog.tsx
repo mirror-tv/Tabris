@@ -2,6 +2,8 @@
 
 import { ReactNode, useState } from 'react'
 
+import { Spinner } from '../ui/spinner'
+
 import { Instructions } from '@/components/shared/instructions'
 import { Button } from '@/components/ui/button'
 import {
@@ -15,6 +17,7 @@ import {
 } from '@/components/ui/dialog'
 import TriangleExclamationIcon from '@/public/icons/triangle-exclamation.svg'
 
+
 export type PreviewData = {
   orderNumber: string
   adName: string
@@ -25,6 +28,7 @@ export type PreviewData = {
     to: string
   }
   adImageName: string
+  isUrgent?: boolean
 }
 
 type ConfirmDialogProps = {
@@ -42,8 +46,15 @@ export default function ConfirmDialog({
 }: ConfirmDialogProps) {
   const [isUploading, setIsUploading] = useState(false)
 
-  const { orderNumber, adName, adRange, adText1, adText2, adImageName } =
-    previewData
+  const {
+    orderNumber,
+    adName,
+    adRange,
+    adText1,
+    adText2,
+    adImageName,
+    isUrgent,
+  } = previewData
 
   async function handleConfirm() {
     try {
@@ -69,6 +80,9 @@ export default function ConfirmDialog({
 
         <div className="space-y-1 rounded-lg bg-gray-2 p-3">
           <InfoRow label="訂單編號：">{orderNumber}</InfoRow>
+          {isUrgent !== undefined && (
+            <InfoRow label="這是急件訂單：">{isUrgent ? '是' : '否'}</InfoRow>
+          )}
           <InfoRow label="廣告名稱：">{adName}</InfoRow>
           <InfoRow label="排播日期：">
             {`${adRange.from} - ${adRange.to}`}
@@ -92,8 +106,20 @@ export default function ConfirmDialog({
               取消
             </Button>
           </DialogClose>
-          <Button size="lg" onClick={handleConfirm} disabled={isUploading}>
-            {isUploading ? '上傳中…' : '確認上傳'}
+          <Button
+            size="lg"
+            className="w-22 gap-1"
+            onClick={handleConfirm}
+            disabled={isUploading}
+          >
+            {isUploading ? (
+              <>
+                上傳中
+                <Spinner className="text-gray-5" />
+              </>
+            ) : (
+              '確認上傳'
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

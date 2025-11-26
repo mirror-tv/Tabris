@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 
+import { ORDER_STATE } from '@/constants'
 import { getOrdersQuery } from '@/graphql/queries/orders'
 import { type OrderRecordForList } from '@/graphql/queries/orders'
 import { getClient } from '@/utils/apollo-client'
@@ -28,7 +29,14 @@ export async function GET() {
       },
     })
 
-    const orders = data?.orders || []
+    const orders =
+      data?.orders?.filter(
+        (order) =>
+          !(
+            order.state === ORDER_STATE.PENDING_UPLOAD &&
+            order.needsModification
+          )
+      ) || []
     const formattedOrders = orders.map((order) => ({
       ...order,
       scheduleStartDateString: formatTaiwanDate(order.scheduleStartDate),

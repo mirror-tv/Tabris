@@ -3,46 +3,14 @@
  * 發送 OTP 驗證碼
  */
 
-import { GoogleAuth } from 'google-auth-library'
+import { sendEmail, EmailPayload } from './mail-sender'
 
 import { AUTH_MESSAGES } from '@/constants/messages'
+import { createErrorLogger } from '@/utils/error-handler'
 
 type SendEmailOTPResult = {
   success: boolean
   message: string
-}
-
-type EmailPayload = {
-  receiver: string[]
-  subject: string
-  body: string
-}
-
-async function sendEmail(
-  emailPayload: EmailPayload,
-  recipientType: string
-) {
-  const emailApiUrl = process.env.EMAIL_API_URL as string
-
-  try {
-    const auth = new GoogleAuth()
-    const client = await auth.getIdTokenClient(emailApiUrl)
-
-    await client.request({
-      url: emailApiUrl,
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      data: emailPayload,
-      timeout: 10000,
-    })
-  } catch (error) {
-    console.error(`Error sending email to ${recipientType}:`, {
-      error: error instanceof Error ? error.message : String(error),
-      receiver: emailPayload.receiver,
-    })
-  }
 }
 
 /**
@@ -85,14 +53,12 @@ export async function sendEmailOTP(
 
     return {
       success: true,
-      message: AUTH_MESSAGES.OTP_SENT
+      message: AUTH_MESSAGES.OTP_SENT,
     }
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('[Email OTP] 發送失敗:', {
-      error: error instanceof Error ? error.message : String(error),
+    createErrorLogger('[Email OTP] 發送失敗', {
       receiver: email,
-    })
+    })(error)
 
     const errorMessage = error instanceof Error ? error.message : '郵件發送失敗'
     return {

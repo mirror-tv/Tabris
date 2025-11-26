@@ -1,7 +1,9 @@
 import { ProgressSteps } from './progress-steps'
+import { StateBadge } from '../custom-ui/state-badge'
 
 import { type OrderRecordForOrderNumber } from '@/graphql/queries/orders'
 import { formatTaiwanDate } from '@/utils/date'
+import { normalizeOrderState } from '@/utils/state'
 
 type OrderStateProps = {
   order: OrderRecordForOrderNumber
@@ -12,6 +14,8 @@ const labelClassName = 'text-sm font-medium text-text-secondary'
 const valueClassName = 'text-base font-normal text-text-primary'
 
 export function OrderState({ order, className = '' }: OrderStateProps) {
+  const normalizedState = normalizeOrderState(order.state)
+
   return (
     <div className={`w-full space-y-6 md:max-w-none xl:max-w-60 ${className}`}>
       <div className="w-full rounded-lg border border-border-default bg-surface-primary p-6">
@@ -40,7 +44,8 @@ export function OrderState({ order, className = '' }: OrderStateProps) {
           </div>
 
           <div className="mt-6 border-t border-border-default pt-6 md:mt-0 md:flex-1 md:border-t-0 md:pt-0 xl:mt-6 xl:border-t xl:pt-6">
-            <ProgressSteps currentStatus={order.state} />
+            <ProgressSteps currentStatus={normalizedState} />
+            {order.isUrgent && <StateBadge className="mt-2" state="urgent" />}
           </div>
         </div>
       </div>

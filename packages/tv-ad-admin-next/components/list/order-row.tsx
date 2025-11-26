@@ -42,7 +42,15 @@ export function OrderRow({
       key: 'broadcastDate',
       content: `${scheduleStartDateString} - ${scheduleEndDateString}`,
     },
-    { key: 'state', content: <StateBadge state={state} /> },
+    {
+      key: 'state',
+      content: (
+        <div className="flex items-center gap-1">
+          <StateBadge state={state} />
+          {order.isUrgent && <StateBadge state="urgent" />}
+        </div>
+      ),
+    },
     { key: 'updatedAt', content: updatedAt || '-' },
     {
       key: 'moreBtn',

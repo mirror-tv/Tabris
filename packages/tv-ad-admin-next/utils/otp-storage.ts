@@ -6,7 +6,7 @@
 import { getRedisClient } from './redis-client'
 
 import { OTP_MAX_ATTEMPTS } from '@/constants'
-
+import { createErrorLogger } from '@/utils/error-handler'
 
 type OTPData = {
   code: string
@@ -41,7 +41,7 @@ async function readOTPFromRedis(identifier: string): Promise<OTPData | null> {
 
     return otpData
   } catch (error) {
-    console.error('[OTP] Redis 讀取錯誤:', error)
+    createErrorLogger('[OTP] Redis 讀取錯誤')(error)
     return null
   }
 }
@@ -59,7 +59,7 @@ async function writeOTPToRedis(
 
     await redis.setex(key, OTP_EXPIRY_SECONDS, JSON.stringify(data))
   } catch (error) {
-    console.error('[OTP] Redis 寫入錯誤:', error)
+    createErrorLogger('[OTP] Redis 寫入錯誤')(error)
     throw error
   }
 }
@@ -73,7 +73,7 @@ async function deleteOTPFromRedis(identifier: string): Promise<void> {
     const key = getOTPKey(identifier)
     await redis.del(key)
   } catch (error) {
-    console.error('[OTP] Redis 刪除錯誤:', error)
+    createErrorLogger('[OTP] Redis 刪除錯誤')(error)
   }
 }
 
@@ -98,7 +98,6 @@ export async function storeOTP(
     console.log(`[OTP] 過期時間: ${new Date(expires).toLocaleString()}`)
   }
 }
-
 
 export async function verifyOTP(
   identifier: string,

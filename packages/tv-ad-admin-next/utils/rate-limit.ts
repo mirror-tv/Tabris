@@ -7,6 +7,7 @@ import fs from 'fs'
 import path from 'path'
 
 import { OTP_MAX_ATTEMPTS } from '@/constants'
+import { createErrorLogger } from '@/utils/error-handler'
 
 const RATE_LIMIT_DIR = path.join(process.cwd(), '.cache', 'rate-limit')
 
@@ -66,7 +67,7 @@ function readRateLimitRecord(key: string): RateLimitRecord | null {
     const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'))
     return data
   } catch (error) {
-    console.error('[RateLimit] 讀取錯誤:', error)
+    createErrorLogger('[RateLimit] 讀取錯誤')(error)
     return null
   }
 }
@@ -82,7 +83,7 @@ function writeRateLimitRecord(key: string, record: RateLimitRecord): void {
     )
     fs.writeFileSync(filePath, JSON.stringify(record, null, 2), 'utf-8')
   } catch (error) {
-    console.error('[RateLimit] 寫入錯誤:', error)
+    createErrorLogger('[RateLimit] 寫入錯誤')(error)
   }
 }
 
@@ -99,7 +100,7 @@ function deleteRateLimitRecord(key: string): void {
       fs.unlinkSync(filePath)
     }
   } catch (error) {
-    console.error('[RateLimit] 刪除錯誤:', error)
+    createErrorLogger('[RateLimit] 刪除錯誤')(error)
   }
 }
 
@@ -206,7 +207,7 @@ export function cleanupExpiredRateLimits(): void {
       }
     })
   } catch (error) {
-    console.error('[RateLimit] 清理錯誤:', error)
+    createErrorLogger('[RateLimit] 清理錯誤')(error)
   }
 }
 

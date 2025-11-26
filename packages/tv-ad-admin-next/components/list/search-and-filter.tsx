@@ -1,3 +1,4 @@
+import { ButtonLoadingText } from '../custom-ui/button-loading-text'
 import { LabeledField } from '../custom-ui/labeled-field'
 
 import { CustomInput } from '@/components/custom-ui/custom-input'
@@ -18,6 +19,7 @@ type SearchAndFilterProps = {
   onSearchChange: (value: string) => void
   orderState: OrderState | 'all'
   onStateChange: (value: OrderState | 'all') => void
+  isLoading?: boolean
 }
 
 const searchId = 'search'
@@ -27,6 +29,7 @@ export function SearchAndFilter({
   onSearchChange,
   orderState,
   onStateChange,
+  isLoading = false,
 }: SearchAndFilterProps) {
   const orderStateOptions = [
     { value: 'all', label: '全部狀態' },
@@ -48,6 +51,7 @@ export function SearchAndFilter({
             type="text"
             value={searchKeyword}
             onChange={(e) => onSearchChange(e.target.value)}
+            disabled={isLoading}
             placeholder="搜尋商品名稱"
             icon={<SearchIcon />}
             className="w-full rounded-lg border-border-default bg-surface-tertiary py-3 text-sm placeholder-text-tertiary focus:border-transparent focus:ring-0 focus:outline-none focus-visible:ring-0"
@@ -58,13 +62,22 @@ export function SearchAndFilter({
             訂單狀態
           </label>
           <Select
-            value={orderState}
+            value={isLoading ? undefined : orderState}
+            disabled={isLoading}
             onValueChange={(value) =>
               onStateChange(value as OrderState | 'all')
             }
           >
             <SelectTrigger className="min-h-[45px] w-full rounded-lg border-border-default bg-surface-tertiary py-3 text-sm focus:border-transparent focus:ring-0 focus:outline-none focus-visible:ring-0">
-              <SelectValue placeholder="選擇狀態" />
+              <SelectValue
+                placeholder={
+                  isLoading ? (
+                    <ButtonLoadingText text="讀取資料中" />
+                  ) : (
+                    '選擇狀態'
+                  )
+                }
+              />
             </SelectTrigger>
             <SelectContent>
               {orderStateOptions.map((option) => (

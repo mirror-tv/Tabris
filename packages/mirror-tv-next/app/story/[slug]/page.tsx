@@ -30,6 +30,7 @@ import MisoPageView from '~/components/shared/miso-pageview'
 import GA4SourceTracking from '~/components/story/ga4-source-tracking'
 import UiDownload from '~/components/shared/ui-download'
 import Article18Warning from '~/components/shared/article-18-warning'
+import AdTvAdminMobileBanner from '~/components/shared/ad-tv-admin-mobile-banner'
 
 const ContainerFullScreenAds = dynamic(
   () => import('~/components/ads/gpt/gpt-popup'),
@@ -306,6 +307,7 @@ const StoryPage = async (props: StoryPageTypes) => {
           {updatedTime && <ArticleUpdateTime updateTime={updatedTime} />}
           {!!tags.length && <ArticleTagList tags={tags} />}
         </section>
+        <AdTvAdminMobileBanner />
         <section className={styles.socialAndRelatedWrapper}>
           <ArticleRelatedPosts
             relatedPosts={relatedPosts}

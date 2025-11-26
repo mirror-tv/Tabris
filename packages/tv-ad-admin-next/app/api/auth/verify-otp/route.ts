@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 import { generateToken } from '@/utils/auth'
+import { createErrorLogger } from '@/utils/error-handler'
 import { getMemberByEmail } from '@/utils/member'
 import { verifyOTP } from '@/utils/otp-storage'
 
@@ -50,10 +51,13 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    const hasIdentified = !!member.nationalId && !!member.residentialAddress
+
     const userPayload = {
       userId,
       memberId: member.id,
       email,
+      hasIdentified,
     }
 
     // 生成 JWT token（必須包含 memberId）
@@ -66,19 +70,29 @@ export async function POST(request: NextRequest) {
     })
 
     // 使用 Next.js 推薦的方式設定 cookie
+    // 檢查請求是否為 HTTPS（考慮 Google Cloud Run 的代理情況）
+    const forwardedProto = request.headers.get('x-forwarded-proto')
+    const isSecure = forwardedProto === 'https'
+
     response.cookies.set({
       name: 'auth_token',
       value: token,
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: isSecure,
       sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 7, // 7 天
       path: '/',
+      // 不設置 domain，讓瀏覽器自動處理（適用於當前域名和子域名）
     })
+
+    // 同時設置響應頭，確保 cookie 被正確設置
+    response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate')
+    response.headers.set('Pragma', 'no-cache')
+    response.headers.set('Expires', '0')
 
     return response
   } catch (error) {
-    console.error('驗證 OTP 錯誤:', error)
+    createErrorLogger('驗證 OTP 錯誤')(error)
     return NextResponse.json(
       { success: false, message: '伺服器錯誤' },
       { status: 500 }

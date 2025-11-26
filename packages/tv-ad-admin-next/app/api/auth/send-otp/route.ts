@@ -7,7 +7,9 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import type { SendOtpResponse } from '@/types/api'
 
+import { ENV } from '@/constants/environment-variables'
 import { AUTH_MESSAGES, formatMessage } from '@/constants/messages'
+import { createErrorLogger } from '@/utils/error-handler'
 import { checkMemberByEmail } from '@/utils/member'
 import { sendEmailOTP } from '@/utils/otp-sender'
 import { generateOTP, storeOTP } from '@/utils/otp-storage'
@@ -17,7 +19,6 @@ import {
   RATE_LIMIT_CONFIGS,
 } from '@/utils/rate-limit'
 import { validateEmail } from '@/utils/validation'
-
 
 export async function POST(request: NextRequest) {
   try {
@@ -99,11 +100,13 @@ export async function POST(request: NextRequest) {
     const emailResult = await sendEmailOTP(email, otp)
 
     // 開發環境：返回 OTP 到前端（方便在瀏覽器 Console 查看）
-    const isDev = process.env.NODE_ENV === 'development'
+    const isDev = ENV === 'dev' || ENV === 'local'
 
     const response: SendOtpResponse = {
       success: emailResult.success,
-      message: emailResult.success ? AUTH_MESSAGES.OTP_SENT : emailResult.message,
+      message: emailResult.success
+        ? AUTH_MESSAGES.OTP_SENT
+        : emailResult.message,
       data: {
         expiresIn: 300,
         ...(isDev && { otp }), // 開發環境才返回 OTP
@@ -112,7 +115,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(response)
   } catch (error) {
-    console.error('發送 OTP 錯誤:', error)
+    createErrorLogger('發送 OTP 錯誤')(error)
     return NextResponse.json(
       { success: false, message: AUTH_MESSAGES.SERVER_ERROR },
       { status: 500 }
