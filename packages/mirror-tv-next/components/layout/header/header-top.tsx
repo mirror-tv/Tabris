@@ -26,7 +26,11 @@ export default function HeaderTop({ sponsors }: HeaderTopProps) {
           </Link>
         </div>
         <div className={styles.adBanner}>
-          <Link href={TV_AD_ADMIN_OEN_URL}>
+          <Link
+            href={TV_AD_ADMIN_OEN_URL}
+            target="_blank"
+            rel="noreferrer noopener"
+          >
             <Image
               src="/images/tv-ad-admin-banner.gif"
               alt="Mnews TV Ad Admin Banner"
