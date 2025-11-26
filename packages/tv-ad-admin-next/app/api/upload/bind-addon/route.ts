@@ -7,7 +7,10 @@ import { ApiResponse } from '@/types'
 import { getClient } from '@/utils/apollo-client'
 import { getCurrentUser } from '@/utils/auth'
 import { createErrorLogger } from '@/utils/error-handler'
-import { sendTransferEmail } from '@/utils/transferr-sender'
+import {
+  sendTransferEmailToUser,
+  sendTransferEmailToSales,
+} from '@/utils/transferr-sender'
 
 export const dynamic = 'force-dynamic'
 
@@ -178,14 +181,24 @@ export async function POST(req: NextRequest) {
     // Step 6: 發送訂單轉移通知郵件
     const memberEmail = originalOrder.member?.email
     const memberName = originalOrder.member?.name
+    const originalOrderNumber = originalOrder.orderNumber || ''
+    const newOrderNumber = newOrder.orderNumber || ''
+    const newOrderName = newOrder.name || ''
+
     if (memberEmail && memberName) {
       try {
-        console.log('Sending transfer email to', memberEmail, memberName, originalOrder.orderNumber, newOrder.orderNumber, newOrder.name)
-        await sendTransferEmail(
+        await sendTransferEmailToUser(
           [memberEmail],
-          originalOrder.orderNumber || '',
-          newOrder.orderNumber || '',
-          newOrder.name || '',
+          originalOrderNumber,
+          newOrderNumber,
+          newOrderName,
+          memberName
+        )
+
+        await sendTransferEmailToSales(
+          originalOrderNumber,
+          newOrderNumber,
+          newOrderName,
           memberName
         )
       } catch (emailError) {
