@@ -1,0 +1,2 @@
+export const REVIEWED_ORDER_PRICE = 600
+export const UNREVIEWED_ORDER_PRICE = 400
