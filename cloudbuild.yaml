@@ -25,6 +25,7 @@ steps:
     env:
     - 'NEXT_PUBLIC_ENV=${BRANCH_NAME}'
     - 'NEXT_PUBLIC_IS_PREVIEW_MODE=$_IS_PREVIEW_MODE'
+    - 'NEXT_PUBLIC_SHOW_TV_AD_ADMIN_BANNER=$_SHOW_TV_AD_ADMIN_BANNER'
     args:
       - '-c'
       - >
@@ -84,3 +85,4 @@ substitutions:
   _IMAGE_NAME: '' # default value
   _CLOUD_RUN_SERVICE_NAMES: '' # default value
   _IS_PREVIEW_MODE: 'false'  # default value
+  _SHOW_TV_AD_ADMIN_BANNER: 'false'
