@@ -5,6 +5,7 @@ import type { Sponsor } from '~/graphql/query/sponsors'
 import { formateHeroImage } from '~/utils'
 import ResponsiveImage from '~/components/shared/responsive-image'
 import { TV_AD_ADMIN_OEN_URL } from '~/constants/constant'
+import { SHOW_TV_AD_ADMIN_BANNER } from '~/constants/environment-variables'
 
 type HeaderTopProps = {
   sponsors: Sponsor[]
@@ -25,20 +26,22 @@ export default function HeaderTop({ sponsors }: HeaderTopProps) {
             />
           </Link>
         </div>
-        <div className={styles.adBanner}>
-          <Link
-            href={TV_AD_ADMIN_OEN_URL}
-            target="_blank"
-            rel="noreferrer noopener"
-          >
-            <Image
-              src="/images/tv-ad-admin-banner.gif"
-              alt="Mnews TV Ad Admin Banner"
-              width={1266}
-              height={712}
-            />
-          </Link>
-        </div>
+        {SHOW_TV_AD_ADMIN_BANNER && (
+          <div className={styles.adBanner}>
+            <Link
+              href={TV_AD_ADMIN_OEN_URL}
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              <Image
+                src="/images/tv-ad-admin-banner.gif"
+                alt="Mnews TV Ad Admin Banner"
+                width={1266}
+                height={712}
+              />
+            </Link>
+          </div>
+        )}
       </div>
       <div className={styles.sponsorsWrapper}>
         {sponsors.slice(0, 3).map((sponsor) => {
