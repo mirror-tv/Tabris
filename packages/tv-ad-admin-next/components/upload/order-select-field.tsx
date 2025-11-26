@@ -26,6 +26,7 @@ type OrderSelectFieldProps = {
   onSelect: (orderNumber: string) => void
   value?: string
   disabled?: boolean
+  reuploadPrice: number[]
 }
 
 type SelectGroupItem =
@@ -41,30 +42,24 @@ export default function OrderSelectField({
   onSelect,
   value,
   disabled = false,
+  reuploadPrice,
 }: OrderSelectFieldProps) {
   const orderedSelectItems = useMemo(() => {
     const items: SelectGroupItem[] = []
+
+    const priceForFilter = [
+      ...new Set(reuploadPrice.map((p) => (p > 1000 ? p - 1000 : p))),
+    ]
 
     const uploadOrders = orders.filter(
       (o) =>
         o.state === ORDER_STATE.PENDING_UPLOAD && o.needsModification === false
     )
-    const reuploadPrice = [
-      ...new Set(
-        orders
-          .filter(
-            (o) => o.state === ORDER_STATE.PENDING_UPLOAD && o.needsModification
-          )
-          .map((o: OrderRecordForUploadQuery) =>
-            o.price && o.price > 1000 ? o.price - 1000 : o.price
-          )
-      ),
-    ]
 
     const reuploadOrders = orders.filter((o) => {
       return (
         o.state === ORDER_STATE.PENDING_QUOTE_CONFIRMATION &&
-        reuploadPrice.includes(getOldOrderPrice(o))
+        priceForFilter.includes(getOldOrderPrice(o))
       )
     })
 
@@ -83,7 +78,7 @@ export default function OrderSelectField({
     }
 
     return items
-  }, [orders])
+  }, [orders, reuploadPrice])
 
   return (
     <LabeledField

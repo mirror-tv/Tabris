@@ -15,7 +15,6 @@ import { AUTH_MESSAGES, LOADING_MESSAGES } from '@/constants/messages'
 import { useAuthStore } from '@/store'
 import { validateEmail } from '@/utils/validation'
 
-
 export default function LoginPage() {
   const { user, login, initialize } = useAuthStore()
 
@@ -38,7 +37,6 @@ export default function LoginPage() {
   // 登入成功後的跳轉在 handleOtpSubmit 中處理
   useEffect(() => {
     if (!user) return
-    console.log('user change', user)
     if (user.hasIdentified === true) {
       // 使用 window.location 確保完整重載，讓 cookie 能正確攜帶
       window.location.href = '/'
@@ -236,7 +234,10 @@ export default function LoginPage() {
       setLoadingMessage(LOADING_MESSAGES.SENDING_OTP)
 
       // 開發環境：在瀏覽器 Console 顯示驗證碼（帶顏色）
-      if ((ENV.startsWith('dev') || ENV.startsWith('local')) && data.data?.otp) {
+      if (
+        (ENV.startsWith('dev') || ENV.startsWith('local')) &&
+        data.data?.otp
+      ) {
         console.log(
           '%c🔐 ========== 重新發送 OTP ==========',
           'color: #10b981; font-size: 14px; font-weight: bold;'

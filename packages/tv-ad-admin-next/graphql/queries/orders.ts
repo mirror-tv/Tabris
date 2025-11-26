@@ -15,6 +15,7 @@ export type OrderRecordForList = Pick<
   | 'createdAt'
   | 'updatedAt'
   | 'isUrgent'
+  | 'needsModification'
 > & {
   relatedOrder?: { id: OrderSchema['id'] }[]
 }
@@ -34,13 +35,14 @@ export const getOrdersQuery = gql`
         id
       }
       isUrgent
+      needsModification
     }
   }
 `
 
 export type OrderRecordForDashboard = Pick<
   OrderSchema,
-  'id' | 'state' | 'updatedAt'
+  'id' | 'state' | 'updatedAt' | 'needsModification'
 >
 
 export const getOrdersStateQuery = gql`
@@ -52,6 +54,7 @@ export const getOrdersStateQuery = gql`
       id
       state
       updatedAt
+      needsModification
     }
   }
 `

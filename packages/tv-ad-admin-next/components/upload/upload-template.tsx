@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 
-import { addDays, format, formatISO, parseISO, startOfToday } from 'date-fns'
+import { formatISO } from 'date-fns'
 import { DateRange } from 'react-day-picker'
 
 import ImageUploadField from './image-upload-field'
@@ -26,12 +26,14 @@ import {
 } from '@/components/ui/card'
 import ConfirmDialog, { PreviewData } from '@/components/upload/confirm-dialog'
 import { ORDER_STATE } from '@/constants'
+import { REVIEWED_ORDER_PRICE, UNREVIEWED_ORDER_PRICE } from '@/constants/price'
 import { OrderRecordForUploadMutation } from '@/graphql/mutations/order'
 import { OrderRecordForUploadQuery } from '@/graphql/queries/orders'
 import TextFormatIcon from '@/public/icons/text-format.svg'
 import TextIcon from '@/public/icons/text.svg'
 import TriangleExclamationIcon from '@/public/icons/triangle-exclamation.svg'
 import { PhotoSchema } from '@/types/photo'
+import { formatTaiwanDate } from '@/utils/date'
 
 export type FormState = {
   adName: string
@@ -66,7 +68,7 @@ const adNameLabelId = 'ad-name-label'
 const adText1LabelId = 'ad-text1-label'
 const adText2LabelId = 'ad-text2-label'
 
-const SCHEDULE_MIN_OFFSET_DAYS = 7
+// const SCHEDULE_MIN_OFFSET_DAYS = 7
 
 export default function UploadTemplate({
   pageTitle,
@@ -87,6 +89,20 @@ export default function UploadTemplate({
   const { adName, adText1, adText2, adRange, adImage, isUrgent } = formState
   const calculatedMinWorkingDays = isUrgent ? 2 : 5
 
+  const reuploadPrice = useMemo(
+    () => [
+      ...new Set(
+        orders
+          .filter(
+            (o) => o.state === ORDER_STATE.PENDING_UPLOAD && o.needsModification
+          )
+          .map((o: OrderRecordForUploadQuery) => o.price)
+          .filter((price): price is number => price != null)
+      ),
+    ],
+    [orders]
+  )
+
   // mode: 'upload' | 'reupload' | null
   // Derived from selectedOrder.state. Used only for UI rendering (labels, buttons, editable fields), not for business or server logic.
   const mode = useMemo(() => {
@@ -95,6 +111,27 @@ export default function UploadTemplate({
       return 'reupload'
     return null
   }, [selectedOrder])
+
+  const urgentType = useMemo<{ urgent: boolean; normal: boolean }>(() => {
+    const typeList = { urgent: false, normal: false }
+    const basicPrice = selectedOrder?.isReviewed
+      ? REVIEWED_ORDER_PRICE
+      : (UNREVIEWED_ORDER_PRICE ?? 0)
+    if (reuploadPrice.includes(basicPrice)) {
+      typeList.normal = true
+    }
+    if (reuploadPrice.includes(basicPrice + 1000)) {
+      typeList.urgent = true
+    }
+    if (!typeList.normal || !typeList.urgent) {
+      setFormState((prev) => ({
+        ...prev,
+        isUrgent: typeList.urgent,
+      }))
+    }
+    console.log(typeList)
+    return typeList
+  }, [selectedOrder, reuploadPrice])
 
   function handleOrderSelect(value: string) {
     const currentOrder = orders.find((o) => o.orderNumber === value)
@@ -122,20 +159,11 @@ export default function UploadTemplate({
           }
         : null
 
-    const startDate = currentOrder.scheduleStartDate
-      ? parseISO(currentOrder.scheduleStartDate)
-      : undefined
-
-    const endDate = currentOrder.scheduleEndDate
-      ? parseISO(currentOrder.scheduleEndDate)
-      : undefined
-
     setFormState({
       adName: currentOrder.name ?? '',
       adText1: currentOrder.paragraphOne ?? '',
       adText2: currentOrder.paragraphTwo ?? '',
-      adRange:
-        startDate && endDate ? { from: startDate, to: endDate } : undefined,
+      adRange: undefined,
       adImage: photoData,
       isUrgent: currentOrder.isUrgent ?? false,
     })
@@ -162,11 +190,6 @@ export default function UploadTemplate({
 
     if (!adRange?.from || !adRange?.to) {
       newErrors.adRange = '請選擇完整的排播起訖日期'
-    } else {
-      const minAllowedDate = addDays(startOfToday(), SCHEDULE_MIN_OFFSET_DAYS)
-      if (adRange!.from! < minAllowedDate) {
-        newErrors.adRange = `排播起始日須在 ${SCHEDULE_MIN_OFFSET_DAYS} 天後`
-      }
     }
 
     if (!adImage) {
@@ -204,8 +227,8 @@ export default function UploadTemplate({
       adText2,
       adImageName: adImage!.name,
       adRange: {
-        from: format(adRange!.from!, 'yyyy/MM/dd'),
-        to: format(adRange!.to!, 'yyyy/MM/dd'),
+        from: formatTaiwanDate(adRange!.from!, 'yyyy/M/d'),
+        to: formatTaiwanDate(adRange!.to!, 'yyyy/M/d'),
       },
       ...(selectedOrder?.state === ORDER_STATE.PENDING_QUOTE_CONFIRMATION && {
         isUrgent: formState.isUrgent,
@@ -234,6 +257,7 @@ export default function UploadTemplate({
                 error={errors.order}
                 onSelect={handleOrderSelect}
                 value={selectedOrder?.orderNumber}
+                reuploadPrice={reuploadPrice}
               />
 
               {!!selectedOrder && (
@@ -244,6 +268,7 @@ export default function UploadTemplate({
                       <Checkbox
                         id={adUrgentLabelId}
                         checked={formState.isUrgent}
+                        disabled={!urgentType.normal || !urgentType.urgent}
                         onCheckedChange={(value) =>
                           setFormState((prev) => ({
                             ...prev,
