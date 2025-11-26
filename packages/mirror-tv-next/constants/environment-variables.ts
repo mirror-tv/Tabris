@@ -2,13 +2,6 @@
 const ENV = process.env.NEXT_PUBLIC_ENV || 'local'
 const SHOW_TV_AD_ADMIN_BANNER =
   process.env.NEXT_PUBLIC_SHOW_TV_AD_ADMIN_BANNER === 'true'
-
-console.log('environment-variables.ts loaded')
-console.log(
-  'process.env.NEXT_PUBLIC_SHOW_TV_AD_ADMIN_BANNER:',
-  process.env.NEXT_PUBLIC_SHOW_TV_AD_ADMIN_BANNER
-)
-console.log('SHOW_TV_AD_ADMIN_BANNER:', SHOW_TV_AD_ADMIN_BANNER)
 let SITE_URL: string
 let GTM_ID: string
 let GLOBAL_CACHE_SETTING: number
