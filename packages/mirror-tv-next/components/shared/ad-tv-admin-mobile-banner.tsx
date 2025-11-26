@@ -8,6 +8,11 @@ import { SHOW_TV_AD_ADMIN_BANNER } from '~/constants/environment-variables'
 import styles from './_styles/ad-tv-admin-mobile-banner.module.scss'
 
 export default function AdTvAdminMobileBanner() {
+  console.log(
+    'AdTvAdminMobileBanner - SHOW_TV_AD_ADMIN_BANNER:',
+    SHOW_TV_AD_ADMIN_BANNER
+  )
+
   if (!SHOW_TV_AD_ADMIN_BANNER) {
     return null
   }
