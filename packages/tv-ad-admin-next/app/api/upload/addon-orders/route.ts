@@ -65,7 +65,7 @@ export async function GET(req: NextRequest) {
       member: { id: { equals: string } }
       needsModification: { equals: boolean }
       isUrgent: { equals: boolean }
-      relatedOrderBy: { none: Record<string, never> }
+      parentOrder: null
       OR?: Array<{ price: { equals: number } }>
     }
 
@@ -73,7 +73,7 @@ export async function GET(req: NextRequest) {
       member: { id: { equals: currentUser.memberId } },
       needsModification: { equals: true },
       isUrgent: { equals: isUrgent },
-      relatedOrderBy: { none: {} },
+      parentOrder: null,
     }
 
     if (originalOrder.isReviewed === true) {

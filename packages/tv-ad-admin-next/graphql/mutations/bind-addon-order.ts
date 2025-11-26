@@ -15,23 +15,7 @@ export const createOrderFromAddonMutation = gql`
       member {
         id
       }
-      relatedOrder {
-        id
-      }
-    }
-  }
-`
-
-export const updateOrderRelationMutation = gql`
-  mutation UpdateOrderRelation(
-    $where: OrderWhereUniqueInput!
-    $data: OrderUpdateInput!
-  ) {
-    updateOrder(where: $where, data: $data) {
-      id
-      orderNumber
-      state
-      relatedOrder {
+      parentOrder {
         id
       }
     }

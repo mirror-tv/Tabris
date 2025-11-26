@@ -1,15 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 import { ORDER_STATE } from '@/constants'
-import {
-  createOrderFromAddonMutation,
-  updateOrderRelationMutation,
-} from '@/graphql/mutations/bind-addon-order'
+import { createOrderFromAddonMutation } from '@/graphql/mutations/bind-addon-order'
 import { getAddonOrdersQuery, AddonOrderQuery } from '@/graphql/queries/addon-orders'
 import { ApiResponse } from '@/types'
 import { getClient } from '@/utils/apollo-client'
 import { getCurrentUser } from '@/utils/auth'
 import { createErrorLogger } from '@/utils/error-handler'
+import {
+  sendTransferEmailToUser,
+  sendTransferEmailToSales,
+} from '@/utils/transferr-sender'
 
 export const dynamic = 'force-dynamic'
 
@@ -105,7 +106,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    if (addonOrder.relatedOrderBy && addonOrder.relatedOrderBy.length > 0) {
+    if (addonOrder.parentOrder != null) {
       return NextResponse.json<ApiResponse>(
         {
           success: false,
@@ -117,6 +118,7 @@ export async function POST(req: NextRequest) {
 
     type NewOrderData = {
       member: { connect: { id: string } }
+      parentOrder: { connect: { id: string } }
       state: string
       price: number | null | undefined
       needsModification: boolean
@@ -131,6 +133,7 @@ export async function POST(req: NextRequest) {
 
     const newOrderData: NewOrderData = {
       member: { connect: { id: currentUser.memberId } },
+      parentOrder: { connect: { id: originalOrderId } },
       state: ORDER_STATE.MATERIAL_UPLOADED,
       price: addonOrder.price,
       needsModification: false,
@@ -173,46 +176,34 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Step 5: 將原訂單關聯到新訂單，並將原訂單狀態改為 TRANSFERRED
-    const { errors: updateOriginalErrors } = await client.mutate({
-      mutation: updateOrderRelationMutation,
-      variables: {
-        where: { id: originalOrderId },
-        data: {
-          state: ORDER_STATE.TRANSFERRED,
-          relatedOrder: { connect: [{ id: newOrder.id }] },
-        },
-      },
-      errorPolicy: 'all',
-    })
+    // Step 5: 新訂單的 parentOrder 已設定，GQL server 會自動處理原訂單的關聯和狀態
 
-    if (updateOriginalErrors?.length) {
-      const message = updateOriginalErrors.map((e) => e.message).join(', ')
-      createErrorLogger('Failed to update original order')(new Error(message))
-      return NextResponse.json<ApiResponse>(
-        {
-          success: false,
-          message: `New order created but failed to update original order: ${message}`,
-        },
-        { status: 500 }
-      )
-    }
+    // Step 6: 發送訂單轉移通知郵件
+    const memberEmail = originalOrder.member?.email
+    const memberName = originalOrder.member?.name
+    const originalOrderNumber = originalOrder.orderNumber || ''
+    const newOrderNumber = newOrder.orderNumber || ''
+    const newOrderName = newOrder.name || ''
 
-    const { errors: updateAddonErrors } = await client.mutate({
-      mutation: updateOrderRelationMutation,
-      variables: {
-        where: { id: addonOrderId },
-        data: {
-          state: ORDER_STATE.TRANSFERRED,
-        },
-      },
-      errorPolicy: 'all',
-    })
+    if (memberEmail && memberName) {
+      try {
+        await sendTransferEmailToUser(
+          [memberEmail],
+          originalOrderNumber,
+          newOrderNumber,
+          newOrderName,
+          memberName
+        )
 
-    if (updateAddonErrors?.length) {
-      createErrorLogger('Failed to update addon order status')(
-        new Error(updateAddonErrors.map((e) => e.message).join(', '))
-      )
+        await sendTransferEmailToSales(
+          originalOrderNumber,
+          newOrderNumber,
+          newOrderName,
+          memberName
+        )
+      } catch (emailError) {
+        createErrorLogger('Failed to send transfer email')(emailError)
+      }
     }
 
     return NextResponse.json<ApiResponse>({

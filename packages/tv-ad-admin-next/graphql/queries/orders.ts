@@ -17,7 +17,7 @@ export type OrderRecordForList = Pick<
   | 'isUrgent'
   | 'needsModification'
 > & {
-  relatedOrder?: { id: OrderSchema['id'] }[]
+  parentOrder?: { id: OrderSchema['id'] }
 }
 
 export const getOrdersQuery = gql`
@@ -31,7 +31,7 @@ export const getOrdersQuery = gql`
       scheduleEndDate
       createdAt
       updatedAt
-      relatedOrder {
+      parentOrder {
         id
       }
       isUrgent
