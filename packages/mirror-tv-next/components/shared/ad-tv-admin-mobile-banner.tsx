@@ -7,7 +7,11 @@ import { SHOW_TV_AD_ADMIN_BANNER } from '~/constants/environment-variables'
 
 import styles from './_styles/ad-tv-admin-mobile-banner.module.scss'
 
-export default function AdTvAdminMobileBanner() {
+export default function AdTvAdminMobileBanner({
+  location = 'article',
+}: {
+  location?: 'article' | 'home'
+}) {
   if (!SHOW_TV_AD_ADMIN_BANNER) {
     return null
   }
@@ -17,6 +21,8 @@ export default function AdTvAdminMobileBanner() {
       <Link
         href={TV_AD_ADMIN_OEN_URL}
         target="_blank"
+        className="GTM-banner-click-personal-ads"
+        data-gtm={`mobile-${location}-personal-ads`}
         rel="noreferrer noopener"
       >
         <Image
