@@ -96,7 +96,7 @@ export default async function LatestAndEditorChoicesWithLive({
         <EditorChoicesSwiper editorChoices={editorChoices} />
       </section>
       <GPTAd pageKey="home" adKey="MB_M2" />
-      <AdTvAdminMobileBanner />
+      <AdTvAdminMobileBanner location="home" />
       <section className={styles.latest}>
         <UiHeadingBordered
           title={latestListTitle}
