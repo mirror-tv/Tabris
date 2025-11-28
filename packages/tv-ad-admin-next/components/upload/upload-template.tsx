@@ -129,7 +129,6 @@ export default function UploadTemplate({
         isUrgent: typeList.urgent,
       }))
     }
-    console.log(typeList)
     return typeList
   }, [selectedOrder, reuploadPrice])
 

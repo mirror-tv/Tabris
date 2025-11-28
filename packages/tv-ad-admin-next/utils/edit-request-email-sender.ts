@@ -6,7 +6,7 @@ export async function sendOrderEditRequestEmailToUser(
   reason: string,
   details: string
 ) {
-  const subject = `鏡電視個人廣告系統 - 訂單修改請求已送出 (${orderNumber})`
+  const subject = `【鏡新聞個人廣告系統】訂單修改請求已送出 - ${orderNumber}`
 
   const body = `
 <!DOCTYPE html>
@@ -54,7 +54,7 @@ export async function sendOrderEditRequestEmailToSales(
   details: string,
   userEmail: string
 ) {
-  const subject = `鏡電視個人廣告系統 - 訂單修改請求 ${orderNumber}`
+  const subject = `訂單修改需求 － ${orderNumber}`
 
   const body = `
     <h2>${subject}</h2>
