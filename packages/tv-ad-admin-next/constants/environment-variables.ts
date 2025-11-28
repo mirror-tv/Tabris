@@ -5,6 +5,8 @@ const ENV = process.env.NEXT_PUBLIC_ENV || 'local'
 const GQL_ENDPOINT = process.env.GQL_ENDPOINT
 const JWT_SECRET = process.env.JWT_SECRET
 
+console.log('ENV', ENV)
+
 // API Endpoints
 let API_BASE_URL: string
 
@@ -46,6 +48,11 @@ switch (ENV) {
     GA4_ID = 'G-LOCAL-ID'
     break
 }
+
+console.log('API_BASE_URL', API_BASE_URL)
+console.log('CMS_API_URL', CMS_API_URL)
+console.log('GTM_ID', GTM_ID)
+console.log('GA4_ID', GA4_ID)
 
 export {
   ENV,
