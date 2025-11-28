@@ -14,12 +14,6 @@ WORKDIR /next-app
 COPY --from=deps /next-app/node_modules ./node_modules
 COPY . .
 
-ARG NEXT_PUBLIC_ENV
-ARG NEXT_PUBLIC_SHOW_TV_AD_ADMIN_BANNER
-
-ENV NEXT_PUBLIC_ENV=${NEXT_PUBLIC_ENV}
-ENV NEXT_PUBLIC_SHOW_TV_AD_ADMIN_BANNER=${NEXT_PUBLIC_SHOW_TV_AD_ADMIN_BANNER}
-
 RUN yarn build
 
 # Production image, copy all the files and run next
