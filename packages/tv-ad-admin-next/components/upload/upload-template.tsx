@@ -159,19 +159,11 @@ export default function UploadTemplate({
           }
         : null
 
-    const dateRange: DateRange | undefined =
-      currentOrder.scheduleStartDate && currentOrder.scheduleEndDate
-        ? {
-            from: new Date(currentOrder.scheduleStartDate),
-            to: new Date(currentOrder.scheduleEndDate),
-          }
-        : undefined
-
     setFormState({
       adName: currentOrder.name ?? '',
       adText1: currentOrder.paragraphOne ?? '',
       adText2: currentOrder.paragraphTwo ?? '',
-      adRange: dateRange,
+      adRange: undefined,
       adImage: photoData,
       isUrgent: currentOrder.isUrgent ?? false,
     })
@@ -235,8 +227,8 @@ export default function UploadTemplate({
       adText2,
       adImageName: adImage!.name,
       adRange: {
-        from: formatTaiwanDate(adRange!.from!, 'yyyy/M/d'),
-        to: formatTaiwanDate(adRange!.to!, 'yyyy/M/d'),
+        from: formatTaiwanDate(adRange!.from!, 'yyyy/MM/dd'),
+        to: formatTaiwanDate(adRange!.to!, 'yyyy/MM/dd'),
       },
       ...(selectedOrder?.state === ORDER_STATE.PENDING_QUOTE_CONFIRMATION && {
         isUrgent: formState.isUrgent,

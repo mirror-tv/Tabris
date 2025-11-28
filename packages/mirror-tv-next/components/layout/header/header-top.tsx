@@ -30,6 +30,8 @@ export default function HeaderTop({ sponsors }: HeaderTopProps) {
           <div className={styles.adBanner}>
             <Link
               href={TV_AD_ADMIN_OEN_URL}
+              className="GTM-banner-click-personal-ads"
+              data-gtm="header-personal-ads"
               target="_blank"
               rel="noreferrer noopener"
             >
