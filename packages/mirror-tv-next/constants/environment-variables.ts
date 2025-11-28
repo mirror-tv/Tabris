@@ -47,7 +47,7 @@ switch (ENV) {
     HOMEPAGE_JSON_URL =
       'https://storage.googleapis.com/static-mnews-tw-staging/files/json/topic_video.json'
     GA4_ID = 'G-8Q9RVB3K0E'
-    SHOW_TV_AD_ADMIN_BANNER = false
+    SHOW_TV_AD_ADMIN_BANNER = true
     break
 
   case 'dev':
