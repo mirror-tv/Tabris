@@ -94,6 +94,7 @@ export default async function RootLayout({
   } catch (error) {
     console.error('Failed to fetch popular posts:', error)
   }
+  console.log('GTM_ID', GTM_ID)
 
   return (
     <html lang="zh-Hant" className={`${noto_sans.variable}`}>

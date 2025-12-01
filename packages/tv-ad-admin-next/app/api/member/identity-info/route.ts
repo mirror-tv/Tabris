@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
 
     if (!address || typeof address !== 'string' || !address.trim()) {
       return NextResponse.json(
-        { success: false, message: '請輸入完整戶籍地址' },
+        { success: false, message: '請輸入完整通訊地址' },
         { status: 400 }
       )
     }
