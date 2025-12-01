@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { Suspense, useState, useEffect, useMemo } from 'react'
 
 import { useSearchParams } from 'next/navigation'
 
@@ -11,13 +11,14 @@ import IdentityInfo from '@/components/login/identity-info'
 import OptForm from '@/components/login/opt-form'
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
+import { Spinner } from '@/components/ui/spinner'
 import { OTP_MAX_ATTEMPTS } from '@/constants'
 import { ENV } from '@/constants/environment-variables'
 import { AUTH_MESSAGES, LOADING_MESSAGES } from '@/constants/messages'
 import { useAuthStore } from '@/store'
 import { validateEmail } from '@/utils/validation'
 
-export default function LoginPage() {
+function LoginContent() {
   const { user, login, initialize } = useAuthStore()
   const searchParams = useSearchParams()
 
@@ -310,5 +311,13 @@ export default function LoginPage() {
         <div> {stage === 'identity-info' && <IdentityInfo />}</div>
       </PageMain>
     </>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<Spinner className="size-15" />}>
+      <LoginContent />
+    </Suspense>
   )
 }
