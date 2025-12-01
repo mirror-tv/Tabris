@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { formatISO } from 'date-fns'
 import { DateRange } from 'react-day-picker'
@@ -51,6 +51,7 @@ type UploadTemplateProps = {
   onSubmit: (data: OrderRecordForUploadMutation) => void
   orders: OrderRecordForUploadQuery[]
   loading: boolean
+  initialOrderNumber?: string | null
 }
 
 const initialFormState: FormState = {
@@ -75,6 +76,7 @@ export default function UploadTemplate({
   onSubmit,
   orders,
   loading,
+  initialOrderNumber,
 }: UploadTemplateProps) {
   const [selectedOrder, setSelectedOrder] =
     useState<OrderRecordForUploadQuery | null>(null)
@@ -168,6 +170,19 @@ export default function UploadTemplate({
     })
   }
 
+  // Auto-select order from URL query parameter
+  useEffect(() => {
+    if (initialOrderNumber && orders.length > 0 && !selectedOrder && !loading) {
+      const orderToSelect = orders.find(
+        (o) => o.orderNumber === initialOrderNumber
+      )
+      if (orderToSelect) {
+        handleOrderSelect(initialOrderNumber)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialOrderNumber, orders.length, selectedOrder, loading])
+
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
@@ -257,6 +272,11 @@ export default function UploadTemplate({
                 onSelect={handleOrderSelect}
                 value={selectedOrder?.orderNumber}
                 reuploadPrice={reuploadPrice}
+                disabled={
+                  !!initialOrderNumber &&
+                  !!selectedOrder &&
+                  selectedOrder.orderNumber === initialOrderNumber
+                }
               />
 
               {!!selectedOrder && (
