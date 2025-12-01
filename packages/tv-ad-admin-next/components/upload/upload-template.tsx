@@ -292,6 +292,7 @@ export default function UploadTemplate({
                           setFormState((prev) => ({
                             ...prev,
                             isUrgent: Boolean(value),
+                            adRange: undefined,
                           }))
                         }
                       />
