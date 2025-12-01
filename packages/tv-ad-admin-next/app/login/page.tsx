@@ -1,6 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+
+import { useSearchParams } from 'next/navigation'
 
 import type { SendOtpResponse } from '@/types/api'
 
@@ -17,6 +19,7 @@ import { validateEmail } from '@/utils/validation'
 
 export default function LoginPage() {
   const { user, login, initialize } = useAuthStore()
+  const searchParams = useSearchParams()
 
   const [stage, setStage] = useState<'email' | 'otp' | 'identity-info'>('email')
   const [email, setEmail] = useState('')
@@ -32,18 +35,24 @@ export default function LoginPage() {
     initialize()
   }, [initialize])
 
-  // 如果已登入且已完成身份驗證，redirect 到首頁
+  // 獲取重定向目標（如果有 redirect 參數則使用，否則使用首頁）
+  const redirectUrl = useMemo(() => {
+    const redirect = searchParams.get('redirect')
+    return redirect && redirect.startsWith('/') ? redirect : '/'
+  }, [searchParams])
+
+  // 如果已登入且已完成身份驗證，redirect 到目標頁面
   // 注意：這個 useEffect 主要處理從其他頁面進入登入頁的情況
   // 登入成功後的跳轉在 handleOtpSubmit 中處理
   useEffect(() => {
     if (!user) return
     if (user.hasIdentified === true) {
       // 使用 window.location 確保完整重載，讓 cookie 能正確攜帶
-      window.location.href = '/'
+      window.location.href = redirectUrl
     } else if (user.hasIdentified === false) {
       setStage('identity-info')
     }
-  }, [user])
+  }, [user, redirectUrl])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -193,7 +202,8 @@ export default function LoginPage() {
           }
 
           // 方法 3: 使用 window.location 確保完整重載，讓 cookie 能正確攜帶
-          window.location.href = '/'
+          // 如果有 redirect 參數，則重定向到該頁面，否則重定向到首頁
+          window.location.href = redirectUrl
           return
         }
       }
