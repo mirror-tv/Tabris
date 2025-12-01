@@ -18,7 +18,6 @@ import {
 import { useAuthStore } from '@/store/auth.store'
 import { validateTaiwanNationalId } from '@/utils/validation'
 
-
 // ===== Label / Input Element IDs =====
 const idLabelId = 'id-number-label'
 const addressLabelId = 'address-label'
@@ -65,7 +64,7 @@ export default function IdentityInfo() {
     else if (!validateTaiwanNationalId(trimmedIdNumber))
       newErrors.idNumber = '身分證字號格式不正確'
 
-    if (!trimmedAddress) newErrors.address = '請輸入完整戶籍地址'
+    if (!trimmedAddress) newErrors.address = '請輸入完整通訊地址'
 
     setErrors(newErrors)
     if (Object.keys(newErrors).length > 0) return
@@ -132,7 +131,7 @@ export default function IdentityInfo() {
             </LabeledField>
 
             {/* address */}
-            <LabeledField id={addressLabelId} label="戶籍地址">
+            <LabeledField id={addressLabelId} label="通訊地址">
               <CustomInput
                 id={addressLabelId}
                 type="text"
