@@ -14,6 +14,7 @@ import LogoIcon from '@/public/icons/mnews-logo.svg'
 import { useAuthStore } from '@/store'
 import { cn } from '@/utils'
 
+
 type PageHeaderProps =
   | { variant?: 'default'; title?: string }
   | { variant: 'centered'; title?: never }
@@ -93,7 +94,14 @@ export default function PageHeader({
 function ArrowButton() {
   const router = useRouter()
   const handleBack = () => {
-    router.back()
+    if (
+      document.referrer &&
+      document.referrer.startsWith(window.location.origin)
+    ) {
+      router.back()
+    } else {
+      router.push('/')
+    }
   }
   return (
     <button
