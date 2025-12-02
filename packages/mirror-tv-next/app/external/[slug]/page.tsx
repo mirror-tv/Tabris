@@ -43,6 +43,29 @@ type ExternalPageTypes = {
   params: { slug: string }
 }
 
+function extractBriefText(externalData: SingleExternalPost): string {
+  let brief = ''
+  if (externalData.brief) {
+    try {
+      const briefData =
+        typeof externalData.brief === 'string'
+          ? JSON.parse(externalData.brief)
+          : externalData.brief
+      if (briefData?.draft?.blocks) {
+        brief = briefData.draft.blocks
+          .map((block: { text: string }) => block.text)
+          .join('')
+      }
+    } catch {
+      // If parsing fails, use brief as-is or fallback to brief_original
+      brief = externalData.brief || externalData.brief_original || ''
+    }
+  } else {
+    brief = externalData.brief_original || ''
+  }
+  return brief
+}
+
 function generateExternalJsonLds(
   externalData: SingleExternalPost,
   pageUrl: string
@@ -61,6 +84,7 @@ function generateExternalJsonLds(
     '@type': 'BreadcrumbList',
     itemListElement: generateBreadcrumbList(externalData, pageUrl),
   }
+  const brief = extractBriefText(externalData)
 
   const jsonLdNewsArticle = {
     '@context': 'https://schema.org/',
@@ -85,7 +109,7 @@ function generateExternalJsonLds(
         url: logoUrl,
       },
     },
-    description: externalData.brief || externalData.brief_original || '',
+    description: brief,
     url: pageUrl,
     thumbnailUrl: externalData.thumbnail || null,
     articleSection: category?.name || '',
@@ -163,7 +187,7 @@ export async function generateMetadata({
   }
 
   const title = externalData.name
-  const brief = externalData.brief || externalData.brief_original || ''
+  const brief = extractBriefText(externalData)
   const tags = externalData.tags
     ?.map((tag: { name: string }) => tag.name)
     .join(', ')
