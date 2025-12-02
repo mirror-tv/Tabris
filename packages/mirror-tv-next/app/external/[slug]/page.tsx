@@ -43,8 +43,14 @@ type ExternalPageTypes = {
   params: { slug: string }
 }
 
+function stripHtmlTags(html: string): string {
+  return html.replace(/<[^>]*>/g, '').trim()
+}
+
 function extractBriefText(externalData: SingleExternalPost): string {
   let brief = ''
+  let isFromBriefOriginal = false
+
   if (externalData.brief) {
     try {
       const briefData =
@@ -55,14 +61,26 @@ function extractBriefText(externalData: SingleExternalPost): string {
         brief = briefData.draft.blocks
           .map((block: { text: string }) => block.text)
           .join('')
+      } else {
+        // If brief exists but no draft.blocks, fallback to brief_original
+        isFromBriefOriginal = true
+        brief = externalData.brief_original || ''
       }
     } catch {
-      // If parsing fails, use brief as-is or fallback to brief_original
-      brief = externalData.brief || externalData.brief_original || ''
+      // If parsing fails, fallback to brief_original
+      isFromBriefOriginal = true
+      brief = externalData.brief_original || ''
     }
   } else {
+    isFromBriefOriginal = true
     brief = externalData.brief_original || ''
   }
+
+  // Remove HTML tags if brief came from brief_original
+  if (isFromBriefOriginal && brief) {
+    brief = stripHtmlTags(brief)
+  }
+
   return brief
 }
 
