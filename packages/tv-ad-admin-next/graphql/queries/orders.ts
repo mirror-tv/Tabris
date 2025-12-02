@@ -14,8 +14,10 @@ export type OrderRecordForList = Pick<
   | 'scheduleEndDateString'
   | 'createdAt'
   | 'updatedAt'
+  | 'isUrgent'
+  | 'needsModification'
 > & {
-  relatedOrder?: { id: OrderSchema['id'] }[]
+  parentOrder?: { id: OrderSchema['id'] }
 }
 
 export const getOrdersQuery = gql`
@@ -29,16 +31,18 @@ export const getOrdersQuery = gql`
       scheduleEndDate
       createdAt
       updatedAt
-      relatedOrder {
+      parentOrder {
         id
       }
+      isUrgent
+      needsModification
     }
   }
 `
 
 export type OrderRecordForDashboard = Pick<
   OrderSchema,
-  'id' | 'state' | 'updatedAt'
+  'id' | 'state' | 'updatedAt' | 'needsModification'
 >
 
 export const getOrdersStateQuery = gql`
@@ -50,6 +54,7 @@ export const getOrdersStateQuery = gql`
       id
       state
       updatedAt
+      needsModification
     }
   }
 `
@@ -72,6 +77,7 @@ export type OrderRecordForOrderNumber = Pick<
   | 'demoImage'
   | 'videoDuration'
   | 'scheduleConfirmDeadline'
+  | 'isUrgent'
 >
 
 export const getOrdersByOrderNumberQuery = gql`
@@ -89,6 +95,7 @@ export const getOrdersByOrderNumberQuery = gql`
       createdAt
       updatedAt
       videoDuration
+      isUrgent
       attachment {
         id
         url
@@ -118,20 +125,19 @@ export type OrderRecordForUploadQuery = Pick<
   | 'id'
   | 'name'
   | 'member'
-  | 'nameEditable'
   | 'scheduleStartDate'
   | 'scheduleEndDate'
   | 'scheduleStartDateString'
   | 'scheduleEndDateString'
   | 'schedule'
-  | 'scheduleEditable'
   | 'paragraphOne'
-  | 'paragraphOneEditable'
   | 'paragraphTwo'
-  | 'paragraphTwoEditable'
   | 'image'
-  | 'imageEditable'
   | 'state'
+  | 'isUrgent'
+  | 'isReviewed'
+  | 'needsModification'
+  | 'price'
 > & {
   orderNumber: string
 }
@@ -148,17 +154,14 @@ export const getOrdersForUpload = gql`
       id
       orderNumber
       name
-      nameEditable
+      price
       member {
         id
       }
       scheduleStartDate
       scheduleEndDate
-      scheduleEditable
       paragraphOne
-      paragraphOneEditable
       paragraphTwo
-      paragraphTwoEditable
       image {
         id
         url
@@ -167,8 +170,10 @@ export const getOrdersForUpload = gql`
           extension
         }
       }
-      imageEditable
       state
+      isUrgent
+      needsModification
+      isReviewed
     }
   }
 `
@@ -183,6 +188,7 @@ export type OrderRecordForEdit = Pick<
   | 'scheduleEndDate'
   | 'scheduleStartDateString'
   | 'scheduleEndDateString'
+  | 'isUrgent'
 >
 
 export const getOrderForEditQuery = gql`
@@ -194,6 +200,7 @@ export const getOrderForEditQuery = gql`
       state
       scheduleStartDate
       scheduleEndDate
+      isUrgent
     }
   }
 `

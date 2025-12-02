@@ -30,6 +30,7 @@ import type { SingleExternalPost } from '~/graphql/query/external'
 import dynamic from 'next/dynamic'
 import MisoPageView from '~/components/shared/miso-pageview'
 import GA4SourceTracking from '~/components/story/ga4-source-tracking'
+import AdTvAdminMobileBanner from '~/components/shared/ad-tv-admin-mobile-banner'
 
 const ContainerFullScreenAds = dynamic(
   () => import('~/components/ads/gpt/gpt-popup'),
@@ -317,6 +318,7 @@ const ExternalPage = async (props: ExternalPageTypes) => {
           {updatedTime && <ArticleUpdateTime updateTime={updatedTime} />}
           {!!tags.length && <ArticleTagList tags={tags} />}
         </section>
+        <AdTvAdminMobileBanner />
         <section className={styles.socialAndRelatedWrapper}>
           <ArticleRelatedPosts
             relatedPosts={[]}

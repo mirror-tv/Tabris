@@ -3,19 +3,19 @@ export const COLOR_THEMES = {
   label: {
     gray: {
       bg: 'bg-gray-2',
-      text: 'text-gray-8',
+      text: 'text-gray-6',
       border: 'border-gray-3',
       dot: 'bg-gray-5',
     },
     yellow: {
       bg: 'bg-yellow-1',
-      text: 'text-yellow-9',
+      text: 'text-yellow-7',
       border: 'border-yellow-2',
       dot: 'bg-yellow-7',
     },
     red: {
       bg: 'bg-red-1',
-      text: 'text-red-9',
+      text: 'text-red-7',
       border: 'border-red-2',
       dot: 'bg-red-7',
     },
@@ -26,14 +26,14 @@ export const COLOR_THEMES = {
       dot: 'bg-gray-4',
     },
     blue: {
-      bg: 'bg-blue-7',
-      text: 'text-white',
+      bg: 'bg-blue-1',
+      text: 'text-blue-7',
       border: 'border-blue-7',
       dot: 'bg-blue-4',
     },
     green: {
       bg: 'bg-green-1',
-      text: 'text-green-9',
+      text: 'text-green-7',
       border: 'border-green-2',
       dot: 'bg-green-7',
     },
@@ -41,16 +41,16 @@ export const COLOR_THEMES = {
 
   progress: {
     orange: {
-      bg: 'bg-yellow-7',
-      text: 'text-yellow-7',
-      border: 'border-yellow-7',
-      dot: 'bg-yellow-7',
+      bg: 'bg-[#D97706]',
+      text: 'text-[#D97706]',
+      border: 'border-[#D97706]',
+      dot: 'bg-[#D97706]',
     },
     red: {
-      bg: 'bg-red-7',
-      text: 'text-red-7',
-      border: 'border-red-7',
-      dot: 'bg-red-7',
+      bg: 'bg-[#DC2626]',
+      text: 'text-[#DC2626]',
+      border: 'border-[#DC2626]',
+      dot: 'bg-[#DC2626]',
     },
     yellow: {
       bg: 'bg-yellow-7',
@@ -63,6 +63,12 @@ export const COLOR_THEMES = {
       text: 'text-green-7',
       border: 'border-green-7',
       dot: 'bg-green-7',
+    },
+    blue: {
+      bg: 'bg-blue-7',
+      text: 'text-blue-7',
+      border: 'border-blue-7',
+      dot: 'bg-blue-7',
     },
   },
 } as const

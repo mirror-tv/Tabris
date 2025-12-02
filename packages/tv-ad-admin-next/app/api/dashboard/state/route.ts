@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 
+import { ORDER_STATE } from '@/constants'
 import { getOrdersStateQuery } from '@/graphql/queries/orders'
 import { type OrderRecordForDashboard } from '@/graphql/queries/orders'
 import { getClient } from '@/utils/apollo-client'
@@ -42,7 +43,14 @@ export async function GET() {
       },
     })
 
-    const orders = data?.orders || []
+    const orders =
+      data?.orders?.filter(
+        (order) =>
+          !(
+            order.state === ORDER_STATE.PENDING_UPLOAD &&
+            order.needsModification
+          )
+      ) || []
 
     return NextResponse.json({
       orders,

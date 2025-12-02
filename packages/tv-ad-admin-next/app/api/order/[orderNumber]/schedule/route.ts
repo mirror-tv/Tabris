@@ -134,17 +134,7 @@ export async function POST(
       mutation: updateOrderScheduleMutation,
       variables: {
         where: {
-          orderNumber: {
-            equals: orderNumber,
-          },
-          member: {
-            id: {
-              equals: user.memberId,
-            },
-          },
-          state: {
-            equals: ORDER_STATE.PENDING_BROADCAST_DATE,
-          },
+          orderNumber,
         },
         data: {
           scheduleStartDate: parseISO(scheduleStartDate),

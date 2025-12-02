@@ -5,6 +5,8 @@ const ENV = process.env.NEXT_PUBLIC_ENV || 'local'
 const GQL_ENDPOINT = process.env.GQL_ENDPOINT
 const JWT_SECRET = process.env.JWT_SECRET
 
+console.log('ENV', ENV)
+
 // API Endpoints
 let API_BASE_URL: string
 
@@ -22,30 +24,35 @@ switch (ENV) {
     API_BASE_URL = 'https://api.mnews.tw'
     CMS_API_URL = 'https://cms.mnews.tw/graphql'
     GTM_ID = 'GTM-PROD-ID'
-    GA4_ID = 'G-PROD-ID'
+    GA4_ID = 'G-SZR4JRJ0G2'
     break
 
   case 'staging':
     API_BASE_URL = 'https://api-staging.mnews.tw'
     CMS_API_URL = 'https://cms-staging.mnews.tw/graphql'
     GTM_ID = 'GTM-STAGING-ID'
-    GA4_ID = 'G-STAGING-ID'
+    GA4_ID = 'G-8Q9RVB3K0E'
     break
 
   case 'dev':
     API_BASE_URL = 'https://api-dev.mnews.tw'
     CMS_API_URL = 'https://cms-dev.mnews.tw/graphql'
     GTM_ID = 'GTM-DEV-ID'
-    GA4_ID = 'G-DEV-ID'
+    GA4_ID = 'G-YZ07T9YJ6T'
     break
 
   default: // local
     API_BASE_URL = 'http://localhost:3000'
     CMS_API_URL = 'http://localhost:3000/cms/graphql'
     GTM_ID = 'GTM-LOCAL-ID'
-    GA4_ID = 'G-LOCAL-ID'
+    GA4_ID = 'G-YZ07T9YJ6T'
     break
 }
+
+console.log('API_BASE_URL', API_BASE_URL)
+console.log('CMS_API_URL', CMS_API_URL)
+console.log('GTM_ID', GTM_ID)
+console.log('GA4_ID', GA4_ID)
 
 export {
   ENV,

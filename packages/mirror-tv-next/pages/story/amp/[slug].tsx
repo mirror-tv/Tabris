@@ -30,6 +30,7 @@ import AmpApiDataRenderer from '~/components/story/amp/amp-renderer'
 import { SITE_TITLE, META_SITE_URL } from '~/constants/constant'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
+import { GTM_ID } from '~/constants/environment-variables'
 
 export const config = { amp: true }
 
@@ -222,9 +223,11 @@ export default function AmpPage({
   return (
     <html lang="zh-Hant" amp="">
       <head>
-        <script async src="https://cdn.ampproject.org/v0.js"></script>
-        <link rel="canonical" href={pageUrl} />
-        <style amp-custom="true">{`
+        <meta charSet="utf-8" />
+        <style
+          amp-custom=""
+          dangerouslySetInnerHTML={{
+            __html: `
           body {
             margin: 0;
             padding: 0;
@@ -259,6 +262,9 @@ export default function AmpPage({
             object-fit: cover;
             object-position: center;
           }
+          .amp-image-contain {
+            position: relative;
+          }
           .hero-img-caption {
             font-size: 14px;
             line-height: 1.5;
@@ -282,10 +288,124 @@ export default function AmpPage({
             height: calc((100vw - 32px) * 0.641);
             position: relative;
           }
-        `}</style>
+          .amp-hero-category-time {
+            margin-bottom: 8px;
+          }
+          .amp-hero-category {
+            font-size: 14px;
+            color: #014db8;
+            margin-right: 8px;
+          }
+          .amp-hero-publish-time {
+            font-size: 14px;
+            color: #666;
+          }
+          .amp-hero-title {
+            font-size: 24px;
+            font-weight: 600;
+            line-height: 1.4;
+            margin: 16px 0;
+            color: #000;
+          }
+          .amp-hero-credits {
+            list-style: none;
+            padding: 0;
+            margin: 16px 0;
+          }
+          .amp-hero-credit-item {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 4px;
+          }
+          .amp-post-list-wrapper,
+          .amp-related-list-wrapper {
+            margin: 24px 0;
+            padding: 0 16px;
+          }
+          .amp-post-list-title,
+          .amp-related-list-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #000;
+          }
+          .amp-card-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+          }
+          .amp-post-list-item,
+          .amp-related-list-item {
+            margin-bottom: 16px;
+          }
+          .amp-post-list-link,
+          .amp-related-list-link {
+            display: flex;
+            text-decoration: none;
+            color: #000;
+          }
+          .amp-post-list-image-wrapper {
+            width: 130px;
+            height: 130px;
+            margin-right: 12px;
+            flex-shrink: 0;
+          }
+          .amp-post-list-title-text,
+          .amp-related-list-title-text {
+            font-size: 16px;
+            line-height: 1.5;
+            flex: 1;
+          }
+          .amp-article-wrapper {
+            margin: 24px 0;
+          }
+          .amp-image-container {
+            position: relative;
+            width: 100%;
+            margin: 16px 0;
+          }
+          .amp-image-description {
+            font-size: 14px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+          }
+        `,
+          }}
+        />
+        <meta
+          name="viewport"
+          content="width=device-width,minimum-scale=1,initial-scale=1"
+        />
+        <script async src="https://cdn.ampproject.org/v0.js"></script>
+        <link rel="canonical" href={pageUrl} />
+        {/* Google Tag Manager */}
+        <amp-analytics
+          config={`https://www.googletagmanager.com/amp.json?id=${GTM_ID}`}
+          data-credentials="include"
+        ></amp-analytics>
+        <script
+          async
+          custom-element="amp-analytics"
+          src="https://cdn.ampproject.org/v0/amp-analytics-0.1.js"
+        ></script>
+        <script
+          async
+          custom-element="amp-ad"
+          src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"
+        ></script>
         {headContent}
       </head>
       <body>
+        {/* Google Tag Manager (noscript) */}
+        <noscript>
+          <iframe
+            src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+            height="0"
+            width="0"
+            style={{ display: 'none', visibility: 'hidden' }}
+          />
+        </noscript>
         <AMPLayout>
           <main className="main-content">
             <section className="hero-image-and-video">

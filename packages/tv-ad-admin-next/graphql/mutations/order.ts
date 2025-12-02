@@ -13,6 +13,7 @@ export type OrderRecordForUploadMutation = Pick<OrderSchema, 'state'> &
       | 'paragraphTwo'
       | 'scheduleStartDate'
       | 'scheduleEndDate'
+      | 'isUrgent'
     > & {
       image?:
         | (Partial<PhotoSchema> & { data?: File | null })

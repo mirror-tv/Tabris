@@ -1,8 +1,9 @@
-import { parseISO, addHours, format } from 'date-fns'
+import { parseISO } from 'date-fns'
 
 /**
  * Convert UTC time to Taiwan time (+8 hours)
  * 將 UTC 時間轉換為台灣時間（+8 小時）
+ * Returns a Date object representing Taiwan time in UTC
  */
 export function toTaiwanTime(
   dateInput: string | Date | null | undefined
@@ -10,21 +11,135 @@ export function toTaiwanTime(
   if (!dateInput) return null
 
   // Parse string into Date object if necessary
-  const date =
-    typeof dateInput === 'string' ? parseISO(dateInput) : dateInput
+  const date = typeof dateInput === 'string' ? parseISO(dateInput) : dateInput
 
-  // Taiwan is UTC+8, so add 8 hours to UTC time
-  return addHours(date, 8)
+  // Get UTC time in milliseconds and add 8 hours for Taiwan time
+  const utcTime = date.getTime()
+  const taiwanTime = utcTime + 8 * 60 * 60 * 1000 // Add 8 hours in milliseconds
+
+  return new Date(taiwanTime)
 }
 
 /**
  * Format date as YYYY/MM/DD (Taiwan timezone)
  * 將日期格式化為 YYYY/MM/DD（台灣時區）
+ * Uses UTC methods to format Taiwan time correctly regardless of local timezone
  */
 export function formatTaiwanDate(
-  dateInput: string | Date | null | undefined
+  dateInput: string | Date | null | undefined,
+  rule: string = 'yyyy/MM/dd'
 ): string {
-  const date = toTaiwanTime(dateInput)
-  if (!date) return ''
-  return format(date, 'yyyy/MM/dd')
+  if (!dateInput) return ''
+
+  const date = typeof dateInput === 'string' ? parseISO(dateInput) : dateInput
+  const taiwanDate = new Date(date.getTime() + 8 * 60 * 60 * 1000)
+
+  // Extract components using UTC methods (Taiwan time = UTC + 8 hours)
+  const components = {
+    yyyy: String(taiwanDate.getUTCFullYear()),
+    MM: String(taiwanDate.getUTCMonth() + 1).padStart(2, '0'),
+    dd: String(taiwanDate.getUTCDate()).padStart(2, '0'),
+    HH: String(taiwanDate.getUTCHours()).padStart(2, '0'),
+    mm: String(taiwanDate.getUTCMinutes()).padStart(2, '0'),
+    ss: String(taiwanDate.getUTCSeconds()).padStart(2, '0'),
+  }
+
+  return rule
+    .replace(/yyyy/g, components.yyyy)
+    .replace(/HH/g, components.HH)
+    .replace(/mm/g, components.mm) // Replace minutes before month
+    .replace(/ss/g, components.ss)
+    .replace(/MM/g, components.MM) // Replace month after minutes
+    .replace(/dd/g, components.dd)
+}
+
+type HolidayData = {
+  date: string
+  isholiday: '是' | '否'
+  name?: string
+  [key: string]: unknown
+}
+
+const TAIPEI_HOLIDAY_API_BASE_URL =
+  'https://data.taipei/api/v1/dataset/0dcbcfcf-f7a1-4664-a810-82c01cb524e0'
+
+async function fetchHolidayData(year: number): Promise<HolidayData[]> {
+  // 在客戶端使用 API 路由來避免 CORS 問題
+  if (typeof window !== 'undefined') {
+    try {
+      const response = await fetch(`/api/holidays/${year}/full`)
+      if (!response.ok) {
+        throw new Error(`Failed to fetch holiday data: ${response.statusText}`)
+      }
+      const result = await response.json()
+      return result.data || []
+    } catch (error) {
+      console.error('Failed to fetch holidays from API:', error)
+      throw error
+    }
+  }
+
+  // 伺服器端直接呼叫外部 API
+  const url = `${TAIPEI_HOLIDAY_API_BASE_URL}?scope=resourceAquire&q=date ${year}&limit=365`
+
+  const response = await fetch(url)
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch holiday data: ${response.statusText}`)
+  }
+
+  const data = await response.json()
+
+  return data.result?.results || []
+}
+
+export async function getAllHolidaysForYear(year: number): Promise<string[]> {
+  // 使用 fetchHolidayData 獲取完整數據，然後過濾出假日
+  const holidayData = await fetchHolidayData(year)
+  return holidayData
+    .filter((item) => item.isholiday === '是')
+    .map((item) => item.date)
+}
+
+/**
+ * 取得指定年度的完整工作天/非工作天行事曆資料
+ * 用於判斷是否應該開放到該年度年底的日期選擇
+ * 如果該年度還沒有資料，返回 null
+ *
+ * 檢查標準：
+ * - 資料筆數必須 >= 200（一年約 365 天，200 筆以上才視為有完整年度資料）
+ * - 必須包含該年度的資料（檢查日期格式是否為該年度）
+ */
+export async function getYearData(year: number): Promise<HolidayData[] | null> {
+  try {
+    const holidayData = await fetchHolidayData(year)
+
+    // 如果沒有資料，返回 null
+    if (holidayData.length === 0) {
+      return null
+    }
+
+    // 檢查資料筆數是否足夠（一年約 365 天，至少要有 200 筆才視為完整年度資料）
+    if (holidayData.length < 200) {
+      return null
+    }
+
+    // 檢查資料是否確實屬於該年度（檢查前幾筆和後幾筆資料的年份）
+    const firstDate = holidayData[0]?.date
+    const lastDate = holidayData[holidayData.length - 1]?.date
+
+    if (firstDate && lastDate) {
+      const firstYear = parseInt(firstDate.substring(0, 4))
+      const lastYear = parseInt(lastDate.substring(0, 4))
+
+      // 如果資料的年份範圍不包含目標年份，視為沒有該年度的資料
+      if (firstYear > year || lastYear < year) {
+        return null
+      }
+    }
+
+    return holidayData
+  } catch (error) {
+    return null
+  }
 }

@@ -9,6 +9,7 @@ export const getOrderImageQuery = gql`
       }
     ) {
       id
+      state
       member {
         id
       }

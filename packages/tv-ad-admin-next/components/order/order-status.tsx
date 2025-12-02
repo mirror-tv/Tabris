@@ -1,6 +1,7 @@
 import { ProgressSteps } from './progress-steps'
 
 import { type OrderSchema } from '@/types/order'
+import { normalizeOrderState } from '@/utils/state'
 
 type OrderStatusProps = {
   order: OrderSchema
@@ -11,6 +12,8 @@ const labelClassName = 'text-sm font-medium text-text-secondary'
 const valueClassName = 'text-base font-normal text-text-primary'
 
 export function OrderStatus({ order, className = '' }: OrderStatusProps) {
+  const normalizedState = normalizeOrderState(order.state)
+
   return (
     <div className={`w-full space-y-6 md:max-w-none xl:max-w-60 ${className}`}>
       <div className="w-full rounded-lg border border-border-default bg-surface-primary p-6">
@@ -35,7 +38,7 @@ export function OrderStatus({ order, className = '' }: OrderStatusProps) {
           </div>
 
           <div className="mt-6 border-t border-border-default pt-6 md:mt-0 md:flex-1 md:border-t-0 md:pt-0 xl:mt-6 xl:border-t xl:pt-6">
-            <ProgressSteps currentStatus={order.state} />
+            <ProgressSteps currentStatus={normalizedState} />
           </div>
         </div>
       </div>

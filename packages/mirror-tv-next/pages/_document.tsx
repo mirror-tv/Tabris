@@ -1,18 +1,33 @@
 import Document, {
   DocumentContext,
   DocumentInitialProps,
-  Head,
   Main,
-  NextScript,
 } from 'next/document'
 import { ServerStyleSheet } from 'styled-components'
-// import Script from 'next/script'
-import { GTM_ID } from '~/constants/environment-variables'
 
 export default class MyDocument extends Document {
   static async getInitialProps(
     ctx: DocumentContext
   ): Promise<DocumentInitialProps> {
+    // Check if this is an AMP page
+    // For AMP pages, we must skip styled-components to avoid
+    // styles being injected into body, which violates AMP rules
+    // See: https://github.com/vercel/next.js/issues/21278
+    const isAmpPage = ctx.pathname?.includes('/amp/')
+
+    if (isAmpPage) {
+      // For AMP pages, skip styled-components completely
+      // Styles should be inlined in <style amp-custom> tag in the page component
+      const originalRenderPage = ctx.renderPage
+      ctx.renderPage = () => originalRenderPage()
+      const initialProps = await Document.getInitialProps(ctx)
+      return {
+        ...initialProps,
+        styles: initialProps.styles, // Don't add styled-components styles
+      }
+    }
+
+    // For non-AMP pages, use styled-components normally
     const sheet = new ServerStyleSheet()
     const originalRenderPage = ctx.renderPage
 
@@ -39,34 +54,9 @@ export default class MyDocument extends Document {
   }
 
   render() {
-    return (
-      <html lang="zh-Hant">
-        <Head>
-          {/* Google Tag Manager */}
-          <amp-analytics
-            config={`https://www.googletagmanager.com/amp.json?id=${GTM_ID}`}
-            data-credentials="include"
-          ></amp-analytics>
-          <script
-            async
-            custom-element="amp-analytics"
-            src="https://cdn.ampproject.org/v0/amp-analytics-0.1.js"
-          ></script>
-        </Head>
-        <body>
-          {/* Google Tag Manager (noscript) */}
-          <noscript>
-            <iframe
-              src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
-              height="0"
-              width="0"
-              style={{ display: 'none', visibility: 'hidden' }}
-            />
-          </noscript>
-          <Main />
-          <NextScript />
-        </body>
-      </html>
-    )
+    // Since this project only has AMP pages that return full HTML,
+    // we return just Main and let the page component's
+    // full HTML structure (with head and body) take over
+    return <Main />
   }
 }

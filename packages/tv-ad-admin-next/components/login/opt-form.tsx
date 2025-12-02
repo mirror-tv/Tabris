@@ -1,9 +1,9 @@
 import { useState } from 'react'
 
-import Link from 'next/link'
-
 import RadixInspiredOTP from '@/components/custom-ui/radix-inspired-otp'
 import { Button } from '@/components/ui/button'
+
+import { ButtonLoadingText } from '../custom-ui/button-loading-text'
 
 type OptFormProps = {
   email: string
@@ -15,6 +15,7 @@ type OptFormProps = {
   maxAttempts: number
   handleOtpSubmit: (value?: string) => void
   handleResendOtp: () => void
+  setStage: (stage: 'email' | 'otp' | 'identity-info') => void
 }
 
 export default function OptForm({
@@ -27,6 +28,7 @@ export default function OptForm({
   maxAttempts,
   handleOtpSubmit,
   handleResendOtp,
+  setStage,
 }: OptFormProps) {
   const [otpValue, setOtpValue] = useState('')
   const isLocked = failedAttempts >= maxAttempts
@@ -62,7 +64,13 @@ export default function OptForm({
           size="lg"
           className="w-full"
         >
-          {isLoading ? '驗證中...' : isLocked ? '已鎖定' : '登入'}
+          {isLoading ? (
+            <ButtonLoadingText text="驗證中" />
+          ) : isLocked ? (
+            '已鎖定'
+          ) : (
+            '登入'
+          )}
         </Button>
 
         <div className="flex items-center justify-center text-sm">
@@ -83,12 +91,12 @@ export default function OptForm({
             重新發送{canResend ? '' : `(${countdown}s)`}
           </Button>
         </div>
-        <Link
-          href={`/`}
-          className="-mt-2 text-center text-sm leading-normal font-medium text-brand-primary hover:font-bold"
+        <p
+          className="-mt-2 text-center text-sm leading-normal font-medium text-brand-primary hover:cursor-pointer hover:font-bold"
+          onClick={() => setStage('email')}
         >
           重新填寫電子信箱
-        </Link>
+        </p>
       </div>
     </>
   )

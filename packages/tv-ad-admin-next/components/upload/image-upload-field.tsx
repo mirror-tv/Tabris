@@ -33,7 +33,7 @@ export default function ImageUploadField({
 
   function _validateAndSetFile(adImageFile: File) {
     if (!ALLOWED_IMAGE_FILE_TYPES.includes(adImageFile.type)) {
-      setErrors((prev) => ({ ...prev, adImageFile: '僅支援 JPG 或 PNG 格式' }))
+      setErrors((prev) => ({ ...prev, adImage: '僅支援 JPG 或 PNG 格式' }))
       setImage(null)
       return
     }
@@ -41,7 +41,7 @@ export default function ImageUploadField({
     if (adImageFile.size > MAX_IMAGE_FILE_SIZE) {
       setErrors((prev) => ({
         ...prev,
-        adImageFile: '檔案超過 5MB，請重新上傳',
+        adImage: '檔案超過 5MB，請重新上傳',
       }))
       setImage(null)
       return
@@ -53,7 +53,7 @@ export default function ImageUploadField({
       url: '',
       data: adImageFile,
     })
-    setErrors((prev) => ({ ...prev, adImageFile: '' }))
+    setErrors((prev) => ({ ...prev, adImage: '' }))
   }
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {

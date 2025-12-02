@@ -3,11 +3,21 @@ import { useState } from 'react'
 
 import { DialogClose } from '@radix-ui/react-dialog'
 import { format } from 'date-fns'
+import { notFound } from 'next/navigation'
 
+import { ButtonLoadingText } from '@/components/custom-ui/button-loading-text'
 import { CustomInput } from '@/components/custom-ui/custom-input'
+import { DotLoader } from '@/components/custom-ui/dot-loader'
 import { Badge, badgeVariants } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from '@/components/ui/card'
 import {
   Dialog,
   DialogTrigger,
@@ -28,6 +38,8 @@ import {
   SelectItem,
   SelectValue,
 } from '@/components/ui/select'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Spinner } from '@/components/ui/spinner'
 import {
   Table,
   TableHeader,
@@ -37,6 +49,7 @@ import {
   TableCell,
 } from '@/components/ui/table'
 import { ORDER_STATE, OrderStateMap } from '@/constants'
+import { ENV } from '@/constants/environment-variables'
 import { useResponsive } from '@/hooks/useResponsive'
 import UploadIcon from '@/public/icons/upload.svg'
 import { cn } from '@/utils'
@@ -44,6 +57,10 @@ import { cn } from '@/utils'
 export default function Demo() {
   const [date, setDate] = useState<Date | undefined>(new Date())
   const { isMobile, isTablet, isDesktop } = useResponsive()
+
+  if (!['local', 'dev'].includes(ENV)) {
+    notFound()
+  }
 
   return (
     <div className="min-h-screen space-y-8 bg-surface-secondary p-8">
@@ -244,6 +261,68 @@ export default function Demo() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+      </div>
+
+      {/* Spinner Demo  */}
+      <section>
+        <h3 className="mb-2 text-text-primary">Spinner</h3>
+        <div className="flex items-center gap-6">
+          <Spinner />
+          <Spinner className="size-6 text-brand-primary" />
+          <Spinner className="size-8 text-gray-5" />
+          <div className="flex items-center gap-2 text-sm text-text-secondary">
+            <Spinner className="size-4" />
+            <span>Loading...</span>
+          </div>
+        </div>
+        <div className="flex flex-col gap-4">
+          <DotLoader /> {/* default 3 dots */}
+          <DotLoader count={5} /> {/* five dots */}
+          <DotLoader className="text-brand-primary" /> {/* brand color */}
+          <DotLoader dotClassName="h-3 w-3" /> {/* larger dots */}
+          <DotLoader intervalMs={300} /> {/* slower sequence */}
+        </div>
+
+        <ButtonLoadingText dotClassName='bg-gray-9' text="讀取中" />
+      </section>
+
+      {/* Skeleton Demo */}
+      <div>
+        <h3 className="mb-2 text-text-primary">Skeleton</h3>
+        <div className="space-y-3">
+          <Skeleton className="h-4 w-[250px]" />
+          <Skeleton className="h-4 w-[200px]" />
+          <Skeleton className="h-4 w-[180px]" />
+        </div>
+      </div>
+
+      {/* Card Demo */}
+      <div>
+        <h3 className="mb-2 text-text-primary">Card</h3>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Card>
+            <CardHeader>
+              <CardTitle>Default Card</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>This is a simple card with content and footer.</p>
+            </CardContent>
+            <CardFooter>
+              <Button>Action</Button>
+            </CardFooter>
+          </Card>
+
+          <Card variant="note">
+            <CardHeader>
+              <CardTitle>Note Card</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>
+                This card uses the “note” variant with yellow accent colors.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   )

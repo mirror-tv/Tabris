@@ -1,3 +1,4 @@
+/* eslint-disable */
 const express = require('express')
 const {
   createProxyMiddleware,
@@ -23,8 +24,40 @@ app.use(
     changeOrigin: true,
     selfHandleResponse: true,
     onProxyRes: responseInterceptor(async (responseBuffer, req, res) => {
-      const response = responseBuffer.toString('utf8') // convert buffer to string
+      let response = responseBuffer.toString('utf8') // convert buffer to string
       const originStoryUrl = res.url?.replace('/story/amp/', '/story/')
+
+      // Fix Next.js nested HTML structure issue
+      // Next.js wraps our AMP page's full HTML with its own <html><head><body> structure
+      // This creates nested HTML which causes AMP validation errors
+      // We need to extract only the AMP page's HTML structure
+      // See: https://github.com/vercel/next.js/issues/21278
+
+      if (response.includes('<!-- __NEXT_DATA__ -->')) {
+        // Find the second DOCTYPE (from the AMP page component)
+        const nextDataIndex = response.indexOf('<!-- __NEXT_DATA__ -->')
+        const secondDoctypeIndex = response.indexOf(
+          '<!DOCTYPE',
+          nextDataIndex + 1
+        )
+        if (secondDoctypeIndex !== -1) {
+          // Extract from the second DOCTYPE onwards (this is our AMP page's HTML)
+          let ampHtml = response.substring(secondDoctypeIndex)
+
+          // The AMP page component returns a complete HTML document
+          // Find the first </html> tag - that's where the AMP page ends
+          // Everything after that is from Next.js wrapper
+          const firstHtmlClose = ampHtml.indexOf('</html>')
+          if (firstHtmlClose !== -1) {
+            // Extract everything up to and including the first </html>
+            response = ampHtml.substring(0, firstHtmlClose + 7)
+          } else {
+            // Fallback: if no closing tag found, use everything from second DOCTYPE
+            response = ampHtml
+          }
+        }
+      }
+
       return response
         .replace(/<amp-video controls="true"/g, '<amp-video controls')
         .replace(/contenteditable|spellcheck/g, (match) => `data-${match}`)

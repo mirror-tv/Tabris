@@ -1,35 +1,31 @@
 import { formatTaiwanDate } from './date'
+import { normalizeOrderState } from './state'
 
 import { OrderStateMap, ORDER_STATE } from '@/constants'
+import { REVIEWED_ORDER_PRICE, UNREVIEWED_ORDER_PRICE } from '@/constants/price'
 import {
   type OrderRecordForList,
   type OrderRecordForDashboard,
+  type OrderRecordForUploadQuery,
 } from '@/graphql/queries/orders'
-
-type RelatedOrder = { id: string } | Array<{ id: string }>
 
 /**
  * 將訂單分組並排序
- * 訂單之間有父子關係（透過 relatedOrder），將訂單分組顯示
+ * 訂單之間有父子關係（透過 parentOrder），將訂單分組顯示
  */
 export function groupOrders(
   orders: OrderRecordForList[]
 ): OrderRecordForList[][] {
-  const parentMap = new Map<string, OrderRecordForList[]>()
+  const childrenMap = new Map<string, OrderRecordForList[]>()
 
-  // 建立父訂單到子訂單的映射
+  // 建立父訂單 ID 到子訂單的映射
   for (const order of orders) {
-    const related = order.relatedOrder as RelatedOrder | undefined
-
-    // 處理陣列格式的 relatedOrder
-    if (Array.isArray(related) && related.length > 0) {
-      const parentId = related[0]?.id
-      if (parentId) {
-        if (!parentMap.has(parentId)) {
-          parentMap.set(parentId, [])
-        }
-        parentMap.get(parentId)!.push(order)
+    if (order.parentOrder?.id) {
+      const parentId = order.parentOrder.id
+      if (!childrenMap.has(parentId)) {
+        childrenMap.set(parentId, [])
       }
+      childrenMap.get(parentId)!.push(order)
     }
   }
 
@@ -45,7 +41,7 @@ export function groupOrders(
 
     chain.push(order)
     processed[order.id] = true
-    const children = parentMap.get(order.id) || ([] as OrderRecordForList[])
+    const children = childrenMap.get(order.id) || []
 
     for (const child of children) {
       if (!processed[child.id]) {
@@ -59,11 +55,7 @@ export function groupOrders(
   for (const order of orders) {
     if (processed[order.id]) continue
 
-    const isRoot =
-      !order.relatedOrder ||
-      (Array.isArray(order.relatedOrder) && order.relatedOrder.length === 0) ||
-      (typeof order.relatedOrder === 'object' &&
-        Object.keys(order.relatedOrder).length === 0)
+    const isRoot = !order.parentOrder || !order.parentOrder.id
 
     if (isRoot) {
       const chain = buildChain(order, [])
@@ -79,8 +71,10 @@ export function groupOrders(
 
       // 子訂單排序：非「已轉移」的排在前面，全部按 createdAt 從新到舊
       childOrders.sort((a, b) => {
-        const isTransferredA = a.state === ORDER_STATE.TRANSFERRED
-        const isTransferredB = b.state === ORDER_STATE.TRANSFERRED
+        const normalizedStateA = normalizeOrderState(a.state)
+        const normalizedStateB = normalizeOrderState(b.state)
+        const isTransferredA = normalizedStateA === ORDER_STATE.TRANSFERRED
+        const isTransferredB = normalizedStateB === ORDER_STATE.TRANSFERRED
 
         // 非「已轉移」的排在前面
         if (isTransferredA && !isTransferredB) return 1
@@ -114,7 +108,8 @@ export function getOrdersState(
 ): { state: keyof typeof OrderStateMap; count: number }[] {
   const stateCount = orders.reduce(
     (acc, order) => {
-      acc[order.state] = (acc[order.state] || 0) + 1
+      const normalizedState = normalizeOrderState(order.state)
+      acc[normalizedState] = (acc[normalizedState] || 0) + 1
       return acc
     },
     {} as Partial<Record<keyof typeof OrderStateMap, number>>
@@ -124,4 +119,8 @@ export function getOrdersState(
     state: state as keyof typeof OrderStateMap,
     count: count,
   }))
+}
+
+export const getOldOrderPrice = (order: OrderRecordForUploadQuery) => {
+  return order.isReviewed ? REVIEWED_ORDER_PRICE : UNREVIEWED_ORDER_PRICE
 }

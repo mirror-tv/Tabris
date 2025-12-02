@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/dialog'
 import { OrderStateMap } from '@/constants'
 import { type OrderRecord } from '@/mocks/mockData'
+import { normalizeOrderState } from '@/utils/state'
 
 type TestModalProps = {
   orders: OrderRecord[]
@@ -62,8 +63,8 @@ export function TestModal({
 
           <div className="grid max-h-96 gap-2 overflow-y-auto">
             {orders.map((order) => {
-              const stateConfig =
-                OrderStateMap[order.state as keyof typeof OrderStateMap]
+              const normalizedState = normalizeOrderState(order.state)
+              const stateConfig = OrderStateMap[normalizedState]
               const isSelected = currentOrderId === order.orderNumber
 
               return (
@@ -98,7 +99,7 @@ export function TestModal({
                     </div>
                   </div>
 
-                  <StateBadge state={order.state} />
+                  <StateBadge state={normalizedState} />
 
                   {isSelected && (
                     <div className="ml-2">

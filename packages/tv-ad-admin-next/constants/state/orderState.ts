@@ -1,6 +1,6 @@
 import { COLOR_THEMES } from './colors'
 
-export type StateFlow = 'normal' | 'cancel' | 'setTime' | 'edit' | 'transferred'
+export type StateFlow = 'normal' | 'cancel' | 'setTime' | 'edit'
 
 export const ORDER_STATE = {
   PENDING_UPLOAD: 'paid',
@@ -24,7 +24,7 @@ export const OrderStateMap = {
     progressColor: 'red',
   },
   [ORDER_STATE.MATERIAL_UPLOADED]: {
-    label: '已上傳檔案',
+    label: '素材已上傳',
     colors: COLOR_THEMES.label.yellow,
     progressColor: 'yellow',
   },
@@ -39,9 +39,9 @@ export const OrderStateMap = {
     progressColor: 'red',
   },
   [ORDER_STATE.PENDING_SCHEDULE]: {
-    label: '排播',
+    label: '待排播',
     colors: COLOR_THEMES.label.blue,
-    progressColor: 'green',
+    progressColor: 'blue',
   },
   [ORDER_STATE.BROADCASTED]: {
     label: '已播出',
@@ -69,7 +69,7 @@ export const OrderStateMap = {
     progressColor: 'red',
   },
   [ORDER_STATE.DATE_RESET]: {
-    label: '已重新設定排播日期',
+    label: '已重設排播日期',
     colors: COLOR_THEMES.label.yellow,
     progressColor: 'yellow',
   },
@@ -103,12 +103,6 @@ export const getStatesByFlow = (flow: StateFlow): OrderState[] => {
       ORDER_STATE.PENDING_QUOTE_CONFIRMATION,
       ORDER_STATE.TRANSFERRED,
     ],
-    transferred: [
-      ...basicFlow,
-      ORDER_STATE.MODIFICATION_REQUEST,
-      ORDER_STATE.PENDING_QUOTE_CONFIRMATION,
-      ORDER_STATE.TRANSFERRED,
-    ],
     setTime: [
       ...basicFlow.slice(0, 3),
       ORDER_STATE.PENDING_BROADCAST_DATE,
@@ -123,26 +117,39 @@ export const getStatesByFlow = (flow: StateFlow): OrderState[] => {
   return flowOrderMap[flow] || []
 }
 
+const NORMAL_FLOW_STATES = new Set<OrderState>([
+  ...basicFlow,
+  ORDER_STATE.PENDING_SCHEDULE,
+  ORDER_STATE.BROADCASTED,
+])
+
+const EDIT_FLOW_STATES = new Set<OrderState>([
+  ORDER_STATE.MODIFICATION_REQUEST,
+  ORDER_STATE.PENDING_QUOTE_CONFIRMATION,
+  ORDER_STATE.TRANSFERRED,
+])
+
+const SET_TIME_FLOW_STATES = new Set<OrderState>([
+  ORDER_STATE.PENDING_BROADCAST_DATE,
+  ORDER_STATE.DATE_RESET,
+])
+
+/**
+ * 根據當前訂單狀態判斷所屬的流程類型
+ * @param state 當前訂單狀態
+ * @returns 對應的流程類型
+ */
 export const getCurrentFlow = (state: OrderState): StateFlow => {
-  if (state === ORDER_STATE.CANCELLED) {
-    return 'cancel'
+  if (NORMAL_FLOW_STATES.has(state)) {
+    return 'normal'
   }
-  if (state === ORDER_STATE.TRANSFERRED) {
-    return 'transferred'
-  }
-  if (
-    state === ORDER_STATE.MODIFICATION_REQUEST ||
-    state === ORDER_STATE.PENDING_QUOTE_CONFIRMATION
-  ) {
+  if (EDIT_FLOW_STATES.has(state)) {
     return 'edit'
   }
-  if (
-    state === ORDER_STATE.PENDING_BROADCAST_DATE ||
-    state === ORDER_STATE.DATE_RESET
-  ) {
+  if (SET_TIME_FLOW_STATES.has(state)) {
     return 'setTime'
   }
-  return 'normal'
+  return 'cancel'
 }
 
 /**
@@ -150,9 +157,12 @@ export const getCurrentFlow = (state: OrderState): StateFlow => {
  * @param currentState 當前狀態
  * @returns 下一個狀態，如果已經是最後一個狀態或找不到則返回 null
  */
-export const getNextState = (currentState: OrderState): OrderState | null => {
-  const flow = getCurrentFlow(currentState)
-  const states = getStatesByFlow(flow)
+export const getNextState = (
+  currentState: OrderState,
+  flow?: StateFlow
+): OrderState | null => {
+  const searchedflow = flow ? flow : getCurrentFlow(currentState)
+  const states = getStatesByFlow(searchedflow)
   const currentIndex = states.indexOf(currentState)
 
   if (currentIndex === -1 || currentIndex === states.length - 1) {

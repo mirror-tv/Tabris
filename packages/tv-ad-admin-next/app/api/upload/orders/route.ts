@@ -10,6 +10,8 @@ import { getClient } from '@/utils/apollo-client'
 import { getCurrentUser } from '@/utils/auth'
 import { createErrorLogger } from '@/utils/error-handler'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   try {
     const currentUser = await getCurrentUser()

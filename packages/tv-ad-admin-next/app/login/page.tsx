@@ -1,25 +1,28 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { Suspense, useState, useEffect, useMemo } from 'react'
 
-import { useRouter } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 
 import type { SendOtpResponse } from '@/types/api'
 
 import EmailForm from '@/components/login/email-form'
+import IdentityInfo from '@/components/login/identity-info'
 import OptForm from '@/components/login/opt-form'
 import PageHeader from '@/components/shared/page-header'
 import PageMain from '@/components/shared/page-main'
+import { Spinner } from '@/components/ui/spinner'
 import { OTP_MAX_ATTEMPTS } from '@/constants'
+import { ENV } from '@/constants/environment-variables'
 import { AUTH_MESSAGES, LOADING_MESSAGES } from '@/constants/messages'
 import { useAuthStore } from '@/store'
 import { validateEmail } from '@/utils/validation'
 
-export default function LoginPage() {
-  const router = useRouter()
-  const { isAuthenticated, login, initialize } = useAuthStore()
+function LoginContent() {
+  const { user, login, initialize } = useAuthStore()
+  const searchParams = useSearchParams()
 
-  const [showOtpForm, setShowOtpForm] = useState(false)
+  const [stage, setStage] = useState<'email' | 'otp' | 'identity-info'>('email')
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [loadingMessage, setLoadingMessage] = useState('')
@@ -33,12 +36,24 @@ export default function LoginPage() {
     initialize()
   }, [initialize])
 
-  // 如果已登入，重定向到首頁（dashboard）
+  // 獲取重定向目標（如果有 redirect 參數則使用，否則使用首頁）
+  const redirectUrl = useMemo(() => {
+    const redirect = searchParams.get('redirect')
+    return redirect && redirect.startsWith('/') ? redirect : '/'
+  }, [searchParams])
+
+  // 如果已登入且已完成身份驗證，redirect 到目標頁面
+  // 注意：這個 useEffect 主要處理從其他頁面進入登入頁的情況
+  // 登入成功後的跳轉在 handleOtpSubmit 中處理
   useEffect(() => {
-    if (isAuthenticated) {
-      router.push('/')
+    if (!user) return
+    if (user.hasIdentified === true) {
+      // 使用 window.location 確保完整重載，讓 cookie 能正確攜帶
+      window.location.href = redirectUrl
+    } else if (user.hasIdentified === false) {
+      setStage('identity-info')
     }
-  }, [isAuthenticated, router])
+  }, [user, redirectUrl])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -72,8 +87,7 @@ export default function LoginPage() {
 
       setLoadingMessage(LOADING_MESSAGES.SENDING_OTP)
 
-      // 開發環境：在瀏覽器 Console 顯示驗證碼（帶顏色）
-      if (process.env.NODE_ENV === 'development' && data.data?.otp) {
+      if ((ENV === 'dev' || ENV === 'local') && data.data?.otp) {
         console.log(
           '%c🔐 ========== OTP 驗證碼 ==========',
           'color: #10b981; font-size: 14px; font-weight: bold;'
@@ -90,7 +104,7 @@ export default function LoginPage() {
         )
       }
 
-      setShowOtpForm(true)
+      setStage('otp')
       setCountdown(60)
       setCanResend(false)
     } catch (err) {
@@ -153,13 +167,47 @@ export default function LoginPage() {
 
       // 登入成功，更新 store
       if (data.user) {
-        // login 是同步函數，只是更新 zustand store 的 state，不需要 await
         login(data.user)
-      }
 
-      // 登入成功，跳轉到首頁（dashboard）
-      // Cookie 已在 API 響應時設定，狀態更新是同步的，可直接跳轉
-      router.push('/')
+        // 如果已完成身份驗證，確保 cookie 被保存後再跳轉
+        if (data.user.hasIdentified === true) {
+          // 方法 1: 等待瀏覽器保存 cookie
+          await new Promise((resolve) => setTimeout(resolve, 300))
+
+          // 方法 2: 驗證 cookie 是否可用（最多重試 3 次）
+          let retries = 3
+          let cookieVerified = false
+
+          while (retries > 0 && !cookieVerified) {
+            try {
+              const verifyResponse = await fetch('/api/auth/me', {
+                method: 'GET',
+                credentials: 'include',
+              })
+              const verifyData = await verifyResponse.json()
+
+              if (verifyData.success && verifyData.user) {
+                cookieVerified = true
+                // 更新 store 以確保狀態一致
+                login(verifyData.user)
+                break
+              }
+            } catch {
+              console.log('驗證 cookie 失敗，重試中...', retries)
+            }
+
+            retries--
+            if (retries > 0) {
+              await new Promise((resolve) => setTimeout(resolve, 200))
+            }
+          }
+
+          // 方法 3: 使用 window.location 確保完整重載，讓 cookie 能正確攜帶
+          // 如果有 redirect 參數，則重定向到該頁面，否則重定向到首頁
+          window.location.href = redirectUrl
+          return
+        }
+      }
     } catch (err) {
       console.error(err)
       setError(AUTH_MESSAGES.NETWORK_ERROR)
@@ -197,7 +245,10 @@ export default function LoginPage() {
       setLoadingMessage(LOADING_MESSAGES.SENDING_OTP)
 
       // 開發環境：在瀏覽器 Console 顯示驗證碼（帶顏色）
-      if (process.env.NODE_ENV === 'development' && data.data?.otp) {
+      if (
+        (ENV.startsWith('dev') || ENV.startsWith('local')) &&
+        data.data?.otp
+      ) {
         console.log(
           '%c🔐 ========== 重新發送 OTP ==========',
           'color: #10b981; font-size: 14px; font-weight: bold;'
@@ -229,31 +280,44 @@ export default function LoginPage() {
     <>
       <PageHeader variant="centered" />
       <PageMain className="flex justify-center py-5 md:py-10">
-        <div className="flex h-fit max-w-[288px] flex-col items-center rounded-xl border border-border-default bg-surface-primary p-4 shadow-lg md:max-w-[448px] md:min-w-[448px] md:p-6">
-          {!showOtpForm ? (
-            <EmailForm
-              email={email}
-              setEmail={setEmail}
-              handleSubmit={handleSubmit}
-              isLoading={isLoading}
-              loadingMessage={loadingMessage}
-              error={error}
-            />
-          ) : (
-            <OptForm
-              email={email}
-              error={error}
-              isLoading={isLoading}
-              countdown={countdown}
-              canResend={canResend}
-              failedAttempts={failedAttempts}
-              maxAttempts={OTP_MAX_ATTEMPTS}
-              handleOtpSubmit={handleOtpSubmit}
-              handleResendOtp={handleResendOtp}
-            />
-          )}
-        </div>
+        {stage !== 'identity-info' && (
+          <div className="flex h-fit max-w-[288px] flex-col items-center rounded-xl border border-border-default bg-surface-primary p-4 shadow-lg md:max-w-[448px] md:min-w-[448px] md:p-6">
+            {stage === 'email' && (
+              <EmailForm
+                email={email}
+                setEmail={setEmail}
+                handleSubmit={handleSubmit}
+                isLoading={isLoading}
+                loadingMessage={loadingMessage}
+                error={error}
+              />
+            )}
+            {stage === 'otp' && (
+              <OptForm
+                email={email}
+                error={error}
+                isLoading={isLoading}
+                countdown={countdown}
+                canResend={canResend}
+                failedAttempts={failedAttempts}
+                maxAttempts={OTP_MAX_ATTEMPTS}
+                handleOtpSubmit={handleOtpSubmit}
+                handleResendOtp={handleResendOtp}
+                setStage={setStage}
+              />
+            )}
+          </div>
+        )}
+        <div> {stage === 'identity-info' && <IdentityInfo />}</div>
       </PageMain>
     </>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<Spinner className="size-15" />}>
+      <LoginContent />
+    </Suspense>
   )
 }

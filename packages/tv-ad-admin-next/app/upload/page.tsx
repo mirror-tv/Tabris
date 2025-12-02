@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 import SubmitResult from '@/components/shared/submit-result'
+import { Spinner } from '@/components/ui/spinner'
 import UploadTemplate from '@/components/upload/upload-template'
 import { OrderRecordForUploadMutation } from '@/graphql/mutations/order'
 import { OrderRecordForUploadQuery } from '@/graphql/queries/orders'
@@ -14,12 +15,24 @@ import { handleUnauthorized } from '@/utils/handle-unauthorized'
 
 const pageTitle = '上傳廣告素材'
 
-export default function UploadPage() {
+function UploadContent() {
   const { submitStatus, setSubmitStatus } = useSubmitStatus()
   const router = useRouter()
+  const searchParams = useSearchParams()
 
   const [orders, setOrders] = useState<OrderRecordForUploadQuery[]>([])
   const [loading, setLoading] = useState(true)
+  const [initialOrderNumber, setInitialOrderNumber] = useState<string | null>(
+    null
+  )
+
+  useEffect(() => {
+    // Get orderNumber from URL query parameters
+    const orderNumber = searchParams.get('orderNumber')
+    if (orderNumber) {
+      setInitialOrderNumber(orderNumber)
+    }
+  }, [searchParams])
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -71,6 +84,8 @@ export default function UploadPage() {
         formData.append('scheduleStartDate', data.scheduleStartDate)
       if ('scheduleEndDate' in data && data.scheduleEndDate)
         formData.append('scheduleEndDate', data.scheduleEndDate)
+      if ('isUrgent' in data && data.isUrgent !== undefined)
+        formData.append('isUrgent', String(data.isUrgent))
 
       // Attach image file if present
       if ('image' in data && data.image?.data) {
@@ -90,6 +105,14 @@ export default function UploadPage() {
       const payload: ApiResponse = await res.json()
 
       if (!res.ok || !payload?.success) {
+        if (payload?.message === 'NO_ADDON_ORDER_AVAILABLE') {
+          const errorData = payload?.data as { reason?: string } | undefined
+          const reason =
+            errorData?.reason ||
+            '沒有符合條件的加購訂單。請先購買加購訂單才能修改此訂單。'
+          alert(reason)
+          return
+        }
         throw new Error(payload?.message || 'Upload failed')
       }
 
@@ -119,6 +142,15 @@ export default function UploadPage() {
       onSubmit={handleConfirmUpload}
       orders={orders}
       loading={loading}
+      initialOrderNumber={initialOrderNumber}
     />
+  )
+}
+
+export default function UploadPage() {
+  return (
+    <Suspense fallback={<Spinner className="size-15" />}>
+      <UploadContent />
+    </Suspense>
   )
 }
