@@ -94,10 +94,11 @@ export default function PageHeader({
 function ArrowButton() {
   const router = useRouter()
   const handleBack = () => {
-    if (
-      document.referrer &&
-      document.referrer.startsWith(window.location.origin)
-    ) {
+    const hasHistory = window.history.length > 1
+    const sameOriginReferrer =
+      document.referrer && document.referrer.startsWith(window.location.origin)
+
+    if (hasHistory && sameOriginReferrer) {
       router.back()
     } else {
       router.push('/')
