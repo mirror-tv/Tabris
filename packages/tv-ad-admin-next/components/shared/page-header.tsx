@@ -14,6 +14,7 @@ import LogoIcon from '@/public/icons/mnews-logo.svg'
 import { useAuthStore } from '@/store'
 import { cn } from '@/utils'
 
+
 type PageHeaderProps =
   | { variant?: 'default'; title?: string }
   | { variant: 'centered'; title?: never }
@@ -93,7 +94,18 @@ export default function PageHeader({
 function ArrowButton() {
   const router = useRouter()
   const handleBack = () => {
-    router.back()
+    const hasHistory = window.history.length > 1
+    const sameOriginReferrer =
+      document.referrer && document.referrer.startsWith(window.location.origin)
+
+    // Check if the referrer path includes the login string (Prevents redirect loops)
+    const isLoginReferrer = document.referrer.includes('/login')
+
+    if (hasHistory && sameOriginReferrer && !isLoginReferrer) {
+      router.back()
+    } else {
+      router.push('/')
+    }
   }
   return (
     <button
