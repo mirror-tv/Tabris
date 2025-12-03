@@ -63,34 +63,110 @@ type HolidayData = {
 const TAIPEI_HOLIDAY_API_BASE_URL =
   'https://data.taipei/api/v1/dataset/0dcbcfcf-f7a1-4664-a810-82c01cb524e0'
 
+/**
+ * 生成指定年度的周六周日假日資料（fallback）
+ * 格式：YYYYMMDD
+ */
+function generateWeekendHolidays(year: number): HolidayData[] {
+  const holidays: HolidayData[] = []
+  const startDate = new Date(year, 0, 1) // 該年度第一天
+  const endDate = new Date(year, 11, 31) // 該年度最後一天
+
+  for (
+    let date = new Date(startDate);
+    date <= endDate;
+    date.setDate(date.getDate() + 1)
+  ) {
+    const dayOfWeek = date.getDay() // 0 = 周日, 6 = 周六
+    if (dayOfWeek === 0 || dayOfWeek === 6) {
+      const yearStr = String(date.getFullYear())
+      const monthStr = String(date.getMonth() + 1).padStart(2, '0')
+      const dayStr = String(date.getDate()).padStart(2, '0')
+      holidays.push({
+        date: `${yearStr}${monthStr}${dayStr}`,
+        isholiday: '是',
+      })
+    }
+  }
+
+  return holidays
+}
+
 async function fetchHolidayData(year: number): Promise<HolidayData[]> {
   // 在客戶端使用 API 路由來避免 CORS 問題
   if (typeof window !== 'undefined') {
     try {
-      const response = await fetch(`/api/holidays/${year}/full`)
+      // 檢查 URL 參數是否有 debug=time
+      const urlParams = new URLSearchParams(window.location.search)
+      const isDebugMode = urlParams.get('debug') === 'time'
+      const apiUrl = isDebugMode
+        ? `/api/holidays/${year}/full?debug=time`
+        : `/api/holidays/${year}/full`
+
+      const response = await fetch(apiUrl)
       if (!response.ok) {
-        throw new Error(`Failed to fetch holiday data: ${response.statusText}`)
+        // API 請求失敗（HTTP 錯誤），使用 fallback
+        console.warn(
+          `無法取得 ${year} 年的政府放假日資料（HTTP ${response.status}），使用周六周日作為 fallback`
+        )
+        return generateWeekendHolidays(year)
       }
       const result = await response.json()
+      // 如果 API 返回錯誤，使用 fallback
+      if (result.error) {
+        console.warn(
+          `無法取得 ${year} 年的政府放假日資料（API 錯誤），使用周六周日作為 fallback`
+        )
+        return generateWeekendHolidays(year)
+      }
+      // 如果沒有資料，可能是政府還沒釋出，返回空陣列（不使用 fallback）
+      if (!result.data || result.data.length === 0) {
+        console.info(`${year} 年的政府放假日資料尚未釋出，不顯示假日標記`)
+        return []
+      }
       return result.data || []
     } catch (error) {
+      // 網路錯誤或其他異常，使用 fallback
       console.error('Failed to fetch holidays from API:', error)
-      throw error
+      console.warn(
+        `無法取得 ${year} 年的政府放假日資料（網路錯誤），使用周六周日作為 fallback`
+      )
+      return generateWeekendHolidays(year)
     }
   }
 
   // 伺服器端直接呼叫外部 API
-  const url = `${TAIPEI_HOLIDAY_API_BASE_URL}?scope=resourceAquire&q=date ${year}&limit=365`
+  try {
+    const url = `${TAIPEI_HOLIDAY_API_BASE_URL}?scope=resourceAquire&q=date ${year}&limit=365`
 
-  const response = await fetch(url)
+    const response = await fetch(url)
 
-  if (!response.ok) {
-    throw new Error(`Failed to fetch holiday data: ${response.statusText}`)
+    if (!response.ok) {
+      // API 請求失敗（HTTP 錯誤），使用 fallback
+      console.warn(
+        `無法取得 ${year} 年的政府放假日資料（HTTP ${response.status}），使用周六周日作為 fallback`
+      )
+      return generateWeekendHolidays(year)
+    }
+
+    const data = await response.json()
+    const holidayData = data.result?.results || []
+
+    // 如果沒有資料，可能是政府還沒釋出，返回空陣列（不使用 fallback）
+    if (holidayData.length === 0) {
+      console.info(`${year} 年的政府放假日資料尚未釋出，不顯示假日標記`)
+      return []
+    }
+
+    return holidayData
+  } catch (error) {
+    // 網路錯誤或其他異常，使用 fallback
+    console.error('Failed to fetch holidays from API:', error)
+    console.warn(
+      `無法取得 ${year} 年的政府放假日資料（網路錯誤），使用周六周日作為 fallback`
+    )
+    return generateWeekendHolidays(year)
   }
-
-  const data = await response.json()
-
-  return data.result?.results || []
 }
 
 export async function getAllHolidaysForYear(year: number): Promise<string[]> {

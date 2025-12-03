@@ -88,7 +88,9 @@ export async function POST(req: NextRequest) {
 
       if (queryErrors?.length) {
         const message = queryErrors.map((e) => e.message).join(', ')
-        createErrorLogger('Failed to verify order ownership.')(new Error(message))
+        createErrorLogger('Failed to verify order ownership.')(
+          new Error(message)
+        )
         return NextResponse.json<ApiResponse>(
           { success: false, message },
           { status: 500 }
@@ -330,7 +332,8 @@ export async function POST(req: NextRequest) {
             success: false,
             message: 'NO_ADDON_ORDER_AVAILABLE',
             data: {
-              reason: '沒有符合條件的加購訂單。請先購買加購訂單才能修改此訂單。',
+              reason:
+                '沒有符合條件的加購訂單。請先購買加購訂單才能修改此訂單。',
             },
           },
           { status: 400 }
@@ -443,7 +446,9 @@ export async function POST(req: NextRequest) {
           await client.mutate({
             mutation: deletePhotoMutation,
             variables: { where: { id: oldImageId } },
-            context: { headers: { 'x-apollo-operation-name': 'deleteOldPhoto' } },
+            context: {
+              headers: { 'x-apollo-operation-name': 'deleteOldPhoto' },
+            },
           })
         } catch (cleanupError) {
           createErrorLogger(
@@ -527,9 +532,9 @@ export async function POST(req: NextRequest) {
           context: { headers: { 'x-apollo-operation-name': 'deleteOldPhoto' } },
         })
       } catch (cleanupError) {
-        createErrorLogger(`Failed to delete previous image record ${oldImageId}`)(
-          cleanupError
-        )
+        createErrorLogger(
+          `Failed to delete previous image record ${oldImageId}`
+        )(cleanupError)
       }
     }
 
