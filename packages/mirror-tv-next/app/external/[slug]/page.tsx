@@ -49,7 +49,7 @@ function stripHtmlTags(html: string): string {
 
 function extractBriefText(externalData: SingleExternalPost): string {
   let brief = ''
-  let isFromBriefOriginal = false
+  let needsHtmlStrip = false
 
   if (externalData.brief) {
     try {
@@ -57,27 +57,31 @@ function extractBriefText(externalData: SingleExternalPost): string {
         typeof externalData.brief === 'string'
           ? JSON.parse(externalData.brief)
           : externalData.brief
-      if (briefData?.draft?.blocks) {
+      if (briefData?.draft?.blocks && briefData.draft.blocks.length > 0) {
         brief = briefData.draft.blocks
           .map((block: { text: string }) => block.text)
           .join('')
+      } else if (briefData?.html) {
+        // If draft.blocks is empty but html exists, use html and strip tags
+        brief = briefData.html
+        needsHtmlStrip = true
       } else {
-        // If brief exists but no draft.blocks, fallback to brief_original
-        isFromBriefOriginal = true
+        // If brief exists but no draft.blocks or html, fallback to brief_original
+        needsHtmlStrip = true
         brief = externalData.brief_original || ''
       }
     } catch {
       // If parsing fails, fallback to brief_original
-      isFromBriefOriginal = true
+      needsHtmlStrip = true
       brief = externalData.brief_original || ''
     }
   } else {
-    isFromBriefOriginal = true
+    needsHtmlStrip = true
     brief = externalData.brief_original || ''
   }
 
-  // Remove HTML tags if brief came from brief_original
-  if (isFromBriefOriginal && brief) {
+  // Remove HTML tags if needed
+  if (needsHtmlStrip && brief) {
     brief = stripHtmlTags(brief)
   }
 
@@ -206,10 +210,11 @@ export async function generateMetadata({
 
   const title = externalData.name
   const brief = extractBriefText(externalData)
+  const description = brief || META_DESCRIPTION
   const tags = externalData.tags
     ?.map((tag: { name: string }) => tag.name)
     .join(', ')
-  const image = externalData.thumbnail
+  const image = externalData.thumbnail || '/images/image-default.jpg'
   const dableImage = externalData.thumbnail
   const pageUrl = `${META_SITE_URL}/external/${params.slug}`
   const writer = externalData.byline
@@ -224,12 +229,12 @@ export async function generateMetadata({
 
   return {
     title,
-    description: brief,
+    description,
     openGraph: {
       title,
-      description: brief,
+      description,
       url: pageUrl,
-      images: image ? [{ url: image }] : [],
+      images: [{ url: image }],
       type: 'article',
       publishedTime: publishedDateIso,
       modifiedTime: modifiedDateIso,
@@ -239,8 +244,8 @@ export async function generateMetadata({
     twitter: {
       card: 'summary_large_image',
       title,
-      description: brief,
-      images: image ? [image] : [],
+      description,
+      images: [image],
     },
     keywords: tags,
     authors: writer ? [{ name: writer }] : [],
