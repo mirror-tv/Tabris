@@ -1,6 +1,5 @@
 // 這裡管理的是在 Build 階段就會寫死數值的環境變數 (通常為 `NEXT_PUBLCI_` 開頭)
 const ENV = process.env.NEXT_PUBLIC_ENV || 'local'
-let SHOW_TV_AD_ADMIN_BANNER: boolean
 let SITE_URL: string
 let GTM_ID: string
 let GLOBAL_CACHE_SETTING: number
@@ -30,7 +29,6 @@ switch (ENV) {
     HOMEPAGE_JSON_URL =
       'https://storage.googleapis.com/static-mnews-tw-prod/files/json/topic_video.json'
     GA4_ID = 'G-SZR4JRJ0G2'
-    SHOW_TV_AD_ADMIN_BANNER = false
     break
 
   case 'staging':
@@ -47,7 +45,6 @@ switch (ENV) {
     HOMEPAGE_JSON_URL =
       'https://storage.googleapis.com/static-mnews-tw-staging/files/json/topic_video.json'
     GA4_ID = 'G-8Q9RVB3K0E'
-    SHOW_TV_AD_ADMIN_BANNER = true
     break
 
   case 'dev':
@@ -64,7 +61,6 @@ switch (ENV) {
     HOMEPAGE_JSON_URL =
       'https://storage.googleapis.com/static-mnews-tw-dev/files/json/topic_video.json'
     GA4_ID = 'G-YZ07T9YJ6T'
-    SHOW_TV_AD_ADMIN_BANNER = true
     break
 
   default:
@@ -81,24 +77,8 @@ switch (ENV) {
     HOMEPAGE_JSON_URL =
       'https://storage.googleapis.com/static-mnews-tw-dev/files/json/topic_video.json'
     GA4_ID = 'G-YZ07T9YJ6T'
-    SHOW_TV_AD_ADMIN_BANNER = true
     break
 }
-
-console.log('ENV', ENV)
-console.log('SITE_URL', SITE_URL)
-console.log('YOUTUBE_API_URL', YOUTUBE_API_URL)
-console.log('GTM_ID', GTM_ID)
-console.log('GLOBAL_CACHE_SETTING', GLOBAL_CACHE_SETTING)
-console.log('HEADER_JSON_URL', HEADER_JSON_URL)
-console.log('FLASH_NEWS_JSON_URL', FLASH_NEWS_JSON_URL)
-console.log('SCHEDULE_JSON_URL', SCHEDULE_JSON_URL)
-console.log('POPULAR_POSTS_URL', POPULAR_POSTS_URL)
-console.log('POPULAR_VIDEOS_JSON_URL', POPULAR_VIDEOS_JSON_URL)
-console.log('FEATURE_POSTS_URL', FEATURE_POSTS_URL)
-console.log('HOMEPAGE_JSON_URL', HOMEPAGE_JSON_URL)
-console.log('GA4_ID', GA4_ID)
-console.log('SHOW_TV_AD_ADMIN_BANNER', SHOW_TV_AD_ADMIN_BANNER)
 
 export {
   ENV,
@@ -114,5 +94,4 @@ export {
   FEATURE_POSTS_URL,
   HOMEPAGE_JSON_URL,
   GA4_ID,
-  SHOW_TV_AD_ADMIN_BANNER,
 }
