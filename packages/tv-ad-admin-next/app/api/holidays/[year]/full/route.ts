@@ -40,7 +40,7 @@ function generateWeekendHolidays(year: number): HolidayData[] {
 }
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: { year: string } }
 ) {
   const { year } = params
@@ -52,6 +52,19 @@ export async function GET(
   const yearNum = parseInt(year, 10)
   if (isNaN(yearNum)) {
     return NextResponse.json({ error: 'Invalid year' }, { status: 400 })
+  }
+
+  // 檢查是否有 debug=time 參數，如果有則模擬"打不到政府日曆"的狀況
+  const searchParams = req.nextUrl.searchParams
+  const isDebugMode = searchParams.get('debug') === 'time'
+
+  if (isDebugMode) {
+    // Debug 模式：模擬政府日曆 API 無法取得的情況，使用周六周日作為 fallback
+    console.info(
+      `[DEBUG MODE] 模擬無法取得 ${year} 年的政府放假日資料，使用周六周日作為 fallback`
+    )
+    const fallbackData = generateWeekendHolidays(yearNum)
+    return NextResponse.json({ data: fallbackData })
   }
 
   try {
