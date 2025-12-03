@@ -98,7 +98,10 @@ function ArrowButton() {
     const sameOriginReferrer =
       document.referrer && document.referrer.startsWith(window.location.origin)
 
-    if (hasHistory && sameOriginReferrer) {
+    // Check if the referrer path includes the login string (Prevents redirect loops)
+    const isLoginReferrer = document.referrer.includes('/login')
+
+    if (hasHistory && sameOriginReferrer && !isLoginReferrer) {
       router.back()
     } else {
       router.push('/')
