@@ -103,6 +103,12 @@ async function fetchHolidayData(year: number): Promise<HolidayData[]> {
         ? `/api/holidays/${year}/full?debug=time`
         : `/api/holidays/${year}/full`
 
+      if (isDebugMode) {
+        console.info(
+          `[DEBUG MODE] 使用 debug=time 模式取得 ${year} 年的假日資料，將模擬無法取得政府日曆 API 的情況`
+        )
+      }
+
       const response = await fetch(apiUrl)
       if (!response.ok) {
         // API 請求失敗（HTTP 錯誤），使用 fallback
