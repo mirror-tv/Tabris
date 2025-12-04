@@ -43,6 +43,51 @@ type ExternalPageTypes = {
   params: { slug: string }
 }
 
+function stripHtmlTags(html: string): string {
+  return html.replace(/<[^>]*>/g, '').trim()
+}
+
+function extractBriefText(externalData: SingleExternalPost): string {
+  let brief = ''
+  let needsHtmlStrip = false
+
+  if (externalData.brief) {
+    try {
+      const briefData =
+        typeof externalData.brief === 'string'
+          ? JSON.parse(externalData.brief)
+          : externalData.brief
+      if (briefData?.draft?.blocks && briefData.draft.blocks.length > 0) {
+        brief = briefData.draft.blocks
+          .map((block: { text: string }) => block.text)
+          .join('')
+      } else if (briefData?.html) {
+        // If draft.blocks is empty but html exists, use html and strip tags
+        brief = briefData.html
+        needsHtmlStrip = true
+      } else {
+        // If brief exists but no draft.blocks or html, fallback to brief_original
+        needsHtmlStrip = true
+        brief = externalData.brief_original || ''
+      }
+    } catch {
+      // If parsing fails, fallback to brief_original
+      needsHtmlStrip = true
+      brief = externalData.brief_original || ''
+    }
+  } else {
+    needsHtmlStrip = true
+    brief = externalData.brief_original || ''
+  }
+
+  // Remove HTML tags if needed
+  if (needsHtmlStrip && brief) {
+    brief = stripHtmlTags(brief)
+  }
+
+  return brief
+}
+
 function generateExternalJsonLds(
   externalData: SingleExternalPost,
   pageUrl: string
@@ -61,6 +106,7 @@ function generateExternalJsonLds(
     '@type': 'BreadcrumbList',
     itemListElement: generateBreadcrumbList(externalData, pageUrl),
   }
+  const brief = extractBriefText(externalData)
 
   const jsonLdNewsArticle = {
     '@context': 'https://schema.org/',
@@ -85,7 +131,7 @@ function generateExternalJsonLds(
         url: logoUrl,
       },
     },
-    description: externalData.brief || externalData.brief_original || '',
+    description: brief,
     url: pageUrl,
     thumbnailUrl: externalData.thumbnail || null,
     articleSection: category?.name || '',
@@ -163,11 +209,12 @@ export async function generateMetadata({
   }
 
   const title = externalData.name
-  const brief = externalData.brief || externalData.brief_original || ''
+  const brief = extractBriefText(externalData)
+  const description = brief || META_DESCRIPTION
   const tags = externalData.tags
     ?.map((tag: { name: string }) => tag.name)
     .join(', ')
-  const image = externalData.thumbnail
+  const image = externalData.thumbnail || '/images/image-default.jpg'
   const dableImage = externalData.thumbnail
   const pageUrl = `${META_SITE_URL}/external/${params.slug}`
   const writer = externalData.byline
@@ -182,12 +229,12 @@ export async function generateMetadata({
 
   return {
     title,
-    description: brief,
+    description,
     openGraph: {
       title,
-      description: brief,
+      description,
       url: pageUrl,
-      images: image ? [{ url: image }] : [],
+      images: [{ url: image }],
       type: 'article',
       publishedTime: publishedDateIso,
       modifiedTime: modifiedDateIso,
@@ -197,8 +244,8 @@ export async function generateMetadata({
     twitter: {
       card: 'summary_large_image',
       title,
-      description: brief,
-      images: image ? [image] : [],
+      description,
+      images: [image],
     },
     keywords: tags,
     authors: writer ? [{ name: writer }] : [],

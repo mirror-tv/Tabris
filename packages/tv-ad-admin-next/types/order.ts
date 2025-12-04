@@ -19,7 +19,7 @@ export type OrderSchema = {
 
   attachment?: AttachmentSchema | null
   image?: ImageSchema | null
-  demoImage?: ImageSchema | null
+  demoImage?: ImageSchema | ImageSchema[] | null
 
   paragraphOne?: string | null
   paragraphTwo?: string | null
