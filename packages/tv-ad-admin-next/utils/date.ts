@@ -96,12 +96,7 @@ async function fetchHolidayData(year: number): Promise<HolidayData[]> {
   // 在客戶端使用 API 路由來避免 CORS 問題
   if (typeof window !== 'undefined') {
     try {
-      // 檢查 URL 參數是否有 debug=time
-      const urlParams = new URLSearchParams(window.location.search)
-      const isDebugMode = urlParams.get('debug') === 'time'
-      const apiUrl = isDebugMode
-        ? `/api/holidays/${year}/full?debug=time`
-        : `/api/holidays/${year}/full`
+      const apiUrl = `/api/holidays/${year}/full`
 
       const response = await fetch(apiUrl)
       if (!response.ok) {

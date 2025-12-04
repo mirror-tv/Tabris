@@ -54,19 +54,6 @@ export async function GET(
     return NextResponse.json({ error: 'Invalid year' }, { status: 400 })
   }
 
-  // 檢查是否有 debug=time 參數，如果有則模擬"打不到政府日曆"的狀況
-  const searchParams = req.nextUrl.searchParams
-  const isDebugMode = searchParams.get('debug') === 'time'
-
-  if (isDebugMode) {
-    // Debug 模式：模擬政府日曆 API 無法取得的情況，使用周六周日作為 fallback
-    console.info(
-      `[DEBUG MODE] 模擬無法取得 ${year} 年的政府放假日資料，使用周六周日作為 fallback`
-    )
-    const fallbackData = generateWeekendHolidays(yearNum)
-    return NextResponse.json({ data: fallbackData })
-  }
-
   try {
     const url = `${TAIPEI_HOLIDAY_API_BASE_URL}?scope=resourceAquire&q=date ${year}&limit=365`
 
