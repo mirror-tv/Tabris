@@ -379,11 +379,6 @@ export default function AmpPage({
         />
         <script async src="https://cdn.ampproject.org/v0.js"></script>
         <link rel="canonical" href={pageUrl} />
-        {/* Google Tag Manager */}
-        <amp-analytics
-          config={`https://www.googletagmanager.com/amp.json?id=${GTM_ID}`}
-          data-credentials="include"
-        ></amp-analytics>
         <script
           async
           custom-element="amp-analytics"
@@ -397,6 +392,11 @@ export default function AmpPage({
         {headContent}
       </head>
       <body>
+        {/* Google Tag Manager */}
+        <amp-analytics
+          config={`https://www.googletagmanager.com/amp.json?id=${GTM_ID}`}
+          data-credentials="include"
+        ></amp-analytics>
         {/* Google Tag Manager (noscript) */}
         <noscript>
           <iframe
