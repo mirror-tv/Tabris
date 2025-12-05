@@ -6,3 +6,11 @@ export const metadata: Metadata = {
     follow: true,
   },
 }
+
+export default function SearchPageLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return <>{children}</>
+}
