@@ -1,5 +1,6 @@
 import { type ApiDataBlockBase, ApiDataBlockType } from './type'
 import styles from './_styles/youtube-block.module.scss'
+import { extractYoutubeId } from '~/utils'
 type ContentYoutube = {
   id: string
   description: string
@@ -21,8 +22,20 @@ const YoutubeBlock = ({
   isAmp?: boolean
 }) => {
   const youtubeData = data.content[0]
-  const youtubeId = youtubeData.id
+  const rawYoutubeId = youtubeData.id
   const youtubeDescription = youtubeData.description
+
+  let youtubeId = rawYoutubeId?.trim() || ''
+
+  if (youtubeId.includes('youtube.com') || youtubeId.includes('youtu.be')) {
+    const extractedId = extractYoutubeId(youtubeId)
+    if (extractedId) {
+      youtubeId = extractedId
+    }
+  } else {
+    youtubeId = youtubeId.replace(/^\/+|\/+$/g, '')
+  }
+
   return (
     <div className={styles.youtubeContainer}>
       {isAmp ? (
