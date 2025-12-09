@@ -100,7 +100,7 @@ export default function SideMenu({ categories, sponsors }: SideMenuProps) {
           <div className={styles.sponsorsBlock}>
             <div className={styles.sponsorsWrapper}>
               {sponsors.slice(0, 3).map((sponsor) => {
-                const formattedLogo = formateHeroImage(sponsor.logo ?? {})
+                const formattedLogo = formateHeroImage(sponsor.mobile ?? {})
                 return (
                   <div key={sponsor.id}>
                     <Link
