@@ -1,110 +1,3 @@
-type Draft = {
-  blocks: DraftBlock[]
-}
-
-type DraftBlock = {
-  data: object
-  depth: number
-  entityRanges: any[]
-  inlineStyleRanges: any[]
-  key: string
-  text: string
-  type: string
-}
-
-const hasContentInRawContentBlock = (rawContentBlock: Draft): boolean => {
-  if (
-    !rawContentBlock ||
-    !rawContentBlock.blocks ||
-    !rawContentBlock.blocks.length
-  ) {
-    return false
-  }
-  const hasAtomicBlock = Boolean(
-    rawContentBlock.blocks.some((block: DraftBlock) => block.type === 'atomic')
-  )
-  if (hasAtomicBlock) {
-    return hasAtomicBlock
-  }
-  const defaultBlockHasContent = Boolean(
-    rawContentBlock.blocks
-      .filter((block: DraftBlock) => block.type !== 'atomic')
-      .some((block: DraftBlock) => block.text.trim())
-  )
-  return defaultBlockHasContent
-}
-
-const removeEmptyContentBlock = (rawContentBlock: Draft): Draft => {
-  const hasContent = hasContentInRawContentBlock(rawContentBlock)
-  if (!hasContent) {
-    throw new Error(
-      'There is no content in rawContentBlock, please check again.'
-    )
-  }
-  const blocksWithHideEmptyBlock = rawContentBlock.blocks
-    .map((block: DraftBlock) => {
-      if (block.type === 'atomic' || block.text.trim()) {
-        return block
-      } else {
-        return undefined
-      }
-    })
-    .filter((item): item is DraftBlock => !!item)
-
-  return { ...rawContentBlock, blocks: blocksWithHideEmptyBlock }
-}
-const getContentBlocksH2H3 = (
-  rawContentBlock: Draft
-): Pick<DraftBlock, 'text' | 'key' | 'type'>[] => {
-  try {
-    const contentBlocks = removeEmptyContentBlock(rawContentBlock)
-    return contentBlocks.blocks
-      .filter(
-        (block: DraftBlock) =>
-          block.type === 'header-two' || block.type === 'header-three'
-      )
-      .map((block: DraftBlock) => {
-        return { key: block.key, text: block.text, type: block.type }
-      })
-  } catch (error) {
-    console.warn(
-      `Because ${error}, Function 'getContentBlocksH2H3' return an empty array`
-    )
-    return []
-  }
-}
-
-function extractFileExtension(url: string): string | null {
-  const parts = url?.split('.')
-  if (parts?.length > 1) {
-    return parts[parts.length - 1]
-  }
-  return null
-}
-
-const getContentTextBlocks = (
-  rawContentBlock: Draft
-): Pick<DraftBlock, 'text' | 'key' | 'type'>[] => {
-  try {
-    const contentBlocks = removeEmptyContentBlock(rawContentBlock)
-    return contentBlocks.blocks
-      .filter(
-        (block: DraftBlock) =>
-          block.type === 'header-two' ||
-          block.type === 'header-three' ||
-          block.type === 'unstyled'
-      )
-      .map((block: DraftBlock) => {
-        return { key: block.key, text: block.text, type: block.type }
-      })
-  } catch (error) {
-    console.warn(
-      `Because ${error}, Function 'getContentTextBlocks' return an empty array`
-    )
-    return []
-  }
-}
-
 function convertToAmpFacebook(embeddedCode: string): string {
   const facebookRegex = /facebook.com\/plugins\/post\.php/i
   if (!facebookRegex.test(embeddedCode)) return embeddedCode
@@ -292,4 +185,182 @@ export function convertEmbeddedToAmp(
   )
 
   return codeWithoutWrongWidth
+}
+
+// AMP 允許的 HTML 標籤列表
+const AMP_ALLOWED_TAGS = [
+  'p',
+  'br',
+  'strong',
+  'em',
+  'b',
+  'i',
+  'u',
+  'a',
+  'ul',
+  'ol',
+  'li',
+  'blockquote',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'div',
+  'span',
+  'img',
+  'figure',
+  'figcaption',
+]
+
+/**
+ * 處理 <a> 標籤，從 href 屬性中提取 https:// 開頭的 URL
+ * 如果找到 https:// URL，使用該 URL 作為 href
+ * @param tagContent 標籤內容（不包括 < 和 >）
+ * @returns 處理後的標籤內容，如果沒有有效 URL 則返回空字符串（保留原標籤）
+ */
+function sanitizeAnchorTag(tagContent: string): string {
+  // 匹配 href 屬性（支持單引號和雙引號）
+  const hrefMatch = tagContent.match(/\bhref\s*=\s*["']([^"']+)["']/i)
+
+  if (!hrefMatch) {
+    // 如果沒有 href 屬性，返回空字符串（保留原標籤）
+    return ''
+  }
+
+  const hrefValue = hrefMatch[1]
+
+  // 解碼 HTML 實體
+  const decodedHref = hrefValue
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+
+  // 從 href 值中提取 https:// 開頭的 URL
+  const urlMatch = decodedHref.match(/https:\/\/[^\s"'>]+/i)
+
+  if (urlMatch) {
+    // 找到 https:// URL，使用該 URL 作為 href
+    const cleanUrl = urlMatch[0]
+
+    // 只保留 AMP 允許的屬性（target, rel 等）
+    const allowedAttrs: string[] = []
+
+    // 檢查是否有 target 屬性
+    const targetMatch = tagContent.match(/\btarget\s*=\s*["']([^"']+)["']/i)
+    if (targetMatch) {
+      allowedAttrs.push(`target="${targetMatch[1]}"`)
+    }
+
+    // 檢查是否有 rel 屬性
+    const relMatch = tagContent.match(/\brel\s*=\s*["']([^"']+)["']/i)
+    if (relMatch) {
+      allowedAttrs.push(`rel="${relMatch[1]}"`)
+    }
+
+    // 構建新的 <a> 標籤，只包含允許的屬性
+    const attrsStr = allowedAttrs.length > 0 ? ` ${allowedAttrs.join(' ')}` : ''
+    return `a href="${cleanUrl}"${attrsStr}`
+  }
+
+  // 如果沒有找到 https:// URL，返回空字符串（保留原標籤）
+  // 這樣可以避免破壞原有的 <a> 標籤結構
+  return ''
+}
+
+/**
+ * 清理 HTML 內容，移除或轉義非 AMP 允許的標籤
+ * 對於非標準標籤（如 <this>、<THIS IS FOR>），將其轉義為 HTML 實體
+ */
+export function sanitizeHtmlForAmp(html: string): string {
+  if (!html || typeof html !== 'string') return html || ''
+
+  // 先處理 <a> 標籤，提取 href 中的 https:// URL
+  // 這需要在其他處理之前進行，避免 <a> 標籤被錯誤轉義
+  let processedHtml = html.replace(/<a\b([^>]*)>/gi, (match, tagContent) => {
+    const sanitizedAnchor = sanitizeAnchorTag(tagContent)
+    return sanitizedAnchor ? `<${sanitizedAnchor}>` : match
+  })
+
+  // 處理已經被瀏覽器錯誤解析的標籤（如 <this is="" for="">）
+  // 這種標籤通常有空的屬性值，且標籤名稱不在允許列表中
+  processedHtml = processedHtml.replace(
+    /<([a-zA-Z][a-zA-Z0-9-]*)\s+([a-zA-Z][a-zA-Z0-9-]*)\s*=\s*""\s+([a-zA-Z][a-zA-Z0-9-]*)\s*=\s*"">/gi,
+    (match, tagName, attr1, attr2) => {
+      const lowerTagName = tagName.toLowerCase()
+      // 如果標籤名稱不在允許列表中，轉義
+      if (
+        !AMP_ALLOWED_TAGS.includes(lowerTagName) &&
+        !lowerTagName.startsWith('amp-')
+      ) {
+        return `&lt;${tagName} ${attr1}="" ${attr2}=""&gt;`
+      }
+      return match
+    }
+  )
+
+  // 也處理單個空屬性的情況（如 <this is="">）
+  processedHtml = processedHtml.replace(
+    /<([a-zA-Z][a-zA-Z0-9-]*)\s+([a-zA-Z][a-zA-Z0-9-]*)\s*=\s*"">/gi,
+    (match, tagName, attr) => {
+      const lowerTagName = tagName.toLowerCase()
+      // 如果標籤名稱不在允許列表中，轉義
+      if (
+        !AMP_ALLOWED_TAGS.includes(lowerTagName) &&
+        !lowerTagName.startsWith('amp-')
+      ) {
+        return `&lt;${tagName} ${attr}=""&gt;`
+      }
+      return match
+    }
+  )
+
+  // 轉義所有非 AMP 允許的標籤
+  // 匹配所有 <...> 格式的標籤，包括包含空格的標籤名稱（如 <THIS IS FOR>）
+  return processedHtml.replace(/<([^>]+)>/g, (match, tagContent) => {
+    const trimmedContent = tagContent.trim()
+
+    // 提取標籤名稱（標籤內容的第一個單詞）
+    // 處理開閉標籤：/tagName 或 tagName
+    const tagNameMatch = trimmedContent.match(/^\/?([a-zA-Z][a-zA-Z0-9-]*)/)
+
+    if (!tagNameMatch) {
+      // 如果標籤名稱不符合標準格式，轉義整個標籤
+      return `&lt;${tagContent}&gt;`
+    }
+
+    const tagName = tagNameMatch[1]
+    const afterTagName = trimmedContent.substring(tagNameMatch[0].length).trim()
+
+    // 檢查標籤名稱後是否緊跟著空格和大寫字母（非標準標籤名稱，如 "THIS IS FOR"）
+    // 標準 HTML 標籤名稱後應該是屬性（如 href="..." 或 class="..."）或結束
+    // 如果標籤名稱後是空格+大寫字母（且沒有等號），可能是非標準標籤（如 "THIS IS FOR"）
+    if (
+      afterTagName &&
+      afterTagName.match(/^[A-Z]/) &&
+      !afterTagName.includes('=')
+    ) {
+      // 標籤名稱包含空格（如 <THIS IS FOR>），轉義整個標籤
+      return `&lt;${tagContent}&gt;`
+    }
+
+    const lowerTagName = tagName.toLowerCase()
+
+    // 如果是 AMP 允許的標籤，保留
+    // 注意：<a> 標籤已經在前面處理過了，這裡不需要重複處理
+    if (AMP_ALLOWED_TAGS.includes(lowerTagName)) {
+      return match
+    }
+
+    // 如果是 AMP 自定義元素（以 amp- 開頭），保留
+    if (lowerTagName.startsWith('amp-')) {
+      return match
+    }
+
+    // 否則轉義為 HTML 實體
+    return `&lt;${tagContent}&gt;`
+  })
 }

@@ -50,6 +50,7 @@
   flex-direction: column;
   margin: 0 auto 0 0;
   flex: 1;
+  max-width: 100%;
 
   @include media-breakpoint-up(md) {
     max-width: 600px;

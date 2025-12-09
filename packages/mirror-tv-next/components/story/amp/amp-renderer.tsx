@@ -47,7 +47,13 @@ const AmpApiDataRenderer = ({
       {parsedContentData.map((apiDataBlock) => {
         switch (apiDataBlock.type) {
           case ApiDataBlockType.Unstyled:
-            return <UnstyledBlock data={apiDataBlock} key={apiDataBlock.id} />
+            return (
+              <UnstyledBlock
+                data={apiDataBlock}
+                key={apiDataBlock.id}
+                isAmp={true}
+              />
+            )
           case ApiDataBlockType.HeaderOne:
           case ApiDataBlockType.HeaderTwo:
             return (
@@ -55,6 +61,7 @@ const AmpApiDataRenderer = ({
                 data={apiDataBlock}
                 blockType={apiDataBlock.type}
                 key={apiDataBlock.id}
+                isAmp={true}
               />
             )
           case ApiDataBlockType.Image:
