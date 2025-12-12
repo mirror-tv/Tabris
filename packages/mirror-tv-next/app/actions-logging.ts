@@ -16,6 +16,7 @@ export async function logPageView() {
   const log = logging.log(logName)
   const taipeiTime = dayjs().tz('Asia/Taipei')
   const eventTriggeredDate = taipeiTime.format('YYYY/MM/DD')
+  const eventTriggeredTime = taipeiTime.format('HH:mm')
 
   const metadata = {
     resource: { type: 'global' },
@@ -23,6 +24,7 @@ export async function logPageView() {
     labels: {
       eventType,
       date: eventTriggeredDate,
+      time: eventTriggeredTime,
     },
   }
 
