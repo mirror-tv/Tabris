@@ -1,6 +1,7 @@
 import styles from './_styles/ombuds-intro.module.scss'
 import ArticleContentVideo from '~/components/shared/article-content-video'
 import Link from 'next/link'
+import { CUSTOMER_SERVICE_EMAIL } from '~/constants/constant'
 
 export default function ombudsIntro() {
   return (
@@ -57,10 +58,10 @@ export default function ombudsIntro() {
               <p className={styles.tel}>（02）7752-5678</p>
               <p>或洽客服信箱</p>
               <Link
-                href="mailto:mnews.cs@mnews.com.tw"
+                href={`mailto:${CUSTOMER_SERVICE_EMAIL}`}
                 className={styles.reportMail}
               >
-                mnews.cs@mnews.com.tw
+                {CUSTOMER_SERVICE_EMAIL}
               </Link>
             </div>
           </div>
