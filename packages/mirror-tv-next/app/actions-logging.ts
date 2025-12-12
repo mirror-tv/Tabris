@@ -10,7 +10,7 @@ export async function logPageView() {
 
   const metadata = {
     resource: { type: 'global' },
-    severity: 'DEFAULT',
+    severity: 'INFO',
     labels: {
       eventType,
     },
