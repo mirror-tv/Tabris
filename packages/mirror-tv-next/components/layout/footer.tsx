@@ -1,6 +1,9 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { HEADER_BOTTOM_LINKS } from '~/constants/constant'
+import {
+  CUSTOMER_SERVICE_EMAIL,
+  HEADER_BOTTOM_LINKS,
+} from '~/constants/constant'
 import styles from './_styles/footer.module.scss'
 
 const footerRightList = [
@@ -93,7 +96,9 @@ export default function Footer(): JSX.Element {
               </p>
               <p className={styles.info}>
                 <span>客服信箱: </span>
-                <a href="mailto:mnews.cs@mnews.com.tw">mnews.cs@mnews.com.tw</a>
+                <a href={`mailto:${CUSTOMER_SERVICE_EMAIL}`}>
+                  {CUSTOMER_SERVICE_EMAIL}
+                </a>
               </p>
             </div>
           </div>
