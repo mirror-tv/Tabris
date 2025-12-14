@@ -13,6 +13,7 @@ let FEATURE_POSTS_URL: string
 let HOMEPAGE_JSON_URL: string =
   'https://storage.googleapis.com/static-mnews-tw-dev/files/json/topic_video.json'
 let GA4_ID: string
+let FEATURE_2025_HOMEPAGE_STYLE: 'on' | 'off'
 
 switch (ENV) {
   case 'prod':
@@ -29,6 +30,7 @@ switch (ENV) {
     HOMEPAGE_JSON_URL =
       'https://storage.googleapis.com/static-mnews-tw-prod/files/json/topic_video.json'
     GA4_ID = 'G-SZR4JRJ0G2'
+    FEATURE_2025_HOMEPAGE_STYLE = 'off'
     break
 
   case 'staging':
@@ -45,6 +47,7 @@ switch (ENV) {
     HOMEPAGE_JSON_URL =
       'https://storage.googleapis.com/static-mnews-tw-staging/files/json/topic_video.json'
     GA4_ID = 'G-8Q9RVB3K0E'
+    FEATURE_2025_HOMEPAGE_STYLE = 'off'
     break
 
   case 'dev':
@@ -61,6 +64,7 @@ switch (ENV) {
     HOMEPAGE_JSON_URL =
       'https://storage.googleapis.com/static-mnews-tw-dev/files/json/topic_video.json'
     GA4_ID = 'G-YZ07T9YJ6T'
+    FEATURE_2025_HOMEPAGE_STYLE = 'on'
     break
 
   default:
@@ -77,6 +81,7 @@ switch (ENV) {
     HOMEPAGE_JSON_URL =
       'https://storage.googleapis.com/static-mnews-tw-dev/files/json/topic_video.json'
     GA4_ID = 'G-YZ07T9YJ6T'
+    FEATURE_2025_HOMEPAGE_STYLE = 'on'
     break
 }
 
@@ -94,4 +99,5 @@ export {
   FEATURE_POSTS_URL,
   HOMEPAGE_JSON_URL,
   GA4_ID,
+  FEATURE_2025_HOMEPAGE_STYLE,
 }

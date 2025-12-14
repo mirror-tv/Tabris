@@ -10,6 +10,7 @@
   max-width: 100dvw;
   overflow: hidden;
   margin-bottom: 32px;
+  position: relative;
   @include media-breakpoint-up(md) {
     max-width: 554px;
   }

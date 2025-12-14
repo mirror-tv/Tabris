@@ -15,6 +15,9 @@ import Live from './live'
 import dynamic from 'next/dynamic'
 import AdTvAdminMobileBanner from '../shared/ad-tv-admin-mobile-banner'
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
+import { FEATURE_2025_HOMEPAGE_STYLE } from '~/constants/environment-variables'
+import PostListWithFirstPage from './post-list-with-first-page'
+import PopularPostsAndWeather from './popular-posts-and-weather'
 
 type LatestAndEditorChoicesWithLiveProps = {
   latestListTitle: string
@@ -30,6 +33,7 @@ export default async function LatestAndEditorChoicesWithLive({
   latestListTitle,
   liveData,
 }: LatestAndEditorChoicesWithLiveProps) {
+  const isFeature2025HomepageStyleOn = FEATURE_2025_HOMEPAGE_STYLE === 'on'
   let salesPosts: Sale[] = []
   let initRenderedPosts = []
 
@@ -102,13 +106,27 @@ export default async function LatestAndEditorChoicesWithLive({
           title={latestListTitle}
           className={styles.listTitle}
         />
-        <LatestPostListHandler
-          initPosts={initRenderedPosts}
-          postsCount={latestPostsCount?.count || 0}
-          renderedSalesLength={renderedSalesLength || 0}
-          filteredSlug={filteredSlug}
-          source={source}
-        />
+        {!isFeature2025HomepageStyleOn && (
+          <LatestPostListHandler
+            initPosts={initRenderedPosts}
+            postsCount={latestPostsCount?.count || 0}
+            renderedSalesLength={renderedSalesLength || 0}
+            filteredSlug={filteredSlug}
+            source={source}
+          />
+        )}
+        {isFeature2025HomepageStyleOn && (
+          <>
+            <PostListWithFirstPage
+              initPosts={initRenderedPosts}
+              postsCount={latestPostsCount?.count || 0}
+              renderedSalesLength={renderedSalesLength || 0}
+              filteredSlug={filteredSlug}
+              source={source}
+            />
+            <PopularPostsAndWeather title="熱門新聞" />
+          </>
+        )}
       </section>
     </>
   )
