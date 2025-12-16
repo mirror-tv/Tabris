@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import styles from './_styles/weather-main.module.scss'
 import { fetchWeather } from '~/app/_actions/homepage/weather'
+import ArrowUpIcon from '~/public/icons/weather/arrow-up.svg'
 
 const weatherToImage = {
   晴: '/icons/weather/sunny.svg',
@@ -16,14 +17,11 @@ const weatherToImage = {
   未知: '/icons/weather/unknown.svg',
 } as const
 
-const arrowUp = '/icons/weather/arrow-up.svg'
-const arrowDown = '/icons/weather/arrow-down.svg'
-
 export type CityAndWeather = {
   [city: string]: {
     weather: string
-    maxTemp: number
-    minTemp: number
+    max_temp: number
+    min_temp: number
   }
 }
 
@@ -37,6 +35,7 @@ export default function WeatherMain() {
   useEffect(() => {
     const loadWeatherData = async () => {
       const data = await fetchWeather()
+      console.log({ data })
       if (data) {
         setWeatherData(data)
         const cities = Object.keys(data)
@@ -65,64 +64,54 @@ export default function WeatherMain() {
   if (!info) return null
 
   return (
-    <div className={styles.container}>
-      <div className={styles.weatherBar}>
-        <p className={styles.label}>今日天氣</p>
-        <div className={styles.citySelector}>
-          <button
-            className={`${styles.cityButton} ${
-              isDropdownOpen ? styles.isOpen : ''
-            }`}
-            onClick={toggleDropdown}
-          >
-            <p>{selectedCity}</p>
-            <Image
-              src={arrowUp}
-              width={16}
-              height={16}
-              className={`${styles.arrow} ${styles.arrowUp} ${
-                isDropdownOpen ? styles.hidden : ''
+    <>
+      <div className={styles.container}>
+        <div className={styles.weatherBar}>
+          <p className={styles.label}>今日天氣</p>
+          <div className={styles.citySelector}>
+            <button
+              className={`${styles.cityButton} ${
+                isDropdownOpen ? styles.isOpen : ''
               }`}
-              alt="箭頭"
-            />
-            <Image
-              src={arrowDown}
-              width={16}
-              height={16}
-              alt="箭頭"
-              className={`${styles.arrow} ${styles.arrowDown} ${
-                isDropdownOpen ? '' : styles.hidden
-              }`}
-            />
-          </button>
-          {isDropdownOpen && (
-            <ul className={styles.dropdown}>
-              {cities.map((city) => (
-                <li
-                  className={styles.dropdownItem}
-                  key={city}
-                  onClick={() => handleCitySelect(city)}
-                  data-gtm="weather-city-selection"
-                >
-                  {city}
-                </li>
-              ))}
-            </ul>
-          )}
+              onClick={toggleDropdown}
+            >
+              <p>{selectedCity}</p>
+              <ArrowUpIcon
+                className={`${styles.arrow} ${styles.arrowUp} ${
+                  isDropdownOpen ? styles.rotate180 : ''
+                }`}
+              />
+            </button>
+            {isDropdownOpen && (
+              <ul className={styles.dropdown}>
+                {cities.map((city) => (
+                  <li
+                    className={styles.dropdownItem}
+                    key={city}
+                    onClick={() => handleCitySelect(city)}
+                    data-gtm="weather-city-selection"
+                  >
+                    {city}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+          <Image
+            src={
+              weatherToImage[info.weather as keyof typeof weatherToImage] ||
+              '/icons/weather/unknown.svg'
+            }
+            width={18}
+            height={18}
+            alt="天氣圖示"
+            className={styles.weatherIcon}
+          />
+          <p className={styles.maxTemp}>{info['max_temp']}º</p>
+          <p className={styles.minTemp}>{info['min_temp']}º</p>
         </div>
-        <Image
-          src={
-            weatherToImage[info.weather as keyof typeof weatherToImage] ||
-            '/icons/weather/unknown.svg'
-          }
-          width={18}
-          height={18}
-          alt="天氣圖示"
-          className={styles.weatherIcon}
-        />
-        <p className={styles.maxTemp}>{info.maxTemp}º</p>
-        <p className={styles.minTemp}>{info.minTemp}º</p>
       </div>
-    </div>
+      <p className={styles.source}>提供機關／交通部中央氣象署</p>
+    </>
   )
 }

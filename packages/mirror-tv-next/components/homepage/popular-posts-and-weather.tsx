@@ -5,6 +5,7 @@ import Link from 'next/link'
 import UiHeadingBordered from '../shared/ui-heading-bordered'
 import { formateHeroImage } from '~/utils'
 import Image from '@readr-media/react-image'
+import WeatherMain from './weather-main'
 
 type PopularPostsListType = {
   title: string
@@ -20,7 +21,7 @@ export default function PopularPostsList({ title }: PopularPostsListType) {
       <div className={styles.titleWrapper}>
         <UiHeadingBordered title={title} className={styles.title} />
       </div>
-      {/* <WeatherMain /> */}
+      <WeatherMain />
       <ul className={styles.list}>
         {popularPosts?.slice(0, 10).map((post, index) => {
           return (
