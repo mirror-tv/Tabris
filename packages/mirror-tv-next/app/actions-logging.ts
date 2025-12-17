@@ -5,6 +5,7 @@ import dayjs from 'dayjs'
 import 'dayjs/locale/zh-tw'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
+import { parseUserAgentInfo } from '~/utils/user-agent'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -17,7 +18,18 @@ export async function logPageView() {
   const taipeiTime = dayjs().tz('Asia/Taipei')
   const eventTriggeredDate = taipeiTime.format('YYYY/MM/DD')
   const eventTriggeredTime = taipeiTime.format('HH:mm')
-
+  const {
+    browser,
+    device,
+    os,
+    isInAppBrowser,
+    isWebview,
+    ipAddress,
+    pathname,
+  } = parseUserAgentInfo()
+  const { name: browserName, version: browserVersion } = browser
+  const { model: deviceModel, vendor: deviceVendor } = device
+  const { name: osName, version: osVersion } = os
   const metadata = {
     resource: { type: 'global' },
     severity: 'INFO',
@@ -25,10 +37,23 @@ export async function logPageView() {
       eventType,
       date: eventTriggeredDate,
       time: eventTriggeredTime,
+      browserName,
+      browserVersion,
+      deviceModel,
+      deviceVendor,
+      osName,
+      osVersion,
+      ipAddress,
     },
   }
 
-  const entry = log.entry(metadata)
+  const jsonPayload = {
+    pageURL: pathname,
+    isInAppBrowser,
+    isWebview,
+  }
+
+  const entry = log.entry(metadata, jsonPayload)
 
   return log.write(entry)
 }
