@@ -40,6 +40,10 @@
   @include media-breakpoint-up(md) {
     flex-grow: 1;
   }
+  @include media-breakpoint-up(xl) {
+    min-width: fit-content;
+    margin-right: 10px;
+  }
 }
 
 .citySelector {
@@ -71,20 +75,12 @@
   }
 
   @include media-breakpoint-up(md) {
-    gap: 12px;
-  }
-
-  @include media-breakpoint-up(xl) {
-    margin-left: 37px;
+    gap: 4px;
   }
 }
 
 .arrow {
   flex-shrink: 0;
-}
-
-.hidden {
-  display: none !important;
 }
 
 .rotate180 {
@@ -108,10 +104,6 @@
   @include media-breakpoint-up(md) {
     height: 196px;
   }
-
-  @include media-breakpoint-up(xl) {
-    left: 24px;
-  }
 }
 
 .dropdownItem {
@@ -132,7 +124,7 @@
   flex-shrink: 0;
 
   @include media-breakpoint-up(xl) {
-    margin-right: 20px;
+    margin-right: 10px;
   }
 }
 
@@ -145,7 +137,7 @@
   line-height: 36px;
 
   @include media-breakpoint-up(xl) {
-    margin-right: 20px;
+    margin-right: 10px;
   }
 }
 
