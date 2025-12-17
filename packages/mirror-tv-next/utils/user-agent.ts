@@ -1,29 +1,31 @@
 import 'server-only'
 import { headers } from 'next/headers'
-import { NextRequest, userAgent } from 'next/server'
+import { UAParser } from 'ua-parser-js'
 
-export function parseUserAgentInfo(request: NextRequest) {
+export function parseUserAgentInfo() {
   const headersList = headers()
-  const userAgenInfo = headersList.get('user-agent') || ''
+  const userAgent = headersList.get('user-agent') || ''
   const ipAddress =
     headersList.get('x-forwarded-for') || headersList.get('remote-addr') || ''
   const pathname = headersList.get('referer') || ''
 
-  const { browser, device, os } = userAgent(request)
+  const parser = new UAParser(userAgent)
+  const result = parser.getResult()
 
-  const uaBrowser = {
-    name: browser.name || '',
-    version: browser.version || '',
+  const browser = {
+    name: result.browser.name || '',
+    version: result.browser.version || '',
   }
 
-  const uaDevice = {
-    model: device.model || '',
-    vendor: device.vendor || '',
+  const device = {
+    model: result.device.model || '',
+    vendor: result.device.vendor || '',
   }
 
-  const uaOS = {
-    name: os.name || '',
-    version: os.version || '',
+  const os = {
+    name: result.os.name || '',
+    version: result.os.version || '',
   }
-  return { userAgenInfo, ipAddress, pathname, uaBrowser, uaDevice, uaOS }
+
+  return { ipAddress, pathname, browser, device, os }
 }
