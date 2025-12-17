@@ -27,5 +27,25 @@ export function parseUserAgentInfo() {
     version: result.os.version || '',
   }
 
-  return { ipAddress, pathname, browser, device, os }
+  const inAppPatterns = [
+    'fbav',
+    'instagram',
+    'line',
+    'wechat',
+    'micromessenger',
+    'tiktok',
+    'snapchat',
+  ]
+
+  const webviewPatterns = ['wv', 'webview', '; wv', ';webview', 'mobile safari']
+
+  const isInAppBrowser = inAppPatterns.some((pattern) =>
+    userAgent.toLowerCase().includes(pattern)
+  )
+
+  const isWebview = webviewPatterns.some((pattern) =>
+    userAgent.toLowerCase().includes(pattern)
+  )
+
+  return { ipAddress, pathname, browser, device, os, isInAppBrowser, isWebview }
 }
