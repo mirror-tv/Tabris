@@ -41,6 +41,7 @@ export default async function Home() {
       <LatestAndEditorChoicesWithLive
         latestListTitle="即時新聞"
         liveData={homepageData.allVideos[0]}
+        mnewsLives={homepageData.allVideos.slice(0, 2)}
       />
       <GPTAd pageKey="home" adKey="PC_BT" />
       <GPTAd pageKey="home" adKey="MB_M3" />

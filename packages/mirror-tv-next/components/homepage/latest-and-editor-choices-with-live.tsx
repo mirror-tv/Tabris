@@ -18,6 +18,7 @@ const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 import { FEATURE_2025_HOMEPAGE_STYLE } from '~/constants/environment-variables'
 import PostListWithFirstPage from './post-list-with-first-page'
 import PopularPostsAndWeather from './popular-posts-and-weather'
+import MNewsLives from './mnews-lives'
 
 type LatestAndEditorChoicesWithLiveProps = {
   latestListTitle: string
@@ -27,11 +28,18 @@ type LatestAndEditorChoicesWithLiveProps = {
     url: string
     description: string
   }
+  mnewsLives: {
+    id: string
+    youtubeUrl: string
+    url: string
+    description: string
+  }[]
 }
 
 export default async function LatestAndEditorChoicesWithLive({
   latestListTitle,
   liveData,
+  mnewsLives,
 }: LatestAndEditorChoicesWithLiveProps) {
   const isFeature2025HomepageStyleOn = FEATURE_2025_HOMEPAGE_STYLE === 'on'
   let salesPosts: Sale[] = []
@@ -95,8 +103,13 @@ export default async function LatestAndEditorChoicesWithLive({
 
   return (
     <>
-      <section className={styles.liveAndEditor}>
-        <Live liveData={liveData} />
+      <section
+        className={`${styles.liveAndEditor} ${
+          !isFeature2025HomepageStyleOn ? styles.reverse : ''
+        }`}
+      >
+        {!isFeature2025HomepageStyleOn && <Live liveData={liveData} />}
+        {isFeature2025HomepageStyleOn && <MNewsLives mnewsLives={mnewsLives} />}
         <EditorChoicesSwiper editorChoices={editorChoices} />
       </section>
       <GPTAd pageKey="home" adKey="MB_M2" />
