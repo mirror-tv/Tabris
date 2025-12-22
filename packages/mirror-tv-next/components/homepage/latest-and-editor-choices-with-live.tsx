@@ -10,6 +10,7 @@ import {
   SALES_LABEL_NAME,
 } from '~/constants/constant'
 import LatestPostListHandler from './latest-post-list-handler'
+import EditorChoicesSwiper2025 from './editor-choices-swiper2025'
 import EditorChoicesSwiper from './editor-choices-swiper'
 import Live from './live'
 import dynamic from 'next/dynamic'
@@ -110,7 +111,12 @@ export default async function LatestAndEditorChoicesWithLive({
       >
         {!isFeature2025HomepageStyleOn && <Live liveData={liveData} />}
         {isFeature2025HomepageStyleOn && <MNewsLives mnewsLives={mnewsLives} />}
-        <EditorChoicesSwiper editorChoices={editorChoices} />
+        {!isFeature2025HomepageStyleOn && (
+          <EditorChoicesSwiper2025 editorChoices={editorChoices} />
+        )}
+        {isFeature2025HomepageStyleOn && (
+          <EditorChoicesSwiper editorChoices={editorChoices} />
+        )}
       </section>
       <GPTAd pageKey="home" adKey="MB_M2" />
       <AdTvAdminMobileBanner location="home" />

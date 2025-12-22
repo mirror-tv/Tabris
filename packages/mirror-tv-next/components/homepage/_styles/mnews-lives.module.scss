@@ -8,12 +8,12 @@
   gap: 16px;
   margin-bottom: 32px;
   @include media-breakpoint-up(md) {
-    width: 672px;
+    width: 688px;
     align-self: center;
   }
   @include media-breakpoint-up(xl) {
     align-self: inherit;
-    max-width: 100%;
+    max-width: 366px;
   }
 }
 
@@ -21,10 +21,10 @@
   min-height: 56.21vw;
   position: relative;
   @include media-breakpoint-up(md) {
-    min-height: 378px;
+    min-height: 387px;
   }
   @include media-breakpoint-up(xl) {
-    min-height: 241px;
+    min-height: 206px;
   }
 }
 
