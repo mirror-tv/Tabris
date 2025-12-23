@@ -43,9 +43,18 @@ yarn workspace tv-ad-admin-next lint
 
 ## Environment Variables
 
-Create a `.env` file in the package root.
+Create a `.env` file in the package root. For environment variable values, refer to:
+[TV Personal Ads - Environment Variables – Dropbox Paper](https://www.dropbox.com/scl/fi/ze7x5ktgd5th0q4rh9bef/.paper?rlkey=9kskffyibcvwsww8r73lf1k27&dl=0)
 
-For environment variable values, refer to: [TV Personal Ads - Environment Variables – Dropbox Paper](https://www.dropbox.com/scl/fi/ze7x5ktgd5th0q4rh9bef/.paper?rlkey=9kskffyibcvwsww8r73lf1k27&dl=0)
+### Required Variables
+
+| Variable           | Description                                             |
+| ------------------ | ------------------------------------------------------- |
+| `NEXT_PUBLIC_ENV`  | Environment identifier (`local`/`dev`/`staging`/`prod`) |
+| `GQL_ENDPOINT`     | GraphQL API endpoint                                    |
+| `JWT_SECRET`       | JWT signing secret                                      |
+| `REDIS_URL`        | Redis connection URL (configured by backend)            |
+| `SENDGRID_API_KEY` | SendGrid API Key for OTP emails (configured by backend) |
 
 ## Project Structure
 
@@ -89,14 +98,8 @@ tv-ad-admin-next/
 │   └── index.ts              # Re-exports
 │
 ├── graphql/                  # GraphQL operations
-│   ├── queries/              # GraphQL queries
-│   ├── mutations/            # GraphQL mutations
-│   └── delete/               # GraphQL delete operations
 │
 ├── hooks/                    # Custom React hooks
-│   ├── useResponsive.ts      # Responsive breakpoint hook
-│   ├── useDebounce.ts        # Debounce hook
-│   └── useSubmitStatus.ts    # Form submission status hook
 │
 ├── store/                    # Zustand stores
 │   ├── auth.store.ts         # Authentication state
@@ -106,9 +109,6 @@ tv-ad-admin-next/
 │   └── globals.css           # Tailwind CSS v4 configuration
 │
 ├── types/                    # TypeScript type definitions
-│   ├── order.ts              # Order-related types
-│   ├── api.ts                # API response types
-│   └── form.ts               # Form-related types
 │
 ├── utils/                    # Utility functions
 │   ├── apollo-client.ts      # Apollo Client setup
@@ -126,7 +126,8 @@ tv-ad-admin-next/
 
 ## Tailwind CSS v4 Configuration
 
-> ⚠️ **Important**: This project uses **Tailwind CSS v4**, which configures styles in `styles/globals.css` using CSS-native syntax instead of `tailwind.config.js`.
+> **Important**: This project uses **Tailwind CSS v4**, which configures styles in `styles/globals.css` using CSS-native syntax instead of `tailwind.config.js`.
+> **重要**：此專案使用 Tailwind CSS v4，樣式設定位於 styles/globals.css，採用原生 CSS 語法，而非使用 tailwind.config.js。
 
 ### Design Tokens
 
@@ -159,6 +160,8 @@ The project defines comprehensive design tokens:
 - `components/ui/` — Base UI components from shadcn/ui, customized for this project.
 - `components/custom-ui/` — Extended components built on top of base UI for project-specific needs.
 
+For detailed guidance on using Radix UI's `<Slot>` component and `asChild` pattern, see [radix-slot-guide.md](./radix-slot-guide.md).
+
 ## Authentication Flow
 
 1. User enters email → OTP sent via SendGrid
@@ -175,15 +178,9 @@ Protected routes are defined in `middleware.ts`.
 
 Visit `/demo` (only available in `local` and `dev` environments) to preview UI components.
 
-```
-http://localhost:3000/demo
-```
-
 ### Dev Navigation
 
-A floating navigation bar appears at the bottom of the screen in `local` and `dev` environments, providing quick links to all pages.
-
-> ⚠️ **Note**: Dev Navigation is partially deprecated. Some pages require dynamic parameters (e.g., `/order/[orderNumber]`) that cannot be directly linked. It remains useful for viewing static pages during development.
+A floating navigation bar appears at the bottom of the screen in `local` and `dev` environments, providing quick links to static pages (Demo, Dashboard, Upload, List). Pages requiring dynamic parameters (e.g., `/order/[orderNumber]`) are not included.
 
 Location: `components/demo/dev-navigation.tsx`
 
@@ -262,21 +259,7 @@ Use `--env-file` to load environment variables:
 docker run -p 3000:3000 --env-file .env tv-ad-admin-next
 ```
 
-> ⚠️ **Note**: The `.env` file contains sensitive information and is excluded from git.
->
-> For environment variable values, refer to: [TV Personal Ads - Environment Variables – Dropbox Paper](https://www.dropbox.com/scl/fi/ze7x5ktgd5th0q4rh9bef/.paper?rlkey=9kskffyibcvwsww8r73lf1k27&dl=0)
-
-### Required Environment Variables
-
-Ensure the `.env` file contains the following variables before starting the container:
-
-| Variable           | Description                                             |
-| ------------------ | ------------------------------------------------------- |
-| `NEXT_PUBLIC_ENV`  | Environment identifier (`local`/`dev`/`staging`/`prod`) |
-| `GQL_ENDPOINT`     | GraphQL API endpoint                                    |
-| `JWT_SECRET`       | JWT signing secret                                      |
-| `REDIS_URL`        | Redis connection URL                                    |
-| `SENDGRID_API_KEY` | SendGrid API Key (for OTP emails)                       |
+> ⚠️ **Note**: The `.env` file contains sensitive information and is excluded from git. See [Environment Variables](#environment-variables) for required variables and reference links.
 
 ## Migration Notes
 
