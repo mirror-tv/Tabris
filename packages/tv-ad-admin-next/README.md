@@ -186,6 +186,16 @@ Location: `components/demo/dev-navigation.tsx`
 
 ## Code Style & Conventions
 
+### VS Code Settings
+
+The workspace includes VS Code settings (`.vscode/settings.json`) that automatically format code on save:
+
+- **Auto-format on save**: Prettier as default formatter
+- **Import sorting**: ESLint auto-fixes import order
+- **Tailwind class sorting**: ESLint auto-sorts Tailwind CSS class names
+
+> 工作區已設定 VS Code 自動儲存時格式化，包含 import 排序與 Tailwind class name 排序。
+
 ### Class Name Utility
 
 Use the `cn()` utility for conditional class names:
@@ -241,25 +251,17 @@ const client = getClient()
 const { data } = await client.query({ query: GET_ORDERS })
 ```
 
-## Deployment
+## Local Development
 
-The project includes a `Dockerfile` for containerized deployment.
+Local development requires a running Docker container (Redis) to support backend services.
+The specific startup commands and configuration steps are documented in the environment variables guide above.
 
-### Build Docker Image
+本地開發需要一個運行中的 Docker 容器 (Redis) 以支援後端服務。
+具體的啟動指令與配置步驟記錄在上方的環境變數指南中。
 
-```bash
-docker build -t tv-ad-admin-next .
-```
+Ensure the container is active before executing the development server commands.
 
-### Run Container
-
-Use `--env-file` to load environment variables:
-
-```bash
-docker run -p 3000:3000 --env-file .env tv-ad-admin-next
-```
-
-> ⚠️ **Note**: The `.env` file contains sensitive information and is excluded from git. See [Environment Variables](#environment-variables) for required variables and reference links.
+在執行開發伺服器指令之前，請確保容器已處於活動狀態。
 
 ## Migration Notes
 
@@ -267,6 +269,7 @@ This project was migrated from `mnews-personal-ads` (Vite + React Router) to Nex
 
 ## Related Documentation
 
+- [tv-ad-admin-next 個人廣告 (Tabris)](https://www.dropbox.com/scl/fi/tocut1vb930se9pjtsh7j/tv-ad-admin-next-Tabris.paper?rlkey=38o9piaw03ft3fjmhclbu83ox&dl=0)
 - [Next.js App Router](https://nextjs.org/docs/app)
 - [Tailwind CSS v4](https://tailwindcss.com/blog/tailwindcss-v4)
 - [shadcn/ui](https://ui.shadcn.com/)
