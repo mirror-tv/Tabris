@@ -86,6 +86,8 @@
 }
 
 .loadMoreWrapper {
-  width: 772px !important;
-  margin: 0 !important;
+  @include media-breakpoint-up(xl) {
+    width: 772px !important;
+    margin: 0 !important;
+  }
 }
