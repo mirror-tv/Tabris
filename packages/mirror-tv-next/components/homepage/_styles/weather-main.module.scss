@@ -43,6 +43,7 @@
   @include media-breakpoint-up(xl) {
     min-width: fit-content;
     margin-right: 10px;
+    font-size: 14px;
   }
 }
 
@@ -76,6 +77,12 @@
 
   @include media-breakpoint-up(md) {
     gap: 4px;
+  }
+  @include media-breakpoint-up(xl) {
+    font-size: 14px;
+    path {
+      transform: scale(0.9);
+    }
   }
 }
 
@@ -115,6 +122,9 @@
   &:hover {
     color: #004dbc;
   }
+  @include media-breakpoint-up(xl) {
+    font-size: 14px;
+  }
 }
 
 .weatherIcon {
@@ -138,6 +148,7 @@
 
   @include media-breakpoint-up(xl) {
     margin-right: 10px;
+    font-size: 22px;
   }
 }
 
@@ -147,6 +158,9 @@
   font-weight: 700;
   color: #7f8493;
   line-height: 24px;
+  @include media-breakpoint-up(xl) {
+    font-size: 14px;
+  }
 }
 
 .source {
