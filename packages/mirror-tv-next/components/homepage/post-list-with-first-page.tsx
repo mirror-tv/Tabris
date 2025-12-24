@@ -82,7 +82,7 @@ export default function PostListWithFirstPage({
         ))}
       </ol>
       {!hasShowSecondPage && (
-        <div className={styles.loadMoreWrapper}>
+        <div>
           <button
             onClick={() => setHasShowSecondPage(true)}
             className={`${styles.load} load-more g-button-load-more button-load-more`}

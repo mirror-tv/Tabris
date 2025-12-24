@@ -64,15 +64,16 @@
   letter-spacing: 3px;
   text-align: center;
   line-height: 28px;
-  color: #9b9b9b;
-  border: 1px solid #9b9b9b;
+  color: #004dbc;
+  border: 1px solid #004dbc;
   outline: none;
-  border-radius: 4px;
+  border-radius: 12px;
   margin: 36px auto;
   display: block;
   outline: none !important;
+
   &:hover {
-    border: 2px solid #9b9b9b;
+    background: #e7e7e7;
   }
   @include media-breakpoint-up(md) {
     display: block;

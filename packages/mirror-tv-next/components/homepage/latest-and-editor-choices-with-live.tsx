@@ -72,7 +72,7 @@ export default async function LatestAndEditorChoicesWithLive({
       source,
     },
   } = await getLatestPostsAndEditorChoices({
-    first: take,
+    first: HOMEPAGE_POSTS_PAGE_SIZE * 2 - renderedSalesLength,
     skip: 0,
     withCount: true,
     filteredSlug: [],
