@@ -128,3 +128,6 @@ lib
 
 # vercel
 .vercel
+
+# cursor
+.cursor
