@@ -28,6 +28,16 @@
   }
 }
 
+.titleWrapper {
+  margin-left: 12px;
+  @include media-breakpoint-up(md) {
+    margin: 0 auto;
+  }
+  @include media-breakpoint-up(xl) {
+    margin: 0;
+  }
+}
+
 .placeholder {
   position: absolute;
   top: 0;
