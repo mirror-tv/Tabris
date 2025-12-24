@@ -44,7 +44,7 @@ export default async function Home() {
         mnewsLives={homepageData.allVideos.slice(0, 2)}
       />
       <GPTAd pageKey="home" adKey="PC_BT" />
-      <GPTAd pageKey="home" adKey="MB_M3" className={styles.gptAd} />
+      <GPTAd pageKey="home" adKey="MB_M3" className={styles.gptAdM3} />
       {!isFeature2025HomepageStyleOn && <PopularPostsList title="熱門新聞" />}
       <LiveCamList
         title="直播現場"
