@@ -17,6 +17,8 @@ let WEATHER_JSON_URL: string
 let HOMEPAGE_TOPIC_JSON_URL: string
 let HOMEPAGE_VIDEO_JSON_URL: string
 
+const TIMESTAMP_FOR_CACHE = '?t=' + Date.now() / 10
+
 switch (ENV) {
   case 'prod':
     SITE_URL = 'https://mnews.tw'
@@ -33,7 +35,7 @@ switch (ENV) {
     FEATURE_POSTS_URL = `${SITE_URL}/json/category_features_news.json`
     WEATHER_JSON_URL = `${JSON_BASE_URL}/weather.json`
     HOMEPAGE_TOPIC_JSON_URL = `${JSON_BASE_URL}/topic.json`
-    HOMEPAGE_VIDEO_JSON_URL = `${JSON_BASE_URL}/video.json`
+    HOMEPAGE_VIDEO_JSON_URL = `${JSON_BASE_URL}/video.json${TIMESTAMP_FOR_CACHE}`
     GA4_ID = 'G-SZR4JRJ0G2'
     FEATURE_2025_HOMEPAGE_STYLE = 'off'
 
@@ -54,7 +56,7 @@ switch (ENV) {
     POPULAR_VIDEOS_JSON_URL = `${SITE_URL}/json/popular-videonews-list.json`
     FEATURE_POSTS_URL = `${SITE_URL}/json/featured_categories_post.json`
     HOMEPAGE_TOPIC_JSON_URL = `${JSON_BASE_URL}/topic.json`
-    HOMEPAGE_VIDEO_JSON_URL = `${JSON_BASE_URL}/video.json`
+    HOMEPAGE_VIDEO_JSON_URL = `${JSON_BASE_URL}/video.json${TIMESTAMP_FOR_CACHE}`
     GA4_ID = 'G-8Q9RVB3K0E'
     FEATURE_2025_HOMEPAGE_STYLE = 'off'
     break
@@ -74,7 +76,7 @@ switch (ENV) {
     POPULAR_VIDEOS_JSON_URL = `${SITE_URL}/json/popular-videonews-list.json`
     FEATURE_POSTS_URL = `${SITE_URL}/json/category_features_news.json`
     HOMEPAGE_TOPIC_JSON_URL = `${JSON_BASE_URL}/topic.json`
-    HOMEPAGE_VIDEO_JSON_URL = `${JSON_BASE_URL}/video.json`
+    HOMEPAGE_VIDEO_JSON_URL = `${JSON_BASE_URL}/video.json${TIMESTAMP_FOR_CACHE}`
     GA4_ID = 'G-YZ07T9YJ6T'
     FEATURE_2025_HOMEPAGE_STYLE = 'on'
     break
@@ -94,7 +96,7 @@ switch (ENV) {
     POPULAR_VIDEOS_JSON_URL = `${SITE_URL}/json/popular-videonews-list.json`
     FEATURE_POSTS_URL = `${SITE_URL}/json/category_features_news.json`
     HOMEPAGE_TOPIC_JSON_URL = `${JSON_BASE_URL}/topic.json`
-    HOMEPAGE_VIDEO_JSON_URL = `${JSON_BASE_URL}/video.json`
+    HOMEPAGE_VIDEO_JSON_URL = `${JSON_BASE_URL}/video.json${TIMESTAMP_FOR_CACHE}`
     GA4_ID = 'G-YZ07T9YJ6T'
     FEATURE_2025_HOMEPAGE_STYLE = 'on'
     break

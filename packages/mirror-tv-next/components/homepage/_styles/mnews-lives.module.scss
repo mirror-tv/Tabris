@@ -38,6 +38,21 @@
   }
 }
 
+.title {
+  border-image: linear-gradient(
+      180deg,
+      $color-blue-deep 35%,
+      transparent 0,
+      transparent 65%,
+      $color-blue-deep 0
+    )
+    5 !important;
+  width: fit-content;
+  p {
+    color: $color-blue-deep;
+  }
+}
+
 .placeholder {
   position: absolute;
   top: 0;
