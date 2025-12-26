@@ -1,3 +1,5 @@
+'use server'
+
 import { Logging } from '@google-cloud/logging'
 import { GCP_PROJECT_ID } from '~/constants/config'
 import { ENV } from '~/constants/environment-variables'
@@ -30,6 +32,7 @@ export async function logPageView() {
   const { name: browserName, version: browserVersion } = browser
   const { model: deviceModel, vendor: deviceVendor } = device
   const { name: osName, version: osVersion } = os
+  // const pageType = parsePageType(pathname)
   const metadata = {
     resource: { type: 'global' },
     severity: 'INFO',
