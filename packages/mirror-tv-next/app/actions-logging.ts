@@ -32,7 +32,7 @@ export async function logPageView() {
   const { name: browserName, version: browserVersion } = browser
   const { model: deviceModel, vendor: deviceVendor } = device
   const { name: osName, version: osVersion } = os
-  // const pageType = parsePageType(pathname)
+  const pageType = parsePageType(pathname)
   const metadata = {
     resource: { type: 'global' },
     severity: 'INFO',
@@ -52,6 +52,7 @@ export async function logPageView() {
 
   const jsonPayload = {
     pageURL: pathname,
+    pageType,
     isInAppBrowser,
     isWebview,
   }
@@ -59,4 +60,18 @@ export async function logPageView() {
   const entry = log.entry(metadata, jsonPayload)
 
   return log.write(entry)
+}
+
+function parsePageType(url: string) {
+  const { pathname } = new URL(url)
+  const parsed = pathname.split('/')
+
+  switch (parsed[1]) {
+    case '':
+      return 'index'
+    case 'topic':
+      return parsed[2] ? 'topic' : 'topic-listing'
+    default:
+      return parsed[1] ?? ''
+  }
 }
