@@ -5,10 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 
-import {
-  createCustomToken,
-  getOrCreateFirebaseUser,
-} from '@/utils/firebase-admin'
+import { createCustomToken, getFirebaseUser } from '@/utils/firebase-admin'
 import { createErrorLogger } from '@/utils/error-handler'
 import { getMemberByEmail } from '@/utils/member'
 import { verifyOTP } from '@/utils/otp-storage'
@@ -53,15 +50,15 @@ export async function POST(request: NextRequest) {
 
     const hasIdentified = !!member.nationalId && !!member.residentialAddress
 
-    // 取得或創建 Firebase User
-    // 優先使用 member 的 firebaseID，如果沒有則創建新的
+    // 取得 Firebase User
+    // 優先使用 member 的 firebaseID，如果沒有則根據 email 查找
     let firebaseUid: string
     try {
       if (member.firebaseID) {
         firebaseUid = member.firebaseID
       } else {
-        // 創建新的 Firebase User
-        firebaseUid = await getOrCreateFirebaseUser(email)
+        // 根據 email 查找 Firebase User
+        firebaseUid = await getFirebaseUser(email)
         // TODO: 更新 CMS member 的 firebaseID 欄位
         // await updateMemberFirebaseId(member.id, firebaseUid)
       }
@@ -106,6 +103,19 @@ export async function POST(request: NextRequest) {
           { status: 500 }
         )
       }
+
+      // 如果 Firebase 帳號不存在，回傳明確的錯誤訊息
+      if (firebaseError?.message?.includes('Firebase 帳號不存在')) {
+        createErrorLogger('Firebase 帳號不存在')(firebaseError)
+        return NextResponse.json(
+          {
+            success: false,
+            message: 'Firebase 帳號不存在，請聯繫管理員',
+          },
+          { status: 404 }
+        )
+      }
+
       throw firebaseError // 重新拋出其他錯誤
     }
   } catch (error) {
