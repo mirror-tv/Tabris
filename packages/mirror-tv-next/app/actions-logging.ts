@@ -12,7 +12,11 @@ import { parseUserAgentInfo } from '~/utils/user-agent'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
-export async function logPageView() {
+export async function logPageView({
+  screenSize,
+}: {
+  screenSize: { width: number; height: number }
+}) {
   const logging = new Logging({ projectId: GCP_PROJECT_ID })
   const eventType = 'page-view'
   const logName = `${GCP_PROJECT_ID}-${ENV}-web-${eventType}`
@@ -53,6 +57,7 @@ export async function logPageView() {
   const jsonPayload = {
     pageURL: pathname,
     pageType,
+    screenSize,
     isInAppBrowser,
     isWebview,
   }
