@@ -13,9 +13,11 @@ dayjs.extend(utc)
 dayjs.extend(timezone)
 
 export async function logPageView({
+  referrer,
   screenSize,
   extra = {},
 }: {
+  referrer: string
   screenSize: { width: number; height: number }
   extra?: Record<string, unknown>
 }) {
@@ -53,6 +55,7 @@ export async function logPageView({
       osName,
       osVersion,
       ipAddress,
+      referrer,
     },
   }
 
