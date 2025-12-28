@@ -5,6 +5,7 @@ import { Noto_Sans } from 'next/font/google'
 import Script from 'next/script'
 import Footer from '~/components/layout/footer'
 import MainHeader from '~/components/layout/header/main-header'
+import { ReferrerProvider } from '~/context/referrer-context'
 import { META_DESCRIPTION, SITE_TITLE } from '~/constants/constant'
 import {
   GLOBAL_CACHE_SETTING,
@@ -159,16 +160,18 @@ export default async function RootLayout({
       />
       <CompassFit />
       <body>
-        <DataProvider
-          initialPopularPosts={initialPopularPosts}
-          initialLatestPosts={initialLatestPosts}
-          initialHeaderData={initialHeaderData}
-        >
-          <MainHeader />
-          <TagManagerWrapper />
-          <div className={styles.main}>{children}</div>
-          <Footer />
-        </DataProvider>
+        <ReferrerProvider>
+          <DataProvider
+            initialPopularPosts={initialPopularPosts}
+            initialLatestPosts={initialLatestPosts}
+            initialHeaderData={initialHeaderData}
+          >
+            <MainHeader />
+            <TagManagerWrapper />
+            <div className={styles.main}>{children}</div>
+            <Footer />
+          </DataProvider>
+        </ReferrerProvider>
       </body>
     </html>
   )
