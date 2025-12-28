@@ -14,8 +14,10 @@ dayjs.extend(timezone)
 
 export async function logPageView({
   screenSize,
+  extra = {},
 }: {
   screenSize: { width: number; height: number }
+  extra?: Record<string, unknown>
 }) {
   const logging = new Logging({ projectId: GCP_PROJECT_ID })
   const eventType = 'page-view'
@@ -60,6 +62,7 @@ export async function logPageView({
     screenSize,
     isInAppBrowser,
     isWebview,
+    extra,
   }
 
   const entry = log.entry(metadata, jsonPayload)
