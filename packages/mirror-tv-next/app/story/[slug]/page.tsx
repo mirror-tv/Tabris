@@ -1,3 +1,4 @@
+import PageLogger from '~/components/page-logger'
 import ArticleRelatedPosts from '~/components/story/article-related-posts'
 import ArticleSocialList from '~/components/story/article-social-list'
 import { Metadata } from 'next'
@@ -275,6 +276,7 @@ const StoryPage = async (props: StoryPageTypes) => {
 
   return (
     <>
+      <PageLogger />
       <JsonLd data={jsonLdData} />
       <MisoPageView productIds={`story_${params.slug}`} />
       <GA4SourceTracking source={source} />
