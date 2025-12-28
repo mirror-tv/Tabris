@@ -232,6 +232,7 @@ const StoryPage = async (props: StoryPageTypes) => {
   }
 
   const {
+    id,
     contentApiData,
     relatedPosts,
     heroImage,
@@ -274,9 +275,15 @@ const StoryPage = async (props: StoryPageTypes) => {
   const pageUrl = `${META_SITE_URL}/story/${params.slug}`
   const jsonLdData = generateStoryJsonLds(storyData, pageUrl)
 
+  const extra = {
+    storyId: id,
+    storyTitle: title,
+    authorNames: writers.map((writer) => writer.name),
+  }
+
   return (
     <>
-      <PageLogger />
+      <PageLogger extra={extra} />
       <JsonLd data={jsonLdData} />
       <MisoPageView productIds={`story_${params.slug}`} />
       <GA4SourceTracking source={source} />
