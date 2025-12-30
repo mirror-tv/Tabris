@@ -58,7 +58,7 @@ switch (ENV) {
     HOMEPAGE_TOPIC_JSON_URL = `${JSON_BASE_URL}/topic.json`
     HOMEPAGE_VIDEO_JSON_URL = `${JSON_BASE_URL}/video.json${TIMESTAMP_FOR_CACHE}`
     GA4_ID = 'G-8Q9RVB3K0E'
-    FEATURE_2025_HOMEPAGE_STYLE = 'off'
+    FEATURE_2025_HOMEPAGE_STYLE = 'on'
     break
 
   case 'dev':
