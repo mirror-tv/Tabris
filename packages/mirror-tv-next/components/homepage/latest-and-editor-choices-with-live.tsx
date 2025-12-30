@@ -58,7 +58,6 @@ export default async function LatestAndEditorChoicesWithLive({
   })
 
   const renderedSalesLength = Math.min(salesPosts?.length || 0, 4)
-  const take = HOMEPAGE_POSTS_PAGE_SIZE - renderedSalesLength
 
   let filteredSlug = salesPosts
     ?.map((item) => item.adPost.slug)
