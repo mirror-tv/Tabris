@@ -1,10 +1,11 @@
+'use client'
 import styles from './_styles/mnews-lives.module.scss'
 import { extractYoutubeId } from '~/utils'
 import dynamic from 'next/dynamic'
 const YoutubeEmbed = dynamic(() => import('../shared/youtube-embed'))
 import UiHeadingBordered from '../shared/ui-heading-bordered'
 
-export default async function MNewsLives({
+export default function MNewsLives({
   mnewsLives,
 }: {
   mnewsLives: {

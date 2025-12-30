@@ -28,11 +28,20 @@
   }
 }
 
+.videoOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  cursor: pointer;
+  /* 透明層，用於追蹤點擊 */
+  background: transparent;
+}
+
 .titleWrapper {
-  margin-left: 12px;
-  @include media-breakpoint-up(md) {
-    margin: 0 auto;
-  }
+  margin: 0 auto;
   @include media-breakpoint-up(xl) {
     margin: 0;
   }
