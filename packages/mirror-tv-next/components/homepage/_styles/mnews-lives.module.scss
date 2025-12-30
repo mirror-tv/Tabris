@@ -1,0 +1,124 @@
+@import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
+
+.container {
+  width: 100vdw;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 32px;
+  @include media-breakpoint-up(md) {
+    width: 688px;
+    align-self: center;
+  }
+  @include media-breakpoint-up(xl) {
+    align-self: inherit;
+    max-width: 366px;
+  }
+}
+
+.videoWrapper {
+  min-height: 56.21vw;
+  position: relative;
+  @include media-breakpoint-up(md) {
+    min-height: 387px;
+  }
+  @include media-breakpoint-up(xl) {
+    min-height: 206px;
+  }
+}
+
+.videoOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  cursor: pointer;
+  /* 透明層，用於追蹤點擊 */
+  background: transparent;
+}
+
+.titleWrapper {
+  margin: 0 auto;
+  @include media-breakpoint-up(xl) {
+    margin: 0;
+  }
+}
+
+.title {
+  border-image: linear-gradient(
+      180deg,
+      $color-blue-deep 35%,
+      transparent 0,
+      transparent 65%,
+      $color-blue-deep 0
+    )
+    5 !important;
+  width: fit-content;
+  min-width: fit-content;
+  padding-left: 10px !important;
+  p {
+    color: $color-blue-deep;
+  }
+}
+
+.placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-weight: 500;
+}
+
+.placeholderTitle {
+  font-size: 28px;
+  background: linear-gradient(90deg, #fc0 18.95%, #fff 31.82%, #fc0 54.97%);
+  font-feature-settings: 'clig' off, 'liga' off;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 0.5px;
+  @include media-breakpoint-up(xl) {
+    font-size: 32px;
+  }
+}
+
+.placeholderDesc {
+  font-size: 24px;
+  margin-top: 20px;
+  background: linear-gradient(
+    90deg,
+    #fff -102.11%,
+    rgba(255, 255, 255, 0) 201.05%,
+    rgba(255, 255, 255, 0.32) 201.05%,
+    rgba(255, 255, 255, 0.5) 201.05%
+  );
+  font-feature-settings: 'clig' off, 'liga' off;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 0.5px;
+  @include media-breakpoint-up(xl) {
+    font-size: 24px;
+    margin-top: 16px;
+  }
+}
+
+.title {
+  display: block;
+  width: 141px;
+  color: #fc0;
+  font-size: 20px;
+  line-height: 28px;
+  letter-spacing: 0.5px;
+  padding-left: 28px;
+  position: relative;
+}

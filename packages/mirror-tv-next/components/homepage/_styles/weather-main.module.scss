@@ -1,0 +1,177 @@
+@import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
+@import '/styles/theme/z-index';
+
+.container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.weatherBar {
+  display: flex;
+  height: 50px;
+  width: 100%;
+  align-items: center;
+  background: #f6f6fb;
+  padding: 0 12px;
+  line-height: 1;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1);
+
+  @include media-breakpoint-up(md) {
+    max-width: 680px;
+    padding-left: 20px;
+    padding-right: 24px;
+  }
+
+  @include media-breakpoint-up(xl) {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+.label {
+  margin-right: 20px;
+  flex: 1;
+  font-size: 16px;
+  font-weight: 500;
+  color: #7f8493;
+
+  @include media-breakpoint-up(md) {
+    flex-grow: 1;
+  }
+  @include media-breakpoint-up(xl) {
+    min-width: fit-content;
+    margin-right: 10px;
+    font-size: 14px;
+  }
+}
+
+.citySelector {
+  position: relative;
+}
+
+.cityButton {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-right: 16px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #2b2b2b;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+
+  &:hover {
+    color: #004dbc;
+    path {
+      fill: #004dbc;
+    }
+  }
+
+  &:focus {
+    outline: none !important;
+  }
+
+  @include media-breakpoint-up(md) {
+    gap: 4px;
+  }
+  @include media-breakpoint-up(xl) {
+    font-size: 14px;
+    path {
+      transform: scale(0.9);
+    }
+  }
+}
+
+.arrow {
+  flex-shrink: 0;
+}
+
+.rotate180 {
+  transform: rotate(180deg);
+}
+
+.dropdown {
+  position: absolute;
+  left: -23px;
+  top: calc(100% + 18px);
+  z-index: $Z_INDEX-header;
+  height: 91px;
+  width: 100px;
+  cursor: pointer;
+  overflow-y: auto;
+  background: #f6f6fb;
+  padding: 11px 26px 0;
+  margin: 0;
+  list-style: none;
+
+  @include media-breakpoint-up(md) {
+    height: 196px;
+  }
+}
+
+.dropdownItem {
+  white-space: nowrap;
+  padding-bottom: 16px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #2b2b2b;
+  &:hover {
+    color: #004dbc;
+  }
+  @include media-breakpoint-up(xl) {
+    font-size: 14px;
+  }
+}
+
+.weatherIcon {
+  margin-right: 16px;
+  height: 18px;
+  width: 18px;
+  flex-shrink: 0;
+
+  @include media-breakpoint-up(xl) {
+    margin-right: 10px;
+  }
+}
+
+.maxTemp {
+  margin-right: 16px;
+  height: 36px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #2b2b2b;
+  line-height: 36px;
+
+  @include media-breakpoint-up(xl) {
+    margin-right: 10px;
+    font-size: 22px;
+  }
+}
+
+.minTemp {
+  height: 24px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #7f8493;
+  line-height: 24px;
+  @include media-breakpoint-up(xl) {
+    font-size: 14px;
+  }
+}
+
+.source {
+  color: #9b9b9b;
+  text-align: right;
+  font-family: 'Noto Sans';
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 18px;
+  background: #f4f5f6;
+  padding-top: 10px;
+  padding-right: 12px;
+}

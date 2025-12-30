@@ -1,5 +1,5 @@
 'use client'
-import styles from './_styles/editor-choices-swiper.module.scss'
+import styles from './_styles/editor-choices-swiper2025.module.scss'
 import { EditorChoices } from '~/graphql/query/editor-choices'
 import { Swiper, SwiperSlide } from 'swiper/react'
 
@@ -22,13 +22,13 @@ import { useRef } from 'react'
 import { PaginationOptions } from 'swiper/types'
 import UiExclusiveMark from '../shared/ui-exclusive-mark'
 
-type EditorChoicesSwiperProps = {
+type EditorChoicesSwiper2025Props = {
   editorChoices: EditorChoices[]
 }
 
-export default function EditorChoicesSwiper({
+export default function EditorChoicesSwiper2025({
   editorChoices = [],
-}: EditorChoicesSwiperProps) {
+}: EditorChoicesSwiper2025Props) {
   const nextButtonRef = useRef<HTMLButtonElement | null>(null)
   const prevButtonRef = useRef<HTMLButtonElement | null>(null)
   if (!editorChoices?.[0]) {
@@ -50,7 +50,7 @@ export default function EditorChoicesSwiper({
   return (
     <section className={styles.container}>
       <div>
-        <div className={`${styles.swiperContainer}`}>
+        <div className={`${styles.swiperContainer} editor-choices-wrapper`}>
           <Swiper
             cssMode={true}
             slidesPerView={1}
@@ -74,10 +74,10 @@ export default function EditorChoicesSwiper({
               return (
                 <SwiperSlide
                   key={choice.slug}
-                  className={`${styles.swiperSlide}`}
+                  className={`${styles.swiperSlide} editor-choices-wrapper`}
                 >
                   <a
-                    className={`${styles.imageContainer} GTM-editor-choices-link`}
+                    className={styles.imageContainer}
                     href={
                       choice.source === 'externalChoice'
                         ? `/external/${choice.slug}`
@@ -100,18 +100,18 @@ export default function EditorChoicesSwiper({
                       }}
                       priority={false}
                     />
-                    <a
-                      className={`${styles.nameWrapper} GTM-editor-choices-link`}
-                      href={
-                        choice.source === 'externalChoice'
-                          ? `/external/${choice.slug}`
-                          : `/story/${choice.slug}`
-                      }
-                      target="_blank"
-                      rel="noreferrer noopener"
-                    >
-                      <span className={styles.name}>{choice.name}</span>
-                    </a>
+                  </a>
+                  <a
+                    className={styles.nameWrapper}
+                    href={
+                      choice.source === 'externalChoice'
+                        ? `/external/${choice.slug}`
+                        : `/story/${choice.slug}`
+                    }
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  >
+                    <span className={styles.name}>{choice.name}</span>
                   </a>
                 </SwiperSlide>
               )
@@ -120,24 +120,16 @@ export default function EditorChoicesSwiper({
           {editorChoices?.[1] && (
             <>
               <button
-                className={`${styles.navWrapper} ${styles.prevButton} editor-choices-btn`}
+                className={`${styles.nav} ${styles.prev} swiper-button-prev editor-choices-btn`}
                 ref={prevButtonRef}
-              >
-                <div
-                  className={`${styles.nav} ${styles.prev} swiper-button-prev`}
-                />
-              </button>
+              ></button>
               <button
-                className={`${styles.navWrapper} ${styles.nextButton} editor-choices-btn`}
+                className={`${styles.nav} ${styles.next} swiper-button-next editor-choices-btn`}
                 ref={nextButtonRef}
-              >
-                <div
-                  className={`${styles.nav} ${styles.next} swiper-button-next`}
-                />
-              </button>
+              ></button>
             </>
           )}
-          <div className={`swiper-pagination ${styles.pagination}`} />
+          <div className={`swiper-pagination ${styles.pagination}  `} />
         </div>
       </div>
     </section>

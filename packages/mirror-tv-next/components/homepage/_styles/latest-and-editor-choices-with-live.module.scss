@@ -10,8 +10,9 @@
   max-width: 100dvw;
   overflow: hidden;
   margin-bottom: 32px;
+  position: relative;
   @include media-breakpoint-up(md) {
-    max-width: 554px;
+    max-width: 688px;
   }
   @include media-breakpoint-up(xl) {
     max-width: 1128px;
@@ -41,12 +42,19 @@
 
 .liveAndEditor {
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   justify-content: center;
   @include media-breakpoint-up(xl) {
     flex-direction: row-reverse;
     width: 1120px;
     margin: 0 auto;
     gap: 23px;
+  }
+}
+
+.reverse {
+  flex-direction: column;
+  @include media-breakpoint-up(xl) {
+    flex-direction: row-reverse;
   }
 }

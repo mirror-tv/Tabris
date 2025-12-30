@@ -55,6 +55,7 @@
   color: $color-blue-light;
   width: fit-content;
   transition: 0.5s;
+  word-break: break-all;
   &:hover {
     color: $color-blue-deep;
     text-decoration: underline;
