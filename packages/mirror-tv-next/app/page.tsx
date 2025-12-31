@@ -1,3 +1,4 @@
+import PageLogger from '~/components/page-logger'
 import dynamic from 'next/dynamic'
 import MainFlashNews from '~/components/flash-news/main-flash-news'
 import styles from '~/styles/pages/page.module.scss'
@@ -25,6 +26,7 @@ export default async function Home() {
   const isFeature2025HomepageStyleOn = FEATURE_2025_HOMEPAGE_STYLE === 'on'
   return (
     <main className={styles.main}>
+      <PageLogger />
       <GptPopup adKey="MB_HOME" />
       {/* GPT ADs */}
       <GPTPlaceholderDesktop>
