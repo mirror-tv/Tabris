@@ -278,12 +278,12 @@ const StoryPage = async (props: StoryPageTypes) => {
   const extra = {
     storyId: id,
     storyTitle: title,
-    authorNames: writers.map((writer) => writer.name) || [],
-    photographers: photographers.map((photographer) => photographer.name) || [],
-    cameraOperators: cameraOperators.map((operator) => operator.name) || [],
-    designers: designers.map((designer) => designer.name) || [],
-    engineers: engineers.map((engineer) => engineer.name) || [],
-    vocals: vocals.map((vocal) => vocal.name) || [],
+    authorNames: writers.map((writer) => writer.name) || '',
+    photographers: photographers.map((photographer) => photographer.name) || '',
+    cameraOperators: cameraOperators.map((operator) => operator.name) || '',
+    designers: designers.map((designer) => designer.name) || '',
+    engineers: engineers.map((engineer) => engineer.name) || '',
+    vocals: vocals.map((vocal) => vocal.name) || '',
   }
 
   return (
