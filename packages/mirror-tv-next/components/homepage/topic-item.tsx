@@ -22,7 +22,7 @@ export default function TopicItem({ topic, isFirst }: TopicListProps) {
           rel="noreferrer noopener"
           className={styles.imgWrapper}
         >
-          <div className="topic__list__item feature">
+          <div className={`${styles.imgWrapper} topic__list__item feature`}>
             <Image
               images={formateHeroImage(topic.heroImage ?? {})}
               alt={topic.name}
