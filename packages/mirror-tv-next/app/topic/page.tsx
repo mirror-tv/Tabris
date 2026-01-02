@@ -11,6 +11,7 @@ import styles from '~/styles/pages/topic-page.module.scss'
 import dynamic from 'next/dynamic'
 import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
+import PageLogger from '~/components/page-logger'
 
 export const revalidate = GLOBAL_CACHE_SETTING
 
@@ -61,6 +62,7 @@ export default async function TagPage() {
 
   return (
     <section className={styles.topic}>
+      <PageLogger />
       <GPTPlaceholderDesktop>
         <p>廣告</p>
         <GPTAd pageKey="all" adKey="PC_HD" />

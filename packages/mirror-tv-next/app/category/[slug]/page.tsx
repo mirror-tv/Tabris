@@ -27,6 +27,7 @@ import { fetchSales } from '~/app/_actions/share/sales'
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 import { SALES_LABEL_NAME } from '~/constants/constant'
 import { fetchCategoryData } from '~/app/_actions/category/category-data'
+import PageLogger from '~/components/page-logger'
 
 export const revalidate = GLOBAL_CACHE_SETTING
 
@@ -285,6 +286,7 @@ export default async function CategoryPage({
 
   return (
     <section className={styles.postsList}>
+      <PageLogger />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
