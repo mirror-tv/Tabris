@@ -6,6 +6,15 @@
 import { initializeApp, getApps, cert, type App } from 'firebase-admin/app'
 import { getAuth, type DecodedIdToken } from 'firebase-admin/auth'
 
+/**
+ * Firebase Custom Token 的 Custom Claims 類型
+ */
+export type FirebaseCustomClaims = {
+  memberId: string
+  email: string
+  hasIdentified?: boolean
+}
+
 let adminApp: App | null = null
 
 export function getFirebaseAdmin(): App {
@@ -74,7 +83,7 @@ export async function verifyFirebaseToken(
  */
 export async function createCustomToken(
   uid: string,
-  customClaims?: Record<string, unknown>
+  customClaims?: FirebaseCustomClaims
 ): Promise<string> {
   try {
     const admin = getFirebaseAdmin()

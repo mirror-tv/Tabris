@@ -26,9 +26,29 @@ export async function verifyFirebaseTokenEdge(
   }
 
   try {
-    // 使用 Firebase REST API 驗證 token
-    // 如果 token 是偽造的或無效，API 會返回錯誤（如 400 Bad Request）
-    // 只有通過 Firebase 驗證的 token 才會返回用戶資料
+    // 🔒 安全性：先解析並驗證 token 結構，確保 token 格式正確
+    const tokenParts = idToken.split('.')
+    if (tokenParts.length !== 3) {
+      console.error('Firebase token 格式無效')
+      return null
+    }
+
+    // 🔒 安全性：先從 token 中提取 payload 以獲取 UID（用於後續驗證）
+    const initialPayload = parseJWTPayload(idToken)
+    if (!initialPayload) {
+      console.error('無法解析 Firebase token payload')
+      return null
+    }
+
+    const tokenUid = initialPayload.uid as string | undefined
+    if (!tokenUid) {
+      console.error('Firebase token 缺少 uid')
+      return null
+    }
+
+    // 🔒 安全性：使用 Firebase REST API 驗證 token
+    // 如果 token 的 payload 被修改，簽名會失效，API 會返回錯誤
+    // 只有通過 Firebase 驗證的 token（簽名匹配）才會返回用戶資料
     const response = await fetch(
       `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${FIREBASE_API_KEY}`,
       {
@@ -43,7 +63,8 @@ export async function verifyFirebaseTokenEdge(
     )
 
     if (!response.ok) {
-      // Token 無效或偽造，Firebase API 已拒絕
+      // Token 無效、偽造或簽名不匹配，Firebase API 已拒絕
+      console.error('Firebase API 驗證失敗:', response.status, response.statusText)
       return null
     }
 
@@ -55,13 +76,28 @@ export async function verifyFirebaseTokenEdge(
 
     const user = data.users[0]
 
-    // accounts:lookup API 已經驗證了 idToken 的有效性（包括簽名驗證）
-    // 如果 token 是偽造的，API 會返回錯誤，不會到達這裡
-    // 因此我們可以安全地從驗證過的 token 中提取 custom claims
-    // 注意：custom claims 存儲在 token 中，API 響應可能不直接包含
+    // 🔒 安全性：驗證 API 返回的 UID 與 token 中的 UID 一致
+    // 這確保我們使用的是通過 Firebase 驗證的 token
+    if (user.localId !== tokenUid) {
+      console.error('Token UID 與 API 返回的 UID 不一致，可能被篡改:', {
+        tokenUid,
+        apiUid: user.localId,
+      })
+      return null
+    }
+
+    // 🔒 安全性：重新從驗證過的 token 中提取 payload
+    // 雖然 Firebase API 已經驗證了簽名，但我們需要確保使用正確的 payload
+    // 如果 token 被修改，API 會拒絕，所以這裡的 payload 應該是安全的
     const payload = parseJWTPayload(idToken)
 
     if (!payload) {
+      return null
+    }
+
+    // 🔒 安全性：再次驗證 payload 中的 UID 與 API 返回的一致
+    if (payload.uid !== user.localId) {
+      console.error('Payload UID 與 API 返回的 UID 不一致')
       return null
     }
 
@@ -69,7 +105,7 @@ export async function verifyFirebaseTokenEdge(
     const email = payload.email as string | undefined
     const hasIdentified = payload.hasIdentified as boolean | undefined
 
-    // 優先使用 API 返回的 email（如果有的話），否則使用 payload 中的 email
+    // 🔒 安全性：優先使用 API 返回的 email（更可靠），否則使用 payload 中的 email
     const userEmail = user.email || email
 
     if (!memberId || !userEmail) {
@@ -78,6 +114,12 @@ export async function verifyFirebaseTokenEdge(
         email: userEmail,
         uid: user.localId,
       })
+      return null
+    }
+
+    // 🔒 安全性：最終驗證 - 確保 memberId 是字符串類型
+    if (typeof memberId !== 'string') {
+      console.error('memberId 類型無效:', typeof memberId)
       return null
     }
 

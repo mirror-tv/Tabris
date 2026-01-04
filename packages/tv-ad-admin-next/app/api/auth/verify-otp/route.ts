@@ -59,8 +59,6 @@ export async function POST(request: NextRequest) {
       } else {
         // 根據 email 查找 Firebase User
         firebaseUid = await getFirebaseUser(email)
-        // TODO: 更新 CMS member 的 firebaseID 欄位
-        // await updateMemberFirebaseId(member.id, firebaseUid)
       }
 
       // 生成 Firebase Custom Token
