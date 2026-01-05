@@ -9,7 +9,9 @@ export interface ApiDataOrderList extends ApiDataBlockBase {
 }
 
 const OrderListBlock = ({ data }: { data: ApiDataOrderList }) => {
-  const blockContentData = getFirstElement(data.content)
+  const firstElement = getFirstElement(data.content)
+  const blockContentData =
+    typeof firstElement === 'string' ? data.content : firstElement
   return (
     <ol className={styles.orderListBlock}>
       {blockContentData.map((listData, index) => (
