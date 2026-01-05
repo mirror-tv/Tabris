@@ -1,0 +1,94 @@
+@import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
+
+.firstList {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-row-gap: 29px;
+  justify-content: center;
+  margin-bottom: 20px;
+  @include media-breakpoint-up(md) {
+    align-self: center;
+    grid-template-columns: 1fr 1fr;
+    grid-column-gap: 20px;
+    grid-row-gap: 32px;
+  }
+  @include media-breakpoint-up(xl) {
+    grid-template-columns: 1fr 1fr 1fr;
+    align-self: start;
+    max-width: 772px;
+  }
+
+  & + div {
+    width: fit-content;
+    margin: 0 auto;
+  }
+}
+
+.list {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-row-gap: 29px;
+  justify-content: center;
+  @include media-breakpoint-up(md) {
+    align-self: center;
+    grid-template-columns: 1fr 1fr;
+    grid-column-gap: 20px;
+    grid-row-gap: 32px;
+  }
+  @include media-breakpoint-up(xl) {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    padding-top: 20px;
+    border-top: 1px solid #d8d8d8;
+  }
+
+  & + div {
+    width: fit-content;
+    margin: 0 auto;
+  }
+}
+
+.item {
+  display: block;
+  width: 100%;
+  position: relative;
+}
+
+.load {
+  width: 160px;
+  padding: 8px 0;
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: 3px;
+  text-align: center;
+  line-height: 28px;
+  color: #004dbc;
+  border: 1px solid #004dbc;
+  outline: none;
+  border-radius: 12px;
+  margin: 36px auto;
+  display: block;
+  outline: none !important;
+
+  &:hover {
+    background: #e7e7e7;
+  }
+  @include media-breakpoint-up(md) {
+    display: block;
+    margin: 0 auto;
+    margin-top: 24px;
+  }
+  @include media-breakpoint-up(xl) {
+    display: block;
+    width: 160px;
+  }
+}
+
+.loadMoreWrapper {
+  @include media-breakpoint-up(xl) {
+    width: 772px !important;
+    margin: 0 !important;
+  }
+}

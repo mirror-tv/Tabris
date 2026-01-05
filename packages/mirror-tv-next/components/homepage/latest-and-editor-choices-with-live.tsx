@@ -10,11 +10,16 @@ import {
   SALES_LABEL_NAME,
 } from '~/constants/constant'
 import LatestPostListHandler from './latest-post-list-handler'
+import EditorChoicesSwiper2025 from './editor-choices-swiper2025'
 import EditorChoicesSwiper from './editor-choices-swiper'
 import Live from './live'
 import dynamic from 'next/dynamic'
 import AdTvAdminMobileBanner from '../shared/ad-tv-admin-mobile-banner'
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
+import { FEATURE_2025_HOMEPAGE_STYLE } from '~/constants/environment-variables'
+import PostListWithFirstPage from './post-list-with-first-page'
+import PopularPostsAndWeather from './popular-posts-and-weather'
+import MNewsLives from './mnews-lives'
 
 type LatestAndEditorChoicesWithLiveProps = {
   latestListTitle: string
@@ -24,12 +29,20 @@ type LatestAndEditorChoicesWithLiveProps = {
     url: string
     description: string
   }
+  mnewsLives: {
+    id: string
+    youtubeUrl: string
+    url: string
+    description: string
+  }[]
 }
 
 export default async function LatestAndEditorChoicesWithLive({
   latestListTitle,
   liveData,
+  mnewsLives,
 }: LatestAndEditorChoicesWithLiveProps) {
+  const isFeature2025HomepageStyleOn = FEATURE_2025_HOMEPAGE_STYLE === 'on'
   let salesPosts: Sale[] = []
   let initRenderedPosts = []
 
@@ -45,7 +58,6 @@ export default async function LatestAndEditorChoicesWithLive({
   })
 
   const renderedSalesLength = Math.min(salesPosts?.length || 0, 4)
-  const take = HOMEPAGE_POSTS_PAGE_SIZE - renderedSalesLength
 
   let filteredSlug = salesPosts
     ?.map((item) => item.adPost.slug)
@@ -59,7 +71,7 @@ export default async function LatestAndEditorChoicesWithLive({
       source,
     },
   } = await getLatestPostsAndEditorChoices({
-    first: take,
+    first: HOMEPAGE_POSTS_PAGE_SIZE * 2 - renderedSalesLength,
     skip: 0,
     withCount: true,
     filteredSlug: [],
@@ -91,9 +103,19 @@ export default async function LatestAndEditorChoicesWithLive({
 
   return (
     <>
-      <section className={styles.liveAndEditor}>
-        <Live liveData={liveData} />
-        <EditorChoicesSwiper editorChoices={editorChoices} />
+      <section
+        className={`${styles.liveAndEditor} ${
+          !isFeature2025HomepageStyleOn ? styles.reverse : ''
+        }`}
+      >
+        {!isFeature2025HomepageStyleOn && <Live liveData={liveData} />}
+        {isFeature2025HomepageStyleOn && <MNewsLives mnewsLives={mnewsLives} />}
+        {!isFeature2025HomepageStyleOn && (
+          <EditorChoicesSwiper2025 editorChoices={editorChoices} />
+        )}
+        {isFeature2025HomepageStyleOn && (
+          <EditorChoicesSwiper editorChoices={editorChoices} />
+        )}
       </section>
       <GPTAd pageKey="home" adKey="MB_M2" />
       <AdTvAdminMobileBanner location="home" />
@@ -102,13 +124,27 @@ export default async function LatestAndEditorChoicesWithLive({
           title={latestListTitle}
           className={styles.listTitle}
         />
-        <LatestPostListHandler
-          initPosts={initRenderedPosts}
-          postsCount={latestPostsCount?.count || 0}
-          renderedSalesLength={renderedSalesLength || 0}
-          filteredSlug={filteredSlug}
-          source={source}
-        />
+        {!isFeature2025HomepageStyleOn && (
+          <LatestPostListHandler
+            initPosts={initRenderedPosts}
+            postsCount={latestPostsCount?.count || 0}
+            renderedSalesLength={renderedSalesLength || 0}
+            filteredSlug={filteredSlug}
+            source={source}
+          />
+        )}
+        {isFeature2025HomepageStyleOn && (
+          <>
+            <PostListWithFirstPage
+              initPosts={initRenderedPosts}
+              postsCount={latestPostsCount?.count || 0}
+              renderedSalesLength={renderedSalesLength || 0}
+              filteredSlug={filteredSlug}
+              source={source}
+            />
+            <PopularPostsAndWeather title="熱門新聞" />
+          </>
+        )}
       </section>
     </>
   )

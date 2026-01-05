@@ -9,10 +9,12 @@ export interface ApiDataUnorderListBlock extends ApiDataBlockBase {
 }
 
 const UnorderListBlock = ({ data }: { data: ApiDataUnorderListBlock }) => {
-  const blockContentData = getFirstElement(data.content)
+  const firstElement = getFirstElement(data.content)
+  const blockContentData =
+    typeof firstElement === 'string' ? data.content : firstElement
   return (
     <ul className={styles.unOrderListBlock}>
-      {blockContentData.map((listData, index) => (
+      {blockContentData?.map((listData, index) => (
         <li key={index}>{listData}</li>
       ))}
     </ul>
