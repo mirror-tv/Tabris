@@ -7,7 +7,7 @@ import { NextResponse } from 'next/server'
 
 import type { NextRequest } from 'next/server'
 
-import { verifyToken } from '@/utils/auth'
+import { verifyFirebaseTokenEdge } from '@/utils/firebase-edge'
 import { createEdgeErrorLogger } from '@/utils/edge-error-handler'
 
 // 公開 route（不需要登入即可訪問）
@@ -15,6 +15,7 @@ const publicRoutes = ['/login', '/robots.txt']
 const publicApiRoutes = [
   '/api/auth/send-otp',
   '/api/auth/verify-otp',
+  '/api/auth/set-id-token', // 允許前端設置 ID Token
   '/api/auth/me', // 允許 middleware 內部調用
   '/api/member/identity-info',
   '/api/auth/logout',
@@ -66,7 +67,7 @@ export async function middleware(request: NextRequest) {
   if (isPublicRoute || isPublicApiRoute) {
     const token = request.cookies.get('auth_token')?.value
     if (token && isPublicRoute && pathname === '/login') {
-      const payload = await verifyToken(token)
+      const payload = await verifyFirebaseTokenEdge(token)
       if (payload && payload.memberId) {
         // 檢查身份驗證狀態
         try {
@@ -108,7 +109,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
-  const payload = await verifyToken(token)
+  const payload = await verifyFirebaseTokenEdge(token)
 
   if (!payload) {
     if (pathname.startsWith('/api/')) {

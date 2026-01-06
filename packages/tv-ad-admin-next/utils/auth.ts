@@ -1,55 +1,58 @@
 /**
- * 認證工具函數（可在 Edge Runtime 使用）
- * 使用 jose 庫以支援 Edge Runtime
+ * 認證工具函數
+ * 使用 Firebase ID Token 進行驗證
  */
 
-import { SignJWT, jwtVerify } from 'jose'
 import { cookies } from 'next/headers'
 
-import { JWT_SECRET, ENV } from '@/constants/environment-variables'
-
-const getJwtSecret = () => {
-  const secret = JWT_SECRET
-  const isProduction = ENV === 'prod'
-
-  if (
-    isProduction &&
-    (!secret || secret === 'dev-secret-change-in-production')
-  ) {
-    throw new Error(
-      'JWT_SECRET 必須在生產環境中設定，不能使用預設值。請檢查環境變數設定。'
-    )
-  }
-
-  return new TextEncoder().encode(secret || 'dev-secret-change-in-production')
-}
+import { verifyFirebaseToken } from '@/utils/firebase-admin'
 
 export type UserPayload = {
-  userId: string
+  userId: string // Firebase UID
   memberId: string // CMS member id（必填）
   email: string
   hasIdentified?: boolean // 是否已完成身份驗證（有填寫 nationalId 和 residentialAddress）
 }
 
-export async function generateToken(payload: UserPayload): Promise<string> {
-  const JWT_SECRET = getJwtSecret()
-  return await new SignJWT(payload as Record<string, unknown>)
-    .setProtectedHeader({ alg: 'HS256' })
-    .setIssuedAt()
-    .setExpirationTime('7d')
-    .sign(JWT_SECRET)
-}
-
+/**
+ * 從 Firebase ID Token 驗證並提取 UserPayload
+ */
 export async function verifyToken(token: string): Promise<UserPayload | null> {
   try {
-    const JWT_SECRET = getJwtSecret()
-    const { payload } = await jwtVerify(token, JWT_SECRET)
-    return payload as UserPayload
-  } catch {
+    const decodedToken = await verifyFirebaseToken(token)
+    if (!decodedToken) {
+      return null
+    }
+
+    // 從 custom claims 提取資料
+    const memberId = decodedToken.memberId as string | undefined
+    const email = decodedToken.email as string | undefined
+    const hasIdentified = decodedToken.hasIdentified as boolean | undefined
+
+    if (!memberId || !email) {
+      console.error('Firebase token 缺少必要欄位:', {
+        memberId,
+        email,
+        uid: decodedToken.uid,
+      })
+      return null
+    }
+
+    return {
+      userId: decodedToken.uid,
+      memberId,
+      email,
+      hasIdentified,
+    }
+  } catch (error) {
+    console.error('驗證 Firebase token 失敗:', error)
     return null
   }
 }
 
+/**
+ * 取得當前登入的使用者
+ */
 export async function getCurrentUser(): Promise<UserPayload | null> {
   const cookieStore = await cookies()
   const token = cookieStore.get('auth_token')?.value
@@ -57,6 +60,9 @@ export async function getCurrentUser(): Promise<UserPayload | null> {
   return verifyToken(token)
 }
 
+/**
+ * 檢查是否已登入
+ */
 export async function isAuthenticated(): Promise<boolean> {
   return (await getCurrentUser()) !== null
 }
