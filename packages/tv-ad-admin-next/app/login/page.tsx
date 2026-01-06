@@ -16,6 +16,7 @@ import { OTP_MAX_ATTEMPTS } from '@/constants'
 import { ENV } from '@/constants/environment-variables'
 import { AUTH_MESSAGES, LOADING_MESSAGES } from '@/constants/messages'
 import { useAuthStore } from '@/store'
+import { signInWithCustomTokenClient } from '@/utils/firebase-client'
 import { validateEmail } from '@/utils/validation'
 
 function LoginContent() {
@@ -165,46 +166,75 @@ function LoginContent() {
         return
       }
 
-      // 登入成功，更新 store
-      if (data.user) {
-        login(data.user)
+      // 登入成功，使用 Firebase Custom Token 交換 ID Token
+      if (data.success && data.data?.customToken && data.user) {
+        try {
+          // 使用 Firebase Client SDK 交換 Custom Token 為 ID Token
+          const user = await signInWithCustomTokenClient(data.data.customToken)
+          const idToken = await user.getIdToken()
 
-        // 如果已完成身份驗證，確保 cookie 被保存後再跳轉
-        if (data.user.hasIdentified === true) {
-          // 方法 1: 等待瀏覽器保存 cookie
-          await new Promise((resolve) => setTimeout(resolve, 300))
+          // 將 ID Token 發送到後端設置 Cookie
+          const setTokenResponse = await fetch('/api/auth/set-id-token', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify({ idToken }),
+          })
 
-          // 方法 2: 驗證 cookie 是否可用（最多重試 3 次）
-          let retries = 3
-          let cookieVerified = false
+          const setTokenData = await setTokenResponse.json()
 
-          while (retries > 0 && !cookieVerified) {
-            try {
-              const verifyResponse = await fetch('/api/auth/me', {
-                method: 'GET',
-                credentials: 'include',
-              })
-              const verifyData = await verifyResponse.json()
-
-              if (verifyData.success && verifyData.user) {
-                cookieVerified = true
-                // 更新 store 以確保狀態一致
-                login(verifyData.user)
-                break
-              }
-            } catch {
-              console.log('驗證 cookie 失敗，重試中...', retries)
-            }
-
-            retries--
-            if (retries > 0) {
-              await new Promise((resolve) => setTimeout(resolve, 200))
-            }
+          if (!setTokenData.success) {
+            setError(setTokenData.message || '設置認證 token 失敗')
+            return
           }
 
-          // 方法 3: 使用 window.location 確保完整重載，讓 cookie 能正確攜帶
-          // 如果有 redirect 參數，則重定向到該頁面，否則重定向到首頁
-          window.location.href = redirectUrl
+          // 更新 store
+          if (setTokenData.user) {
+            login(setTokenData.user)
+
+            // 如果已完成身份驗證，確保 cookie 被保存後再跳轉
+            if (setTokenData.user.hasIdentified === true) {
+              // 等待瀏覽器保存 cookie
+              await new Promise((resolve) => setTimeout(resolve, 300))
+
+              // 驗證 cookie 是否可用（最多重試 3 次）
+              let retries = 3
+              let cookieVerified = false
+
+              while (retries > 0 && !cookieVerified) {
+                try {
+                  const verifyResponse = await fetch('/api/auth/me', {
+                    method: 'GET',
+                    credentials: 'include',
+                  })
+                  const verifyData = await verifyResponse.json()
+
+                  if (verifyData.success && verifyData.user) {
+                    cookieVerified = true
+                    // 更新 store 以確保狀態一致
+                    login(verifyData.user)
+                    break
+                  }
+                } catch {
+                  console.log('驗證 cookie 失敗，重試中...', retries)
+                }
+
+                retries--
+                if (retries > 0) {
+                  await new Promise((resolve) => setTimeout(resolve, 200))
+                }
+              }
+
+              // 使用 window.location 確保完整重載，讓 cookie 能正確攜帶
+              window.location.href = redirectUrl
+              return
+            }
+          }
+        } catch (firebaseError) {
+          console.error('Firebase 登入錯誤:', firebaseError)
+          setError('Firebase 認證失敗，請重新嘗試')
           return
         }
       }

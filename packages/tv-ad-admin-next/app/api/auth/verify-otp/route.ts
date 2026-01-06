@@ -1,11 +1,11 @@
 /**
  * POST /api/auth/verify-otp
- * 驗證 OTP 並生成 JWT token
+ * 驗證 OTP 並生成 Firebase Custom Token
  */
 
 import { NextRequest, NextResponse } from 'next/server'
 
-import { generateToken } from '@/utils/auth'
+import { createCustomToken, getFirebaseUser } from '@/utils/firebase-admin'
 import { createErrorLogger } from '@/utils/error-handler'
 import { getMemberByEmail } from '@/utils/member'
 import { verifyOTP } from '@/utils/otp-storage'
@@ -38,9 +38,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 生成使用者 ID
-    const userId = Buffer.from(email).toString('base64')
-
     // 取得 member id（登入時就取得，之後可以直接用 id 查詢）
     const member = await getMemberByEmail(email)
 
@@ -53,44 +50,72 @@ export async function POST(request: NextRequest) {
 
     const hasIdentified = !!member.nationalId && !!member.residentialAddress
 
-    const userPayload = {
-      userId,
-      memberId: member.id,
-      email,
-      hasIdentified,
+    // 取得 Firebase User
+    // 優先使用 member 的 firebaseID，如果沒有則根據 email 查找
+    let firebaseUid: string
+    try {
+      if (member.firebaseID) {
+        firebaseUid = member.firebaseID
+      } else {
+        // 根據 email 查找 Firebase User
+        firebaseUid = await getFirebaseUser(email)
+      }
+
+      // 生成 Firebase Custom Token
+      // 在 customClaims 中加入 memberId 和 hasIdentified，方便後續使用
+      const customToken = await createCustomToken(firebaseUid, {
+        memberId: member.id,
+        email,
+        hasIdentified,
+      })
+
+      const userPayload = {
+        userId: firebaseUid,
+        memberId: member.id,
+        email,
+        hasIdentified,
+      }
+
+      // 返回 Custom Token 給前端
+      // 前端需要使用 Firebase SDK 交換 ID Token
+      return NextResponse.json({
+        success: true,
+        message: '登入成功',
+        data: {
+          customToken, // 前端需要使用這個 token 交換 ID Token
+        },
+        user: userPayload,
+      })
+    } catch (firebaseError: any) {
+      // Firebase 相關錯誤處理
+      if (
+        firebaseError?.message?.includes('Firebase Admin SDK 環境變數未設定')
+      ) {
+        createErrorLogger('Firebase 環境變數未設定')(firebaseError)
+        return NextResponse.json(
+          {
+            success: false,
+            message:
+              'Firebase 環境變數未設定。請設定 FIREBASE_ADMIN_PRIVATE_KEY, FIREBASE_ADMIN_CLIENT_EMAIL, FIREBASE_ADMIN_PROJECT_ID',
+          },
+          { status: 500 }
+        )
+      }
+
+      // 如果 Firebase 帳號不存在，回傳明確的錯誤訊息
+      if (firebaseError?.message?.includes('Firebase 帳號不存在')) {
+        createErrorLogger('Firebase 帳號不存在')(firebaseError)
+        return NextResponse.json(
+          {
+            success: false,
+            message: 'Firebase 帳號不存在，請聯繫管理員',
+          },
+          { status: 404 }
+        )
+      }
+
+      throw firebaseError // 重新拋出其他錯誤
     }
-
-    // 生成 JWT token（必須包含 memberId）
-    const token = await generateToken(userPayload)
-
-    const response = NextResponse.json({
-      success: true,
-      message: '登入成功',
-      user: userPayload,
-    })
-
-    // 使用 Next.js 推薦的方式設定 cookie
-    // 檢查請求是否為 HTTPS（考慮 Google Cloud Run 的代理情況）
-    const forwardedProto = request.headers.get('x-forwarded-proto')
-    const isSecure = forwardedProto === 'https'
-
-    response.cookies.set({
-      name: 'auth_token',
-      value: token,
-      httpOnly: true,
-      secure: isSecure,
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7, // 7 天
-      path: '/',
-      // 不設置 domain，讓瀏覽器自動處理（適用於當前域名和子域名）
-    })
-
-    // 同時設置響應頭，確保 cookie 被正確設置
-    response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate')
-    response.headers.set('Pragma', 'no-cache')
-    response.headers.set('Expires', '0')
-
-    return response
   } catch (error) {
     createErrorLogger('驗證 OTP 錯誤')(error)
     return NextResponse.json(
