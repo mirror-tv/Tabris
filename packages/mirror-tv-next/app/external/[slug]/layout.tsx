@@ -4,6 +4,7 @@ import styles from './_styles/external.module.scss'
 import Script from 'next/script'
 import dynamic from 'next/dynamic'
 import AdH1Remover from '~/components/shared/ad-h1-remover'
+import TagManagerWrapper from '~/app/tag-manager'
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 export default function StoryPageLayout({
   children,
@@ -12,6 +13,7 @@ export default function StoryPageLayout({
 }) {
   return (
     <div className={styles.LayoutWrapper}>
+      <TagManagerWrapper />
       <AdH1Remover />
       <Script
         id="dable"
