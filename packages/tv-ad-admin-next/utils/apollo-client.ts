@@ -33,7 +33,16 @@ const createAuthLink = () => {
         },
       }
     } catch (error) {
-      console.warn('Failed to fetch GCP ID Token:', error)
+      // 在本地開發環境中，如果沒有設定 GCP 憑證，這是預期的行為
+      // 只有在生產環境或需要 GCP 認證時才需要設定憑證
+      if (process.env.NODE_ENV === 'development') {
+        console.warn(
+          'GCP ID Token 獲取失敗（本地開發環境，這是預期的）:',
+          error instanceof Error ? error.message : error
+        )
+      } else {
+        console.warn('Failed to fetch GCP ID Token:', error)
+      }
       return { headers }
     }
   })

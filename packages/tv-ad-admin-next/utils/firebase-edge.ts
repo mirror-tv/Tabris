@@ -40,9 +40,14 @@ export async function verifyFirebaseTokenEdge(
       return null
     }
 
-    const tokenUid = initialPayload.uid as string | undefined
+    // Firebase ID Token 的 UID 存儲在 'sub' (subject) 欄位中（JWT 標準）
+    // 某些情況下也可能使用 'uid' 欄位，優先檢查 'sub'
+    const tokenUid = (initialPayload.sub as string | undefined) || 
+                     (initialPayload.uid as string | undefined)
     if (!tokenUid) {
-      console.error('Firebase token 缺少 uid')
+      console.error('Firebase token 缺少 uid (檢查 sub 和 uid 欄位)', {
+        availableKeys: Object.keys(initialPayload),
+      })
       return null
     }
 
@@ -96,8 +101,14 @@ export async function verifyFirebaseTokenEdge(
     }
 
     // 🔒 安全性：再次驗證 payload 中的 UID 與 API 返回的一致
-    if (payload.uid !== user.localId) {
-      console.error('Payload UID 與 API 返回的 UID 不一致')
+    // Firebase ID Token 的 UID 存儲在 'sub' 欄位中（JWT 標準）
+    const payloadUid = (payload.sub as string | undefined) || 
+                       (payload.uid as string | undefined)
+    if (payloadUid !== user.localId) {
+      console.error('Payload UID 與 API 返回的 UID 不一致', {
+        payloadUid,
+        apiUid: user.localId,
+      })
       return null
     }
 
