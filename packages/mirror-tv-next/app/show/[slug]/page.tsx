@@ -136,6 +136,9 @@ export async function generateMetadata({
   }
 
   // 過濾 null 值，但保留 metadataBase（URL 對象）和 openGraph 結構
+  const images = data.openGraph?.images
+  const hasImages = images && (Array.isArray(images) ? images.length > 0 : true)
+
   const filteredData: Metadata = {
     ...(data.metadataBase && { metadataBase: data.metadataBase }),
     ...(data.title && { title: data.title }),
@@ -145,10 +148,7 @@ export async function generateMetadata({
       ...(data.openGraph?.description && {
         description: data.openGraph.description,
       }),
-      ...(data.openGraph?.images &&
-        data.openGraph.images.length > 0 && {
-          images: data.openGraph.images,
-        }),
+      ...(hasImages && { images }),
     },
   }
 
