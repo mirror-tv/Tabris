@@ -76,8 +76,18 @@ export async function generateMetadata({
     return {}
   }
 
-  const data = {
-    metadataBase: new URL(SITE_URL),
+  // 確保 SITE_URL 是有效的 URL
+  let metadataBase: URL | undefined
+  try {
+    if (SITE_URL) {
+      metadataBase = new URL(SITE_URL)
+    }
+  } catch (err) {
+    console.error('Invalid SITE_URL:', SITE_URL, err)
+  }
+
+  const data: Metadata = {
+    ...(metadataBase && { metadataBase }),
     title: `${showData.name || '節目'} - 鏡新聞`,
     description: showData.introduction ?? undefined,
     openGraph: {
