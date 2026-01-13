@@ -72,16 +72,16 @@ export async function generateMetadata({
     throw new Error('Error occurs while fetching data.')
   }
 
-  if (!showData) {
+  if (!showData || !showData.name) {
     return {}
   }
 
   const data = {
     metadataBase: new URL(SITE_URL),
-    title: `${showData.name} - 鏡新聞`,
-    description: showData.introduction,
+    title: `${showData.name || '節目'} - 鏡新聞`,
+    description: showData.introduction ?? undefined,
     openGraph: {
-      title: `${showData.name} - 鏡新聞`,
+      title: `${showData.name || '節目'} - 鏡新聞`,
       description: showData.introduction ?? undefined,
       images: {
         url: showData.picture?.urlOriginal ?? '/images/default-og-img.jpg',
@@ -113,7 +113,7 @@ export default async function ShowPage({
 }) {
   // const MAX_RESULT_NUM = 30
 
-  let show: ShowWithDetail
+  let show: ShowWithDetail | undefined
   const { slug } = params
 
   try {
@@ -136,7 +136,7 @@ export default async function ShowPage({
     throw new Error('Error occurs while fetching data.')
   }
 
-  if (!show?.slug) {
+  if (!show || !show.slug) {
     notFound()
   }
 
@@ -169,10 +169,12 @@ export default async function ShowPage({
         <GPTAd pageKey="show" adKey="MB_M1" />
       </GPTPlaceholderMobile>
       <main className={styles.container}>
-        <h1 className={styles.title}>{show.name}</h1>
+        <h1 className={styles.title}>{show.name || '節目'}</h1>
         <figure className={styles.banner}>
           <ResponsiveImage
-            images={formateHeroImage(show.picture ?? show.bannerImg ?? {})}
+            images={formateHeroImage(
+              show.picture ?? show.bannerImg ?? undefined
+            )}
             alt={show.name || 'show-banner'}
             rwd={{ desktop: '1200px' }}
             priority={true}
@@ -206,7 +208,7 @@ export default async function ShowPage({
                 <div
                   className={styles.introduction}
                   dangerouslySetInnerHTML={{
-                    __html: show.introduction.replace(/\n/g, '<br>'),
+                    __html: (show.introduction || '').replace(/\n/g, '<br>'),
                   }}
                 ></div>
               )}
