@@ -86,6 +86,44 @@ export async function generateMetadata({
     console.error('Invalid SITE_URL:', SITE_URL, err)
   }
 
+  // 處理圖片 URL，確保是絕對 URL
+  const getImageUrl = (url: string | null | undefined): string => {
+    if (!url) {
+      return '/images/default-og-img.jpg'
+    }
+    // 如果已經是絕對 URL，直接返回
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url
+    }
+    // 如果是相對路徑，轉換為絕對 URL
+    if (metadataBase) {
+      try {
+        return new URL(url, metadataBase).toString()
+      } catch (err) {
+        console.error('Failed to convert image URL to absolute:', url, err)
+        // 如果轉換失敗，嘗試使用 SITE_URL 字符串
+        try {
+          return new URL(url, SITE_URL).toString()
+        } catch (err2) {
+          console.error('Failed to convert image URL with SITE_URL:', url, err2)
+          return url
+        }
+      }
+    }
+    // 如果沒有 metadataBase，嘗試使用 SITE_URL 字符串
+    if (SITE_URL) {
+      try {
+        return new URL(url, SITE_URL).toString()
+      } catch (err) {
+        console.error('Failed to convert image URL:', url, err)
+      }
+    }
+    // 最後返回相對路徑
+    return url
+  }
+
+  const imageUrl = getImageUrl(showData.picture?.urlOriginal)
+
   const data: Metadata = {
     ...(metadataBase && { metadataBase }),
     title: `${showData.name || '節目'} - 鏡新聞`,
@@ -93,27 +131,28 @@ export async function generateMetadata({
     openGraph: {
       title: `${showData.name || '節目'} - 鏡新聞`,
       description: showData.introduction ?? undefined,
-      images: {
-        url: showData.picture?.urlOriginal ?? '/images/default-og-img.jpg',
-      },
+      images: imageUrl ? [{ url: imageUrl }] : [],
     },
   }
 
-  return Object.fromEntries(
-    Object.entries(data)
-      .map(([key, value]) => {
-        if (typeof value === 'object' && value !== null) {
-          return [
-            key,
-            Object.fromEntries(
-              Object.entries(value).filter(([, v]) => v != null)
-            ),
-          ]
-        }
-        return [key, value]
-      })
-      .filter(([, value]) => value != null)
-  )
+  // 過濾 null 值，但保留 metadataBase（URL 對象）和 openGraph 結構
+  const filteredData: Metadata = {
+    ...(data.metadataBase && { metadataBase: data.metadataBase }),
+    ...(data.title && { title: data.title }),
+    ...(data.description && { description: data.description }),
+    openGraph: {
+      ...(data.openGraph?.title && { title: data.openGraph.title }),
+      ...(data.openGraph?.description && {
+        description: data.openGraph.description,
+      }),
+      ...(data.openGraph?.images &&
+        data.openGraph.images.length > 0 && {
+          images: data.openGraph.images,
+        }),
+    },
+  }
+
+  return filteredData
 }
 
 export default async function ShowPage({
