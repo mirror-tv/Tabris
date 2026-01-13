@@ -27,6 +27,7 @@ const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 import { SALES_LABEL_NAME } from '~/constants/constant'
 import { fetchCategoryData } from '~/app/_actions/category/category-data'
 import PageLogger from '~/components/page-logger'
+import { notFound } from 'next/navigation'
 
 export const revalidate = GLOBAL_CACHE_SETTING
 
@@ -165,9 +166,8 @@ export default async function CategoryPage({
   let newestPostType: 'external' | 'post' | 'json' = 'json'
 
   categoryData = await fetchCategoryData(params.slug)
-  // 如果沒有找到 category，使用 slug 作為名稱，讓頁面可以正常顯示
   if (!categoryData.name) {
-    categoryData = { ...categoryData, name: params.slug, slug: params.slug }
+    return notFound()
   }
 
   const fetchFeaturePosts = (): Promise<FeaturePostsResponse> =>
