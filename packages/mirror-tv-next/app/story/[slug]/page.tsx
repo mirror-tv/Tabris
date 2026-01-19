@@ -8,7 +8,7 @@ import styles from './_styles/story.module.scss'
 import { fetchStoryBySlug } from '~/app/_actions/story/story-by-slug'
 import ArticleHeroImageAndVideo from '~/components/story/article-hero-image-and-video'
 import ApiDataRenderer from '~/components/story/api-data-renderer/renderer'
-import { formateDateAtTaipei } from '~/utils'
+import { formateDateAtTaipei, formateHeroImage } from '~/utils'
 import ArticleInfo from '~/components/story/article-info'
 import { notFound } from 'next/navigation'
 import ArticleBrief from '~/components/story/article-brief'
@@ -43,6 +43,27 @@ type StoryPageTypes = {
   params: { slug: string }
 }
 
+function getStoryOgImage(heroImage?: SinglePost['heroImage'] | null) {
+  const formattedHeroImage = formateHeroImage(heroImage ?? undefined)
+  return (
+    formattedHeroImage.w1600 ||
+    formattedHeroImage.w2400 ||
+    formattedHeroImage.w800 ||
+    formattedHeroImage.w3200 ||
+    formattedHeroImage.original
+  )
+}
+
+function getStoryDableImage(heroImage?: SinglePost['heroImage'] | null) {
+  const formattedHeroImage = formateHeroImage(heroImage ?? undefined)
+  return (
+    formattedHeroImage.w800 ||
+    formattedHeroImage.w1600 ||
+    formattedHeroImage.w2400 ||
+    formattedHeroImage.original
+  )
+}
+
 function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
   const category = storyData.categories?.[0]
   const logoUrl = '/images/logo.png' // 需要確認實際的 logo 路徑
@@ -66,7 +87,7 @@ function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
       '@id': pageUrl,
     },
     headline: storyData.title,
-    image: storyData.heroImage?.urlDesktopSized,
+    image: getStoryOgImage(storyData.heroImage),
     datePublished: publishedDateIso,
     dateModified: modifiedDateIso,
     author: {
@@ -87,7 +108,7 @@ function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
           .join('')
       : undefined,
     url: pageUrl,
-    thumbnailUrl: storyData.heroImage?.urlDesktopSized,
+    thumbnailUrl: getStoryOgImage(storyData.heroImage),
     articleSection: category?.title || '',
   }
 
@@ -162,8 +183,8 @@ export async function generateMetadata({
         .join('')
     : ''
   const tags = storyData.tags?.map((tag) => tag.name).join(', ')
-  const image = storyData.heroImage?.urlDesktopSized
-  const dableImage = storyData.heroImage?.urlMobileSized
+  const image = getStoryOgImage(storyData.heroImage)
+  const dableImage = getStoryDableImage(storyData.heroImage)
   const pageUrl = `${META_SITE_URL}/story/${params.slug}`
   const writer = storyData.writers?.[0]
   const authorName = writer?.name || SITE_TITLE

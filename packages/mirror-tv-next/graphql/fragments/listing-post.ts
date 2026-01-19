@@ -15,11 +15,7 @@ const listingPost = gql`
     style
     name
     heroImage {
-      urlOriginal
-      urlDesktopSized
-      urlTabletSized
-      urlMobileSized
-      urlTinySized
+      imageApiData
     }
     exclusive
   }

@@ -37,16 +37,10 @@ const fetchShowBySlug = gql`
       slug
       name
       bannerImg {
-        urlDesktopSized
-        urlMobileSized
-        urlTabletSized
-        urlOriginal
+        imageApiData
       }
       picture {
-        urlDesktopSized
-        urlMobileSized
-        urlTabletSized
-        urlOriginal
+        imageApiData
       }
       hostName(sortBy: [sortOrder_ASC, id_DESC])
         @include(if: $shouldFetchHost) {
@@ -55,14 +49,10 @@ const fetchShowBySlug = gql`
         sortOrder
         bioApiData
         showhostImg @include(if: $squareHostImg) {
-          urlMobileSized
-          urlTabletSized
-          urlOriginal
+          imageApiData
         }
         anchorImg @include(if: $rectHostImg) {
-          urlMobileSized
-          urlTabletSized
-          urlOriginal
+          imageApiData
         }
       }
       staffName(sortBy: [sortOrder_ASC, id_DESC])
@@ -72,14 +62,10 @@ const fetchShowBySlug = gql`
         sortOrder
         bioApiData
         showhostImg @include(if: $squareHostImg) {
-          urlMobileSized
-          urlTabletSized
-          urlOriginal
+          imageApiData
         }
         anchorImg @include(if: $rectHostImg) {
-          urlMobileSized
-          urlTabletSized
-          urlOriginal
+          imageApiData
         }
       }
       introduction

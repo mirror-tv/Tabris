@@ -37,6 +37,19 @@ export const config = { amp: true }
 // 初始化 dayjs
 dayjs.extend(utc)
 
+function getStoryOgImage(
+  heroImage: SinglePost['heroImage'] | null | undefined
+) {
+  const formattedHeroImage = formateHeroImage(heroImage ?? undefined)
+  return (
+    formattedHeroImage.w1600 ||
+    formattedHeroImage.w2400 ||
+    formattedHeroImage.w800 ||
+    formattedHeroImage.w3200 ||
+    formattedHeroImage.original
+  )
+}
+
 function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
   const category = storyData.categories?.[0]
   const logoUrl = '/images/logo.png'
@@ -46,7 +59,7 @@ function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
         .map((item: { content?: string[] }) => item.content?.join('') || '')
         .join('')
     : ''
-  const image = storyData.heroImage?.urlDesktopSized
+  const image = getStoryOgImage(storyData.heroImage)
   const writer = storyData.writers?.[0]
   const authorName = writer?.name || SITE_TITLE
   const publishTime = storyData.publishTime
@@ -171,7 +184,7 @@ export default function AmpPage({
     briefApiData,
   } = storyData
   const heroImgSrc =
-    getHeroImageOfAmp(formateHeroImage(heroImage)) ||
+    getHeroImageOfAmp(formateHeroImage(heroImage ?? undefined)) ||
     '/images/image-default.jpg'
   const heroVideoId = extractYoutubeId(heroVideo?.youtubeUrl) ?? ''
 
@@ -181,7 +194,7 @@ export default function AmpPage({
         .join('')
     : ''
   const tags = storyData.tags?.map((tag) => tag.name).join(', ')
-  const image = storyData.heroImage?.urlDesktopSized
+  const image = getStoryOgImage(storyData.heroImage)
   const pageUrl = `${META_SITE_URL}/story/${slug}`
   const category = storyData.categories?.[0]
   const publishedDateIso = dayjs(publishTime).utcOffset(8).toISOString()

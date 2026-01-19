@@ -28,16 +28,12 @@ const getVideoEditorChoice = gql`
         name
         style
         heroImage {
-          urlMobileSized
-          urlOriginal
+          imageApiData
         }
         heroVideo {
           url
           coverPhoto {
-            urlMobileSized
-            urlTabletSized
-            urlDesktopSized
-            urlOriginal
+            imageApiData
           }
         }
       }

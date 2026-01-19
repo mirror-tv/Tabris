@@ -34,9 +34,7 @@ const fetchContactBySlug = gql`
       twitter
       bioApiData
       showhostImg {
-        urlMobileSized
-        urlTabletSized
-        urlDesktopSized
+        imageApiData
       }
       relatedShows @include(if: $shouldFetchRelatedShows) {
         id
@@ -56,9 +54,7 @@ const fetchContactsByAnchorPerson = gql`
       name
       slug
       anchorImg {
-        urlTabletSized
-        urlMobileSized
-        urlOriginal
+        imageApiData
       }
     }
   }
@@ -73,8 +69,7 @@ const fetchContactsByHost = gql`
       name
       slug
       anchorImg {
-        urlTabletSized
-        urlMobileSized
+        imageApiData
       }
     }
   }
@@ -89,8 +84,7 @@ const fetchContactsByInternational = gql`
       name
       slug
       anchorImg {
-        urlTabletSized
-        urlMobileSized
+        imageApiData
       }
     }
   }

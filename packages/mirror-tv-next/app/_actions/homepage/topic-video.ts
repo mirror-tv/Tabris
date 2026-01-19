@@ -12,12 +12,24 @@ type VideoWithRequiredDescription = Omit<Video, 'description'> & {
   description: string
 }
 
+const ImageApiDataSizeSchema = z.object({
+  url: z.string(),
+  width: z.number().optional(),
+  height: z.number().optional(),
+})
+
+const ImageApiDataSchema = z.object({
+  url: z.string().optional(),
+  w480: ImageApiDataSizeSchema.optional(),
+  w800: ImageApiDataSizeSchema.optional(),
+  w1200: ImageApiDataSizeSchema.optional(),
+  w1600: ImageApiDataSizeSchema.optional(),
+  w2400: ImageApiDataSizeSchema.optional(),
+  original: ImageApiDataSizeSchema.optional(),
+})
+
 const HeroImageSchema = z.object({
-  urlDesktopSized: z.string().optional(),
-  urlTabletSized: z.string().optional(),
-  urlMobileSized: z.string().optional(),
-  urlTinySized: z.string().optional(),
-  urlOriginal: z.string().optional(),
+  imageApiData: z.union([z.string(), ImageApiDataSchema]).optional(),
 })
 
 const TopicVideoDataSchema = z.object({
@@ -117,11 +129,9 @@ async function getTopicVideo(): Promise<{
       const transformedTopics = validatedData.allTopics.map((topic) => ({
         ...topic,
         heroImage: topic.heroImage || {
-          urlOriginal: '',
-          urlDesktopSized: '',
-          urlTabletSized: '',
-          urlMobileSized: '',
-          urlTinySized: '',
+          imageApiData: {
+            url: '',
+          },
         },
         postDESC: topic.postDESC || [],
         postASC: topic.postASC || [],

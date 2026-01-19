@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import type { HeroImage } from '~/types/common'
 
 export interface SingleRelatedPost {
   slug: string
@@ -25,15 +26,7 @@ export interface SinglePost {
   heroVideo: {
     youtubeUrl: string
   }
-  heroImage: {
-    id: string
-    name: string
-    urlOriginal: string
-    urlDesktopSized: string
-    urlTabletSized: string
-    urlMobileSized: string
-    urlTinySized: string
-  }
+  heroImage: HeroImage | null
   heroCaption: string
   categories: {
     slug: string
@@ -71,13 +64,7 @@ const fetchStoryBySlug = gql`
         youtubeUrl
       }
       heroImage {
-        id
-        name
-        urlOriginal
-        urlDesktopSized
-        urlTabletSized
-        urlMobileSized
-        urlTinySized
+        imageApiData
       }
       heroCaption
       briefApiData

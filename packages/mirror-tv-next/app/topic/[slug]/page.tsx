@@ -17,7 +17,7 @@ import {
 import type { SingleTopic } from '~/graphql/query/topic'
 import { fetchSingleTopicByTopicSlug } from '~/graphql/query/topic'
 import styles from '~/styles/pages/single-topic-page.module.scss'
-import { handleMetaDesc } from '~/utils'
+import { formateHeroImage, handleMetaDesc } from '~/utils'
 import dynamic from 'next/dynamic'
 import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
@@ -65,6 +65,13 @@ export async function generateMetadata({
   }
 
   const description = handleMetaDesc(singleTopic?.briefHtml ?? '')
+  const heroImage = formateHeroImage(singleTopic?.heroImage)
+  const ogImage =
+    heroImage.w800 ||
+    heroImage.w1600 ||
+    heroImage.w2400 ||
+    heroImage.w3200 ||
+    heroImage.original
 
   return {
     metadataBase: new URL(SITE_URL),
@@ -74,8 +81,7 @@ export async function generateMetadata({
       title: `${singleTopic?.title} - 鏡新聞`,
       description: description !== '' ? description : META_DESCRIPTION,
       siteName: SITE_TITLE,
-      images:
-        singleTopic?.heroImage?.urlMobileSized ?? '/images/default-og-img.jpg',
+      images: ogImage,
     },
   }
 }

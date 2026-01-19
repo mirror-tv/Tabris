@@ -40,11 +40,7 @@ const getPostsByTagName = gql`
       publishTime
       ...listingPostFragment
       ogImage {
-        urlOriginal
-        urlDesktopSized
-        urlTabletSized
-        urlMobileSized
-        urlTinySized
+        imageApiData
       }
     }
     _allPostsMeta(
@@ -177,8 +173,7 @@ const getPostsWithCategory = gql`
       }
       heroVideo {
         coverPhoto {
-          urlMobileSized
-          urlOriginal
+          imageApiData
         }
       }
     }

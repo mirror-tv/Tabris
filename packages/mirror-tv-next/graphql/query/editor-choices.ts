@@ -22,19 +22,11 @@ const fetchEditorChoices = gql`
         name
         slug
         heroImage {
-          urlOriginal
-          urlDesktopSized
-          urlTabletSized
-          urlMobileSized
-          urlTinySized
+          imageApiData
         }
         heroVideo {
           coverPhoto {
-            urlOriginal
-            urlDesktopSized
-            urlTabletSized
-            urlMobileSized
-            urlTinySized
+            imageApiData
           }
         }
         exclusive

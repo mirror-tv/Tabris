@@ -23,12 +23,21 @@ export type FormattedPostCardJson = Omit<
   label?: string | null
 }
 
+// Legacy image format for backward compatibility
+type LegacyImageFormat = {
+  urlOriginal?: string
+  urlDesktopSized?: string
+  urlTabletSized?: string
+  urlMobileSized?: string
+  urlTinySized?: string
+}
+
 type FormatArticleCardInput = {
   slug: string
   name: string
   publishTime: string | Date
-  heroImage?: HeroImage | null
-  ogImage?: HeroImage | null
+  heroImage?: HeroImage | LegacyImageFormat | null
+  ogImage?: HeroImage | LegacyImageFormat | null
   thumbnail?: string | null
   images?: PostImage | null
   style?: string
@@ -57,17 +66,27 @@ const formatArticleCard = (
       '__typename' in post ? String(post['__typename'] ?? '') : undefined,
     exclusive: 'exclusive' in post ? post.exclusive ?? false : false,
   }
+
+  // Handle legacy image format - convert to HeroImage format if needed
+  let heroImageForFormatting: HeroImage | LegacyImageFormat | null | undefined =
+    postFormatArticleCardInput.heroImage ?? postFormatArticleCardInput.ogImage
+
+  // If it's a legacy format (has urlOriginal, urlDesktopSized, etc.), pass it as-is
+  // formateHeroImage can handle both formats
+  if (!heroImageForFormatting && postFormatArticleCardInput.thumbnail) {
+    heroImageForFormatting = {
+      imageApiData: {
+        url: postFormatArticleCardInput.thumbnail ?? undefined,
+        original: {
+          url: postFormatArticleCardInput.thumbnail ?? undefined,
+        },
+      },
+    }
+  }
+
   const imageObj: PostImage =
     postFormatArticleCardInput.images ??
-    formateHeroImage(
-      postFormatArticleCardInput.heroImage ??
-        postFormatArticleCardInput.ogImage ??
-        (postFormatArticleCardInput.thumbnail
-          ? {
-              urlOriginal: postFormatArticleCardInput.thumbnail ?? undefined,
-            }
-          : undefined)
-    )
+    formateHeroImage(heroImageForFormatting)
 
   return {
     href:

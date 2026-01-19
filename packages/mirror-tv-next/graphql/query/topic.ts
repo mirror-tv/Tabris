@@ -77,9 +77,7 @@ const getTopics = gql`
       name
       briefApiData
       heroImage {
-        urlMobileSized
-        urlTabletSized
-        urlOriginal
+        imageApiData
       }
     }
     _allTopicsMeta(where: { state: published }) @include(if: $withCount) {
@@ -103,10 +101,7 @@ const fetchSingleTopicByTopicSlug = gql`
       instagram
       line
       heroImage {
-        urlDesktopSized
-        urlTabletSized
-        urlMobileSized
-        urlOriginal
+        imageApiData
       }
       heroVideo {
         url
@@ -116,10 +111,7 @@ const fetchSingleTopicByTopicSlug = gql`
         slug
         name
         heroImage {
-          urlTabletSized
-          urlDesktopSized
-          urlMobileSized
-          urlOriginal
+          imageApiData
         }
       }
       multivideo {
@@ -139,24 +131,23 @@ const fetchPostItemsByTopicSlug = gql`
     $topicSlug: String!
     $first: Int = 12
     $skip: Int
-    $postDir: [SortPostsBy!] = publishTime_DESC
+    $postDir: [PostOrderByInput!] = { publishTime: desc }
   ) {
-    topic: allTopics(where: { state: published, slug: $topicSlug }) {
+    topic: topics(
+      where: { state: { equals: "published" }, slug: { equals: $topicSlug } }
+    ) {
       items: post(
-        where: { state: published }
-        first: $first
+        where: { state: { equals: "published" } }
+        take: $first
         skip: $skip
-        sortBy: $postDir
+        orderBy: $postDir
       ) {
         id
         slug
         title: name
         publishTime
         heroImage {
-          urlDesktopSized
-          urlTabletSized
-          urlMobileSized
-          urlOriginal
+          imageApiData
         }
         categories {
           name
@@ -185,9 +176,7 @@ const fetchFeatureTopics = gql`
       slug
       name
       heroImage {
-        urlMobileSized
-        urlTabletSized
-        urlOriginal
+        imageApiData
       }
       sortDir
       postDESC: post(

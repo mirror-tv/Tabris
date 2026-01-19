@@ -76,6 +76,16 @@ export async function generateMetadata({
     return {}
   }
 
+  const formattedShowImage = formateHeroImage(
+    showData.picture ?? showData.bannerImg ?? undefined
+  )
+  const ogImage =
+    formattedShowImage.w800 ||
+    formattedShowImage.w1600 ||
+    formattedShowImage.w2400 ||
+    formattedShowImage.w3200 ||
+    formattedShowImage.original
+
   const data = {
     metadataBase: new URL(SITE_URL),
     title: `${showData.name} - 鏡新聞`,
@@ -84,7 +94,7 @@ export async function generateMetadata({
       title: `${showData.name} - 鏡新聞`,
       description: showData.introduction ?? undefined,
       images: {
-        url: showData.picture?.urlOriginal ?? '/images/default-og-img.jpg',
+        url: ogImage,
       },
     },
   }
