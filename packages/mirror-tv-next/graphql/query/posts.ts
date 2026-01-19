@@ -24,18 +24,18 @@ const getPostsByTagName = gql`
     $first: Int = 12
     $skip: Int = 0
     $withCount: Boolean = false
-    $filteredSlug: [String] = [""]
+    $filteredSlug: [String!] = [""]
   ) {
-    allPosts(
+    posts(
       where: {
-        state: published
-        slug_not_in: $filteredSlug
-        categories_some: { slug_not_in: "ombuds" }
-        tags_some: { name: $tagName }
+        state: { equals: "published" }
+        slug: { notIn: $filteredSlug }
+        categories: { some: { slug: { notIn: ["ombuds"] } } }
+        tags: { some: { name: { equals: $tagName } } }
       }
-      first: $first
+      take: $first
       skip: $skip
-      sortBy: publishTime_DESC
+      orderBy: { publishTime: desc }
     ) {
       publishTime
       ...listingPostFragment
@@ -43,16 +43,14 @@ const getPostsByTagName = gql`
         imageApiData
       }
     }
-    _allPostsMeta(
+    count: postsCount(
       where: {
-        state: published
-        slug_not_in: $filteredSlug
-        categories_some: { slug_not_in: "ombuds" }
-        tags_some: { name: $tagName }
+        state: { equals: "published" }
+        slug: { notIn: $filteredSlug }
+        categories: { some: { slug: { notIn: ["ombuds"] } } }
+        tags: { some: { name: { equals: $tagName } } }
       }
-    ) @include(if: $withCount) {
-      count
-    }
+    ) @include(if: $withCount)
   }
   ${listingPost}
 `

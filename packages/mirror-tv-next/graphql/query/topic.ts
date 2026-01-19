@@ -39,6 +39,24 @@ export type Post = ListingPost & {
   categories: Category[]
 }
 
+// Response type for fetchSingleTopicByTopicSlug (new k6 structure)
+export type PostsByTagNameResponse = {
+  posts: Array<{
+    publishTime: string
+    slug: string
+    style: string
+    name: string
+    heroImage: {
+      imageApiData: string | null
+    } | null
+    exclusive: boolean | null
+    ogImage: {
+      imageApiData: string | null
+    } | null
+  }>
+  count?: number
+}
+
 export type SingleTopic = Topic & {
   title: string
   sortDir: string
@@ -66,11 +84,11 @@ export type FeatureTopic = Omit<Topic, 'briefApiData'> & {
 
 const getTopics = gql`
   query fetchTopics($first: Int = 12, $skip: Int, $withCount: Boolean = true) {
-    allTopics(
-      first: $first
+    topics(
+      take: $first
       skip: $skip
-      where: { state: published }
-      sortBy: [sortOrder_ASC, updatedAt_DESC]
+      where: { state: { equals: "published" } }
+      orderBy: [{ sortOrder: asc }, { updatedAt: desc }]
     ) {
       id
       slug
@@ -80,49 +98,50 @@ const getTopics = gql`
         imageApiData
       }
     }
-    _allTopicsMeta(where: { state: published }) @include(if: $withCount) {
-      count
-    }
+    count: topicsCount(where: { state: { equals: "published" } })
+      @include(if: $withCount)
   }
 `
 
 const fetchSingleTopicByTopicSlug = gql`
-  query fetchSingleTopicByTopicSlug(
-    $topicSlug: String!
-    $withCount: Boolean = true
+  query fetchPostsByTagName(
+    $tagName: String!
+    $first: Int = 12
+    $skip: Int = 0
+    $withCount: Boolean = false
+    $filteredSlug: [String!] = [""]
   ) {
-    topic: allTopics(where: { state: published, slug: $topicSlug }) {
-      id
-      title: name
-      sortDir
-      leading
-      facebook
-      briefHtml
-      instagram
-      line
+    posts(
+      where: {
+        state: { equals: "published" }
+        slug: { notIn: $filteredSlug }
+        categories: { some: { slug: { notIn: ["ombuds"] } } }
+        tags: { some: { name: { equals: $tagName } } }
+      }
+      take: $first
+      skip: $skip
+      orderBy: { publishTime: desc }
+    ) {
+      publishTime
+      slug
+      style
+      name
       heroImage {
         imageApiData
       }
-      heroVideo {
-        url
-      }
-      slideshow {
-        id
-        slug
-        name
-        heroImage {
-          imageApiData
-        }
-      }
-      multivideo {
-        id
-        youtubeUrl
-        url
-      }
-      meta: _postMeta(where: { state: published }) @include(if: $withCount) {
-        count
+      exclusive
+      ogImage {
+        imageApiData
       }
     }
+    count: postsCount(
+      where: {
+        state: { equals: "published" }
+        slug: { notIn: $filteredSlug }
+        categories: { some: { slug: { notIn: ["ombuds"] } } }
+        tags: { some: { name: { equals: $tagName } } }
+      }
+    ) @include(if: $withCount)
   }
 `
 

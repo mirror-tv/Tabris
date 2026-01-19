@@ -12,29 +12,28 @@ const getExternalsByTagName = gql`
     $first: Int = 12
     $skip: Int = 0
     $withCount: Boolean = false
-    $filteredSlug: [String] = [""]
+    $filteredSlug: [String!] = [""]
   ) {
-    allExternals(
+    externals(
       where: {
-        state: published
-        slug_not_in: $filteredSlug
-        tags_some: { name: $tagName }
+        state: { equals: "published" }
+        slug: { notIn: $filteredSlug }
+        tags: { some: { name: { equals: $tagName } } }
       }
-      first: $first
+      take: $first
       skip: $skip
-      sortBy: publishTime_DESC
+      orderBy: { publishTime: desc }
     ) {
-      ...listingExternalFragment
+      id
+      # ...listingExternalFragment
     }
-    _allExternalsMeta(
+    count: externalsCount(
       where: {
-        state: published
-        slug_not_in: $filteredSlug
-        tags_some: { name: $tagName }
+        state: { equals: "published" }
+        slug: { notIn: $filteredSlug }
+        tags: { some: { name: { equals: $tagName } } }
       }
-    ) @include(if: $withCount) {
-      count
-    }
+    ) @include(if: $withCount)
   }
   ${listingExternal}
 `
