@@ -2,8 +2,9 @@ import AMPLayout from '~/components/story/amp/layout'
 import {
   ENV,
   GLOBAL_CACHE_SETTING,
-  POPULAR_POSTS_URL,
+  POPULAR_POSTS_FILE_NAME,
 } from '~/constants/environment-variables'
+import { fetchStaticJson } from '~/utils/fetch-static-json'
 import { getClient } from '~/apollo-client'
 import {
   fetchStoryBySlug as fetchStoryBySlugDocument,
@@ -524,11 +525,7 @@ export const getServerSideProps: GetServerSideProps<{
   }
 
   const fetchPopularList = () =>
-    fetch(POPULAR_POSTS_URL, {
-      next: { revalidate: GLOBAL_CACHE_SETTING },
-    }).then((res) => {
-      return res.json() as unknown as { report: RawPopularPost[] }
-    })
+    fetchStaticJson<{ report: RawPopularPost[] }>(POPULAR_POSTS_FILE_NAME)
 
   const client = getClient()
 
