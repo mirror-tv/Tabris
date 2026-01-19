@@ -1,9 +1,5 @@
-type Category = {
-  name: string
-  slug: string
-  sortOrder: number | null
-  id: string
-}
+import type { Category } from '~/graphql/query/category'
+import type { Sponsor } from '~/graphql/query/sponsors'
 
 type BannerImage = {
   urlMobileSized: string
@@ -18,26 +14,6 @@ export type Show = {
   sortOrder: string | null
   bannerImg: BannerImage | null
   listShow?: boolean | null
-}
-
-type Sponsor = {
-  id: string
-  title: string | null
-  url: string | null
-  logo: {
-    urlMobileSized: string
-  }
-  mobile: {
-    urlMobileSized: string
-  } | null
-  tablet: {
-    urlMobileSized: string
-  } | null
-  topic: {
-    id: string
-    slug: string
-    name: string
-  } | null
 }
 
 export type HeaderData = {
