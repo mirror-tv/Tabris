@@ -69,8 +69,8 @@ function handleMetaDesc(str: string) {
 function handleApiData(apiData: string | null | undefined): ApiData[] {
   try {
     const rawString = apiData ?? ''
-    const content = JSON.parse(rawString)
-
+    const content =
+      typeof rawString === 'string' ? JSON.parse(rawString) : rawString
     return content?.filter((item: ApiData) => item) || []
   } catch {
     return []
