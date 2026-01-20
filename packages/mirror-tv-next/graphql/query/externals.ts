@@ -46,27 +46,25 @@ const getExternalsByCategory = gql`
     $withCount: Boolean = false
     $filteredSlug: [String] = [""]
   ) {
-    allExternals(
+    externals(
       where: {
-        state: published
-        slug_not_in: $filteredSlug
-        categories_some: { slug: $categorySlug }
+        state: { equals: "publish" }
+        slug: { notIn: $filteredSlug }
+        categories: { some: { slug: { equals: $categorySlug } } }
       }
-      first: $first
+      take: $first
       skip: $skip
-      sortBy: publishTime_DESC
+      orderBy: { publishTime: desc }
     ) {
       ...listingExternalFragment
     }
-    _allExternalsMeta(
+    externalsCount(
       where: {
-        state: published
-        slug_not_in: $filteredSlug
-        categories_some: { slug: $categorySlug }
+        state: { equals: "publish" }
+        slug: { notIn: $filteredSlug }
+        categories: { some: { slug: { equals: $categorySlug } } }
       }
-    ) @include(if: $withCount) {
-      count
-    }
+    ) @include(if: $withCount)
   }
   ${listingExternal}
 `

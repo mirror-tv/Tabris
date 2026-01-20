@@ -3,10 +3,11 @@ import type { HeroImage } from '~/types/common'
 
 export type ListingPost = {
   slug: string
-  style?: string
+  style?: string | null
   name: string
   heroImage: HeroImage | null
   exclusive: boolean | null
+  __typename?: 'Post'
 }
 
 const listingPost = gql`

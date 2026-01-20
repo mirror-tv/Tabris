@@ -14,10 +14,10 @@ export interface SingleExternalPost {
   id: string
   slug: string
   state: string
-  partner: {
+  partner?: {
     name: string
     slug: string
-  }
+  } | null
   name: string
   tags: {
     id: string
@@ -31,20 +31,23 @@ export interface SingleExternalPost {
   }[]
   // subtitle?: string
   publishTime: string
-  byline?: string
-  thumbnail?: string
-  heroCaption?: string
-  brief_original?: string
-  content_original?: string
-  brief?: string
+  byline?: string | null
+  thumbnail?: string | null
+  heroCaption?: string | null
+  brief_original?: string | null
+  content_original?: string | null
+  brief?: string | null
   // content: string
-  source?: string
-  updatedAt: string
+  source?: string | null
+  updatedAt: string | null
+  __typename?: 'External'
 }
 
 const fetchExternalBySlug = gql`
   query fetchExternalBySlug($slug: String!) {
-    allExternals(where: { slug: $slug, state: published }) {
+    allExternals: externals(
+      where: { slug: { equals: $slug }, state: { equals: "published" } }
+    ) {
       id
       slug
       state

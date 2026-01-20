@@ -5,6 +5,7 @@ export type ListingExternal = {
   slug: string
   name: string
   thumbnail?: string | null
+  __typename?: 'External'
 }
 
 const listingExternal = gql`

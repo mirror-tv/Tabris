@@ -33,7 +33,7 @@ const fetchShowBySlug = gql`
     $squareHostImg: Boolean = false
     $rectHostImg: Boolean = false
   ) {
-    allShows(where: { slug: $slug }) {
+    allShows: shows(where: { slug: { equals: $slug } }) {
       slug
       name
       bannerImg {
@@ -42,7 +42,7 @@ const fetchShowBySlug = gql`
       picture {
         imageApiData
       }
-      hostName(sortBy: [sortOrder_ASC, id_DESC])
+      hostName(orderBy: [{ sortOrder: asc }, { id: desc }])
         @include(if: $shouldFetchHost) {
         slug
         name
@@ -55,7 +55,7 @@ const fetchShowBySlug = gql`
           imageApiData
         }
       }
-      staffName(sortBy: [sortOrder_ASC, id_DESC])
+      staffName(orderBy: [{ sortOrder: asc }, { id: desc }])
         @include(if: $shouldFetchStaff) {
         slug
         name
