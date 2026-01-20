@@ -39,6 +39,10 @@ export type Post = ListingPost & {
   categories: Category[]
 }
 
+export type PostOrderByInput = {
+  publishTime?: 'asc' | 'desc'
+}
+
 export type SingleTopic = Topic & {
   title: string
   sortDir: string | null
