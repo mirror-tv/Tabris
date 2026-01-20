@@ -40,7 +40,7 @@ type FormatArticleCardInput = {
   ogImage?: HeroImage | LegacyImageFormat | null
   thumbnail?: string | null
   images?: PostImage | null
-  style?: string
+  style?: string | null
   categories?: { name: string }[]
   partner?: { name: string; slug: string }
   __typename?: string

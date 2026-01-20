@@ -66,7 +66,7 @@ function handleMetaDesc(str: string) {
   return formatedStr.length > 123 ? formatedStr + '...' : formatedStr
 }
 
-function handleApiData(apiData: string): ApiData[] {
+function handleApiData(apiData: string | null | undefined): ApiData[] {
   try {
     const rawString = apiData ?? ''
     const content = JSON.parse(rawString)

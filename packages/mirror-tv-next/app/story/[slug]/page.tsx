@@ -289,7 +289,7 @@ const StoryPage = async (props: StoryPageTypes) => {
     ? formateDateAtTaipei(new Date(updatedAt), 'YYYY.MM.DD HH:mm', '臺北時間')
     : ''
 
-  const hasBrief = doesHaveBrief(briefApiData)
+  const hasBrief = doesHaveBrief(briefApiData ?? '')
 
   const pageUrl = `${META_SITE_URL}/story/${params.slug}`
   const jsonLdData = generateStoryJsonLds(storyData, pageUrl)
@@ -299,12 +299,12 @@ const StoryPage = async (props: StoryPageTypes) => {
       <JsonLd data={jsonLdData} />
       <MisoPageView productIds={`story_${params.slug}`} />
       <GA4SourceTracking source={source} />
-      <Article18Warning isAdult={isAdult} />
+      <Article18Warning isAdult={!!isAdult} />
       <section className={styles.article}>
         <ContainerFullScreenAds adKey="MB_NEWS" />
         <ArticleHeroImageAndVideo
           heroImage={heroImage}
-          title={heroCaption}
+          title={heroCaption || ''}
           heroCaption={heroCaption}
           style={style}
           heroVideo={heroVideo}
@@ -319,11 +319,16 @@ const StoryPage = async (props: StoryPageTypes) => {
           designers={designers}
           engineers={engineers}
           vocals={vocals}
-          otherbyline={otherbyline}
+          otherbyline={otherbyline ?? ''}
         />
-        {hasBrief && <ArticleBrief brief={JSON.parse(briefApiData || '[]')} />}
+        {hasBrief && (
+          <ArticleBrief brief={JSON.parse((briefApiData ?? '') || '[]')} />
+        )}
         <section className={styles.contentWrapper}>
-          <ApiDataRenderer contentData={contentApiData} isStoryBrief={false} />
+          <ApiDataRenderer
+            contentData={contentApiData ?? ''}
+            isStoryBrief={false}
+          />
           {!!download?.length && <UiDownload downloads={download} />}
           {updatedTime && <ArticleUpdateTime updateTime={updatedTime} />}
           {!!tags.length && <ArticleTagList tags={tags} />}

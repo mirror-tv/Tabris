@@ -157,23 +157,25 @@ export default async function SingleTopicPage({
       {(() => {
         switch (singleTopic.leading) {
           case 'video':
-            return (
+            return singleTopic.heroVideo?.url ? (
               <HeroVideo
                 videoSrc={singleTopic.heroVideo.url}
                 controls={false}
               />
-            )
+            ) : null
           case 'image':
-            return (
+            return singleTopic.heroImage ? (
               <HeroImage
                 heroImage={singleTopic.heroImage}
                 title={singleTopic.title}
               />
-            )
+            ) : null
           case 'slideshow':
             return (
               <HeroSlideshow
-                heroImage={singleTopic.heroImage}
+                heroImage={
+                  singleTopic.heroImage ?? { imageApiData: { url: '' } }
+                }
                 title={singleTopic.title}
                 slideshow={singleTopic.slideshow}
               />
@@ -181,7 +183,9 @@ export default async function SingleTopicPage({
           case 'multivideo':
             return (
               <HeroMultiVideo
-                heroImage={singleTopic.heroImage}
+                heroImage={
+                  singleTopic.heroImage ?? { imageApiData: { url: '' } }
+                }
                 title={singleTopic.title}
                 multivideo={singleTopic.multivideo}
               />
@@ -218,7 +222,7 @@ export default async function SingleTopicPage({
         </div>
         <TopicPostItems
           slug={params.slug}
-          itemsCount={singleTopic.meta.count}
+          itemsCount={singleTopic.itemsCount ?? 0}
         />
       </section>
     </main>

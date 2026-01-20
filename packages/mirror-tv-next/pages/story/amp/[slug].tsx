@@ -186,7 +186,7 @@ export default function AmpPage({
   const heroImgSrc =
     getHeroImageOfAmp(formateHeroImage(heroImage ?? undefined)) ||
     '/images/image-default.jpg'
-  const heroVideoId = extractYoutubeId(heroVideo?.youtubeUrl) ?? ''
+  const heroVideoId = extractYoutubeId(heroVideo?.youtubeUrl ?? '') ?? ''
 
   const brief = briefApiData
     ? JSON.parse(briefApiData)
@@ -432,7 +432,11 @@ export default function AmpPage({
                 ></amp-youtube>
               ) : (
                 <figure className="image-wrapper">
-                  <amp-img src={heroImgSrc} layout="fill" alt={heroCaption} />
+                  <amp-img
+                    src={heroImgSrc}
+                    layout="fill"
+                    alt={heroCaption ?? ''}
+                  />
                 </figure>
               )}
               {!!heroCaption && (
@@ -451,17 +455,17 @@ export default function AmpPage({
               designers={designers}
               engineers={engineers}
               vocals={vocals}
-              otherbyline={otherbyline}
+              otherbyline={otherbyline ?? ''}
             />
             <section className="brief-wrapper">
               <AmpApiDataRenderer
-                contentData={briefApiData}
+                contentData={briefApiData ?? ''}
                 isStoryBrief={true}
                 currentUrl={`/story/amp/${slug}`}
               />
             </section>
             <AmpApiDataRenderer
-              contentData={contentApiData}
+              contentData={contentApiData ?? ''}
               isStoryBrief={false}
               currentUrl={`/story/amp/${slug}`}
             />

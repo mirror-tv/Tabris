@@ -29,9 +29,6 @@ const ApiDataRenderer = ({
   contentData,
   isStoryBrief,
 }: ApiDataRendererPropsType) => {
-  if (isStoryBrief) {
-    console.log({ contentData })
-  }
   const parsedContentData: ApiData = JSON.parse(contentData)
 
   if (parsedContentData?.length >= 4 && !isStoryBrief) {
