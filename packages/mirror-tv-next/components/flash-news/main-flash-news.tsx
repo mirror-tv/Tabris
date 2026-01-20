@@ -1,7 +1,4 @@
 import errors from '@twreporter/errors'
-import {
-  GLOBAL_CACHE_SETTING,
-} from '~/constants/environment-variables'
 import { fetchStaticJson } from '~/utils/fetch-static-json'
 import styles from './_styles/main-flash-news.module.scss'
 import type { FlashNews } from '~/types/common'

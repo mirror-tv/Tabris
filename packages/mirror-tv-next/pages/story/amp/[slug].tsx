@@ -1,9 +1,5 @@
 import AMPLayout from '~/components/story/amp/layout'
-import {
-  ENV,
-  GLOBAL_CACHE_SETTING,
-  POPULAR_POSTS_FILE_NAME,
-} from '~/constants/environment-variables'
+import { ENV, POPULAR_POSTS_FILE_NAME } from '~/constants/environment-variables'
 import { fetchStaticJson } from '~/utils/fetch-static-json'
 import { getClient } from '~/apollo-client'
 import {

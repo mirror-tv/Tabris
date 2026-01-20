@@ -15,7 +15,6 @@ import {
 
 import { fetchStaticJson } from '~/utils/fetch-static-json'
 import { createDataFetchingChain } from '~/utils/fetch-function'
-import { ENV } from '~/constants/environment-variables'
 
 const HeroImageSchema = z.object({
   urlDesktopSized: z.string().optional(),
