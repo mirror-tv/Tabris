@@ -1,5 +1,3 @@
-'use server'
-
 import fs from 'fs/promises'
 import { isServer } from '~/utils/common'
 import {
