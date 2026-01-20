@@ -1,3 +1,4 @@
+import PageLogger from '~/components/page-logger'
 import dynamic from 'next/dynamic'
 import MainFlashNews from '~/components/flash-news/main-flash-news'
 import styles from '~/styles/pages/page.module.scss'
@@ -25,6 +26,7 @@ export default async function Home() {
   const isFeature2025HomepageStyleOn = FEATURE_2025_HOMEPAGE_STYLE === 'on'
   return (
     <main className={styles.main}>
+      <PageLogger />
       <GptPopup adKey="MB_HOME" />
       {/* GPT ADs */}
       <GPTPlaceholderDesktop>
@@ -44,7 +46,9 @@ export default async function Home() {
         mnewsLives={homepageData.allVideos.slice(0, 2)}
       />
       <GPTAd pageKey="home" adKey="PC_BT" />
-      <GPTAd pageKey="home" adKey="MB_M3" />
+      <div className={styles.gptAdM3Wrapper}>
+        <GPTAd pageKey="home" adKey="MB_M3" className={styles.gptAdM3} />
+      </div>
       {!isFeature2025HomepageStyleOn && <PopularPostsList title="熱門新聞" />}
       <LiveCamList
         title="直播現場"

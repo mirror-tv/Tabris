@@ -24,9 +24,6 @@ export default function DevNavigation() {
           Demo
         </Link>
         <span className="font-extrabold">|</span>
-        <Link href="/login" className="hover:text-purple-400">
-          Login
-        </Link>
         <Link href="/" className="hover:text-indigo-400">
           Dashboard
         </Link>
@@ -35,15 +32,6 @@ export default function DevNavigation() {
         </Link>
         <Link href="/list" className="hover:text-yellow-400">
           List
-        </Link>
-        <Link href="/order" className="hover:text-red-400">
-          Order
-        </Link>
-        <Link href="/edit-request" className="hover:text-red-400">
-          Edit-Request
-        </Link>
-        <Link href="/edit-schedule" className="hover:text-red-400">
-          Edit-Schedule
         </Link>
       </div>
 

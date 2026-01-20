@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.8.0-rc.2",
+    "@google-cloud/logging": "^11.2.1",
     "@next/third-parties": "^14.1.4",
     "@readr-media/react-image": "2.2.3",
     "@readr-media/react-infinite-scroll-list": "^1.2.0",
@@ -28,9 +29,11 @@
     "react-dom": "18.2.0",
     "react-youtube": "^10.1.0",
     "sass": "^1.69.7",
+    "server-only": "^0.0.1",
     "styled-components": "^6.1.15",
     "stylelint-scss": "^6.0.0",
     "swiper": "^11.0.6",
+    "ua-parser-js": "^2.0.7",
     "zod": "^4.1.5"
   },
   "engines": {

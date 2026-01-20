@@ -55,6 +55,7 @@
   color: $color-blue-light;
   width: fit-content;
   transition: 0.5s;
+  word-break: break-all;
   &:hover {
     color: $color-blue-deep;
     text-decoration: underline;
@@ -121,4 +122,10 @@
   @include media-breakpoint-up(xl) {
     display: block;
   }
+}
+
+.featureImgWrapper {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }

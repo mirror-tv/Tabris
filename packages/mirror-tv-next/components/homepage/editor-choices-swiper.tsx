@@ -50,7 +50,7 @@ export default function EditorChoicesSwiper({
   return (
     <section className={styles.container}>
       <div>
-        <div className={`${styles.swiperContainer} editor-choices-wrapper`}>
+        <div className={`${styles.swiperContainer}`}>
           <Swiper
             cssMode={true}
             slidesPerView={1}
@@ -74,10 +74,10 @@ export default function EditorChoicesSwiper({
               return (
                 <SwiperSlide
                   key={choice.slug}
-                  className={`${styles.swiperSlide} editor-choices-wrapper`}
+                  className={`${styles.swiperSlide}`}
                 >
                   <a
-                    className={styles.imageContainer}
+                    className={`${styles.imageContainer} GTM-editor-choices-link`}
                     href={
                       choice.source === 'externalChoice'
                         ? `/external/${choice.slug}`
@@ -101,7 +101,7 @@ export default function EditorChoicesSwiper({
                       priority={false}
                     />
                     <a
-                      className={styles.nameWrapper}
+                      className={`${styles.nameWrapper} GTM-editor-choices-link`}
                       href={
                         choice.source === 'externalChoice'
                           ? `/external/${choice.slug}`

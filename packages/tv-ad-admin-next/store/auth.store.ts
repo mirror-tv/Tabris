@@ -5,6 +5,8 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 
 import type { UserPayload } from '@/utils/auth'
 
+import { signOutFirebase } from '@/utils/firebase-client'
+
 type AuthState = {
   user: UserPayload | null
   isAuthenticated: boolean
@@ -58,6 +60,15 @@ export const useAuthStore = create<AuthStore>()(
           isInitialized: true,
         })
         try {
+          // 清除 Firebase 認證狀態
+          try {
+            await signOutFirebase()
+          } catch (firebaseError) {
+            console.error('Firebase 登出錯誤:', firebaseError)
+            // Firebase 登出錯誤不影響整體登出流程
+          }
+
+          // 清除後端 Cookie
           await fetch('/api/auth/logout', {
             method: 'POST',
             credentials: 'include',

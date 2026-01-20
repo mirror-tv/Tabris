@@ -21,6 +21,7 @@ import { formateHeroImage, handleMetaDesc } from '~/utils'
 import dynamic from 'next/dynamic'
 import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
+import PageLogger from '~/components/page-logger'
 
 export const revalidate = GLOBAL_CACHE_SETTING
 
@@ -150,6 +151,7 @@ export default async function SingleTopicPage({
 
   return (
     <main className={styles.mainWrapper}>
+      <PageLogger />
       <GPTPlaceholderDesktop>
         <p>廣告</p>
         <GPTAd pageKey="all" adKey="PC_HD" />

@@ -1,3 +1,4 @@
+import PageLogger from '~/components/page-logger'
 import ArticleRelatedPosts from '~/components/story/article-related-posts'
 import ArticleSocialList from '~/components/story/article-social-list'
 import { Metadata } from 'next'
@@ -252,6 +253,7 @@ const StoryPage = async (props: StoryPageTypes) => {
   }
 
   const {
+    id,
     contentApiData,
     relatedPosts,
     heroImage,
@@ -294,8 +296,23 @@ const StoryPage = async (props: StoryPageTypes) => {
   const pageUrl = `${META_SITE_URL}/story/${params.slug}`
   const jsonLdData = generateStoryJsonLds(storyData, pageUrl)
 
+  // 為了通過 BigQuery 的型別規則，故用 toString() 將陣列轉成字串，來統一以下部分屬性有值和無值時的型別，非 view log 相關用途請勿更動
+  const extra = {
+    storyId: id,
+    storyTitle: title,
+    authorNames: writers.map((writer) => writer.name).toString() || '',
+    photographers:
+      photographers.map((photographer) => photographer.name).toString() || '',
+    cameraOperators:
+      cameraOperators.map((operator) => operator.name).toString() || '',
+    designers: designers.map((designer) => designer.name).toString() || '',
+    engineers: engineers.map((engineer) => engineer.name).toString() || '',
+    vocals: vocals.map((vocal) => vocal.name).toString() || '',
+  }
+
   return (
     <>
+      <PageLogger extra={extra} />
       <JsonLd data={jsonLdData} />
       <MisoPageView productIds={`story_${params.slug}`} />
       <GA4SourceTracking source={source} />

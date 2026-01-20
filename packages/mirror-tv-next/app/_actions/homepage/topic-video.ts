@@ -2,7 +2,10 @@
 
 import errors from '@twreporter/errors'
 import { z } from 'zod'
-import { HOMEPAGE_JSON_URL } from '~/constants/environment-variables'
+import {
+  HOMEPAGE_TOPIC_JSON_URL,
+  HOMEPAGE_VIDEO_JSON_URL,
+} from '~/constants/environment-variables'
 import { createDataFetchingChain } from '~/utils/fetch-function'
 import type { Video } from '~/graphql/query/videos'
 import type { PromotionVideo } from '~/graphql/query/promotion-video'
@@ -32,7 +35,7 @@ const HeroImageSchema = z.object({
   imageApiData: z.union([z.string(), ImageApiDataSchema]).optional(),
 })
 
-const TopicVideoDataSchema = z.object({
+const TopicDataSchema = z.object({
   allTopics: z.array(
     z.object({
       id: z.string(),
@@ -58,6 +61,10 @@ const TopicVideoDataSchema = z.object({
         .optional(),
     })
   ),
+  timestamp: z.string().optional(),
+})
+
+const VideoDataSchema = z.object({
   allVideos: z.array(
     z.object({
       id: z.string(),
@@ -75,13 +82,35 @@ const TopicVideoDataSchema = z.object({
   timestamp: z.string().optional(),
 })
 
-async function fetchTopicVideoData() {
-  const resp = await fetch(HOMEPAGE_JSON_URL)
+async function fetchTopicData() {
+  const resp = await fetch(HOMEPAGE_TOPIC_JSON_URL)
   if (!resp.ok) {
     throw new Error(`HTTP error! status: ${resp.status}`)
   }
   const jsonData = await resp.json()
-  return TopicVideoDataSchema.parse(jsonData)
+  return TopicDataSchema.parse(jsonData)
+}
+
+async function fetchVideoData() {
+  const resp = await fetch(HOMEPAGE_VIDEO_JSON_URL)
+  if (!resp.ok) {
+    throw new Error(`HTTP error! status: ${resp.status}`)
+  }
+  const jsonData = await resp.json()
+  return VideoDataSchema.parse(jsonData)
+}
+
+async function fetchTopicVideoData() {
+  const [topicData, videoData] = await Promise.all([
+    fetchTopicData(),
+    fetchVideoData(),
+  ])
+
+  return {
+    allTopics: topicData.allTopics,
+    allVideos: videoData.allVideos,
+    allPromotionVideos: videoData.allPromotionVideos,
+  }
 }
 
 async function getTopicVideo(): Promise<{

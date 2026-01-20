@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import dynamic from 'next/dynamic'
-import { notFound } from 'next/navigation'
 import GptPopup from '~/components/ads/gpt/gpt-popup'
 import {
   fetchExternalsByCategory,
@@ -27,6 +26,8 @@ import { fetchSales } from '~/app/_actions/share/sales'
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 import { SALES_LABEL_NAME } from '~/constants/constant'
 import { fetchCategoryData } from '~/app/_actions/category/category-data'
+import PageLogger from '~/components/page-logger'
+import { notFound } from 'next/navigation'
 
 export const revalidate = GLOBAL_CACHE_SETTING
 
@@ -41,6 +42,19 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = params
   const categoryData = await fetchCategoryData(slug)
+
+  if (!categoryData.name) {
+    return {
+      metadataBase: new URL(SITE_URL),
+      title: '分類 - 鏡新聞',
+      openGraph: {
+        title: '分類 - 鏡新聞',
+        images: {
+          url: '/images/default-og-img.jpg',
+        },
+      },
+    }
+  }
 
   let firstPost = null
 
@@ -115,13 +129,15 @@ export async function generateMetadata({
 
     const newestPostIsExternal =
       (externals?.length &&
+        externals[0] &&
         categoryPosts?.length &&
+        categoryPosts[0] &&
         new Date(externals[0].publishTime) >
           new Date(categoryPosts[0].publishTime)) ||
-      !categoryPosts?.length
-    if (newestPostIsExternal) {
+      (!categoryPosts?.length && externals?.length && externals[0])
+    if (newestPostIsExternal && externals[0]) {
       ogImage = externals[0].images.w3200 ?? '/images/default-og-img.jpg'
-    } else {
+    } else if (categoryPosts[0]) {
       ogImage = categoryPosts[0].images.w3200 ?? '/images/default-og-img.jpg'
     }
   }
@@ -150,7 +166,9 @@ export default async function CategoryPage({
   let newestPostType: 'external' | 'post' | 'json' = 'json'
 
   categoryData = await fetchCategoryData(params.slug)
-  if (!categoryData.name) return notFound()
+  if (!categoryData.name) {
+    return notFound()
+  }
 
   const fetchFeaturePosts = (): Promise<FeaturePostsResponse> =>
     fetch(FEATURE_POSTS_URL).then((res) => res.json())
@@ -269,15 +287,17 @@ export default async function CategoryPage({
   if (!featurePost?.slug) {
     const newestPostIsExternal =
       (externalsCount &&
+        externals[0] &&
         postsCount &&
+        categoryPosts[0] &&
         new Date(externals[0].publishTime) >
           new Date(categoryPosts[0].publishTime)) ||
-      !postsCount
+      (!postsCount && externalsCount && externals[0])
     newestPostType = newestPostIsExternal ? 'external' : 'post'
-    if (newestPostIsExternal) {
+    if (newestPostIsExternal && externals[0]) {
       featurePost = externals[0]
       externals.splice(0, 1)
-    } else {
+    } else if (categoryPosts[0]) {
       featurePost = categoryPosts[0]
       categoryPosts.splice(0, 1)
     }
@@ -285,6 +305,7 @@ export default async function CategoryPage({
 
   return (
     <section className={styles.postsList}>
+      <PageLogger />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

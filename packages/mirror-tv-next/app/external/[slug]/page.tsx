@@ -1,3 +1,4 @@
+import PageLogger from '~/components/page-logger'
 import ArticleRelatedPosts from '~/components/story/article-related-posts'
 import ArticleSocialList from '~/components/story/article-social-list'
 import { Metadata } from 'next'
@@ -278,6 +279,7 @@ const ExternalPage = async (props: ExternalPageTypes) => {
   }
 
   const {
+    id,
     content_original,
     heroCaption,
     categories,
@@ -315,8 +317,15 @@ const ExternalPage = async (props: ExternalPageTypes) => {
   const pageUrl = `${META_SITE_URL}/external/${params.slug}`
   const jsonLdData = generateExternalJsonLds(externalData, pageUrl)
 
+  const extra = {
+    externalId: id,
+    externalTitle: title,
+    authorName: partner?.name ?? '',
+  }
+
   return (
     <>
+      <PageLogger extra={extra} />
       <JsonLd data={jsonLdData} />
       <MisoPageView productIds={`external_${params.slug}`} />
       <GA4SourceTracking source={source} />
