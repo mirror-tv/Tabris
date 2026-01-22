@@ -21,9 +21,7 @@ export default function NavItems({ categories }: NavItemProps) {
 
   const [showRest, setShowRest] = useState(false)
   const [showBox, setShowBox] = useState(false)
-  const [renderedCategoryIndex, setRenderedCategoryIndex] = useState(
-    categories.length
-  )
+  const [renderedCategoryIndex, setRenderedCategoryIndex] = useState(0)
   const categoryListRef = useRef<HTMLUListElement>(null)
 
   const handleShowBox = () => {
@@ -99,9 +97,11 @@ export default function NavItems({ categories }: NavItemProps) {
               path === '/category/video' ? styles.active : ''
             }`}
           >
-            <Link href="/category/video" className="category-nav__link">
-              影音
-            </Link>
+            {renderedCategoryIndex > 0 && (
+              <Link href="/category/video" className="category-nav__link">
+                影音
+              </Link>
+            )}
           </li>
           {categories.slice(0, renderedCategoryIndex).map((category) => {
             // Check if the category's slug matches the path
@@ -123,13 +123,15 @@ export default function NavItems({ categories }: NavItemProps) {
             )
           })}
           <div>
-            <li
-              onMouseEnter={handleShowBox}
-              onMouseLeave={handleHideBox}
-              className={styles.showLi}
-            >
-              節目列表
-            </li>
+            {renderedCategoryIndex > 0 && (
+              <li
+                onMouseEnter={handleShowBox}
+                onMouseLeave={handleHideBox}
+                className={styles.showLi}
+              >
+                節目列表
+              </li>
+            )}
             {showBox && (
               <div
                 className={styles.showBox}
@@ -149,14 +151,15 @@ export default function NavItems({ categories }: NavItemProps) {
             )}
           </div>
 
-          {categories.length > renderedCategoryIndex && (
-            <li
-              onClick={handleSeeMoreClick}
-              className={`${styles.li} ${styles.grey}`}
-            >
-              看更多
-            </li>
-          )}
+          {categories.length > renderedCategoryIndex &&
+            renderedCategoryIndex > 0 && (
+              <li
+                onClick={handleSeeMoreClick}
+                className={`${styles.li} ${styles.grey}`}
+              >
+                看更多
+              </li>
+            )}
         </div>
 
         <DesktopSearchBar />
