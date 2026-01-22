@@ -37,7 +37,7 @@
   justify-content: center;
   align-items: flex-start;
   height: 43px;
-  padding: 8 20px;
+  padding: 8px 20px;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000 75.48%);
   @include media-breakpoint-up(md) {
     height: fit-content;
