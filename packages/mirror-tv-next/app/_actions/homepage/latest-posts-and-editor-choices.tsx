@@ -13,8 +13,8 @@ import {
   fetchEditorChoices,
 } from '~/graphql/query/editor-choices'
 
+import { fetchStaticJson } from '~/utils/fetch-static-json'
 import { createDataFetchingChain } from '~/utils/fetch-function'
-import { ENV } from '~/constants/environment-variables'
 
 const HeroImageSchema = z.object({
   urlDesktopSized: z.string().optional(),
@@ -184,16 +184,7 @@ type GetLatestPostsServerActionType = {
 }
 
 async function fetchLatestPostsAndEditorChoices({ page }: { page: number }) {
-  const timestamp = Date.now()
-  const resp = await fetch(
-    `https://storage.googleapis.com/static-mnews-tw-${ENV}/files/json/latest_posts0${page}.json?timestamp=${
-      timestamp / 100
-    }`
-  )
-  if (!resp.ok) {
-    throw new Error(`HTTP error! status: ${resp.status}`)
-  }
-  const jsonData = await resp.json()
+  const jsonData = await fetchStaticJson(`latest_posts0${page}.json`)
   const result = StaticHomepageResponseSchema.safeParse(jsonData)
 
   if (!result.success) {

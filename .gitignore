@@ -37,7 +37,7 @@ coverage
 # Bower dependency directory (https://bower.io/)
 bower_components
 
-# node-waf configuration
+# node-waf ㄏㄜuration
 .lock-wscript
 
 # Compiled binary addons (https://nodejs.org/api/addons.html)
@@ -132,3 +132,7 @@ lib
 
 # cursor
 .cursor
+
+# gemini
+.gemini
+GEMINI.md

@@ -3,27 +3,17 @@ import MobileNav from '~/components/layout/header/mobile-header/mobile-nav'
 import type { Category } from '~/graphql/query/category'
 import type { Sponsor } from '~/graphql/query/sponsors'
 
-import {
-  GLOBAL_CACHE_SETTING,
-  HEADER_JSON_URL,
-} from '~/constants/environment-variables'
+import { HEADER_JSON_FILE_NAME } from '~/constants/environment-variables'
+import { fetchStaticJson } from '~/utils/fetch-static-json'
 import styles from './_styles/main-header.module.scss'
 import HeaderBottom from './header-bottom'
 import HeaderNav from './header-nav'
 import HeaderTop from './header-top'
+import type { HeaderData } from '~/types/header'
 
 async function getData() {
   try {
-    const res = await fetch(HEADER_JSON_URL, {
-      next: { revalidate: GLOBAL_CACHE_SETTING },
-    })
-
-    if (!res.ok) {
-      console.error('Failed to fetch header data')
-      return { allSponsors: [], allCategories: [], allShows: [] }
-    }
-
-    return res.json()
+    return await fetchStaticJson<HeaderData>(HEADER_JSON_FILE_NAME)
   } catch (err) {
     const annotatingError = errors.helpers.wrap(
       err,
@@ -40,7 +30,7 @@ async function getData() {
         }),
       })
     )
-    return
+    return { allSponsors: [], allCategories: [], allShows: [] }
   }
 }
 
