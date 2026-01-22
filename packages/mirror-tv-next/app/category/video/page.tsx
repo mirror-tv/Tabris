@@ -30,6 +30,7 @@ import {
 import UiAsideVideosList from '~/components/shared/ui-aside-videos-list'
 import { getVideo } from '~/app/_actions/share/video'
 import { fetchPromotionVideosServerAction } from '~/app/_actions/share/promotion-videos'
+import { getTopicVideo } from '~/app/_actions/homepage/topic-video'
 
 export const revalidate = GLOBAL_CACHE_SETTING
 
@@ -71,8 +72,13 @@ export default async function VideoCategoryPage() {
   let allCategories: Category[] = []
   let allPromotionVideos: PromotionVideo[] = []
   let otherStreamings: Video[] = []
-  let liveVideo: Video[] = []
+
   let allVideoEditorChoices: VideoEditorChoice[] = []
+
+  const { data: homepageData } = await getTopicVideo()
+  const liveVideo: Video[] = homepageData.allVideos?.[0]
+    ? [homepageData.allVideos[0]]
+    : []
 
   const client = getClient()
 
@@ -99,8 +105,6 @@ export default async function VideoCategoryPage() {
 
   const fetchOtherStreaming = () => getVideo({ name: 'live-cam', take: 2 })
 
-  const fetchLiveVideo = () => getVideo({ name: 'mnews-live', take: 1 })
-
   const fetchVideoEditorChoice = () =>
     client.query<{ allVideoEditorChoices: VideoEditorChoice[] }>({
       query: getVideoEditorChoice,
@@ -111,7 +115,6 @@ export default async function VideoCategoryPage() {
     fetchPopularPosts(),
     fetchPromotionVideos(),
     fetchOtherStreaming(),
-    fetchLiveVideo(),
     fetchVideoEditorChoice(),
   ])
 
@@ -159,16 +162,8 @@ export default async function VideoCategoryPage() {
     'Error occurs while fetching other streaming videos in video category page'
   )
 
-  liveVideo = handleResponse(
-    responses[4],
-    (data: Awaited<ReturnType<typeof fetchLiveVideo>> | undefined) => {
-      return data?.data?.allVideos ?? []
-    },
-    'Error occurs while fetching live videos in video category page'
-  )
-
   allVideoEditorChoices = handleResponse(
-    responses[5] as PromiseSettledResult<Record<string, unknown>>,
+    responses[4] as PromiseSettledResult<Record<string, unknown>>,
     (response: Record<string, unknown> | undefined) => {
       const data = response as
         | Awaited<ReturnType<typeof fetchVideoEditorChoice>>
