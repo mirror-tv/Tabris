@@ -68,12 +68,12 @@ const VideoDataSchema = z.object({
 })
 
 async function fetchTopicData() {
-  const jsonData = await fetchStaticJson('topic.json')
+  const jsonData = await fetchStaticJson('topic.json', true)
   return TopicDataSchema.parse(jsonData)
 }
 
 async function fetchVideoData() {
-  const jsonData = await fetchStaticJson('video.json')
+  const jsonData = await fetchStaticJson('video.json', true)
   return VideoDataSchema.parse(jsonData)
 }
 

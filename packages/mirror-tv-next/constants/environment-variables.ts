@@ -52,10 +52,9 @@ switch (ENV) {
 }
 
 const bucketDomain = process.env.GCS_FUSE_STATIC_BUCKET ?? STATIC_FILE_DOMAIN
-const JSON_BASE_URL = `https://${bucketDomain}/files/json`
+const JSON_BASE_URL = `https://${bucketDomain}`
 const FEATURE_POSTS_FILE_NAME = 'category_features_news.json'
 const POPULAR_POSTS_FILE_NAME = 'popularlist.json'
-const WEATHER_JSON_FILE_NAME = 'weather.json'
 const HEADER_JSON_FILE_NAME = 'header_v2-1.json'
 
 export {
@@ -66,7 +65,6 @@ export {
   YOUTUBE_API_URL,
   FEATURE_POSTS_FILE_NAME,
   POPULAR_POSTS_FILE_NAME,
-  WEATHER_JSON_FILE_NAME,
   HEADER_JSON_FILE_NAME,
   GA4_ID,
   FEATURE_2025_HOMEPAGE_STYLE,

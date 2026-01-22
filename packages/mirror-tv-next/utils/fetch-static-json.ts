@@ -11,15 +11,17 @@ import {
  * @param filename - The JSON filename to fetch
  */
 export async function fetchStaticJson<T = unknown>(
-  filename: string
+  filename: string,
+  hasFilePrefix: boolean = false
 ): Promise<T> {
   const GCS_FUSE_MOUNT_DIR = process.env.GCS_FUSE_MOUNT_DIR ?? '/statics'
+  const pathPrefix = hasFilePrefix ? '/files/json' : '/json'
 
   // 1. Try reading from local file system if on server
   if (isServer()) {
     try {
-      // Structure: [mount_dir]/files/json/[filename]
-      const filePath = `${GCS_FUSE_MOUNT_DIR}/files/json/${filename}`
+      // Structure: [mount_dir]/[prefix]/[filename]
+      const filePath = `${GCS_FUSE_MOUNT_DIR}${pathPrefix}/${filename}`
       const content = await fs.readFile(filePath, 'utf-8')
       return JSON.parse(content) as T
     } catch (err) {
@@ -32,7 +34,7 @@ export async function fetchStaticJson<T = unknown>(
   }
 
   // 2. Fallback to HTTP fetch
-  const url = `${JSON_BASE_URL}/${filename}`
+  const url = `${JSON_BASE_URL}${pathPrefix}/${filename}`
   const res = await fetch(url, {
     next: { revalidate: GLOBAL_CACHE_SETTING },
   })

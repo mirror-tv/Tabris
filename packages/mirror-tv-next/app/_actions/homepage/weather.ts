@@ -8,7 +8,7 @@ export const fetchWeather = async (): Promise<CityAndWeather | undefined> => {
   const errorLogger = createErrorLogger('Error occurs while fetching weather')
 
   try {
-    const rawWeatherData = await fetchStaticJson('weather.json')
+    const rawWeatherData = await fetchStaticJson('weather.json', true)
 
     const data = JSON.parse(JSON.stringify(rawWeatherData))
     // Ensure data is parsed and not referencing the original object
