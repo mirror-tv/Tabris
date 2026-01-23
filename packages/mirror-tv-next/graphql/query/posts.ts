@@ -45,7 +45,7 @@ const getPostsByTagName = gql`
         imageApiData
       }
     }
-    count: postsCount(
+    postsCount(
       where: {
         state: { equals: "published" }
         slug: { notIn: $filteredSlug }

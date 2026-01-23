@@ -103,7 +103,7 @@ export async function fetchExternalsByCategory({
     const annotatingError = errors.helpers.wrap(
       err,
       'UnhandledError',
-      'Error occurs while fetching category posts data on category page'
+      'Error occurs while fetching category externals data on category page'
     )
 
     console.error(

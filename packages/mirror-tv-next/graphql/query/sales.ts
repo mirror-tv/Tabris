@@ -16,11 +16,11 @@ const getSales = gql`
   query fetchSales($first: Int = 4) {
     allSales: sales(
       where: {
-        state: { equals: "published" }
+        state: { equals: published }
         adPost: { state: { equals: "published" } }
       }
-      orderBy: [{ sortOrder: asc }, { updatedAt: desc }]
       take: $first
+      orderBy: [{ sortOrder: asc }, { updatedAt: desc }]
     ) {
       id
       adPost {
