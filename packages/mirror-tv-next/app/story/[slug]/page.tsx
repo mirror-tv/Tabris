@@ -32,6 +32,7 @@ import GA4SourceTracking from '~/components/story/ga4-source-tracking'
 import UiDownload from '~/components/shared/ui-download'
 import Article18Warning from '~/components/shared/article-18-warning'
 import AdTvAdminMobileBanner from '~/components/shared/ad-tv-admin-mobile-banner'
+import { handleApiData } from '~/utils'
 
 const ContainerFullScreenAds = dynamic(
   () => import('~/components/ads/gpt/gpt-popup'),
@@ -74,6 +75,10 @@ function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
   const publishedDateIso = dayjs(publishTime).utcOffset(8).format()
   const modifiedDateIso = dayjs(updateTime).utcOffset(8).format()
 
+  const briefText = handleApiData(storyData.briefApiData)
+    .map((item: { content?: string[] }) => item.content?.join('') || '')
+    .join('')
+
   const jsonLdBreadcrumbList = {
     '@context': 'http://schema.org/',
     '@type': 'BreadcrumbList',
@@ -103,11 +108,7 @@ function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
         url: logoUrl,
       },
     },
-    description: storyData.briefApiData
-      ? JSON.parse(storyData.briefApiData)
-          .map((item: { content?: string[] }) => item.content?.join('') || '')
-          .join('')
-      : undefined,
+    description: briefText || '',
     url: pageUrl,
     thumbnailUrl: getStoryOgImage(storyData.heroImage),
     articleSection: category?.title || '',
@@ -178,11 +179,9 @@ export async function generateMetadata({
   }
 
   const title = storyData.title
-  const brief = storyData.briefApiData
-    ? JSON.parse(storyData.briefApiData)
-        .map((item: { content?: string[] }) => item.content?.join('') || '')
-        .join('')
-    : ''
+  const brief = handleApiData(storyData.briefApiData)
+    .map((item: { content?: string[] }) => item.content?.join('') || '')
+    .join('')
   const tags = storyData.tags?.map((tag) => tag.name).join(', ')
   const image = getStoryOgImage(storyData.heroImage)
   const dableImage = getStoryDableImage(storyData.heroImage)
@@ -291,7 +290,7 @@ const StoryPage = async (props: StoryPageTypes) => {
     ? formateDateAtTaipei(new Date(updatedAt), 'YYYY.MM.DD HH:mm', '臺北時間')
     : ''
 
-  const hasBrief = doesHaveBrief(briefApiData ?? '')
+  const hasBrief = doesHaveBrief(handleApiData(briefApiData))
 
   const pageUrl = `${META_SITE_URL}/story/${params.slug}`
   const jsonLdData = generateStoryJsonLds(storyData, pageUrl)
@@ -338,9 +337,7 @@ const StoryPage = async (props: StoryPageTypes) => {
           vocals={vocals}
           otherbyline={otherbyline ?? ''}
         />
-        {hasBrief && (
-          <ArticleBrief brief={JSON.parse((briefApiData ?? '') || '[]')} />
-        )}
+        {hasBrief && <ArticleBrief brief={handleApiData(briefApiData)} />}
         <section className={styles.contentWrapper}>
           <ApiDataRenderer
             contentData={contentApiData ?? ''}

@@ -21,7 +21,7 @@ import dynamic from 'next/dynamic'
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 
 type ApiDataRendererPropsType = {
-  contentData: string
+  contentData: string | ApiData
   isStoryBrief?: boolean
 }
 
@@ -29,7 +29,21 @@ const ApiDataRenderer = ({
   contentData,
   isStoryBrief,
 }: ApiDataRendererPropsType) => {
-  const parsedContentData: ApiData = JSON.parse(contentData)
+  // Handle both string and already-parsed object cases
+  let parsedContentData: ApiData
+  if (typeof contentData === 'string') {
+    try {
+      parsedContentData = JSON.parse(contentData)
+    } catch (error) {
+      console.error('Failed to parse contentData:', error)
+      return null
+    }
+  } else if (Array.isArray(contentData)) {
+    parsedContentData = contentData
+  } else {
+    console.error('Invalid contentData type:', typeof contentData)
+    return null
+  }
 
   if (parsedContentData?.length >= 4 && !isStoryBrief) {
     const newObject: ApiDataBlock = {

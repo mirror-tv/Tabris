@@ -14,7 +14,7 @@ const getExternalsByTagName = gql`
     $withCount: Boolean = false
     $filteredSlug: [String!] = [""]
   ) {
-    externals(
+    allExternals: externals(
       where: {
         state: { equals: "published" }
         slug: { notIn: $filteredSlug }
@@ -46,7 +46,7 @@ const getExternalsByCategory = gql`
     $withCount: Boolean = false
     $filteredSlug: [String] = [""]
   ) {
-    externals(
+    allExternals: externals(
       where: {
         state: { equals: "publish" }
         slug: { notIn: $filteredSlug }

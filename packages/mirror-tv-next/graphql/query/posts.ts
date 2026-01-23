@@ -28,7 +28,7 @@ const getPostsByTagName = gql`
     $withCount: Boolean = false
     $filteredSlug: [String!] = [""]
   ) {
-    posts(
+    allPosts: posts(
       where: {
         state: { equals: "published" }
         slug: { notIn: $filteredSlug }
@@ -59,7 +59,7 @@ const getPostsByTagName = gql`
 
 const getLatestPosts = gql`
   query fetchLatestPosts($first: Int = 5, $filteredSlug: [String!] = [""]) {
-    posts(
+    allPosts: posts(
       where: {
         slug: { notIn: $filteredSlug }
         categories: { some: { slug: { notIn: "ombuds" } } }
@@ -83,7 +83,7 @@ const getPostsByCategorySlug = gql`
     $withCount: Boolean = false
     $filteredSlug: [String!] = [""]
   ) {
-    posts(
+    allPosts: posts(
       where: {
         state: { equals: "published" }
         slug: { notIn: $filteredSlug }
@@ -117,7 +117,7 @@ const getVideoPostsByCategorySlug = gql`
     $withCount: Boolean = false
     $filteredSlug: [String!] = [""]
   ) {
-    posts(
+    allPosts: posts(
       where: {
         categories: {
           some: { slug: { equals: $category } }
@@ -155,7 +155,7 @@ const getPostsWithCategory = gql`
     $withCount: Boolean = false
     $filteredSlug: [String!] = [""]
   ) {
-    posts(
+    allPosts: posts(
       where: {
         state: { equals: "published" }
         slug: { notIn: $filteredSlug }
