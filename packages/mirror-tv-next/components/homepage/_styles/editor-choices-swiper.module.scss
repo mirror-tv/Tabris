@@ -36,10 +36,10 @@
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  height: 43px;
-  padding: 8 20px;
+  padding: 8px 20px;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000 75.48%);
   @include media-breakpoint-up(md) {
+    height: 43px;
     height: fit-content;
   }
   @include media-breakpoint-up(md) {
@@ -59,6 +59,8 @@
   display: -webkit-box;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  display: block;
+  height: 100%;
   @include media-breakpoint-up(md) {
     font-weight: 500;
     line-height: 160%;
