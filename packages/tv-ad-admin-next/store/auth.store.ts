@@ -3,9 +3,8 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
-import type { UserPayload } from '@/utils/auth'
-
 import { signOutFirebase } from '@/utils/firebase-client'
+import type { UserPayload } from '@/utils/auth'
 
 type AuthState = {
   user: UserPayload | null

@@ -39,6 +39,7 @@ export default function EmbedCodeBlock({ data }: { data: ApiDataEmbedCode }) {
   const isScrollVideo = caption === 'reporter-scroll-video'
   const hasPdfFile = embeddedCode.includes('.pdf')
   const showCaption = caption && !isScrollVideo && !hasPdfFile
+  console.log(showCaption, 'showCaption')
 
   useEffect(() => {
     if (embedRef.current && !run.current) {

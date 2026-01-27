@@ -7,8 +7,8 @@ import { NextResponse } from 'next/server'
 
 import type { NextRequest } from 'next/server'
 
-import { createEdgeErrorLogger } from '@/utils/edge-error-handler'
 import { verifyFirebaseTokenEdge } from '@/utils/firebase-edge'
+import { createEdgeErrorLogger } from '@/utils/edge-error-handler'
 
 // 公開 route（不需要登入即可訪問）
 const publicRoutes = ['/login', '/robots.txt']

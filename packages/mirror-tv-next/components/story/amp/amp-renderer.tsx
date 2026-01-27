@@ -16,7 +16,7 @@ import AmpEmbedded from './blocks/amp-embedded'
 import AmpUnsupportedBlock from './blocks/amp-unsupported-block'
 
 type AmpApiDataRendererPropsType = {
-  contentData: string | ApiData
+  contentData: string
   isStoryBrief?: boolean
   currentUrl?: string
 }
@@ -26,21 +26,7 @@ const AmpApiDataRenderer = ({
   isStoryBrief,
   currentUrl,
 }: AmpApiDataRendererPropsType) => {
-  // Handle both string and already-parsed object cases
-  let parsedContentData: ApiData
-  if (typeof contentData === 'string') {
-    try {
-      parsedContentData = JSON.parse(contentData)
-    } catch (error) {
-      console.error('Failed to parse contentData:', error)
-      return null
-    }
-  } else if (Array.isArray(contentData)) {
-    parsedContentData = contentData
-  } else {
-    console.error('Invalid contentData type:', typeof contentData)
-    return null
-  }
+  const parsedContentData: ApiData = JSON.parse(contentData)
 
   if (parsedContentData?.length >= 4 && !isStoryBrief) {
     const newObject: ApiDataBlock = {

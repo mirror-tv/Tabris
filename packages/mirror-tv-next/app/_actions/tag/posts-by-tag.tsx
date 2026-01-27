@@ -32,7 +32,7 @@ async function fetchPostsItems({
   try {
     const { data } = await client.query<{
       allPosts: PostCardItem[]
-      postsCount?: number
+      _allPostsMeta?: { count: number }
     }>({
       query: getPostsByTagName,
       variables: {
@@ -43,10 +43,7 @@ async function fetchPostsItems({
         filteredSlug: FILTERED_SLUG,
       },
     })
-    return {
-      allPosts: data?.allPosts ?? [],
-      _allPostsMeta: isWithCount ? { count: data?.postsCount ?? 0 } : undefined,
-    }
+    return data
   } catch (err) {
     const annotatingError = errors.helpers.wrap(
       err,
@@ -78,10 +75,9 @@ async function fetchExternalsByTagName({
 }> {
   const client = getClient()
   try {
-    console.log('tagName', tagName)
     const { data } = await client.query<{
       allExternals: External[]
-      externalsCount?: number
+      _allExternalsMeta?: { count: number }
     }>({
       query: getExternalsByTagName,
       variables: {
@@ -92,13 +88,7 @@ async function fetchExternalsByTagName({
         filteredSlug: FILTERED_SLUG,
       },
     })
-    console.log('data', data)
-    return {
-      allExternals: data?.allExternals ?? [],
-      _allExternalsMeta: isWithCount
-        ? { count: data?.externalsCount ?? 0 }
-        : undefined,
-    }
+    return data
   } catch (err) {
     const annotatingError = errors.helpers.wrap(
       err,

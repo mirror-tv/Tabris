@@ -2,9 +2,9 @@ import gql from 'graphql-tag'
 
 const fetchFeatureCategories = gql`
   query fetchFeatureCategories {
-    allCategories: categories(
-      where: { isFeatured: { equals: true } }
-      orderBy: [{ sortOrder: asc }, { id: desc }]
+    allCategories(
+      where: { isFeatured: true }
+      sortBy: [sortOrder_ASC, id_DESC]
     ) {
       name
       slug

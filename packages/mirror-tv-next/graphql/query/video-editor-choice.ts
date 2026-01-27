@@ -9,34 +9,35 @@ export type VideoEditorChoice = {
     heroImage: HeroImage | null
     heroVideo: {
       url: string
-      coverPhoto: HeroImage | null
+      coverPhoto: HeroImage
     } | null
   } | null
 }
 
 const getVideoEditorChoice = gql`
   query fetchVideoEditorChoices {
-    allVideoEditorChoices: videoEditorChoices(
+    allVideoEditorChoices(
       where: {
-        state: { equals: "published" }
-        videoEditor: {
-          state: { equals: "published" }
-          style: { equals: "videoNews" }
-        }
+        state: published
+        videoEditor: { state: published, style: videoNews }
       }
-      orderBy: { order: asc }
+      sortBy: order_ASC
     ) {
       videoEditor {
         slug
         name
         style
         heroImage {
-          imageApiData
+          urlMobileSized
+          urlOriginal
         }
         heroVideo {
           url
           coverPhoto {
-            imageApiData
+            urlMobileSized
+            urlTabletSized
+            urlDesktopSized
+            urlOriginal
           }
         }
       }

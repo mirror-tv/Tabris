@@ -21,7 +21,7 @@ async function fetchTopics({
   try {
     const { data } = await client.query<{
       allTopics: Topic[]
-      topicsCount?: number
+      _allTopicsMeta?: { count: number }
     }>({
       query: getTopics,
       variables: {
@@ -30,12 +30,7 @@ async function fetchTopics({
         withCount: isWithCount,
       },
     })
-    return {
-      allTopics: data?.allTopics ?? [],
-      _allTopicsMeta: isWithCount
-        ? { count: data?.topicsCount ?? 0 }
-        : undefined,
-    }
+    return data
   } catch (err) {
     const annotatingError = errors.helpers.wrap(
       err,

@@ -6,26 +6,26 @@ export type Topic = {
   id: string
   slug: string
   name: string
-  briefApiData: string | null
-  heroImage: HeroImage | null
+  briefApiData: string
+  heroImage: HeroImage
   sortDir?: string
 }
 
 type HeroVideo = {
-  url: string | null
+  url: string
 }
 
 export type Slideshow = {
   id: string
   slug: string
   name: string
-  heroImage: HeroImage | null
+  heroImage: HeroImage
 }
 
 export type Multivideo = {
   id: string
-  youtubeUrl: string | null
-  url: string | null
+  youtubeUrl: string
+  url: string
 }
 
 type Category = {
@@ -39,23 +39,21 @@ export type Post = ListingPost & {
   categories: Category[]
 }
 
-export type PostOrderByInput = {
-  publishTime?: 'asc' | 'desc'
-}
-
 export type SingleTopic = Topic & {
   title: string
-  sortDir: string | null
-  leading: string | null
-  facebook: string | null
-  briefHtml: string | null
-  instagram: string | null
-  line: string | null
-  heroImage: HeroImage | null
-  heroVideo: HeroVideo | null
+  sortDir: string
+  leading: string
+  facebook: string
+  briefHtml: string
+  instagram: string
+  line: string
+  heroImage: HeroImage
+  heroVideo: HeroVideo
   slideshow: Slideshow[]
   multivideo: Multivideo[]
-  itemsCount: number
+  meta: {
+    count: number
+  }
 }
 
 export type FeatureTopic = Omit<Topic, 'briefApiData'> & {
@@ -68,33 +66,35 @@ export type FeatureTopic = Omit<Topic, 'briefApiData'> & {
 
 const getTopics = gql`
   query fetchTopics($first: Int = 12, $skip: Int, $withCount: Boolean = true) {
-    allTopics: topics(
-      take: $first
+    allTopics(
+      first: $first
       skip: $skip
-      where: { state: { equals: "published" } }
-      orderBy: [{ sortOrder: asc }, { updatedAt: desc }]
+      where: { state: published }
+      sortBy: [sortOrder_ASC, updatedAt_DESC]
     ) {
       id
       slug
       name
       briefApiData
       heroImage {
-        imageApiData
+        urlMobileSized
+        urlTabletSized
+        urlOriginal
       }
     }
-    topicsCount: topicsCount(where: { state: { equals: "published" } })
-      @include(if: $withCount)
+    _allTopicsMeta(where: { state: published }) @include(if: $withCount) {
+      count
+    }
   }
 `
 
 const fetchSingleTopicByTopicSlug = gql`
-  query fetchSingleTopicByTopicSlug($topicSlug: String!) {
-    topic: topics(
-      where: { state: { equals: "published" }, slug: { equals: $topicSlug } }
-    ) {
+  query fetchSingleTopicByTopicSlug(
+    $topicSlug: String!
+    $withCount: Boolean = true
+  ) {
+    topic: allTopics(where: { state: published, slug: $topicSlug }) {
       id
-      slug
-      name
       title: name
       sortDir
       leading
@@ -103,7 +103,10 @@ const fetchSingleTopicByTopicSlug = gql`
       instagram
       line
       heroImage {
-        imageApiData
+        urlDesktopSized
+        urlTabletSized
+        urlMobileSized
+        urlOriginal
       }
       heroVideo {
         url
@@ -113,7 +116,10 @@ const fetchSingleTopicByTopicSlug = gql`
         slug
         name
         heroImage {
-          imageApiData
+          urlTabletSized
+          urlDesktopSized
+          urlMobileSized
+          urlOriginal
         }
       }
       multivideo {
@@ -121,7 +127,9 @@ const fetchSingleTopicByTopicSlug = gql`
         youtubeUrl
         url
       }
-      itemsCount: postCount(where: { state: { equals: "published" } })
+      meta: _postMeta(where: { state: published }) @include(if: $withCount) {
+        count
+      }
     }
   }
 `
@@ -131,23 +139,24 @@ const fetchPostItemsByTopicSlug = gql`
     $topicSlug: String!
     $first: Int = 12
     $skip: Int
-    $postDir: [PostOrderByInput!] = [{ publishTime: desc }]
+    $postDir: [SortPostsBy!] = publishTime_DESC
   ) {
-    topic: topics(
-      where: { state: { equals: "published" }, slug: { equals: $topicSlug } }
-    ) {
+    topic: allTopics(where: { state: published, slug: $topicSlug }) {
       items: post(
-        where: { state: { equals: "published" } }
-        take: $first
+        where: { state: published }
+        first: $first
         skip: $skip
-        orderBy: $postDir
+        sortBy: $postDir
       ) {
         id
         slug
         title: name
         publishTime
         heroImage {
-          imageApiData
+          urlDesktopSized
+          urlTabletSized
+          urlMobileSized
+          urlOriginal
         }
         categories {
           name
@@ -159,9 +168,7 @@ const fetchPostItemsByTopicSlug = gql`
 
 const fetchPostSortDirBySlug = gql`
   query fetchPostSortDirBySlug($topicSlug: String!) {
-    topic: topics(
-      where: { state: { equals: "published" }, slug: { equals: $topicSlug } }
-    ) {
+    topic: allTopics(where: { state: published, slug: $topicSlug }) {
       sortDir
     }
   }
@@ -169,30 +176,32 @@ const fetchPostSortDirBySlug = gql`
 
 const fetchFeatureTopics = gql`
   query fetchFeaturedTopics($topicFirst: Int = 4, $postFirst: Int = 3) {
-    topics(
-      where: { state: { equals: "published" }, isFeatured: { equals: true } }
-      take: $topicFirst
-      orderBy: [{ sortOrder: asc }, { updatedAt: desc }]
+    allTopics(
+      where: { state: published, isFeatured: true }
+      first: $topicFirst
+      sortBy: [sortOrder_ASC, updatedAt_DESC]
     ) {
       id
       slug
       name
       heroImage {
-        imageApiData
+        urlMobileSized
+        urlTabletSized
+        urlOriginal
       }
       sortDir
       postDESC: post(
-        take: $postFirst
-        orderBy: { publishTime: desc }
-        where: { state: { equals: "published" } }
+        first: $postFirst
+        sortBy: publishTime_DESC
+        where: { state: published }
       ) {
         slug
         name
       }
       postASC: post(
-        take: $postFirst
-        orderBy: { publishTime: asc }
-        where: { state: { equals: "published" } }
+        first: $postFirst
+        sortBy: publishTime_ASC
+        where: { state: published }
       ) {
         slug
         name

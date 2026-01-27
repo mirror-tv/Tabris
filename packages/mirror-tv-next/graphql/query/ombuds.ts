@@ -7,31 +7,33 @@ export type Post = ListingPost & {
 
 const fetchOmbudsPostsByCategorySlug = gql`
   query fetchOmbudsPostsByCategorySlug(
-    $filteredSlug: [String!] = [""]
+    $filteredSlug: [String] = [""]
     $withCount: Boolean = true
     $skip: Int = 0
     $first: Int = 8
   ) {
-    allPosts: posts(
+    allPosts(
       where: {
-        state: { equals: "published" }
-        slug: { notIn: $filteredSlug }
-        categories: { some: { slug: { equals: "ombuds" } } }
+        state: published
+        slug_not_in: $filteredSlug
+        categories_some: { slug: "ombuds" }
       }
-      take: $first
+      first: $first
       skip: $skip
-      orderBy: { publishTime: desc }
+      sortBy: publishTime_DESC
     ) {
       publishTime
       ...listingPostFragment
     }
-    postsCount(
+    _allPostsMeta(
       where: {
-        state: { equals: "published" }
-        slug: { notIn: $filteredSlug }
-        categories: { some: { slug: { equals: "ombuds" } } }
+        state: published
+        slug_not_in: $filteredSlug
+        categories_some: { slug: "ombuds" }
       }
-    ) @include(if: $withCount)
+    ) @include(if: $withCount) {
+      count
+    }
   }
   ${listingPost}
 `

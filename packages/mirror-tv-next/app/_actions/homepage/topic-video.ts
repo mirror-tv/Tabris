@@ -2,10 +2,7 @@
 
 import errors from '@twreporter/errors'
 import { z } from 'zod'
-import {
-  HOMEPAGE_TOPIC_JSON_URL,
-  HOMEPAGE_VIDEO_JSON_URL,
-} from '~/constants/environment-variables'
+import { fetchStaticJson } from '~/utils/fetch-static-json'
 import { createDataFetchingChain } from '~/utils/fetch-function'
 import type { Video } from '~/graphql/query/videos'
 import type { PromotionVideo } from '~/graphql/query/promotion-video'
@@ -15,24 +12,12 @@ type VideoWithRequiredDescription = Omit<Video, 'description'> & {
   description: string
 }
 
-const ImageApiDataSizeSchema = z.object({
-  url: z.string(),
-  width: z.number().optional(),
-  height: z.number().optional(),
-})
-
-const ImageApiDataSchema = z.object({
-  url: z.string().optional(),
-  w480: ImageApiDataSizeSchema.optional(),
-  w800: ImageApiDataSizeSchema.optional(),
-  w1200: ImageApiDataSizeSchema.optional(),
-  w1600: ImageApiDataSizeSchema.optional(),
-  w2400: ImageApiDataSizeSchema.optional(),
-  original: ImageApiDataSizeSchema.optional(),
-})
-
 const HeroImageSchema = z.object({
-  imageApiData: z.union([z.string(), ImageApiDataSchema]).optional(),
+  urlDesktopSized: z.string().optional(),
+  urlTabletSized: z.string().optional(),
+  urlMobileSized: z.string().optional(),
+  urlTinySized: z.string().optional(),
+  urlOriginal: z.string().optional(),
 })
 
 const TopicDataSchema = z.object({
@@ -83,20 +68,12 @@ const VideoDataSchema = z.object({
 })
 
 async function fetchTopicData() {
-  const resp = await fetch(HOMEPAGE_TOPIC_JSON_URL)
-  if (!resp.ok) {
-    throw new Error(`HTTP error! status: ${resp.status}`)
-  }
-  const jsonData = await resp.json()
+  const jsonData = await fetchStaticJson('topic.json', true)
   return TopicDataSchema.parse(jsonData)
 }
 
 async function fetchVideoData() {
-  const resp = await fetch(HOMEPAGE_VIDEO_JSON_URL)
-  if (!resp.ok) {
-    throw new Error(`HTTP error! status: ${resp.status}`)
-  }
-  const jsonData = await resp.json()
+  const jsonData = await fetchStaticJson('video.json', true)
   return VideoDataSchema.parse(jsonData)
 }
 
@@ -158,9 +135,11 @@ async function getTopicVideo(): Promise<{
       const transformedTopics = validatedData.allTopics.map((topic) => ({
         ...topic,
         heroImage: topic.heroImage || {
-          imageApiData: {
-            url: '',
-          },
+          urlOriginal: '',
+          urlDesktopSized: '',
+          urlTabletSized: '',
+          urlMobileSized: '',
+          urlTinySized: '',
         },
         postDESC: topic.postDESC || [],
         postASC: topic.postASC || [],

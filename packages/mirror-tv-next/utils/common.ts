@@ -66,23 +66,12 @@ function handleMetaDesc(str: string) {
   return formatedStr.length > 123 ? formatedStr + '...' : formatedStr
 }
 
-function handleApiData(apiData: unknown): ApiData[] {
+function handleApiData(apiData: string): ApiData[] {
   try {
-    if (!apiData) return []
+    const rawString = apiData ?? ''
+    const content = JSON.parse(rawString)
 
-    // already parsed
-    if (Array.isArray(apiData)) {
-      return (apiData as ApiData[]).filter(Boolean)
-    }
-
-    // common case: stringified JSON array
-    if (typeof apiData === 'string') {
-      const parsed = JSON.parse(apiData) as unknown
-      return Array.isArray(parsed) ? (parsed as ApiData[]).filter(Boolean) : []
-    }
-
-    // any other shape is not supported by ApiData renderer
-    return []
+    return content?.filter((item: ApiData) => item) || []
   } catch {
     return []
   }

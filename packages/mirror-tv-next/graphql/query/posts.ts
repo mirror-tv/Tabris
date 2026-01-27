@@ -5,19 +5,17 @@ import { HeroImage } from '~/types/common'
 export type PostCardItem = ListingPost & {
   publishTime: string
   ogImage?: HeroImage | null
-  __typename?: 'Post'
 }
 
 export type PostWithCategory = ListingPost & {
-  publishTime: string | Date
+  publishTime: Date
   categories: {
     slug: string
     name: string
   }[]
-  heroVideo?: {
-    coverPhoto: HeroImage | null
-  } | null
-  __typename?: 'Post'
+  heroVideo: {
+    coverPhoto: HeroImage
+  }
 }
 
 const getPostsByTagName = gql`
@@ -26,47 +24,53 @@ const getPostsByTagName = gql`
     $first: Int = 12
     $skip: Int = 0
     $withCount: Boolean = false
-    $filteredSlug: [String!] = [""]
+    $filteredSlug: [String] = [""]
   ) {
-    allPosts: posts(
+    allPosts(
       where: {
-        state: { equals: "published" }
-        slug: { notIn: $filteredSlug }
-        categories: { some: { slug: { notIn: ["ombuds"] } } }
-        tags: { some: { name: { equals: $tagName } } }
+        state: published
+        slug_not_in: $filteredSlug
+        categories_some: { slug_not_in: "ombuds" }
+        tags_some: { name: $tagName }
       }
-      take: $first
+      first: $first
       skip: $skip
-      orderBy: { publishTime: desc }
+      sortBy: publishTime_DESC
     ) {
       publishTime
       ...listingPostFragment
       ogImage {
-        imageApiData
+        urlOriginal
+        urlDesktopSized
+        urlTabletSized
+        urlMobileSized
+        urlTinySized
       }
     }
-    postsCount(
+    _allPostsMeta(
       where: {
-        state: { equals: "published" }
-        slug: { notIn: $filteredSlug }
-        categories: { some: { slug: { notIn: ["ombuds"] } } }
-        tags: { some: { name: { equals: $tagName } } }
+        state: published
+        slug_not_in: $filteredSlug
+        categories_some: { slug_not_in: "ombuds" }
+        tags_some: { name: $tagName }
       }
-    ) @include(if: $withCount)
+    ) @include(if: $withCount) {
+      count
+    }
   }
   ${listingPost}
 `
 
 const getLatestPosts = gql`
-  query fetchLatestPosts($first: Int = 5, $filteredSlug: [String!] = [""]) {
-    allPosts: posts(
+  query fetchLatestPosts($first: Int = 5, $filteredSlug: [String] = [""]) {
+    allPosts(
       where: {
-        slug: { notIn: $filteredSlug }
-        categories: { some: { slug: { notIn: "ombuds" } } }
-        state: { equals: "published" }
+        slug_not_in: $filteredSlug
+        categories_some: { slug_not_in: "ombuds" }
+        state: published
       }
-      take: $first
-      orderBy: { publishTime: desc }
+      first: $first
+      sortBy: publishTime_DESC
     ) {
       publishTime
       ...listingPostFragment
@@ -81,29 +85,31 @@ const getPostsByCategorySlug = gql`
     $first: Int = 13
     $skip: Int = 0
     $withCount: Boolean = false
-    $filteredSlug: [String!] = [""]
+    $filteredSlug: [String] = [""]
   ) {
-    allPosts: posts(
+    allPosts(
       where: {
-        state: { equals: "published" }
-        slug: { notIn: $filteredSlug }
-        categories: { some: { slug: { equals: $categorySlug } } }
+        state: published
+        slug_not_in: $filteredSlug
+        categories_some: { slug: $categorySlug }
       }
-      take: $first
+      first: $first
       skip: $skip
-      orderBy: [{ publishTime: desc }, { id: desc }]
+      sortBy: [publishTime_DESC, id_DESC]
     ) {
       publishTime
       ...listingPostFragment
     }
 
-    postsCount(
+    _allPostsMeta(
       where: {
-        state: { equals: "published" }
-        slug: { notIn: $filteredSlug }
-        categories: { some: { slug: { equals: $categorySlug } } }
+        state: published
+        slug_not_in: $filteredSlug
+        categories_some: { slug: $categorySlug }
       }
-    ) @include(if: $withCount)
+    ) @include(if: $withCount) {
+      count
+    }
   }
   ${listingPost}
 `
@@ -113,37 +119,35 @@ const getVideoPostsByCategorySlug = gql`
     $category: String!
     $first: Int = 10
     $skip: Int = 0
-    $style: String
+    $style: PostStyleType
     $withCount: Boolean = false
-    $filteredSlug: [String!] = [""]
+    $filteredSlug: [String] = [""]
   ) {
-    allPosts: posts(
+    allPosts(
       where: {
-        categories: {
-          some: { slug: { equals: $category } }
-          every: { slug: { notIn: ["ombuds"] } }
-        }
-        state: { equals: "published" }
-        slug: { notIn: $filteredSlug }
-        style: { equals: $style }
+        categories_some: { slug: $category }
+        state: published
+        slug_not_in: $filteredSlug
+        categories_every: { slug_not_in: "ombuds" }
+        style: $style
       }
-      take: $first
+      first: $first
       skip: $skip
-      orderBy: { publishTime: desc }
+      sortBy: publishTime_DESC
     ) {
       ...listingPostFragment
     }
-    postsCount(
+    _allPostsMeta(
       where: {
-        categories: {
-          some: { slug: { equals: $category } }
-          every: { slug: { notIn: ["ombuds"] } }
-        }
-        state: { equals: "published" }
-        slug: { notIn: $filteredSlug }
-        style: { equals: $style }
+        categories_some: { slug: $category }
+        state: published
+        slug_not_in: $filteredSlug
+        categories_every: { slug_not_in: "ombuds" }
+        style: $style
       }
-    ) @include(if: $withCount)
+    ) @include(if: $withCount) {
+      count
+    }
   }
   ${listingPost}
 `
@@ -153,17 +157,17 @@ const getPostsWithCategory = gql`
     $first: Int = 12
     $skip: Int = 0
     $withCount: Boolean = false
-    $filteredSlug: [String!] = [""]
+    $filteredSlug: [String] = [""]
   ) {
-    allPosts: posts(
+    allPosts(
       where: {
-        state: { equals: "published" }
-        slug: { notIn: $filteredSlug }
-        style: { notIn: ["wide", "projects", "script", "campaign", "readr"] }
+        state: published
+        slug_not_in: $filteredSlug
+        style_not_in: [wide, projects, script, campaign, readr]
       }
-      take: $first
+      first: $first
       skip: $skip
-      orderBy: { publishTime: desc }
+      sortBy: publishTime_DESC
     ) {
       ...listingPostFragment
       publishTime
@@ -173,17 +177,20 @@ const getPostsWithCategory = gql`
       }
       heroVideo {
         coverPhoto {
-          imageApiData
+          urlMobileSized
+          urlOriginal
         }
       }
     }
-    postsCount(
+    _allPostsMeta(
       where: {
-        state: { equals: "published" }
-        slug: { notIn: $filteredSlug }
-        style: { notIn: ["wide", "projects", "script", "campaign", "readr"] }
+        state: published
+        slug_not_in: $filteredSlug
+        style_not_in: [wide, projects, script, campaign, readr]
       }
-    ) @include(if: $withCount)
+    ) @include(if: $withCount) {
+      count
+    }
   }
   ${listingPost}
 `

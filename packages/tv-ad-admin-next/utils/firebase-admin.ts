@@ -109,9 +109,9 @@ export async function getFirebaseUser(email: string): Promise<string> {
     // 根據 email 取得用戶
     const user = await auth.getUserByEmail(email)
     return user.uid
-  } catch (error: unknown) {
+  } catch (error: any) {
     // 如果錯誤是找不到用戶，拋出更明確的錯誤訊息
-    if ((error as { code?: string } | null)?.code === 'auth/user-not-found') {
+    if (error?.code === 'auth/user-not-found') {
       throw new Error(`Firebase 帳號不存在: ${email}`)
     }
     console.error('取得 Firebase User 失敗:', error)

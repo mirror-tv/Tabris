@@ -13,27 +13,15 @@ import {
   fetchEditorChoices,
 } from '~/graphql/query/editor-choices'
 
+import { fetchStaticJson } from '~/utils/fetch-static-json'
 import { createDataFetchingChain } from '~/utils/fetch-function'
-import { ENV } from '~/constants/environment-variables'
-
-const ImageApiDataSizeSchema = z.object({
-  url: z.string(),
-  width: z.number().optional(),
-  height: z.number().optional(),
-})
-
-const ImageApiDataSchema = z.object({
-  url: z.string().optional(),
-  w480: ImageApiDataSizeSchema.optional(),
-  w800: ImageApiDataSizeSchema.optional(),
-  w1200: ImageApiDataSizeSchema.optional(),
-  w1600: ImageApiDataSizeSchema.optional(),
-  w2400: ImageApiDataSizeSchema.optional(),
-  original: ImageApiDataSizeSchema.optional(),
-})
 
 const HeroImageSchema = z.object({
-  imageApiData: z.union([z.string(), ImageApiDataSchema]).optional(),
+  urlDesktopSized: z.string().optional(),
+  urlTabletSized: z.string().optional(),
+  urlMobileSized: z.string().optional(),
+  urlTinySized: z.string().optional(),
+  urlOriginal: z.string().optional(),
 })
 
 const FlexibleHeroImageSchema = z.union([z.string(), HeroImageSchema, z.null()])
@@ -196,16 +184,7 @@ type GetLatestPostsServerActionType = {
 }
 
 async function fetchLatestPostsAndEditorChoices({ page }: { page: number }) {
-  const timestamp = Date.now()
-  const resp = await fetch(
-    `https://storage.googleapis.com/static-mnews-tw-${ENV}/files/json/latest_posts0${page}.json?timestamp=${
-      timestamp / 100
-    }`
-  )
-  if (!resp.ok) {
-    throw new Error(`HTTP error! status: ${resp.status}`)
-  }
-  const jsonData = await resp.json()
+  const jsonData = await fetchStaticJson(`latest_posts0${page}.json`)
   const result = StaticHomepageResponseSchema.safeParse(jsonData)
 
   if (!result.success) {
@@ -277,22 +256,21 @@ async function getLatestPostsAndEditorChoices({
               source: choice.source,
               heroImage:
                 typeof choice.heroImage === 'string'
-                  ? {
-                      imageApiData: {
-                        url: choice.heroImage,
-                        original: { url: choice.heroImage },
-                      },
-                    }
+                  ? { urlOriginal: choice.heroImage }
                   : choice.heroImage || {
-                      imageApiData: {
-                        url: '',
-                      },
+                      urlOriginal: '',
+                      urlDesktopSized: '',
+                      urlTabletSized: '',
+                      urlMobileSized: '',
+                      urlTinySized: '',
                     },
               heroVideo: choice.heroVideo || {
                 coverPhoto: {
-                  imageApiData: {
-                    url: '',
-                  },
+                  urlOriginal: '',
+                  urlDesktopSized: '',
+                  urlTabletSized: '',
+                  urlMobileSized: '',
+                  urlTinySized: '',
                 },
               },
               exclusive: choice.exclusive ?? false,
@@ -307,12 +285,7 @@ async function getLatestPostsAndEditorChoices({
           partner: post.partner,
           heroImage:
             typeof post.heroImage === 'string'
-              ? {
-                  imageApiData: {
-                    url: post.heroImage,
-                    original: { url: post.heroImage },
-                  },
-                }
+              ? { urlOriginal: post.heroImage }
               : post.heroImage,
           publishTime: new Date(post.publishTime),
           categories: (post.categories || []).map((category) => ({
@@ -321,9 +294,11 @@ async function getLatestPostsAndEditorChoices({
           })),
           heroVideo: {
             coverPhoto: post.heroVideo?.coverPhoto || {
-              imageApiData: {
-                url: '',
-              },
+              urlOriginal: '',
+              urlDesktopSized: '',
+              urlTabletSized: '',
+              urlMobileSized: '',
+              urlTinySized: '',
             },
           },
           exclusive: post.exclusive,
@@ -389,9 +364,11 @@ async function getLatestPostsAndEditorChoices({
             choice: {
               ...choice.choice,
               heroImage: choice.choice.heroImage || {
-                imageApiData: {
-                  url: '',
-                },
+                urlOriginal: '',
+                urlDesktopSized: '',
+                urlTabletSized: '',
+                urlMobileSized: '',
+                urlTinySized: '',
               },
             },
           }))
@@ -402,16 +379,20 @@ async function getLatestPostsAndEditorChoices({
             heroVideo: post.heroVideo
               ? {
                   coverPhoto: post.heroVideo?.coverPhoto || {
-                    imageApiData: {
-                      url: '',
-                    },
+                    urlOriginal: '',
+                    urlDesktopSized: '',
+                    urlTabletSized: '',
+                    urlMobileSized: '',
+                    urlTinySized: '',
                   },
                 }
               : {
                   coverPhoto: {
-                    imageApiData: {
-                      url: '',
-                    },
+                    urlOriginal: '',
+                    urlDesktopSized: '',
+                    urlTabletSized: '',
+                    urlMobileSized: '',
+                    urlTinySized: '',
                   },
                 },
           })
@@ -460,16 +441,20 @@ async function getLatestPostsAndEditorChoices({
         heroVideo: post.heroVideo
           ? {
               coverPhoto: post.heroVideo?.coverPhoto || {
-                imageApiData: {
-                  url: '',
-                },
+                urlOriginal: '',
+                urlDesktopSized: '',
+                urlTabletSized: '',
+                urlMobileSized: '',
+                urlTinySized: '',
               },
             }
           : {
               coverPhoto: {
-                imageApiData: {
-                  url: '',
-                },
+                urlOriginal: '',
+                urlDesktopSized: '',
+                urlTabletSized: '',
+                urlMobileSized: '',
+                urlTinySized: '',
               },
             },
       })
