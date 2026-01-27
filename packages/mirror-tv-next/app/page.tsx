@@ -8,6 +8,7 @@ import GptPopup from '~/components/ads/gpt/gpt-popup'
 import { GLOBAL_CACHE_SETTING } from '~/constants/environment-variables'
 import PopularPostsList from '~/components/homepage/popular-posts-list'
 import TopicList from '~/components/homepage/topic-list'
+import LiveCamList from '~/components/homepage/live-cam-list'
 import ShowList from '~/components/homepage/show-list-init'
 import LatestAndEditorChoicesWithLive from '~/components/homepage/latest-and-editor-choices-with-live'
 import { getTopicVideo } from '~/app/_actions/homepage/topic-video'
@@ -49,6 +50,10 @@ export default async function Home() {
         <GPTAd pageKey="home" adKey="MB_M3" className={styles.gptAdM3} />
       </div>
       {!isFeature2025HomepageStyleOn && <PopularPostsList title="熱門新聞" />}
+      <LiveCamList
+        title="直播現場"
+        allLiveVideo={homepageData.allVideos.slice(1)}
+      />
       <PromotionVideoList
         title="發燒單元"
         allPromotionVideos={homepageData.allPromotionVideos.slice(0, 4)}

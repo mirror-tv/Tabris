@@ -3,12 +3,24 @@ export type FlashNews = {
   name: string
 }
 
+export type ImageApiDataSize = {
+  url: string
+  width?: number
+  height?: number
+}
+
+export type ImageApiData = {
+  url?: string
+  w480?: ImageApiDataSize
+  w800?: ImageApiDataSize
+  w1200?: ImageApiDataSize
+  w1600?: ImageApiDataSize
+  w2400?: ImageApiDataSize
+  original?: ImageApiDataSize
+}
+
 export type HeroImage = {
-  urlDesktopSized?: string
-  urlTabletSized?: string
-  urlMobileSized?: string
-  urlTinySized?: string
-  urlOriginal?: string
+  imageApiData?: ImageApiData | string | null
 }
 
 export type Schedule = {

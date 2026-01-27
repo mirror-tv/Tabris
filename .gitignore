@@ -132,11 +132,3 @@ lib
 
 # cursor
 .cursor
-
-# gemini
-.gemini
-GEMINI.md
-
-# CLAUDE
-.claude
-CLAUDE.md

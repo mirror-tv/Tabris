@@ -12,29 +12,27 @@ const getExternalsByTagName = gql`
     $first: Int = 12
     $skip: Int = 0
     $withCount: Boolean = false
-    $filteredSlug: [String] = [""]
+    $filteredSlug: [String!] = [""]
   ) {
-    allExternals(
+    allExternals: externals(
       where: {
-        state: published
-        slug_not_in: $filteredSlug
-        tags_some: { name: $tagName }
+        state: { equals: "published" }
+        slug: { notIn: $filteredSlug }
+        tags: { some: { name: { equals: $tagName } } }
       }
-      first: $first
+      take: $first
       skip: $skip
-      sortBy: publishTime_DESC
+      orderBy: { publishTime: desc }
     ) {
       ...listingExternalFragment
     }
-    _allExternalsMeta(
+    externalsCount(
       where: {
-        state: published
-        slug_not_in: $filteredSlug
-        tags_some: { name: $tagName }
+        state: { equals: "published" }
+        slug: { notIn: $filteredSlug }
+        tags: { some: { name: { equals: $tagName } } }
       }
-    ) @include(if: $withCount) {
-      count
-    }
+    ) @include(if: $withCount)
   }
   ${listingExternal}
 `
@@ -45,29 +43,27 @@ const getExternalsByCategory = gql`
     $first: Int = 12
     $skip: Int = 0
     $withCount: Boolean = false
-    $filteredSlug: [String] = [""]
+    $filteredSlug: [String!] = [""]
   ) {
-    allExternals(
+    allExternals: externals(
       where: {
-        state: published
-        slug_not_in: $filteredSlug
-        categories_some: { slug: $categorySlug }
+        state: { equals: "published" }
+        slug: { notIn: $filteredSlug }
+        categories: { some: { slug: { equals: $categorySlug } } }
       }
-      first: $first
+      take: $first
       skip: $skip
-      sortBy: publishTime_DESC
+      orderBy: { publishTime: desc }
     ) {
       ...listingExternalFragment
     }
-    _allExternalsMeta(
+    externalsCount(
       where: {
-        state: published
-        slug_not_in: $filteredSlug
-        categories_some: { slug: $categorySlug }
+        state: { equals: "published" }
+        slug: { notIn: $filteredSlug }
+        categories: { some: { slug: { equals: $categorySlug } } }
       }
-    ) @include(if: $withCount) {
-      count
-    }
+    ) @include(if: $withCount)
   }
   ${listingExternal}
 `

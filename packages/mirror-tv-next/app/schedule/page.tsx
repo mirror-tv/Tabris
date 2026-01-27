@@ -4,9 +4,9 @@ import type { Metadata } from 'next'
 import ScheduleTable from '~/components/schedule/schedule-table'
 import {
   GLOBAL_CACHE_SETTING,
+  SCHEDULE_JSON_URL,
   SITE_URL,
 } from '~/constants/environment-variables'
-import { fetchStaticJson } from '~/utils/fetch-static-json'
 import styles from '~/styles/pages/schedule-page.module.scss'
 import type { Schedule } from '~/types/common'
 import dynamic from 'next/dynamic'
@@ -34,7 +34,16 @@ type WeekDate = {
 
 async function getData() {
   try {
-    return await fetchStaticJson<Schedule[]>('tv-schedule.json')
+    const res = await fetch(SCHEDULE_JSON_URL, {
+      next: { revalidate: GLOBAL_CACHE_SETTING },
+    })
+
+    if (!res.ok) {
+      console.error('Failed to fetch schedule data')
+      return []
+    }
+
+    return res.json()
   } catch (err) {
     const annotatingError = errors.helpers.wrap(
       err,
@@ -51,14 +60,14 @@ async function getData() {
         }),
       })
     )
-    return []
+    return
   }
 }
 
 export default async function SchedulePage() {
   let schedule: Schedule[] = []
 
-  schedule = (await getData()) ?? []
+  schedule = await getData()
 
   const dayOfWeekMap: { [key: string]: string } = {
     Monday: '星期一',

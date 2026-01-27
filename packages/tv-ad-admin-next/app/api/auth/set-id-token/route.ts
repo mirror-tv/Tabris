@@ -5,8 +5,8 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 
-import { verifyFirebaseToken } from '@/utils/firebase-admin'
 import { createErrorLogger } from '@/utils/error-handler'
+import { verifyFirebaseToken } from '@/utils/firebase-admin'
 
 export async function POST(request: NextRequest) {
   try {

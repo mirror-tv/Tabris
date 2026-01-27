@@ -10,10 +10,9 @@ import { META_DESCRIPTION, SITE_TITLE } from '~/constants/constant'
 import {
   GLOBAL_CACHE_SETTING,
   GTM_ID,
+  HEADER_JSON_URL,
   SITE_URL,
-  HEADER_JSON_FILE_NAME,
 } from '~/constants/environment-variables'
-import { fetchStaticJson } from '~/utils/fetch-static-json'
 import '~/styles/global.css'
 import CompassFit from '~/components/ads/compass-fit'
 import TagManagerWrapper from '~/app/tag-manager'
@@ -86,10 +85,15 @@ export default async function RootLayout({
     'Error occurs while fetching latest posts'
   )
   try {
-    const data = await fetchStaticJson<HeaderData>(HEADER_JSON_FILE_NAME)
+    const data = await fetch(HEADER_JSON_URL, {
+      next: { revalidate: GLOBAL_CACHE_SETTING },
+    }).then((res) => {
+      // use type assertion to eliminate any
+      return res.json() as unknown as HeaderData
+    })
     initialHeaderData = data
   } catch (error) {
-    console.error('Failed to fetch header data:', error)
+    console.error('Failed to fetch popular posts:', error)
   }
   console.log('GTM_ID', GTM_ID)
 
