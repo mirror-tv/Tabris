@@ -19,9 +19,13 @@ const weatherToImage = {
 
 export type CityAndWeather = {
   [city: string]: {
-    weather: string
+    date: string
     max_temp: number
     min_temp: number
+    weather_desc: string
+    weather_code: string
+    weather: string
+    fetch_time: string
   }
 }
 

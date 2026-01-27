@@ -20,7 +20,7 @@ import { fetchPopularPosts } from '~/app/_actions/popular-data'
 import { type RawPopularPost } from '~/types/popular-post'
 import { getLatestPostsAside } from '~/app/_actions/share/get-latest-posts'
 import { type PostCardItem } from '~/graphql/query/posts'
-import type { HeaderData } from '~/types/header'
+import type { HeaderData, RawShow, RawSponsor } from '~/types/header'
 import { handleResponse } from '~/utils'
 import styles from '../styles/pages/layout.module.scss'
 
@@ -87,13 +87,51 @@ export default async function RootLayout({
   try {
     const data = await fetch(HEADER_JSON_URL, {
       next: { revalidate: GLOBAL_CACHE_SETTING },
-    }).then((res) => {
-      // use type assertion to eliminate any
-      return res.json() as unknown as HeaderData
-    })
-    initialHeaderData = data
+    }).then((res) => res.json())
+
+    // Transform new JSON format { categories, shows, sponsors } to HeaderData format { allCategories, allShows, allSponsors }
+    initialHeaderData = {
+      allCategories: data.categories || [],
+      allShows: (data.shows || []).map((show: RawShow) => ({
+        id: show.id,
+        slug: show.slug,
+        name: show.name,
+        sortOrder: show.sortOrder,
+        listShow: show.listShow,
+        bannerImg: show.bannerImg
+          ? {
+              urlMobileSized:
+                show.bannerImg.w800 || show.bannerImg.original || '',
+              urlTabletSized:
+                show.bannerImg.w800 || show.bannerImg.original || '',
+              urlOriginal: show.bannerImg.original || '',
+            }
+          : null,
+      })),
+      allSponsors: (data.sponsors || []).map((sponsor: RawSponsor) => ({
+        id: sponsor.id,
+        title: sponsor.title,
+        url: sponsor.url,
+        logo: sponsor.logo
+          ? {
+              urlMobileSized: sponsor.logo.w480 || '',
+            }
+          : null,
+        mobile: sponsor.mobile
+          ? {
+              urlMobileSized: sponsor.mobile.w480 || '',
+            }
+          : null,
+        tablet: sponsor.tablet
+          ? {
+              urlMobileSized: sponsor.tablet.w480 || '',
+            }
+          : null,
+        topic: sponsor.topic,
+      })),
+    }
   } catch (error) {
-    console.error('Failed to fetch popular posts:', error)
+    console.error('Failed to fetch header data:', error)
   }
   console.log('GTM_ID', GTM_ID)
 

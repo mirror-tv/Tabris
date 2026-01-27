@@ -16,7 +16,7 @@ async function getData() {
 
     if (!res.ok) {
       console.error('Failed to fetch flash news data')
-      return { allPosts: [] }
+      return { posts: [] }
     }
 
     return res.json()
@@ -36,15 +36,16 @@ async function getData() {
         }),
       })
     )
-    return
+    return { posts: [] }
   }
 }
 
 export default async function MainFlashNews() {
   let flashNews: FlashNews[] = []
 
-  const { allPosts } = await getData()
-  flashNews = allPosts
+  const data = await getData()
+  // Transform new JSON format { posts } to { allPosts } for compatibility
+  flashNews = data?.posts || data?.allPosts || []
 
   return (
     <>

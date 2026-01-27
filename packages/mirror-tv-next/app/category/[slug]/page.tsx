@@ -16,6 +16,10 @@ import {
 import { type Category } from '~/graphql/query/category'
 import styles from '~/styles/pages/category.module.scss'
 import { FeaturePost } from '~/types/api-data'
+import type {
+  RawFeaturedCategoriesNewsJson,
+  RawFeaturedPost,
+} from '~/types/featured-categories-news'
 import {
   FormattedPostCard,
   formatArticleCard,
@@ -33,6 +37,58 @@ export const revalidate = GLOBAL_CACHE_SETTING
 
 type FeaturePostsResponse = {
   allPosts: FeaturePost[]
+}
+
+/** Convert new featured_categories_news heroImage { resized } to HeroImage (legacy url* fields) */
+function convertFeaturedHeroImageToLegacy(
+  heroImage: RawFeaturedPost['heroImage']
+): FeaturePost['heroImage'] {
+  if (!heroImage?.resized) {
+    return {
+      urlOriginal: '',
+      urlDesktopSized: '',
+      urlTabletSized: '',
+      urlMobileSized: '',
+      urlTinySized: '',
+    }
+  }
+  const r = heroImage.resized
+  return {
+    urlOriginal: r.original ?? '',
+    urlDesktopSized: r.w1600 ?? r.w2400 ?? '',
+    urlTabletSized: r.w1200 ?? r.w1600 ?? '',
+    urlMobileSized: r.w800 ?? '',
+    urlTinySized: r.w480 ?? '',
+  }
+}
+
+/** Normalize featured_categories_news response to { allPosts: FeaturePost[] } for category feature-post lookup */
+function normalizeFeaturePostsResponse(
+  data: FeaturePostsResponse | RawFeaturedCategoriesNewsJson | undefined
+): FeaturePostsResponse | undefined {
+  if (!data) return undefined
+  if ('allPosts' in data && Array.isArray(data.allPosts)) {
+    return data as FeaturePostsResponse
+  }
+  if ('posts' in data && Array.isArray(data.posts)) {
+    const raw = data as RawFeaturedCategoriesNewsJson
+    const allPosts: FeaturePost[] = raw.posts.map((post: RawFeaturedPost) => ({
+      id: post.id,
+      name: post.name,
+      subtitle: post.subtitle ?? '',
+      slug: post.slug,
+      style: post.style,
+      publishTime: post.publishTime,
+      categories: (post.categories ?? []).map((c) => ({
+        id: c.id ?? '',
+        name: c.name ?? '',
+        slug: c.slug ?? '',
+      })),
+      heroImage: convertFeaturedHeroImageToLegacy(post.heroImage),
+    }))
+    return { allPosts }
+  }
+  return undefined
 }
 
 export async function generateMetadata({
@@ -58,18 +114,26 @@ export async function generateMetadata({
 
   let firstPost = null
 
-  const fetchFeaturePosts = (): Promise<FeaturePostsResponse> =>
-    fetch(FEATURE_POSTS_URL).then((res) => res.json())
+  const fetchFeaturePosts = (): Promise<
+    FeaturePostsResponse | RawFeaturedCategoriesNewsJson
+  > =>
+    fetch(FEATURE_POSTS_URL, {
+      next: { revalidate: GLOBAL_CACHE_SETTING },
+    }).then((res) => res.json())
 
   const [featurePostResult] = await Promise.allSettled([fetchFeaturePosts()])
 
   firstPost = handleResponse(
     featurePostResult,
     (response: Awaited<ReturnType<typeof fetchFeaturePosts>> | undefined) => {
-      if (!response?.allPosts) return null
-      const post = response.allPosts.find((post: FeaturePost) => {
+      const normalized = normalizeFeaturePostsResponse(response)
+      if (!normalized?.allPosts) return null
+      const post = normalized.allPosts.find((post: FeaturePost) => {
         return post.categories.some((category) => {
-          return category.id === categoryData.id
+          return (
+            category.id === categoryData.id ||
+            category.slug === categoryData.slug
+          )
         })
       })
       return post ? formatArticleCard(post) : null
@@ -170,8 +234,12 @@ export default async function CategoryPage({
     return notFound()
   }
 
-  const fetchFeaturePosts = (): Promise<FeaturePostsResponse> =>
-    fetch(FEATURE_POSTS_URL).then((res) => res.json())
+  const fetchFeaturePosts = (): Promise<
+    FeaturePostsResponse | RawFeaturedCategoriesNewsJson
+  > =>
+    fetch(FEATURE_POSTS_URL, {
+      next: { revalidate: GLOBAL_CACHE_SETTING },
+    }).then((res) => res.json())
 
   const fetchSalesPosts = () => fetchSales({ take: 4, pageName: 'category' })
   const [featurePostResult, salesResult] = await Promise.allSettled([
@@ -182,10 +250,13 @@ export default async function CategoryPage({
   featurePost = handleResponse(
     featurePostResult,
     (response: Awaited<ReturnType<typeof fetchFeaturePosts>> | undefined) => {
-      if (!response?.allPosts) return null
-      const post = response.allPosts.find((post: FeaturePost) => {
+      const normalized = normalizeFeaturePostsResponse(response)
+      if (!normalized?.allPosts) return null
+      const post = normalized.allPosts.find((post: FeaturePost) => {
         return post.categories.some(
-          (category) => category.id === categoryData.id
+          (category) =>
+            category.id === categoryData.id ||
+            category.slug === categoryData.slug
         )
       })
       return post ? formatArticleCard(post) : null

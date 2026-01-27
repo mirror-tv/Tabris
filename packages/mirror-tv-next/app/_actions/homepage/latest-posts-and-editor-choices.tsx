@@ -13,35 +13,37 @@ import {
   fetchEditorChoices,
 } from '~/graphql/query/editor-choices'
 
+import { fetchStaticJson } from '~/utils/fetch-static-json'
 import { createDataFetchingChain } from '~/utils/fetch-function'
-import { ENV } from '~/constants/environment-variables'
+import type { HeroImage } from '~/types/common'
 
-const ImageApiDataSizeSchema = z.object({
-  url: z.string(),
-  width: z.number().optional(),
-  height: z.number().optional(),
+// New JSON format schema (for latest_posts.json)
+const NewHeroImageSchema = z.object({
+  original: z.string().optional(),
+  w1600: z.string().optional(),
+  w1200: z.string().optional(),
+  w800: z.string().optional(),
+  w480: z.string().optional(),
 })
 
-const ImageApiDataSchema = z.object({
-  url: z.string().optional(),
-  w480: ImageApiDataSizeSchema.optional(),
-  w800: ImageApiDataSizeSchema.optional(),
-  w1200: ImageApiDataSizeSchema.optional(),
-  w1600: ImageApiDataSizeSchema.optional(),
-  w2400: ImageApiDataSizeSchema.optional(),
-  original: ImageApiDataSizeSchema.optional(),
+// Legacy format schema (for GraphQL compatibility)
+const LegacyHeroImageSchema = z.object({
+  urlDesktopSized: z.string().optional(),
+  urlTabletSized: z.string().optional(),
+  urlMobileSized: z.string().optional(),
+  urlTinySized: z.string().optional(),
+  urlOriginal: z.string().optional(),
 })
 
-const HeroImageSchema = z.object({
-  imageApiData: z.union([z.string(), ImageApiDataSchema]).optional(),
-})
+// Combined schema that accepts both formats
+const HeroImageSchema = z.union([NewHeroImageSchema, LegacyHeroImageSchema])
 
 const FlexibleHeroImageSchema = z.union([z.string(), HeroImageSchema, z.null()])
 
 const StaticEditorChoiceSchema = z.object({
   name: z.string(),
   slug: z.string(),
-  heroImage: FlexibleHeroImageSchema,
+  heroImage: FlexibleHeroImageSchema.optional(),
   heroVideo: z
     .object({
       coverPhoto: HeroImageSchema.nullable(),
@@ -79,7 +81,7 @@ const StaticLatestPostSchema = z.object({
     if (val === null || val === undefined) return new Date().toISOString()
     return String(val)
   }),
-  heroImage: FlexibleHeroImageSchema,
+  heroImage: FlexibleHeroImageSchema.optional(),
   categories: z
     .array(
       z.object({
@@ -195,17 +197,94 @@ type GetLatestPostsServerActionType = {
   jsonPage: number
 }
 
-async function fetchLatestPostsAndEditorChoices({ page }: { page: number }) {
-  const timestamp = Date.now()
-  const resp = await fetch(
-    `https://storage.googleapis.com/static-mnews-tw-${ENV}/files/json/latest_posts0${page}.json?timestamp=${
-      timestamp / 100
-    }`
-  )
-  if (!resp.ok) {
-    throw new Error(`HTTP error! status: ${resp.status}`)
+/**
+ * Convert new heroImage format { original, w1600, w1200, w800, w480 } to legacy format { urlOriginal, urlDesktopSized, urlTabletSized, urlMobileSized, urlTinySized }
+ * Filters out empty strings and returns null if no valid URLs are found
+ */
+function convertHeroImageToLegacyFormat(
+  heroImage: z.infer<typeof FlexibleHeroImageSchema>
+): {
+  urlOriginal?: string
+  urlDesktopSized?: string
+  urlTabletSized?: string
+  urlMobileSized?: string
+  urlTinySized?: string
+} | null {
+  if (!heroImage) {
+    return null
   }
-  const jsonData = await resp.json()
+
+  // Handle string format
+  if (typeof heroImage === 'string') {
+    return heroImage.trim() ? { urlOriginal: heroImage.trim() } : null
+  }
+
+  // If it's already in legacy format, filter out empty strings
+  if ('urlOriginal' in heroImage || 'urlDesktopSized' in heroImage) {
+    const result: {
+      urlOriginal?: string
+      urlDesktopSized?: string
+      urlTabletSized?: string
+      urlMobileSized?: string
+      urlTinySized?: string
+    } = {}
+
+    if (heroImage.urlOriginal?.trim()) {
+      result.urlOriginal = heroImage.urlOriginal.trim()
+    }
+    if (heroImage.urlDesktopSized?.trim()) {
+      result.urlDesktopSized = heroImage.urlDesktopSized.trim()
+    }
+    if (heroImage.urlTabletSized?.trim()) {
+      result.urlTabletSized = heroImage.urlTabletSized.trim()
+    }
+    if (heroImage.urlMobileSized?.trim()) {
+      result.urlMobileSized = heroImage.urlMobileSized.trim()
+    }
+    if (heroImage.urlTinySized?.trim()) {
+      result.urlTinySized = heroImage.urlTinySized.trim()
+    }
+
+    return Object.keys(result).length > 0 ? result : null
+  }
+
+  // Convert new format to legacy format
+  if ('original' in heroImage || 'w1600' in heroImage) {
+    const result: {
+      urlOriginal?: string
+      urlDesktopSized?: string
+      urlTabletSized?: string
+      urlMobileSized?: string
+      urlTinySized?: string
+    } = {}
+
+    // Only include non-empty strings
+    if (heroImage.original?.trim()) {
+      result.urlOriginal = heroImage.original.trim()
+    }
+    if (heroImage.w1600?.trim()) {
+      result.urlDesktopSized = heroImage.w1600.trim()
+    }
+    if (heroImage.w1200?.trim()) {
+      result.urlTabletSized = heroImage.w1200.trim()
+    } else if (heroImage.w1600?.trim()) {
+      result.urlTabletSized = heroImage.w1600.trim()
+    }
+    if (heroImage.w800?.trim()) {
+      result.urlMobileSized = heroImage.w800.trim()
+    }
+    if (heroImage.w480?.trim()) {
+      result.urlTinySized = heroImage.w480.trim()
+    }
+
+    return Object.keys(result).length > 0 ? result : null
+  }
+
+  return null
+}
+
+async function fetchLatestPostsAndEditorChoices({ page }: { page: number }) {
+  const jsonData = await fetchStaticJson(`latest_posts0${page}.json`)
   const result = StaticHomepageResponseSchema.safeParse(jsonData)
 
   if (!result.success) {
@@ -256,89 +335,124 @@ async function getLatestPostsAndEditorChoices({
   }
 
   if (jsonPage) {
-    data = await createDataFetchingChain<{
+    type JsonChainResult = {
       latest: PostWithCategory[]
       choices: EditorChoices[]
       _allPostsMeta?: { count: number }
       source: 'json' | 'graphql'
-    }>(
-      errorLogger,
-      { latest: [], choices: [], source: 'graphql' as const },
-      async () => {
-        const validatedData = await fetchLatestPostsAndEditorChoices({
-          page: jsonPage,
-        })
+    }
+    const fetchFromJson = async (): Promise<JsonChainResult> => {
+      const validatedData = await fetchLatestPostsAndEditorChoices({
+        page: jsonPage,
+      })
 
-        const transformedChoices = (validatedData.choices || []).map(
-          (choice) => ({
-            choice: {
-              name: choice.name,
-              slug: choice.slug,
-              source: choice.source,
-              heroImage:
-                typeof choice.heroImage === 'string'
-                  ? {
-                      imageApiData: {
-                        url: choice.heroImage,
-                        original: { url: choice.heroImage },
-                      },
-                    }
-                  : choice.heroImage || {
-                      imageApiData: {
-                        url: '',
-                      },
-                    },
-              heroVideo: choice.heroVideo || {
-                coverPhoto: {
-                  imageApiData: {
-                    url: '',
-                  },
+      const transformedChoices = (validatedData.choices || []).map((choice) => {
+        let heroImage: HeroImage | null = null
+
+        if (typeof choice.heroImage === 'string') {
+          heroImage = { urlOriginal: choice.heroImage }
+        } else if (choice.heroImage) {
+          const converted = convertHeroImageToLegacyFormat(choice.heroImage)
+          if (converted) {
+            heroImage = converted as HeroImage
+          }
+        }
+
+        const coverPhoto = choice.heroVideo?.coverPhoto
+          ? (convertHeroImageToLegacyFormat(
+              choice.heroVideo.coverPhoto
+            ) as HeroImage | null)
+          : null
+
+        return {
+          choice: {
+            name: choice.name,
+            slug: choice.slug,
+            source: choice.source,
+            heroImage: (heroImage || {
+              urlOriginal: '',
+              urlDesktopSized: '',
+              urlTabletSized: '',
+              urlMobileSized: '',
+              urlTinySized: '',
+            }) as HeroImage,
+            heroVideo: choice.heroVideo
+              ? {
+                  coverPhoto: (coverPhoto || {
+                    urlOriginal: '',
+                    urlDesktopSized: '',
+                    urlTabletSized: '',
+                    urlMobileSized: '',
+                    urlTinySized: '',
+                  }) as HeroImage | null,
+                }
+              : {
+                  coverPhoto: {
+                    urlOriginal: '',
+                    urlDesktopSized: '',
+                    urlTabletSized: '',
+                    urlMobileSized: '',
+                    urlTinySized: '',
+                  } as HeroImage,
                 },
-              },
-              exclusive: choice.exclusive ?? false,
-            },
-          })
-        )
+            exclusive: choice.exclusive ?? false,
+          },
+        }
+      }) as EditorChoices[]
 
-        const transformedPosts = validatedData.latest.map((post) => ({
+      const transformedPosts = validatedData.latest.map((post) => {
+        let heroImage: HeroImage | null = null
+
+        if (typeof post.heroImage === 'string') {
+          heroImage = { urlOriginal: post.heroImage }
+        } else if (post.heroImage) {
+          const converted = convertHeroImageToLegacyFormat(post.heroImage)
+          if (converted) {
+            heroImage = converted as HeroImage
+          }
+        }
+
+        const coverPhoto = post.heroVideo?.coverPhoto
+          ? (convertHeroImageToLegacyFormat(
+              post.heroVideo.coverPhoto
+            ) as HeroImage | null)
+          : null
+
+        return {
           slug: post.slug,
           style: post.style,
           name: post.name,
-          partner: post.partner,
-          heroImage:
-            typeof post.heroImage === 'string'
-              ? {
-                  imageApiData: {
-                    url: post.heroImage,
-                    original: { url: post.heroImage },
-                  },
-                }
-              : post.heroImage,
+          heroImage: heroImage as HeroImage | null,
           publishTime: new Date(post.publishTime),
           categories: (post.categories || []).map((category) => ({
             slug: category.slug || category.name?.toLowerCase() || 'unknown',
             name: category.name,
           })),
           heroVideo: {
-            coverPhoto: post.heroVideo?.coverPhoto || {
-              imageApiData: {
-                url: '',
-              },
-            },
+            coverPhoto: (coverPhoto || {
+              urlOriginal: '',
+              urlDesktopSized: '',
+              urlTabletSized: '',
+              urlMobileSized: '',
+              urlTinySized: '',
+            }) as HeroImage | null,
           },
           exclusive: post.exclusive,
-        }))
+        } as PostWithCategory
+      }) as PostWithCategory[]
 
-        const transformedData = {
-          latest: transformedPosts,
-          choices: transformedChoices,
-          _allPostsMeta: withCount ? { count: 200 } : undefined,
-          source: 'json' as const,
-        }
-
-        return transformedData
-      },
-      async () => {
+      return {
+        latest: transformedPosts as PostWithCategory[],
+        choices: transformedChoices as EditorChoices[],
+        _allPostsMeta: withCount ? { count: 200 } : undefined,
+        source: 'json',
+      } as JsonChainResult
+    }
+    data = await createDataFetchingChain<JsonChainResult>(
+      errorLogger,
+      { latest: [], choices: [], source: 'graphql' as const },
+      fetchFromJson as unknown as () => Promise<JsonChainResult>,
+      async (): Promise<JsonChainResult> => {
         const client = getClient()
 
         const [editorChoicesResult, latestPostsResult] = await Promise.all([
@@ -389,9 +503,11 @@ async function getLatestPostsAndEditorChoices({
             choice: {
               ...choice.choice,
               heroImage: choice.choice.heroImage || {
-                imageApiData: {
-                  url: '',
-                },
+                urlOriginal: '',
+                urlDesktopSized: '',
+                urlTabletSized: '',
+                urlMobileSized: '',
+                urlTinySized: '',
               },
             },
           }))
@@ -402,27 +518,31 @@ async function getLatestPostsAndEditorChoices({
             heroVideo: post.heroVideo
               ? {
                   coverPhoto: post.heroVideo?.coverPhoto || {
-                    imageApiData: {
-                      url: '',
-                    },
+                    urlOriginal: '',
+                    urlDesktopSized: '',
+                    urlTabletSized: '',
+                    urlMobileSized: '',
+                    urlTinySized: '',
                   },
                 }
               : {
                   coverPhoto: {
-                    imageApiData: {
-                      url: '',
-                    },
+                    urlOriginal: '',
+                    urlDesktopSized: '',
+                    urlTabletSized: '',
+                    urlMobileSized: '',
+                    urlTinySized: '',
                   },
                 },
           })
         )
 
         return {
-          latest: transformedGraphQLPosts,
+          latest: transformedGraphQLPosts as PostWithCategory[],
           choices: transformedGraphQLChoices as EditorChoices[],
           _allPostsMeta: validatedLatestPosts._allPostsMeta,
           source: 'graphql' as const,
-        }
+        } as JsonChainResult
       }
     )
   } else {
@@ -460,20 +580,24 @@ async function getLatestPostsAndEditorChoices({
         heroVideo: post.heroVideo
           ? {
               coverPhoto: post.heroVideo?.coverPhoto || {
-                imageApiData: {
-                  url: '',
-                },
+                urlOriginal: '',
+                urlDesktopSized: '',
+                urlTabletSized: '',
+                urlMobileSized: '',
+                urlTinySized: '',
               },
             }
           : {
               coverPhoto: {
-                imageApiData: {
-                  url: '',
-                },
+                urlOriginal: '',
+                urlDesktopSized: '',
+                urlTabletSized: '',
+                urlMobileSized: '',
+                urlTinySized: '',
               },
             },
       })
-    )
+    ) as PostWithCategory[]
 
     data = {
       latest: transformedGraphQLPosts,

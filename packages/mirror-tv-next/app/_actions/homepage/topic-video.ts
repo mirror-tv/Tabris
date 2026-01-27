@@ -15,70 +15,63 @@ type VideoWithRequiredDescription = Omit<Video, 'description'> & {
   description: string
 }
 
-const ImageApiDataSizeSchema = z.object({
-  url: z.string(),
-  width: z.number().optional(),
-  height: z.number().optional(),
+// New JSON format schema (for topic.json)
+const NewHeroImageSchema = z.object({
+  w480: z.string().optional(),
+  w800: z.string().optional(),
+  original: z.string().optional(),
 })
 
-const ImageApiDataSchema = z.object({
-  url: z.string().optional(),
-  w480: ImageApiDataSizeSchema.optional(),
-  w800: ImageApiDataSizeSchema.optional(),
-  w1200: ImageApiDataSizeSchema.optional(),
-  w1600: ImageApiDataSizeSchema.optional(),
-  w2400: ImageApiDataSizeSchema.optional(),
-  original: ImageApiDataSizeSchema.optional(),
-})
-
-const HeroImageSchema = z.object({
-  imageApiData: z.union([z.string(), ImageApiDataSchema]).optional(),
+const TopicItemSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  slug: z.string(),
+  heroImage: NewHeroImageSchema.nullable(),
+  sortDir: z.string().optional(),
+  postDESC: z
+    .array(
+      z.object({
+        slug: z.string(),
+        name: z.string(),
+      })
+    )
+    .optional(),
+  postASC: z
+    .array(
+      z.object({
+        slug: z.string(),
+        name: z.string(),
+      })
+    )
+    .optional(),
 })
 
 const TopicDataSchema = z.object({
-  allTopics: z.array(
-    z.object({
-      id: z.string(),
-      name: z.string(),
-      slug: z.string(),
-      heroImage: HeroImageSchema.nullable(),
-      sortDir: z.string().optional(),
-      postDESC: z
-        .array(
-          z.object({
-            slug: z.string(),
-            name: z.string(),
-          })
-        )
-        .optional(),
-      postASC: z
-        .array(
-          z.object({
-            slug: z.string(),
-            name: z.string(),
-          })
-        )
-        .optional(),
-    })
-  ),
+  topics: z.array(TopicItemSchema).optional(),
+  allTopics: z.array(TopicItemSchema).optional(), // Backward compatibility
   timestamp: z.string().optional(),
 })
 
+/** Matches video.json: videos[].id,name,youtubeUrl,url,description,createdAt; promotionVideos[].id,ytUrl; timestamp? */
+const VideoItemSchema = z.object({
+  id: z.string(),
+  name: z.string().optional(),
+  youtubeUrl: z.string(),
+  url: z.string(),
+  description: z.string().optional(),
+  createdAt: z.string().optional(),
+})
+
+const PromotionVideoItemSchema = z.object({
+  id: z.string(),
+  ytUrl: z.string(),
+})
+
 const VideoDataSchema = z.object({
-  allVideos: z.array(
-    z.object({
-      id: z.string(),
-      youtubeUrl: z.string(),
-      url: z.string(),
-      description: z.string().nullable().optional(),
-    })
-  ),
-  allPromotionVideos: z.array(
-    z.object({
-      id: z.string(),
-      ytUrl: z.string(),
-    })
-  ),
+  videos: z.array(VideoItemSchema).optional(),
+  allVideos: z.array(VideoItemSchema).optional(), // Backward compatibility
+  promotionVideos: z.array(PromotionVideoItemSchema).optional(),
+  allPromotionVideos: z.array(PromotionVideoItemSchema).optional(), // Backward compatibility
   timestamp: z.string().optional(),
 })
 
@@ -100,16 +93,45 @@ async function fetchVideoData() {
   return VideoDataSchema.parse(jsonData)
 }
 
+/**
+ * Convert new heroImage format { w480, w800, original } to HeroImage format { urlOriginal, urlMobileSized, urlTabletSized }
+ */
+function convertHeroImageToLegacyFormat(
+  heroImage: z.infer<typeof NewHeroImageSchema> | null
+): {
+  urlOriginal?: string
+  urlMobileSized?: string
+  urlTabletSized?: string
+} | null {
+  if (!heroImage) {
+    return null
+  }
+
+  return {
+    urlOriginal: heroImage.original,
+    urlMobileSized: heroImage.w800,
+    urlTabletSized: heroImage.w800,
+  }
+}
+
 async function fetchTopicVideoData() {
   const [topicData, videoData] = await Promise.all([
     fetchTopicData(),
     fetchVideoData(),
   ])
 
+  // Support both new format (topics) and old format (allTopics)
+  const topics = topicData.topics || topicData.allTopics || []
+
+  // Support both new format (videos, promotionVideos) and old format (allVideos, allPromotionVideos)
+  const videos = videoData.videos || videoData.allVideos || []
+  const promotionVideos =
+    videoData.promotionVideos || videoData.allPromotionVideos || []
+
   return {
-    allTopics: topicData.allTopics,
-    allVideos: videoData.allVideos,
-    allPromotionVideos: videoData.allPromotionVideos,
+    allTopics: topics,
+    allVideos: videos,
+    allPromotionVideos: promotionVideos,
   }
 }
 
@@ -156,12 +178,11 @@ async function getTopicVideo(): Promise<{
 
       // Transform data to match component expectations
       const transformedTopics = validatedData.allTopics.map((topic) => ({
-        ...topic,
-        heroImage: topic.heroImage || {
-          imageApiData: {
-            url: '',
-          },
-        },
+        id: topic.id,
+        slug: topic.slug,
+        name: topic.name,
+        sortDir: topic.sortDir,
+        heroImage: convertHeroImageToLegacyFormat(topic.heroImage),
         postDESC: topic.postDESC || [],
         postASC: topic.postASC || [],
       }))

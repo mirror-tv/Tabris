@@ -7,6 +7,7 @@ import {
   GLOBAL_CACHE_SETTING,
   HEADER_JSON_URL,
 } from '~/constants/environment-variables'
+import type { RawShow, RawSponsor } from '~/types/header'
 import styles from './_styles/main-header.module.scss'
 import HeaderBottom from './header-bottom'
 import HeaderNav from './header-nav'
@@ -23,7 +24,49 @@ async function getData() {
       return { allSponsors: [], allCategories: [], allShows: [] }
     }
 
-    return res.json()
+    const data = await res.json()
+
+    // Transform new JSON format { categories, shows, sponsors } to HeaderData format { allCategories, allShows, allSponsors }
+    return {
+      allCategories: data.categories || [],
+      allShows: (data.shows || []).map((show: RawShow) => ({
+        id: show.id,
+        slug: show.slug,
+        name: show.name,
+        sortOrder: show.sortOrder,
+        listShow: show.listShow,
+        bannerImg: show.bannerImg
+          ? {
+              urlMobileSized:
+                show.bannerImg.w800 || show.bannerImg.original || '',
+              urlTabletSized:
+                show.bannerImg.w800 || show.bannerImg.original || '',
+              urlOriginal: show.bannerImg.original || '',
+            }
+          : null,
+      })),
+      allSponsors: (data.sponsors || []).map((sponsor: RawSponsor) => ({
+        id: sponsor.id,
+        title: sponsor.title,
+        url: sponsor.url,
+        logo: sponsor.logo
+          ? {
+              urlMobileSized: sponsor.logo.w480 || '',
+            }
+          : null,
+        mobile: sponsor.mobile
+          ? {
+              urlMobileSized: sponsor.mobile.w480 || '',
+            }
+          : null,
+        tablet: sponsor.tablet
+          ? {
+              urlMobileSized: sponsor.tablet.w480 || '',
+            }
+          : null,
+        topic: sponsor.topic,
+      })),
+    }
   } catch (err) {
     const annotatingError = errors.helpers.wrap(
       err,
@@ -40,7 +83,7 @@ async function getData() {
         }),
       })
     )
-    return
+    return { allSponsors: [], allCategories: [], allShows: [] }
   }
 }
 

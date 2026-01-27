@@ -175,9 +175,7 @@ export default async function SingleTopicPage({
           case 'slideshow':
             return (
               <HeroSlideshow
-                heroImage={
-                  singleTopic.heroImage ?? { imageApiData: { url: '' } }
-                }
+                heroImage={singleTopic.heroImage ?? { urlOriginal: '' }}
                 title={singleTopic.title}
                 slideshow={singleTopic.slideshow}
               />
@@ -185,9 +183,7 @@ export default async function SingleTopicPage({
           case 'multivideo':
             return (
               <HeroMultiVideo
-                heroImage={
-                  singleTopic.heroImage ?? { imageApiData: { url: '' } }
-                }
+                heroImage={singleTopic.heroImage ?? { urlOriginal: '' }}
                 title={singleTopic.title}
                 multivideo={singleTopic.multivideo}
               />

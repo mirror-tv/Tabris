@@ -334,10 +334,10 @@ const ExternalPage = async (props: ExternalPageTypes) => {
         {thumbnail && (
           <ArticleHeroImageAndVideo
             heroImage={{
-              imageApiData: {
-                url: thumbnail,
-                original: { url: thumbnail },
-              },
+              urlOriginal: thumbnail,
+              urlMobileSized: thumbnail,
+              urlTabletSized: thumbnail,
+              urlDesktopSized: thumbnail,
             }}
             title={title}
             heroCaption={heroCaption}

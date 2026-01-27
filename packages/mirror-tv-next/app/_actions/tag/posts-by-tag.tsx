@@ -78,7 +78,6 @@ async function fetchExternalsByTagName({
 }> {
   const client = getClient()
   try {
-    console.log('tagName', tagName)
     const { data } = await client.query<{
       allExternals: External[]
       externalsCount?: number
@@ -92,7 +91,6 @@ async function fetchExternalsByTagName({
         filteredSlug: FILTERED_SLUG,
       },
     })
-    console.log('data', data)
     return {
       allExternals: data?.allExternals ?? [],
       _allExternalsMeta: isWithCount

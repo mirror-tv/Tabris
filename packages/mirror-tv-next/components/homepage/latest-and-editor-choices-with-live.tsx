@@ -77,7 +77,6 @@ export default async function LatestAndEditorChoicesWithLive({
     filteredSlug: [],
     jsonPage: 1,
   })
-
   filteredSlug = filteredSlug.concat(
     editorChoices?.map((item) => item.choice.slug)
   )
