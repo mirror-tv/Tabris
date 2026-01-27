@@ -1,8 +1,5 @@
 import errors from '@twreporter/errors'
-import {
-  FLASH_NEWS_JSON_URL,
-  GLOBAL_CACHE_SETTING,
-} from '~/constants/environment-variables'
+import { fetchStaticJson } from '~/utils/fetch-static-json'
 import styles from './_styles/main-flash-news.module.scss'
 import type { FlashNews } from '~/types/common'
 import UiMobFlashNews from './ui-mob-flash-news'
@@ -10,16 +7,7 @@ import UiPcFlashNews from './ui-pc-flash-news'
 
 async function getData() {
   try {
-    const res = await fetch(FLASH_NEWS_JSON_URL, {
-      next: { revalidate: GLOBAL_CACHE_SETTING },
-    })
-
-    if (!res.ok) {
-      console.error('Failed to fetch flash news data')
-      return { allPosts: [] }
-    }
-
-    return res.json()
+    return await fetchStaticJson<{ allPosts: FlashNews[] }>('flash_news.json')
   } catch (err) {
     const annotatingError = errors.helpers.wrap(
       err,
@@ -36,14 +24,14 @@ async function getData() {
         }),
       })
     )
-    return
+    return { allPosts: [] }
   }
 }
 
 export default async function MainFlashNews() {
   let flashNews: FlashNews[] = []
 
-  const { allPosts } = await getData()
+  const { allPosts } = (await getData()) ?? { allPosts: [] }
   flashNews = allPosts
 
   return (

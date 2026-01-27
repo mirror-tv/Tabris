@@ -9,10 +9,11 @@ import PostsListManager from '~/components/category/posts-list-manager'
 import UiFeaturePost from '~/components/category/ui-feature-post'
 import UiHeadingBordered from '~/components/shared/ui-heading-bordered'
 import {
-  FEATURE_POSTS_URL,
+  FEATURE_POSTS_FILE_NAME,
   GLOBAL_CACHE_SETTING,
   SITE_URL,
 } from '~/constants/environment-variables'
+import { fetchStaticJson } from '~/utils/fetch-static-json'
 import { type Category } from '~/graphql/query/category'
 import styles from '~/styles/pages/category.module.scss'
 import { FeaturePost } from '~/types/api-data'
@@ -59,7 +60,7 @@ export async function generateMetadata({
   let firstPost = null
 
   const fetchFeaturePosts = (): Promise<FeaturePostsResponse> =>
-    fetch(FEATURE_POSTS_URL).then((res) => res.json())
+    fetchStaticJson(FEATURE_POSTS_FILE_NAME)
 
   const [featurePostResult] = await Promise.allSettled([fetchFeaturePosts()])
 
@@ -171,7 +172,7 @@ export default async function CategoryPage({
   }
 
   const fetchFeaturePosts = (): Promise<FeaturePostsResponse> =>
-    fetch(FEATURE_POSTS_URL).then((res) => res.json())
+    fetchStaticJson(FEATURE_POSTS_FILE_NAME)
 
   const fetchSalesPosts = () => fetchSales({ take: 4, pageName: 'category' })
   const [featurePostResult, salesResult] = await Promise.allSettled([
