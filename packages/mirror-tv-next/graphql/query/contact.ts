@@ -4,22 +4,22 @@ import type { HeroImage } from '~/types/common'
 export type Contact = {
   name: string
   slug: string
-  anchorImg: HeroImage | null
+  anchorImg: HeroImage
 }
 
 export type SingleAnchor = Contact & {
   facebook: string | null
   instagram: string | null
   twitter: string | null
-  bioApiData: string | null
-  showhostImg: HeroImage | null
+  bioApiData: string
+  showhostImg: HeroImage
   relatedShows?: {
     id: string
     name: string
     playList01: string | null
     playList02: string | null
   }[]
-  __typename?: string
+  __typename: string
 }
 
 const fetchContactBySlug = gql`
@@ -27,16 +27,16 @@ const fetchContactBySlug = gql`
     $slug: String!
     $shouldFetchRelatedShows: Boolean = false
   ) {
-    allContacts: contacts(
-      where: { slug: { equals: $slug }, isResigned: { not: { equals: true } } }
-    ) {
+    allContacts(where: { slug: $slug, isResigned_not: true }) {
       name
       facebook
       instagram
       twitter
       bioApiData
       showhostImg {
-        imageApiData
+        urlMobileSized
+        urlTabletSized
+        urlDesktopSized
       }
       relatedShows @include(if: $shouldFetchRelatedShows) {
         id
@@ -49,17 +49,16 @@ const fetchContactBySlug = gql`
 `
 const fetchContactsByAnchorPerson = gql`
   query fetchContactsByAnchorPerson {
-    allContacts: contacts(
-      where: {
-        anchorperson: { equals: true }
-        isResigned: { not: { equals: true } }
-      }
-      orderBy: [{ sortOrder: asc }, { updatedAt: desc }]
+    allContacts(
+      where: { anchorperson: true, isResigned_not: true }
+      sortBy: [sortOrder_ASC, updatedAt_DESC]
     ) {
       name
       slug
       anchorImg {
-        imageApiData
+        urlTabletSized
+        urlMobileSized
+        urlOriginal
       }
     }
   }
@@ -67,14 +66,15 @@ const fetchContactsByAnchorPerson = gql`
 
 const fetchContactsByHost = gql`
   query fetchContactsByHost {
-    allContacts: contacts(
-      where: { host: { equals: true }, isResigned: { not: { equals: true } } }
-      orderBy: [{ sortOrder: asc }, { updatedAt: desc }]
+    allContacts(
+      where: { host: true, isResigned_not: true }
+      sortBy: [sortOrder_ASC, updatedAt_DESC]
     ) {
       name
       slug
       anchorImg {
-        imageApiData
+        urlTabletSized
+        urlMobileSized
       }
     }
   }
@@ -82,17 +82,15 @@ const fetchContactsByHost = gql`
 
 const fetchContactsByInternational = gql`
   query fetchContactsByInternational {
-    allContacts: contacts(
-      where: {
-        international: { equals: true }
-        isResigned: { not: { equals: true } }
-      }
-      orderBy: [{ sortOrder: asc }, { updatedAt: desc }]
+    allContacts(
+      where: { international: true, isResigned_not: true }
+      sortBy: [sortOrder_ASC, updatedAt_DESC]
     ) {
       name
       slug
       anchorImg {
-        imageApiData
+        urlTabletSized
+        urlMobileSized
       }
     }
   }

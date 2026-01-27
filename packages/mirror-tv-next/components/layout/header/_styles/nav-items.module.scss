@@ -96,7 +96,7 @@
   max-width: 560px;
   height: 28px;
 
-  @include media-breakpoint-up(xl) {
+  @include media-breakpoint-up(md) {
     max-width: 960px;
   }
 }

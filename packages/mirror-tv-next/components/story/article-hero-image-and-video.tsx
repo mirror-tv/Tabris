@@ -17,7 +17,7 @@ const ArticleHeroImageAndVideo: React.FC<ArticleHeroImageAndVideoProps> = (
   props
 ) => {
   const { heroImage, title, heroCaption, style, heroVideo } = props
-  const formattedHeroImage = formateHeroImage(heroImage ?? undefined)
+  const formattedHeroImage = formateHeroImage(heroImage)
 
   return (
     <figure className={styles.heroCaptionWrapper}>

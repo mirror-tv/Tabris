@@ -4,19 +4,16 @@ export type Video = {
   id: string
   youtubeUrl: string
   url: string
-  description?: string | null
+  description?: string
 }
 
 const getVideoByName = gql`
   query fetchVideoByName(
     $name: String!
     $take: Int
-    $withDescription: Boolean
+    $withDescription: Boolean!
   ) {
-    videos(
-      where: { name: { equals: $name }, state: { equals: "published" } }
-      take: $take
-    ) {
+    allVideos(where: { name: $name, state: published }, first: $take) {
       id
       youtubeUrl
       url

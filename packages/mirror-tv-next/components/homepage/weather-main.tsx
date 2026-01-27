@@ -35,6 +35,7 @@ export default function WeatherMain() {
   useEffect(() => {
     const loadWeatherData = async () => {
       const data = await fetchWeather()
+      console.log({ data })
       if (data) {
         setWeatherData(data)
         const cities = Object.keys(data)

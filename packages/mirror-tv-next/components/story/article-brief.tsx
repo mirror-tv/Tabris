@@ -2,10 +2,9 @@
 import { useState, useEffect } from 'react'
 import styles from './_styles/article-brief.module.scss'
 import ApiDataRenderer from './api-data-renderer/renderer'
-import type { ApiData } from '~/types/api-data'
 
 type ArticleBriefProps = {
-  brief: string | ApiData[] | Array<{ id: string; content: string }>
+  brief: string | Array<{ id: string; content: string }>
 }
 
 export default function ArticleBrief({ brief }: ArticleBriefProps) {

@@ -122,35 +122,16 @@ export async function generateMetadata({
     return url
   }
 
+  const imageUrl = getImageUrl(showData.picture?.urlOriginal)
+
   const data: Metadata = {
     ...(metadataBase && { metadataBase }),
-    title: `${showData.name} - 鏡新聞`,
+    title: `${showData.name || '節目'} - 鏡新聞`,
     description: showData.introduction ?? undefined,
     openGraph: {
-      title: `${showData.name} - 鏡新聞`,
+      title: `${showData.name || '節目'} - 鏡新聞`,
       description: showData.introduction ?? undefined,
-      images: {
-        url: (() => {
-          const formattedShowImage = formateHeroImage(
-            showData.picture ?? showData.bannerImg ?? undefined
-          )
-          const bestImage =
-            formattedShowImage.w800 ||
-            formattedShowImage.w1600 ||
-            formattedShowImage.w2400 ||
-            formattedShowImage.w3200 ||
-            formattedShowImage.original
-
-          // formateHeroImage 在沒有圖時會回傳 '/images/image-default.jpg'，
-          // 但 OG 預設圖想用 '/images/default-og-img.jpg'
-          const ogImage =
-            !bestImage || bestImage === '/images/image-default.jpg'
-              ? '/images/default-og-img.jpg'
-              : bestImage
-
-          return getImageUrl(ogImage)
-        })(),
-      },
+      images: imageUrl ? [{ url: imageUrl }] : [],
     },
   }
 

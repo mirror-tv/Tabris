@@ -17,7 +17,7 @@ import {
 import type { SingleTopic } from '~/graphql/query/topic'
 import { fetchSingleTopicByTopicSlug } from '~/graphql/query/topic'
 import styles from '~/styles/pages/single-topic-page.module.scss'
-import { formateHeroImage, handleMetaDesc } from '~/utils'
+import { handleMetaDesc } from '~/utils'
 import dynamic from 'next/dynamic'
 import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
@@ -66,13 +66,6 @@ export async function generateMetadata({
   }
 
   const description = handleMetaDesc(singleTopic?.briefHtml ?? '')
-  const heroImage = formateHeroImage(singleTopic?.heroImage)
-  const ogImage =
-    heroImage.w800 ||
-    heroImage.w1600 ||
-    heroImage.w2400 ||
-    heroImage.w3200 ||
-    heroImage.original
 
   return {
     metadataBase: new URL(SITE_URL),
@@ -82,7 +75,8 @@ export async function generateMetadata({
       title: `${singleTopic?.title} - 鏡新聞`,
       description: description !== '' ? description : META_DESCRIPTION,
       siteName: SITE_TITLE,
-      images: ogImage,
+      images:
+        singleTopic?.heroImage?.urlMobileSized ?? '/images/default-og-img.jpg',
     },
   }
 }
@@ -159,25 +153,23 @@ export default async function SingleTopicPage({
       {(() => {
         switch (singleTopic.leading) {
           case 'video':
-            return singleTopic.heroVideo?.url ? (
+            return (
               <HeroVideo
                 videoSrc={singleTopic.heroVideo.url}
                 controls={false}
               />
-            ) : null
+            )
           case 'image':
-            return singleTopic.heroImage ? (
+            return (
               <HeroImage
                 heroImage={singleTopic.heroImage}
                 title={singleTopic.title}
               />
-            ) : null
+            )
           case 'slideshow':
             return (
               <HeroSlideshow
-                heroImage={
-                  singleTopic.heroImage ?? { imageApiData: { url: '' } }
-                }
+                heroImage={singleTopic.heroImage}
                 title={singleTopic.title}
                 slideshow={singleTopic.slideshow}
               />
@@ -185,9 +177,7 @@ export default async function SingleTopicPage({
           case 'multivideo':
             return (
               <HeroMultiVideo
-                heroImage={
-                  singleTopic.heroImage ?? { imageApiData: { url: '' } }
-                }
+                heroImage={singleTopic.heroImage}
                 title={singleTopic.title}
                 multivideo={singleTopic.multivideo}
               />
@@ -224,7 +214,7 @@ export default async function SingleTopicPage({
         </div>
         <TopicPostItems
           slug={params.slug}
-          itemsCount={singleTopic.itemsCount ?? 0}
+          itemsCount={singleTopic.meta.count}
         />
       </section>
     </main>

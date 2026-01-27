@@ -1,7 +1,7 @@
 'use server'
 import errors from '@twreporter/errors'
 import { getClient } from '~/apollo-client'
-import type { Post, PostOrderByInput } from '~/graphql/query/topic'
+import type { Post } from '~/graphql/query/topic'
 import {
   fetchPostItemsByTopicSlug,
   fetchPostSortDirBySlug,
@@ -11,7 +11,7 @@ type FetchTopicItemsProps = {
   page: number
   pageSize: number
   slug: string
-  sortBy: PostOrderByInput
+  sortBy: string
 }
 
 type FetchSortDirProps = {
@@ -44,7 +44,7 @@ async function fetchTopicItems({
         postDir: [sortBy],
       },
     })
-    return { items: data?.topic?.[0]?.items ?? [] }
+    return { items: data.topic[0].items }
   } catch (err) {
     const annotatingError = errors.helpers.wrap(
       err,

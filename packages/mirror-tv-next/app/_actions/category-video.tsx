@@ -30,7 +30,7 @@ async function fetchVideoPostsItems({
   try {
     const { data } = await client.query<{
       allPosts: PostCardItem[]
-      postsCount?: number
+      _allPostsMeta?: { count: number }
     }>({
       query: getVideoPostsByCategorySlug,
       variables: {
@@ -42,15 +42,7 @@ async function fetchVideoPostsItems({
         style: 'videoNews',
       },
     })
-    return {
-      data: {
-        allPosts: data?.allPosts ?? [],
-        _allPostsMeta: isWithCount
-          ? { count: data?.postsCount ?? 0 }
-          : undefined,
-      },
-      categorySlug,
-    }
+    return { data, categorySlug }
   } catch (err) {
     const annotatingError = errors.helpers.wrap(
       err,

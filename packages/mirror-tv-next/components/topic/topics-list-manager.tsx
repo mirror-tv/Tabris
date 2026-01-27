@@ -37,7 +37,7 @@ export default function TopicsListManager({
     })
   }
 
-  function transformBrief(briefApiData: string | null = ''): ApiData[] {
+  function transformBrief(briefApiData = ''): ApiData[] {
     const data: ApiData[] = briefApiData ? handleApiData(briefApiData) : []
     return data.length && doesHaveBrief(data) ? data : []
   }

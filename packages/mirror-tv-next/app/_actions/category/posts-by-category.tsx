@@ -33,7 +33,7 @@ export async function fetchPostsByCategory({
   try {
     const { data } = await client.query<{
       allPosts: PostCardItem[]
-      postsCount?: number
+      _allPostsMeta?: { count: number }
     }>({
       query: getPostsByCategorySlug,
       variables: {
@@ -44,10 +44,7 @@ export async function fetchPostsByCategory({
         filteredSlug: [...FILTERED_SLUG, ...filteredSlug],
       },
     })
-    return {
-      allPosts: data?.allPosts ?? [],
-      _allPostsMeta: isWithCount ? { count: data?.postsCount ?? 0 } : undefined,
-    }
+    return data
   } catch (err) {
     const annotatingError = errors.helpers.wrap(
       err,
@@ -82,7 +79,7 @@ export async function fetchExternalsByCategory({
   try {
     const { data } = await client.query<{
       allExternals: External[]
-      externalsCount?: number
+      _allExternalsMeta?: { count: number }
     }>({
       query: getExternalsByCategory,
       variables: {
@@ -93,17 +90,12 @@ export async function fetchExternalsByCategory({
         filteredSlug: [...FILTERED_SLUG, ...filteredSlug],
       },
     })
-    return {
-      allExternals: data?.allExternals ?? [],
-      _allExternalsMeta: isWithCount
-        ? { count: data?.externalsCount ?? 0 }
-        : undefined,
-    }
+    return data
   } catch (err) {
     const annotatingError = errors.helpers.wrap(
       err,
       'UnhandledError',
-      'Error occurs while fetching category externals data on category page'
+      'Error occurs while fetching category posts data on category page'
     )
 
     console.error(

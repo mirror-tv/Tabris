@@ -9,7 +9,7 @@ import styles from './_styles/story.module.scss'
 import { fetchStoryBySlug } from '~/app/_actions/story/story-by-slug'
 import ArticleHeroImageAndVideo from '~/components/story/article-hero-image-and-video'
 import ApiDataRenderer from '~/components/story/api-data-renderer/renderer'
-import { formateDateAtTaipei, formateHeroImage } from '~/utils'
+import { formateDateAtTaipei } from '~/utils'
 import ArticleInfo from '~/components/story/article-info'
 import { notFound } from 'next/navigation'
 import ArticleBrief from '~/components/story/article-brief'
@@ -32,7 +32,6 @@ import GA4SourceTracking from '~/components/story/ga4-source-tracking'
 import UiDownload from '~/components/shared/ui-download'
 import Article18Warning from '~/components/shared/article-18-warning'
 import AdTvAdminMobileBanner from '~/components/shared/ad-tv-admin-mobile-banner'
-import { handleApiData } from '~/utils'
 
 const ContainerFullScreenAds = dynamic(
   () => import('~/components/ads/gpt/gpt-popup'),
@@ -45,27 +44,6 @@ type StoryPageTypes = {
   params: { slug: string }
 }
 
-function getStoryOgImage(heroImage?: SinglePost['heroImage'] | null) {
-  const formattedHeroImage = formateHeroImage(heroImage ?? undefined)
-  return (
-    formattedHeroImage.w1600 ||
-    formattedHeroImage.w2400 ||
-    formattedHeroImage.w800 ||
-    formattedHeroImage.w3200 ||
-    formattedHeroImage.original
-  )
-}
-
-function getStoryDableImage(heroImage?: SinglePost['heroImage'] | null) {
-  const formattedHeroImage = formateHeroImage(heroImage ?? undefined)
-  return (
-    formattedHeroImage.w800 ||
-    formattedHeroImage.w1600 ||
-    formattedHeroImage.w2400 ||
-    formattedHeroImage.original
-  )
-}
-
 function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
   const category = storyData.categories?.[0]
   const logoUrl = '/images/logo.png' // 需要確認實際的 logo 路徑
@@ -74,10 +52,6 @@ function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
   const updateTime = storyData.updatedAt || storyData.publishTime
   const publishedDateIso = dayjs(publishTime).utcOffset(8).format()
   const modifiedDateIso = dayjs(updateTime).utcOffset(8).format()
-
-  const briefText = handleApiData(storyData.briefApiData)
-    .map((item: { content?: string[] }) => item.content?.join('') || '')
-    .join('')
 
   const jsonLdBreadcrumbList = {
     '@context': 'http://schema.org/',
@@ -93,7 +67,7 @@ function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
       '@id': pageUrl,
     },
     headline: storyData.title,
-    image: getStoryOgImage(storyData.heroImage),
+    image: storyData.heroImage?.urlDesktopSized,
     datePublished: publishedDateIso,
     dateModified: modifiedDateIso,
     author: {
@@ -108,9 +82,13 @@ function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
         url: logoUrl,
       },
     },
-    description: briefText || '',
+    description: storyData.briefApiData
+      ? JSON.parse(storyData.briefApiData)
+          .map((item: { content?: string[] }) => item.content?.join('') || '')
+          .join('')
+      : undefined,
     url: pageUrl,
-    thumbnailUrl: getStoryOgImage(storyData.heroImage),
+    thumbnailUrl: storyData.heroImage?.urlDesktopSized,
     articleSection: category?.title || '',
   }
 
@@ -179,12 +157,14 @@ export async function generateMetadata({
   }
 
   const title = storyData.title
-  const brief = handleApiData(storyData.briefApiData)
-    .map((item: { content?: string[] }) => item.content?.join('') || '')
-    .join('')
+  const brief = storyData.briefApiData
+    ? JSON.parse(storyData.briefApiData)
+        .map((item: { content?: string[] }) => item.content?.join('') || '')
+        .join('')
+    : ''
   const tags = storyData.tags?.map((tag) => tag.name).join(', ')
-  const image = getStoryOgImage(storyData.heroImage)
-  const dableImage = getStoryDableImage(storyData.heroImage)
+  const image = storyData.heroImage?.urlDesktopSized
+  const dableImage = storyData.heroImage?.urlMobileSized
   const pageUrl = `${META_SITE_URL}/story/${params.slug}`
   const writer = storyData.writers?.[0]
   const authorName = writer?.name || SITE_TITLE
@@ -290,7 +270,7 @@ const StoryPage = async (props: StoryPageTypes) => {
     ? formateDateAtTaipei(new Date(updatedAt), 'YYYY.MM.DD HH:mm', '臺北時間')
     : ''
 
-  const hasBrief = doesHaveBrief(handleApiData(briefApiData))
+  const hasBrief = doesHaveBrief(briefApiData)
 
   const pageUrl = `${META_SITE_URL}/story/${params.slug}`
   const jsonLdData = generateStoryJsonLds(storyData, pageUrl)
@@ -315,12 +295,12 @@ const StoryPage = async (props: StoryPageTypes) => {
       <JsonLd data={jsonLdData} />
       <MisoPageView productIds={`story_${params.slug}`} />
       <GA4SourceTracking source={source} />
-      <Article18Warning isAdult={!!isAdult} />
+      <Article18Warning isAdult={isAdult} />
       <section className={styles.article}>
         <ContainerFullScreenAds adKey="MB_NEWS" />
         <ArticleHeroImageAndVideo
           heroImage={heroImage}
-          title={heroCaption || ''}
+          title={heroCaption}
           heroCaption={heroCaption}
           style={style}
           heroVideo={heroVideo}
@@ -335,14 +315,11 @@ const StoryPage = async (props: StoryPageTypes) => {
           designers={designers}
           engineers={engineers}
           vocals={vocals}
-          otherbyline={otherbyline ?? ''}
+          otherbyline={otherbyline}
         />
-        {hasBrief && <ArticleBrief brief={handleApiData(briefApiData)} />}
+        {hasBrief && <ArticleBrief brief={JSON.parse(briefApiData || '[]')} />}
         <section className={styles.contentWrapper}>
-          <ApiDataRenderer
-            contentData={contentApiData ?? ''}
-            isStoryBrief={false}
-          />
+          <ApiDataRenderer contentData={contentApiData} isStoryBrief={false} />
           {!!download?.length && <UiDownload downloads={download} />}
           {updatedTime && <ArticleUpdateTime updateTime={updatedTime} />}
           {!!tags.length && <ArticleTagList tags={tags} />}

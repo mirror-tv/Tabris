@@ -33,39 +33,53 @@ const fetchShowBySlug = gql`
     $squareHostImg: Boolean = false
     $rectHostImg: Boolean = false
   ) {
-    allShows: shows(where: { slug: { equals: $slug } }) {
+    allShows(where: { slug: $slug }) {
       slug
       name
       bannerImg {
-        imageApiData
+        urlDesktopSized
+        urlMobileSized
+        urlTabletSized
+        urlOriginal
       }
       picture {
-        imageApiData
+        urlDesktopSized
+        urlMobileSized
+        urlTabletSized
+        urlOriginal
       }
-      hostName(orderBy: [{ sortOrder: asc }, { id: desc }])
+      hostName(sortBy: [sortOrder_ASC, id_DESC])
         @include(if: $shouldFetchHost) {
         slug
         name
         sortOrder
         bioApiData
         showhostImg @include(if: $squareHostImg) {
-          imageApiData
+          urlMobileSized
+          urlTabletSized
+          urlOriginal
         }
         anchorImg @include(if: $rectHostImg) {
-          imageApiData
+          urlMobileSized
+          urlTabletSized
+          urlOriginal
         }
       }
-      staffName(orderBy: [{ sortOrder: asc }, { id: desc }])
+      staffName(sortBy: [sortOrder_ASC, id_DESC])
         @include(if: $shouldFetchStaff) {
         slug
         name
         sortOrder
         bioApiData
         showhostImg @include(if: $squareHostImg) {
-          imageApiData
+          urlMobileSized
+          urlTabletSized
+          urlOriginal
         }
         anchorImg @include(if: $rectHostImg) {
-          imageApiData
+          urlMobileSized
+          urlTabletSized
+          urlOriginal
         }
       }
       introduction

@@ -23,7 +23,7 @@ export async function fetchStoryBySlug(
         slug,
       },
     })
-    return data ?? { allPosts: [] }
+    return data ?? []
   } catch (err) {
     const annotatingError = errors.helpers.wrap(
       err,

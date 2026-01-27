@@ -1,6 +1,6 @@
 import { fetchSortDir, fetchTopicItems } from '~/app/_actions/signal-topic'
 import MoreItemsManager from '~/components/topic/single-topic/more-items-manager'
-import type { Post, PostOrderByInput } from '~/graphql/query/topic'
+import type { Post } from '~/graphql/query/topic'
 
 type Props = {
   slug: string
@@ -10,7 +10,7 @@ type Props = {
 export default async function TopicPostItems({ slug, itemsCount }: Props) {
   const PAGE_SIZE = 12
   let itemsList: Post[] = []
-  let sortBy: PostOrderByInput = { publishTime: 'desc' }
+  let sortingString: string = ''
 
   try {
     const data = await fetchSortDir({
@@ -19,15 +19,14 @@ export default async function TopicPostItems({ slug, itemsCount }: Props) {
 
     const sortDir = data.sortDir
 
-    sortBy =
-      sortDir === 'asc' ? { publishTime: 'asc' } : { publishTime: 'desc' }
+    sortingString = sortDir === 'asc' ? 'publishTime_ASC' : 'publishTime_DESC'
 
     try {
       const topicItemsData = await fetchTopicItems({
         page: 1,
         pageSize: PAGE_SIZE,
         slug: slug,
-        sortBy,
+        sortBy: sortingString,
       })
 
       itemsList = topicItemsData.items
@@ -43,7 +42,7 @@ export default async function TopicPostItems({ slug, itemsCount }: Props) {
       initialPostItems={itemsList}
       slug={slug}
       itemsCount={itemsCount}
-      sortBy={sortBy}
+      sortBy={sortingString}
     />
   )
 }
