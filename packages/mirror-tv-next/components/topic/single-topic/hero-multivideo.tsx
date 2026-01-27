@@ -58,7 +58,8 @@ export default function HeroMultiVideo({
             className={styles.swiper}
           >
             {multivideo.map((video, index) => {
-              const videoUrl = video.youtubeUrl ? video.youtubeUrl : video.url
+              const videoUrl = video.youtubeUrl ?? video.url ?? ''
+              if (!videoUrl) return null
               return (
                 <SwiperSlide key={index} className={styles.swiperSlide}>
                   <div className={styles.slideVideoContainer}>

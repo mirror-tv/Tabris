@@ -36,14 +36,14 @@
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  padding: 8px 20px;
+  height: 43px;
+  padding: 8px;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000 75.48%);
   @include media-breakpoint-up(md) {
-    height: 43px;
     height: fit-content;
   }
   @include media-breakpoint-up(md) {
-    padding: 20px 40px;
+    padding: 22px 40px;
   }
 }
 
@@ -55,12 +55,10 @@
   color: #fff;
   text-align: left;
   word-wrap: break-word;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 1;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  display: block;
-  height: 100%;
   @include media-breakpoint-up(md) {
     font-weight: 500;
     line-height: 160%;
@@ -111,22 +109,18 @@
     height: 14px;
     border-left: 2.28px solid white;
     border-bottom: 2.28px solid white;
-    transform: rotate(45deg) translate(-12%, 25%);
+    transform: rotate(45deg) translate(0, 50%);
     @include media-breakpoint-up(md) {
       width: 10px;
       height: 10px;
       border-left: 3.84px solid white !important;
       border-bottom: 3.84px solid white !important;
       margin-bottom: 10px !important;
-      transform: rotate(45deg) translate(0%, 50%);
     }
   }
 
   &.next::before {
-    transform: rotate(225deg) translate(-12%, 0%);
-    @include media-breakpoint-up(md) {
-      transform: rotate(225deg) translate(-50%, -25%);
-    }
+    transform: rotate(225deg) translate(-50%, -25%);
   }
 }
 

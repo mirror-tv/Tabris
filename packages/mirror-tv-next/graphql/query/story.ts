@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import type { HeroImage } from '~/types/common'
 
 export interface SingleRelatedPost {
   slug: string
@@ -13,28 +14,20 @@ export interface SinglePersonInfo {
 export interface SinglePost {
   id: string
   title: string
-  style: string
+  style: string | null
   publishTime: string
-  updatedAt: string
-  exclusive: boolean
-  isAdult: boolean
-  contentApiData: string
-  briefApiData: string
-  source?: string
+  updatedAt: string | null
+  exclusive: boolean | null
+  isAdult: boolean | null
+  contentApiData: string | null
+  briefApiData: string | null
+  source?: string | null
   relatedPosts: SingleRelatedPost[]
-  heroVideo: {
-    youtubeUrl: string
-  }
-  heroImage: {
-    id: string
-    name: string
-    urlOriginal: string
-    urlDesktopSized: string
-    urlTabletSized: string
-    urlMobileSized: string
-    urlTinySized: string
-  }
-  heroCaption: string
+  heroVideo?: {
+    youtubeUrl: string | null
+  } | null
+  heroImage: HeroImage | null
+  heroCaption: string | null
   categories: {
     slug: string
     title: string
@@ -45,21 +38,25 @@ export interface SinglePost {
   designers: SinglePersonInfo[]
   engineers: SinglePersonInfo[]
   vocals: SinglePersonInfo[]
-  otherbyline: string
+  otherbyline: string | null
   tags: {
     name: string
   }[]
-  download: {
-    id: string
-    name: string
-    url: string
-  }[]
-  __typename: string
+  download?:
+    | {
+        id: string
+        name: string
+        url: string
+      }[]
+    | null
+  __typename?: string
 }
 
 const fetchStoryBySlug = gql`
   query fetchStoryBySlug($slug: String!) {
-    allPosts(where: { slug: $slug, state_not_in: invisible }) {
+    allPosts: posts(
+      where: { slug: { equals: $slug }, state: { notIn: ["invisible"] } }
+    ) {
       id
       title: name
       style
@@ -71,13 +68,7 @@ const fetchStoryBySlug = gql`
         youtubeUrl
       }
       heroImage {
-        id
-        name
-        urlOriginal
-        urlDesktopSized
-        urlTabletSized
-        urlMobileSized
-        urlTinySized
+        imageApiData
       }
       heroCaption
       briefApiData
@@ -117,7 +108,7 @@ const fetchStoryBySlug = gql`
         name
         url
       }
-      relatedPosts(where: { state: published }) {
+      relatedPosts(where: { state: { equals: "published" } }) {
         slug
         name
       }

@@ -5,36 +5,31 @@ export type EditorChoices = {
   choice: {
     name: string
     slug: string
-    source?: string
-    heroImage: HeroImage
-    heroVideo: { coverPhoto: HeroImage | null } | null
-    exclusive: boolean
+    source?: string | null
+    heroImage: HeroImage | null
+    heroVideo?: { coverPhoto: HeroImage | null } | null
+    exclusive: boolean | null
   }
 }
 
 const fetchEditorChoices = gql`
   query fetchEditorChoices {
-    allEditorChoices(
-      where: { state: published, choice: { state: published } }
-      sortBy: [sortOrder_ASC, createdAt_DESC]
+    allEditorChoices: editorChoices(
+      where: {
+        state: { equals: "published" }
+        choice: { state: { equals: "published" } }
+      }
+      orderBy: [{ sortOrder: asc }, { createdAt: desc }]
     ) {
       choice {
         name
         slug
         heroImage {
-          urlOriginal
-          urlDesktopSized
-          urlTabletSized
-          urlMobileSized
-          urlTinySized
+          imageApiData
         }
         heroVideo {
           coverPhoto {
-            urlOriginal
-            urlDesktopSized
-            urlTabletSized
-            urlMobileSized
-            urlTinySized
+            imageApiData
           }
         }
         exclusive

@@ -5,7 +5,7 @@ import type { HeroImage } from '~/types/common'
 import { formateHeroImage } from '~/utils'
 
 type Props = {
-  heroImage: HeroImage
+  heroImage: HeroImage | null
 }
 
 export default function AnchorImg({ heroImage }: Props) {
