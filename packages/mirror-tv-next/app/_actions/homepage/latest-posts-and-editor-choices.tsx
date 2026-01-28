@@ -184,7 +184,7 @@ type GetLatestPostsServerActionType = {
 }
 
 async function fetchLatestPostsAndEditorChoices({ page }: { page: number }) {
-  const jsonData = await fetchStaticJson(`latest_posts0${page}.json`)
+  const jsonData = await fetchStaticJson(`latest_posts0${page}.json`, true)
   const result = StaticHomepageResponseSchema.safeParse(jsonData)
 
   if (!result.success) {
