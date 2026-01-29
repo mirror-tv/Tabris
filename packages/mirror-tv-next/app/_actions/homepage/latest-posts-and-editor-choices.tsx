@@ -53,7 +53,7 @@ const StaticLatestPostSchema = z.object({
   slug: z.string(),
   style: z.string().optional(),
   name: z.string(),
-  thumbnail: z.string().optional(),
+  thumbnail: z.string().nullable().optional(),
   partner: z
     .object({
       name: z.string(),
@@ -283,6 +283,7 @@ async function getLatestPostsAndEditorChoices({
           style: post.style,
           name: post.name,
           partner: post.partner,
+          thumbnail: post.thumbnail,
           heroImage:
             typeof post.heroImage === 'string'
               ? { urlOriginal: post.heroImage }
