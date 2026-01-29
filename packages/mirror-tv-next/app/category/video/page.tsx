@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import {
   GLOBAL_CACHE_SETTING,
   SITE_URL,
-  POPULAR_VIDEOS_JSON_URL,
 } from '~/constants/environment-variables'
+import { fetchStaticJson } from '~/utils/fetch-static-json'
 import { handleResponse, formatArticleCard, FormattedPostCard } from '~/utils'
 import type { Category } from '~/graphql/query/category'
 import { fetchFeatureCategories } from '~/graphql/query/categories'
@@ -90,12 +90,7 @@ export default async function VideoCategoryPage() {
     })
 
   const fetchPopularPosts = () =>
-    fetch(POPULAR_VIDEOS_JSON_URL, {
-      next: { revalidate: GLOBAL_CACHE_SETTING },
-    }).then((res) => {
-      // use type assertion to eliminate any
-      return res.json() as unknown as RowPopularVideoData
-    })
+    fetchStaticJson<RowPopularVideoData>('popular-videonews-list.json')
 
   const fetchPromotionVideos = () =>
     fetchPromotionVideosServerAction({
