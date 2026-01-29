@@ -26,12 +26,21 @@ const isFormatOld = (data: ImageData): data is ImageDataFormatOld => {
 
 const normalizeImageData = (imageData: ImageData) => {
   if (isFormatNew(imageData)) {
+    const src = imageData.resizedWebp ?? imageData.resized
+    const images = {
+      original: src.original ?? src.w1600 ?? src.w800 ?? src.w480 ?? '',
+      w800: src.w800,
+      w1600: src.w1600,
+      w2400: src.w2400,
+      w3200: src.w2400 ?? src.original,
+      w400: src.w480,
+    }
     return {
-      images: imageData.resizedWebp ?? imageData.resized,
-      alt: imageData.title || imageData.name,
-      description: imageData.description,
-      width: imageData.imageFile?.width || 16,
-      height: imageData.imageFile?.height || 9,
+      images,
+      alt: imageData.name || (imageData.desc ?? ''),
+      description: imageData.desc ?? '',
+      width: imageData.file?.width ?? 16,
+      height: imageData.file?.height ?? 9,
       isFormat1: true,
     }
   }

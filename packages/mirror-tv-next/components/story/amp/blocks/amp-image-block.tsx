@@ -26,10 +26,10 @@ const normalizeImageData = (imageData: ImageData) => {
   if (isFormatNew(imageData)) {
     return {
       images: imageData.resizedWebp ?? imageData.resized,
-      alt: imageData.title || imageData.name,
-      description: imageData.description,
-      width: imageData.imageFile?.width || 16,
-      height: imageData.imageFile?.height || 9,
+      alt: imageData.name || (imageData.desc ?? ''),
+      description: imageData.desc ?? '',
+      width: imageData.file?.width ?? 16,
+      height: imageData.file?.height ?? 9,
       isFormat1: true,
     }
   }

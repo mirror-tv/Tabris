@@ -63,63 +63,37 @@ export type ApiDataBlock =
   | GptAd
 export type ApiData = ApiDataBlock[]
 
+/** New image API format: id, file, name, resized, resizedWebp, desc */
 type ImageDataFormatNew = {
   id: string
-  desc: string
+  url?: string
+  desc?: string
   name: string
+  file: {
+    url: string
+    width: number
+    height: number
+    __typename?: string
+  }
   resized: {
-    w480: string
-    w800: string
-    w1200: string
-    w1600: string
-    w2400: string
-    original: string
-    __typename: string
+    w480?: string
+    w800?: string
+    w1200?: string
+    w1600?: string
+    w2400?: string
+    original?: string
+    __typename?: string
   }
-  imageFile: {
-    url: string
-    width: number
-    height: number
-    __typename: string
+  resizedWebp?: {
+    w480?: string
+    w800?: string
+    w1200?: string
+    w1600?: string
+    w2400?: string
+    original?: string
+    __typename?: string
   }
-  __typename: string
-  resizedWebp: {
-    w480: string
-    w800: string
-    w1200: string
-    w1600: string
-    w2400: string
-    original: string
-    __typename: string
-  }
-  title: string
-  description: string
-  url: string
-  original: {
-    height: number
-    width: number
-    url: string
-  }
-  desktop: {
-    height: number
-    width: number
-    url: string
-  }
-  tablet: {
-    height: number
-    width: number
-    url: string
-  }
-  mobile: {
-    height: number
-    width: number
-    url: string
-  }
-  tiny: {
-    height: number
-    width: number
-    url: string
-  }
+  __typename?: string
 }
 
 type ImageDataFormatOld = {
