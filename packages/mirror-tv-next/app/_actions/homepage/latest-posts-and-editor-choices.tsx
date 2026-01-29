@@ -39,6 +39,7 @@ const StaticEditorChoiceSchema = z.object({
   source: z.string(),
   exclusive: z
     .any()
+    .optional()
     .transform((val) => {
       if (val === null || val === undefined) return null
       if (typeof val === 'boolean') return val
@@ -84,6 +85,7 @@ const StaticLatestPostSchema = z.object({
     .optional(),
   exclusive: z
     .any()
+    .optional()
     .transform((val) => {
       if (val === null || val === undefined) return null
       if (typeof val === 'boolean') return val
@@ -108,6 +110,7 @@ const ListingPostSchema = z.object({
   heroImage: HeroImageSchema.nullable(),
   exclusive: z
     .any()
+    .optional()
     .transform((val) => {
       if (val === null || val === undefined) return null
       if (typeof val === 'boolean') return val
@@ -302,7 +305,7 @@ async function getLatestPostsAndEditorChoices({
               urlTinySized: '',
             },
           },
-          exclusive: post.exclusive,
+          exclusive: post.exclusive ?? false,
         }))
 
         const transformedData = {
