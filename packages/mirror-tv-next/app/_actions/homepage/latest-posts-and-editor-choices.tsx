@@ -39,6 +39,7 @@ const StaticEditorChoiceSchema = z.object({
   source: z.string(),
   exclusive: z
     .any()
+    .optional()
     .transform((val) => {
       if (val === null || val === undefined) return null
       if (typeof val === 'boolean') return val
@@ -53,7 +54,7 @@ const StaticLatestPostSchema = z.object({
   slug: z.string(),
   style: z.string().optional(),
   name: z.string(),
-  thumbnail: z.string().optional(),
+  thumbnail: z.string().nullable().optional(),
   partner: z
     .object({
       name: z.string(),
@@ -84,6 +85,7 @@ const StaticLatestPostSchema = z.object({
     .optional(),
   exclusive: z
     .any()
+    .optional()
     .transform((val) => {
       if (val === null || val === undefined) return null
       if (typeof val === 'boolean') return val
@@ -108,6 +110,7 @@ const ListingPostSchema = z.object({
   heroImage: HeroImageSchema.nullable(),
   exclusive: z
     .any()
+    .optional()
     .transform((val) => {
       if (val === null || val === undefined) return null
       if (typeof val === 'boolean') return val
@@ -283,6 +286,7 @@ async function getLatestPostsAndEditorChoices({
           style: post.style,
           name: post.name,
           partner: post.partner,
+          thumbnail: post.thumbnail,
           heroImage:
             typeof post.heroImage === 'string'
               ? { urlOriginal: post.heroImage }
@@ -301,7 +305,7 @@ async function getLatestPostsAndEditorChoices({
               urlTinySized: '',
             },
           },
-          exclusive: post.exclusive,
+          exclusive: post.exclusive ?? false,
         }))
 
         const transformedData = {
