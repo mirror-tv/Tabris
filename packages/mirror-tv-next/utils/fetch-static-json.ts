@@ -14,11 +14,11 @@ export async function fetchStaticJson<T = unknown>(
   filename: string,
   hasFilePrefix: boolean = false
 ): Promise<T> {
-  const GCS_FUSE_MOUNT_DIR = process.env.GCS_FUSE_MOUNT_DIR ?? '/statics'
+  const GCS_FUSE_MOUNT_DIR = process.env.GCS_FUSE_MOUNT_DIR
   const pathPrefix = hasFilePrefix ? '/files/json' : '/json'
 
-  // 1. Try reading from local file system if on server
-  if (isServer()) {
+  // 1. Try reading from local file system only when mount dir is explicitly set (e.g. in production with GCS FUSE)
+  if (isServer() && GCS_FUSE_MOUNT_DIR) {
     try {
       // Structure: [mount_dir]/[prefix]/[filename]
       const filePath = `${GCS_FUSE_MOUNT_DIR}${pathPrefix}/${filename}`

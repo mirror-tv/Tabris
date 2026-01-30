@@ -42,7 +42,7 @@ const VideoBlock = ({
     id: youtubeId || '',
     content: [
       {
-        id: youtubeId || '',
+        youtubeId: youtubeId || '',
         description: videoContent.name || '',
       },
     ],
