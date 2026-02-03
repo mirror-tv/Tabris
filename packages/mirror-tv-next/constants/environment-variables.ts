@@ -8,6 +8,7 @@ let GA4_ID: string
 let FEATURE_2025_HOMEPAGE_STYLE: 'on' | 'off'
 let JSON_BASE_URL: string
 let WEATHER_JSON_URL: string
+let SCHEDULE_JSON_URL: string
 
 const TIMESTAMP_FOR_CACHE = '?t=' + Date.now() / 10
 
@@ -21,7 +22,7 @@ switch (ENV) {
     GLOBAL_CACHE_SETTING = 0
     GA4_ID = 'G-SZR4JRJ0G2'
     FEATURE_2025_HOMEPAGE_STYLE = 'off'
-
+    SCHEDULE_JSON_URL = `https://storage.googleapis.com/v2-static-mnews-tw-prod/files/documents/tv-schedule.json`
     break
 
   case 'staging':
@@ -33,6 +34,7 @@ switch (ENV) {
     GLOBAL_CACHE_SETTING = 0
     GA4_ID = 'G-8Q9RVB3K0E'
     FEATURE_2025_HOMEPAGE_STYLE = 'on'
+    SCHEDULE_JSON_URL = `https://storage.googleapis.com/v2-static-mnews-tw-staging/files/documents/tv-schedule.json`
     break
 
   case 'dev':
@@ -44,6 +46,7 @@ switch (ENV) {
     GLOBAL_CACHE_SETTING = 0
     GA4_ID = 'G-YZ07T9YJ6T'
     FEATURE_2025_HOMEPAGE_STYLE = 'on'
+    SCHEDULE_JSON_URL = `https://storage.googleapis.com/v2-static-mnews-tw-dev/files/documents/tv-schedule.json`
     break
 
   default:
@@ -54,6 +57,7 @@ switch (ENV) {
     GLOBAL_CACHE_SETTING = 0
     GA4_ID = 'G-YZ07T9YJ6T'
     FEATURE_2025_HOMEPAGE_STYLE = 'on'
+    SCHEDULE_JSON_URL = `https://storage.googleapis.com/v2-static-mnews-tw-dev/files/documents/tv-schedule.json`
     break
 }
 
@@ -63,7 +67,6 @@ WEATHER_JSON_URL = `${JSON_BASE_URL}/weather.json`
 const POPULAR_POSTS_URL = `${JSON_BASE_URL}/popularlist.json`
 const POPULAR_VIDEOS_JSON_URL = `${JSON_BASE_URL}/popular-videonews-list.json`
 const FEATURE_POSTS_URL = `${JSON_BASE_URL}/featured_categories_news.json`
-const SCHEDULE_JSON_URL = `https://storage.googleapis.com/v2-static-mnews-tw-${ENV}/files/documents/tv-schedule.json`
 const HEADER_JSON_URL = `${JSON_BASE_URL}/header.json`
 const FLASH_NEWS_JSON_URL = `${JSON_BASE_URL}/flash_news.json`
 
