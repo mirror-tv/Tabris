@@ -6,6 +6,7 @@ import CustomDropDown from '~/components/schedule/custom-dropdown'
 import WeekDatesPicker from '~/components/schedule/week-dates-picker'
 import styles from './_styles/schedule-table.module.scss'
 import type { Schedule } from '~/types/common'
+import { SCHEDULE_JSON_URL } from '~/constants/environment-variables'
 
 type ScheduleProps = {
   schedule: Schedule[]
@@ -23,6 +24,7 @@ export default function ScheduleTable({
   weekDates,
 }: ScheduleProps): JSX.Element {
   const initialDay = weekDates[0]
+  console.log('SCHEDULE_JSON_URL', SCHEDULE_JSON_URL, 'schedule', schedule)
 
   const [selectedDate, setSelectedDate] = useState<WeekDate>({
     date: initialDay.date,
