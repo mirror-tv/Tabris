@@ -16,14 +16,18 @@ enum ApiDataBlockType {
   Unstyled = 'unstyled',
   HeaderOne = 'header-one',
   HeaderTwo = 'header-two',
+  HeaderThree = 'header-three',
   Blockquote = 'blockquote',
   UnOrderList = 'unordered-list-item',
   OrderList = 'ordered-list-item',
   Annotation = 'annotation',
   Video = 'video',
+  VideoV2 = 'video-v2',
   Slideshow = 'slideshow',
+  SlideshowV2 = 'slideshow-v2',
   InfoBox = 'infobox',
   Audio = 'audio',
+  AudioV2 = 'audio-v2',
   EmbedCode = 'embeddedcode',
   Youtube = 'youtube',
   QuoteBy = 'quoteby',
@@ -46,6 +50,19 @@ interface GptAd extends ApiDataBlockBase {
   content: string
 }
 
+interface ApiDataVideoV2Block extends ApiDataBlockBase {
+  type: ApiDataBlockType.VideoV2
+  content: unknown[]
+}
+interface ApiDataSlideshowV2Block extends ApiDataBlockBase {
+  type: ApiDataBlockType.SlideshowV2
+  content: unknown[]
+}
+interface ApiDataAudioV2Block extends ApiDataBlockBase {
+  type: ApiDataBlockType.AudioV2
+  content: unknown[]
+}
+
 export type ApiDataBlock =
   | ApiDataUnorderListBlock
   | ApiDataInfoBox
@@ -61,6 +78,9 @@ export type ApiDataBlock =
   | ApiDataYoutube
   | ApiImageBlock
   | GptAd
+  | ApiDataVideoV2Block
+  | ApiDataSlideshowV2Block
+  | ApiDataAudioV2Block
 export type ApiData = ApiDataBlock[]
 
 /** New image API format: id, file, name, resized, resizedWebp, desc */
