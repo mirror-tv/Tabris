@@ -20,10 +20,10 @@ function normalizeV2(
   }
   const c = r.content?.[0] as Record<string, unknown> | undefined
   if (r.type === ApiDataBlockType.VideoV2) {
-    const v = (c?.video as Record<string, unknown>[])?.[0] as
-      | Record<string, unknown>
-      | undefined
-    const url = v?.url ?? (v?.file as { url?: string })?.url ?? ''
+    const v = c?.video as Record<string, unknown> | undefined
+    const file = v?.file as { url?: string } | undefined
+    const url =
+      (typeof v?.videoSrc === 'string' ? v.videoSrc : null) ?? file?.url ?? ''
     return {
       kind: 'video',
       block: {

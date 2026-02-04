@@ -26,7 +26,13 @@ const isFormatOld = (data: ImageData): data is ImageDataFormatOld => {
 
 const normalizeImageData = (imageData: ImageData) => {
   if (isFormatNew(imageData)) {
-    const src = imageData.resizedWebp ?? imageData.resized
+    const isGif =
+      imageData.file?.url?.toLowerCase().endsWith('.gif') ??
+      imageData.name?.toLowerCase().endsWith('.gif') ??
+      false
+    const src = isGif
+      ? imageData.resized
+      : imageData.resizedWebp ?? imageData.resized
     const images = {
       original: src.original ?? src.w1600 ?? src.w800 ?? src.w480 ?? '',
       w800: src.w800,
