@@ -5,7 +5,6 @@ let GTM_ID: string
 let GLOBAL_CACHE_SETTING: number
 let YOUTUBE_API_URL: string
 let GA4_ID: string
-let FEATURE_2025_HOMEPAGE_STYLE: 'on' | 'off'
 let STATIC_FILE_DOMAIN: string
 
 switch (ENV) {
@@ -16,7 +15,6 @@ switch (ENV) {
     GTM_ID = 'GTM-PK7VRFX'
     GLOBAL_CACHE_SETTING = 0
     GA4_ID = 'G-SZR4JRJ0G2'
-    FEATURE_2025_HOMEPAGE_STYLE = 'on'
 
     break
 
@@ -27,7 +25,6 @@ switch (ENV) {
     GTM_ID = 'GTM-NFH6FDH'
     GLOBAL_CACHE_SETTING = 0
     GA4_ID = 'G-8Q9RVB3K0E'
-    FEATURE_2025_HOMEPAGE_STYLE = 'on'
     break
 
   case 'dev':
@@ -37,7 +34,6 @@ switch (ENV) {
     GTM_ID = 'GTM-TVZ26W8'
     GLOBAL_CACHE_SETTING = 0
     GA4_ID = 'G-YZ07T9YJ6T'
-    FEATURE_2025_HOMEPAGE_STYLE = 'on'
     break
 
   default:
@@ -47,7 +43,6 @@ switch (ENV) {
     GTM_ID = 'GTM-TVZ26W8'
     GLOBAL_CACHE_SETTING = 0
     GA4_ID = 'G-YZ07T9YJ6T'
-    FEATURE_2025_HOMEPAGE_STYLE = 'on'
     break
 }
 
@@ -67,6 +62,5 @@ export {
   POPULAR_POSTS_FILE_NAME,
   HEADER_JSON_FILE_NAME,
   GA4_ID,
-  FEATURE_2025_HOMEPAGE_STYLE,
   JSON_BASE_URL,
 }
