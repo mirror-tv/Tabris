@@ -43,34 +43,61 @@ function indicatorSvg(shouldRotate: boolean, onClickCallBack: () => void) {
     </svg>
   )
 }
-const AnnotationBlock = ({ data }: { data: ApiDataAnnotation }) => {
-  const [isOpen, setIsOpen] = useState(false)
+export type AnnotationInlineContent = { text: string; annotation: string }
 
-  const toggleOpen = useCallback(() => {
-    setIsOpen((prev) => !prev)
-  }, [])
+const AnnotationBlock = ({
+  data,
+  inline,
+  inlineContent,
+}: {
+  data: ApiDataAnnotation
+  inline?: boolean
+  inlineContent?: AnnotationInlineContent
+}) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const toggleOpen = useCallback(() => setIsOpen((prev) => !prev), [])
 
   const blockContentData = getFirstElement(data.content)
-  const annotationData = extractAnnotationData(blockContentData)
+  const annotationData =
+    inlineContent ?? extractAnnotationData(blockContentData)
+
+  const Wrapper = inline ? 'span' : 'div'
+  const LineWrapper = inline ? 'span' : 'p'
 
   return (
-    <div className={styles.annotationBlock}>
-      <p>
+    <Wrapper className={styles.annotationBlock}>
+      <LineWrapper>
         <span>{annotationData?.text}</span>
-        <span className={styles.toggleButton} onClick={toggleOpen}>
+        <span
+          className={styles.toggleButton}
+          onClick={toggleOpen}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => e.key === 'Enter' && toggleOpen()}
+        >
           (註)
         </span>
         {indicatorSvg(isOpen, toggleOpen)}
-      </p>
+      </LineWrapper>
       {isOpen ? (
-        <p
-          className={styles.annotationContent}
-          dangerouslySetInnerHTML={{
-            __html: annotationData?.annotation,
-          }}
-        />
+        inline ? (
+          <span
+            className={styles.annotationContent}
+            style={{ display: 'block' }}
+            dangerouslySetInnerHTML={{
+              __html: annotationData?.annotation ?? '',
+            }}
+          />
+        ) : (
+          <p
+            className={styles.annotationContent}
+            dangerouslySetInnerHTML={{
+              __html: annotationData?.annotation ?? '',
+            }}
+          />
+        )
       ) : null}
-    </div>
+    </Wrapper>
   )
 }
 
