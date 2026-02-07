@@ -17,7 +17,7 @@ switch (ENV) {
     SITE_URL = 'https://mnews.tw'
     YOUTUBE_API_URL = 'https://mnews.tw'
     JSON_BASE_URL =
-      'https://storage.googleapis.com/static-mnews-tw-prod/files/json'
+      'https://storage.googleapis.com/v2-static-mnews-tw-prod/json'
     GTM_ID = 'GTM-PK7VRFX'
     GLOBAL_CACHE_SETTING = 0
     GA4_ID = 'G-SZR4JRJ0G2'
@@ -29,7 +29,7 @@ switch (ENV) {
     SITE_URL = 'https://staging.mnews.tw'
     YOUTUBE_API_URL = 'https://staging.mnews.tw'
     JSON_BASE_URL =
-      'https://storage.googleapis.com/static-mnews-tw-staging/files/json'
+      'https://storage.googleapis.com/v2-static-mnews-tw-staging/json'
     GTM_ID = 'GTM-NFH6FDH'
     GLOBAL_CACHE_SETTING = 0
     GA4_ID = 'G-8Q9RVB3K0E'
