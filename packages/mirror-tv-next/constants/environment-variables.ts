@@ -14,6 +14,7 @@ const TIMESTAMP_FOR_CACHE = '?t=' + Date.now() / 10
 
 switch (ENV) {
   case 'prod':
+  case 'prod-k6':
     SITE_URL = 'https://mnews.tw'
     YOUTUBE_API_URL = 'https://mnews.tw'
     JSON_BASE_URL =
@@ -26,6 +27,7 @@ switch (ENV) {
     break
 
   case 'staging':
+  case 'staging-k6':
     SITE_URL = 'https://staging.mnews.tw'
     YOUTUBE_API_URL = 'https://staging.mnews.tw'
     JSON_BASE_URL =
@@ -38,6 +40,7 @@ switch (ENV) {
     break
 
   case 'dev':
+  case 'dev-k6':
     SITE_URL = 'https://dev.mnews.tw'
     YOUTUBE_API_URL = 'https://dev.mnews.tw'
     JSON_BASE_URL = 'https://storage.googleapis.com/v2-static-mnews-tw-dev/json'
