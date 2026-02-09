@@ -24,6 +24,7 @@ export const revalidate = GLOBAL_CACHE_SETTING
 export default async function Home() {
   const { data: homepageData } = await getTopicVideo()
   const isFeature2025HomepageStyleOn = FEATURE_2025_HOMEPAGE_STYLE === 'on'
+  console.log({ ENV: process.env.NEXT_PUBLIC_ENV })
   return (
     <main className={styles.main}>
       <PageLogger />
