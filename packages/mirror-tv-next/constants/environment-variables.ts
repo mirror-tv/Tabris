@@ -29,7 +29,7 @@ switch (ENV) {
 
   case 'dev':
     SITE_URL = 'https://dev.mnews.tw'
-    YOUTUBE_API_URL = 'https://dev.mnews.tw'
+    YOUTUBE_API_URL = 'https://yt-relay-tv-dev-439405143478.asia-east1.run.app'
     STATIC_FILE_DOMAIN = 'storage.googleapis.com/static-mnews-tw-dev'
     GTM_ID = 'GTM-TVZ26W8'
     GLOBAL_CACHE_SETTING = 0
@@ -38,7 +38,7 @@ switch (ENV) {
 
   default:
     SITE_URL = 'https://dev.mnews.tw'
-    YOUTUBE_API_URL = 'https://dev.mnews.tw'
+    YOUTUBE_API_URL = 'https://yt-relay-tv-dev-439405143478.asia-east1.run.app'
     STATIC_FILE_DOMAIN = 'storage.googleapis.com/static-mnews-tw-dev'
     GTM_ID = 'GTM-TVZ26W8'
     GLOBAL_CACHE_SETTING = 0
