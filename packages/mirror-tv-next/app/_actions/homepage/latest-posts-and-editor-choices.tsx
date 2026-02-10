@@ -438,6 +438,7 @@ async function getLatestPostsAndEditorChoices({
             }) as HeroImage | null,
           },
           exclusive: post.exclusive,
+          partner: post.partner,
         } as PostWithCategory
       }) as PostWithCategory[]
 
