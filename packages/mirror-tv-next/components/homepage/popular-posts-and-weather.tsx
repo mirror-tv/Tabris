@@ -14,7 +14,7 @@ type PopularPostsListType = {
 export default function PopularPostsList({ title }: PopularPostsListType) {
   const { popularPosts } = useData()
 
-  if (!popularPosts.length) return null
+  // if (!popularPosts.length) return null
 
   return (
     <section className={styles.container}>
