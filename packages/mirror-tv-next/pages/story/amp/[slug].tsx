@@ -361,6 +361,9 @@ export default function AmpPage({
             width: 100%;
             margin: 16px 0;
           }
+          .amp-image-container amp-img {
+            display: block;
+          }
           .amp-image-description {
             font-size: 14px;
             color: #666;
