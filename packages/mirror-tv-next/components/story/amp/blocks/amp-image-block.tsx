@@ -88,7 +88,9 @@ const AmpImageBlock = ({ data }: { data: ApiImageBlock }) => {
         <amp-img
           src={imageSrc}
           alt={normalizedData.alt}
-          layout="fill"
+          layout="responsive"
+          width={normalizedData.width.toString()}
+          height={normalizedData.height.toString()}
           className="amp-image-contain"
         />
       </div>
