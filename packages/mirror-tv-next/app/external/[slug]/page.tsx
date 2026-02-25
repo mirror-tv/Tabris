@@ -28,11 +28,13 @@ import {
   FILTERED_SLUG,
 } from '~/constants/constant'
 import type { SingleExternalPost } from '~/graphql/query/external'
-
+import { GLOBAL_CACHE_SETTING } from '~/constants/environment-variables'
 import dynamic from 'next/dynamic'
 import MisoPageView from '~/components/shared/miso-pageview'
 import GA4SourceTracking from '~/components/story/ga4-source-tracking'
 import AdTvAdminMobileBanner from '~/components/shared/ad-tv-admin-mobile-banner'
+
+export const revalidate = GLOBAL_CACHE_SETTING
 
 const ContainerFullScreenAds = dynamic(
   () => import('~/components/ads/gpt/gpt-popup'),
