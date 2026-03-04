@@ -18,13 +18,18 @@ export async function sendEmail(
     const auth = new GoogleAuth()
     const client = await auth.getIdTokenClient(emailApiUrl)
 
+    const dataWithMailTo = {
+      ...emailPayload,
+      mail_to: emailPayload.receiver[0],
+    }
+
     await client.request({
       url: emailApiUrl,
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      data: emailPayload,
+      data: dataWithMailTo,
       timeout: 10000,
     })
   } catch (error) {
