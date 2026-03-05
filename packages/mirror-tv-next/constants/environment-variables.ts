@@ -22,7 +22,7 @@ switch (ENV) {
     GTM_ID = 'GTM-PK7VRFX'
     GLOBAL_CACHE_SETTING = 0
     GA4_ID = 'G-SZR4JRJ0G2'
-    FEATURE_2025_HOMEPAGE_STYLE = 'off'
+    FEATURE_2025_HOMEPAGE_STYLE = 'on'
     SCHEDULE_JSON_URL = `https://storage.googleapis.com/v2-static-mnews-tw-prod/files/documents/tv-schedule.json`
     break
 
