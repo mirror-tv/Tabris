@@ -14,7 +14,6 @@ const TIMESTAMP_FOR_CACHE = '?t=' + Date.now() / 10
 
 switch (ENV) {
   case 'prod':
-  case 'prod-k6':
     SITE_URL = 'https://mnews.tw'
     YOUTUBE_API_URL = 'https://mnews.tw'
     JSON_BASE_URL =
@@ -25,9 +24,19 @@ switch (ENV) {
     FEATURE_2025_HOMEPAGE_STYLE = 'on'
     SCHEDULE_JSON_URL = `https://storage.googleapis.com/v2-static-mnews-tw-prod/files/documents/tv-schedule.json`
     break
+  case 'prod-k6':
+    SITE_URL = 'https://mnews.tw'
+    YOUTUBE_API_URL = 'https://v3.mnews.tw'
+    JSON_BASE_URL =
+      'https://storage.googleapis.com/v2-static-mnews-tw-prod/json'
+    GTM_ID = 'GTM-PK7VRFX'
+    GLOBAL_CACHE_SETTING = 0
+    GA4_ID = 'G-SZR4JRJ0G2'
+    FEATURE_2025_HOMEPAGE_STYLE = 'on'
+    SCHEDULE_JSON_URL = `https://storage.googleapis.com/v2-static-mnews-tw-prod/files/documents/tv-schedule.json`
+    break
 
   case 'staging':
-  case 'staging-k6':
     SITE_URL = 'https://staging.mnews.tw'
     YOUTUBE_API_URL = 'https://staging.mnews.tw'
     JSON_BASE_URL =
@@ -39,10 +48,34 @@ switch (ENV) {
     SCHEDULE_JSON_URL = `https://storage.googleapis.com/v2-static-mnews-tw-staging/files/documents/tv-schedule.json`
     break
 
+  case 'staging-k6':
+    SITE_URL = 'https://staging.mnews.tw'
+    YOUTUBE_API_URL =
+      'https://yt-relay-tv-staging-439405143478.asia-east1.run.app'
+    JSON_BASE_URL =
+      'https://storage.googleapis.com/v2-static-mnews-tw-staging/json'
+    GTM_ID = 'GTM-NFH6FDH'
+    GLOBAL_CACHE_SETTING = 0
+    GA4_ID = 'G-8Q9RVB3K0E'
+    FEATURE_2025_HOMEPAGE_STYLE = 'on'
+    SCHEDULE_JSON_URL = `https://storage.googleapis.com/v2-static-mnews-tw-staging/files/documents/tv-schedule.json`
+    break
+
   case 'dev':
-  case 'dev-k6':
     SITE_URL = 'https://dev.mnews.tw'
     YOUTUBE_API_URL = 'https://dev.mnews.tw'
+    JSON_BASE_URL = 'https://storage.googleapis.com/v2-static-mnews-tw-dev/json'
+    WEATHER_JSON_URL = `${JSON_BASE_URL}/weather.json`
+    GTM_ID = 'GTM-TVZ26W8'
+    GLOBAL_CACHE_SETTING = 0
+    GA4_ID = 'G-YZ07T9YJ6T'
+    FEATURE_2025_HOMEPAGE_STYLE = 'on'
+    SCHEDULE_JSON_URL = `https://storage.googleapis.com/v2-static-mnews-tw-dev/files/documents/tv-schedule.json`
+    break
+
+  case 'dev-k6':
+    SITE_URL = 'https://dev.mnews.tw'
+    YOUTUBE_API_URL = 'https://yt-relay-tv-dev-439405143478.asia-east1.run.app'
     JSON_BASE_URL = 'https://storage.googleapis.com/v2-static-mnews-tw-dev/json'
     WEATHER_JSON_URL = `${JSON_BASE_URL}/weather.json`
     GTM_ID = 'GTM-TVZ26W8'
