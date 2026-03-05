@@ -9,10 +9,10 @@
     max-width: $story-wrapper-max-width-md;
   }
   @include media-breakpoint-up(xl) {
-    max-width: $story-max-width-xl;
+    max-width: $max-width-xl;
   }
   @include media-breakpoint-up(xxl) {
-    max-width: $story-max-width-xl;
+    max-width: $max-width-xl;
   }
 }
 
