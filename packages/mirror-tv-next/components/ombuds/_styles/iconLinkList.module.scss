@@ -1,4 +1,5 @@
 @import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
 
 .infoList {
   margin: 0 16px 48px;
@@ -13,7 +14,7 @@
     column-gap: 16px;
   }
   @include media-breakpoint-up(xl) {
-    width: 1120px;
+    width: $max-width-xl;
     grid-template-columns: repeat(6, 1fr);
   }
 }

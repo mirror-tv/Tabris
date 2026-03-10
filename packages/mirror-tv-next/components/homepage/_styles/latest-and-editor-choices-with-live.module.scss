@@ -46,7 +46,7 @@
   justify-content: center;
   @include media-breakpoint-up(xl) {
     flex-direction: row-reverse;
-    width: 1120px;
+    width: $max-width-xl;
     margin: 0 auto;
     gap: 23px;
   }

@@ -20,6 +20,7 @@ export default function UiListPostsAside({
     <div
       className={[
         styles.wrapper,
+        page === 'story' ? styles.articleWrapper : '',
         page === 'category' ? styles.bordered : '',
         className,
       ].join(' ')}
