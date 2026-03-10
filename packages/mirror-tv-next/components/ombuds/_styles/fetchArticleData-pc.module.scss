@@ -20,7 +20,7 @@
     margin: 0 auto 32px;
   }
   @include media-breakpoint-up(xl) {
-    width: 1120px;
+    width: $max-width-xl;
     margin-bottom: 48px;
   }
 }

@@ -29,10 +29,13 @@ const ApiDataRenderer = ({
   contentData,
   isStoryBrief,
 }: ApiDataRendererPropsType) => {
-  if (isStoryBrief) {
-    console.log({ contentData })
+  let parsedContentData: ApiData
+  try {
+    const parsed = JSON.parse(contentData)
+    parsedContentData = Array.isArray(parsed) ? parsed : []
+  } catch {
+    return null
   }
-  const parsedContentData: ApiData = JSON.parse(contentData)
 
   if (parsedContentData?.length >= 4 && !isStoryBrief) {
     const newObject: ApiDataBlock = {
