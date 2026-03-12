@@ -29,6 +29,13 @@
   }
 }
 
+.articleWrapper {
+  @include media-breakpoint-up(xl) {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
 .listTitle {
   width: max-content;
   border-image: linear-gradient(
