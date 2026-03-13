@@ -89,7 +89,7 @@ export default function EmbedCodeBlock({ data }: { data: ApiDataEmbedCode }) {
         processedEmbeddedCode = processedEmbeddedCode.replace(
           /<iframe([^>]*src=["'][^"']*facebook[^"']*["'][^>]*)>/gi,
           (match, attributes) => {
-            const result = `<iframe${attributes} style="width: auto; max-width: 100% !important; min-height: 474px !important;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"></iframe><div class="${
+            const result = `<iframe${attributes} style="max-width: 100% !important; min-height: 474px !important;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"></iframe><div class="${
               styles.facebookFallback
             }" style="display:none;"><p>此 Facebook 內容無法在此瀏覽器中顯示</p><p>請點擊 <a href="${extractFacebookUrl(
               embeddedCode
