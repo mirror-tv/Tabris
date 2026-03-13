@@ -23,6 +23,7 @@ export interface SinglePost {
   briefApiData: string | null
   source?: string | null
   relatedPosts: SingleRelatedPost[]
+  relatedPostsInInputOrder?: SingleRelatedPost[]
   heroVideo?: {
     youtubeUrl: string | null
   } | null
@@ -32,7 +33,12 @@ export interface SinglePost {
     slug: string
     title: string
   }[]
+  categoriesInInputOrder?: {
+    slug: string
+    title: string
+  }[]
   writers: SinglePersonInfo[]
+  writersInInputOrder?: { slug: string; name: string }[]
   photographers: SinglePersonInfo[]
   cameraOperators: SinglePersonInfo[]
   designers: SinglePersonInfo[]
@@ -40,6 +46,9 @@ export interface SinglePost {
   vocals: SinglePersonInfo[]
   otherbyline: string | null
   tags: {
+    name: string
+  }[]
+  tagsInInputOrder?: {
     name: string
   }[]
   download?:
@@ -78,9 +87,17 @@ const fetchStoryBySlug = gql`
         slug
         title: name
       }
+      categoriesInInputOrder {
+        slug
+        title: name
+      }
       writers {
         name
         slug
+      }
+      writersInInputOrder {
+        slug
+        name
       }
       photographers {
         name
@@ -112,7 +129,14 @@ const fetchStoryBySlug = gql`
         slug
         name
       }
+      relatedPostsInInputOrder {
+        slug
+        name
+      }
       tags {
+        name
+      }
+      tagsInInputOrder {
         name
       }
     }
