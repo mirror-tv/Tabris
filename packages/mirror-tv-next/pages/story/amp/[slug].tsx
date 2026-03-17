@@ -21,6 +21,7 @@ import {
   formatArticleCard,
   handleResponse,
   extractYoutubeId,
+  handleApiData,
 } from '~/utils'
 import { type RawPopularPost } from '~/types/popular-post'
 import { getLatestPosts, PostCardItem } from '~/graphql/query/posts'
@@ -54,11 +55,9 @@ function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
   const category = storyData.categories?.[0]
   const logoUrl = '/images/logo.png'
   const title = storyData.title
-  const brief = storyData.briefApiData
-    ? JSON.parse(storyData.briefApiData)
-        .map((item: { content?: string[] }) => item.content?.join('') || '')
-        .join('')
-    : ''
+  const brief = handleApiData(storyData.briefApiData)
+    .map((item: { content?: string[] }) => item.content?.join('') || '')
+    .join('')
   const image = getStoryOgImage(storyData.heroImage)
   const writer = storyData.writers?.[0]
   const authorName = writer?.name || SITE_TITLE
@@ -188,11 +187,9 @@ export default function AmpPage({
     '/images/image-default.jpg'
   const heroVideoId = extractYoutubeId(heroVideo?.youtubeUrl ?? '') ?? ''
 
-  const brief = briefApiData
-    ? JSON.parse(briefApiData)
-        .map((item: { content?: string[] }) => item.content?.join('') || '')
-        .join('')
-    : ''
+  const brief = handleApiData(briefApiData)
+    .map((item: { content?: string[] }) => item.content?.join('') || '')
+    .join('')
   const tags = storyData.tags?.map((tag) => tag.name).join(', ')
   const image = getStoryOgImage(storyData.heroImage)
   const pageUrl = `${META_SITE_URL}/story/${slug}`
