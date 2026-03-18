@@ -67,7 +67,10 @@ function getStoryDableImage(heroImage?: SinglePost['heroImage'] | null) {
 }
 
 function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
-  const category = storyData.categories?.[0]
+  const category =
+    storyData.categoriesInInputOrder?.[0] || storyData.categories?.[0]
+  const categoryName = category?.title
+  const writerRendered = storyData.writersInInputOrder || storyData.writers
   const logoUrl = '/images/logo.png' // 需要確認實際的 logo 路徑
 
   const publishTime = storyData.publishTime
@@ -97,8 +100,8 @@ function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
     datePublished: publishedDateIso,
     dateModified: modifiedDateIso,
     author: {
-      '@type': storyData.writers?.length ? 'Person' : 'Organization',
-      name: storyData.writers?.[0]?.name || SITE_TITLE,
+      '@type': writerRendered?.length ? 'Person' : 'Organization',
+      name: writerRendered?.[0]?.name || SITE_TITLE,
     },
     publisher: {
       '@type': 'Organization',
@@ -111,15 +114,15 @@ function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
     description: briefText || '',
     url: pageUrl,
     thumbnailUrl: getStoryOgImage(storyData.heroImage),
-    articleSection: category?.title || '',
+    articleSection: categoryName,
   }
 
   let jsonLdPerson
-  if (storyData.writers?.length) {
+  if (writerRendered?.length) {
     jsonLdPerson = {
       '@context': 'http://schema.org/',
       '@type': 'Person',
-      name: storyData.writers[0].name,
+      name: writerRendered?.[0]?.name,
       brand: {
         '@type': 'Brand',
         name: SITE_TITLE,
@@ -139,7 +142,8 @@ function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
 }
 
 function generateBreadcrumbList(storyData: SinglePost, pageUrl: string) {
-  const category = storyData.categories?.[0]
+  const category =
+    storyData.categoriesInInputOrder?.[0] || storyData.categories?.[0]
   const items = [
     {
       '@type': 'ListItem',
@@ -182,13 +186,14 @@ export async function generateMetadata({
   const brief = handleApiData(storyData.briefApiData)
     .map((item: { content?: string[] }) => item.content?.join('') || '')
     .join('')
-  const tags = storyData.tags?.map((tag) => tag.name).join(', ')
+  const tagsRendered = storyData.tagsInInputOrder || storyData.tags
   const image = getStoryOgImage(storyData.heroImage)
   const dableImage = getStoryDableImage(storyData.heroImage)
   const pageUrl = `${META_SITE_URL}/story/${params.slug}`
-  const writer = storyData.writers?.[0]
-  const authorName = writer?.name || SITE_TITLE
-  const category = storyData.categories?.[0]
+  const writerRendered = storyData.writersInInputOrder || storyData.writers
+  const authorName = writerRendered?.[0]?.name || SITE_TITLE
+  const category =
+    storyData.categoriesInInputOrder?.[0] || storyData.categories?.[0]
   const publishTime = storyData.publishTime
   const updateTime = storyData.updatedAt || storyData.publishTime
   const isExclusive = storyData.exclusive ?? false
@@ -209,7 +214,7 @@ export async function generateMetadata({
       type: 'article',
       publishedTime: publishedDateIso,
       modifiedTime: modifiedDateIso,
-      authors: writer ? [writer.name] : [],
+      authors: writerRendered ? [writerRendered?.[0]?.name] : [],
       section: category?.title,
     },
     twitter: {
@@ -218,8 +223,10 @@ export async function generateMetadata({
       description: brief,
       images: image ? [image] : [],
     },
-    keywords: tags,
-    authors: writer ? [{ name: writer.name }] : [],
+    keywords: tagsRendered
+      ? tagsRendered.map((tag) => tag.name).join(', ')
+      : '',
+    authors: writerRendered ? [{ name: writerRendered?.[0]?.name }] : [],
     category: category?.title,
     alternates: {
       canonical: pageUrl,
@@ -255,12 +262,15 @@ const StoryPage = async (props: StoryPageTypes) => {
     id,
     contentApiData,
     relatedPosts,
+    relatedPostsInInputOrder,
     heroImage,
     heroCaption,
     categories,
+    categoriesInInputOrder,
     title,
     publishTime,
     writers,
+    writersInInputOrder,
     photographers,
     cameraOperators,
     designers,
@@ -271,6 +281,7 @@ const StoryPage = async (props: StoryPageTypes) => {
     style,
     heroVideo,
     tags,
+    tagsInInputOrder,
     updatedAt,
     source,
     download,
@@ -281,10 +292,15 @@ const StoryPage = async (props: StoryPageTypes) => {
     'YYYY.MM.DD HH:mm',
     '臺北時間'
   )
+  const categoriesRendered = categoriesInInputOrder || categories
+  const writersRendered = writersInInputOrder || writers
+  const tagsRendered = tagsInInputOrder || tags
 
   const shouldShowAds =
-    !(categories?.length === 1 && categories?.[0]?.slug === 'ombuds') &&
-    !FILTERED_SLUG.includes(params.slug)
+    !(
+      categoriesRendered?.length === 1 &&
+      categoriesRendered?.[0]?.slug === 'ombuds'
+    ) && !FILTERED_SLUG.includes(params.slug)
 
   const updatedTime = updatedAt
     ? formateDateAtTaipei(new Date(updatedAt), 'YYYY.MM.DD HH:mm', '臺北時間')
@@ -299,7 +315,7 @@ const StoryPage = async (props: StoryPageTypes) => {
   const extra = {
     storyId: id,
     storyTitle: title,
-    authorNames: writers.map((writer) => writer.name).toString() || '',
+    authorNames: writersRendered.map((writer) => writer.name).toString() || '',
     photographers:
       photographers.map((photographer) => photographer.name).toString() || '',
     cameraOperators:
@@ -328,8 +344,8 @@ const StoryPage = async (props: StoryPageTypes) => {
         <ArticleInfo
           title={title}
           publishTime={publishTimeTaipei}
-          category={categories?.[0]}
-          writers={writers}
+          category={categoriesRendered?.[0]}
+          writers={writersRendered || []}
           photographers={photographers}
           cameraOperators={cameraOperators}
           designers={designers}
@@ -345,12 +361,12 @@ const StoryPage = async (props: StoryPageTypes) => {
           />
           {!!download?.length && <UiDownload downloads={download} />}
           {updatedTime && <ArticleUpdateTime updateTime={updatedTime} />}
-          {!!tags.length && <ArticleTagList tags={tags} />}
+          {!!tagsRendered?.length && <ArticleTagList tags={tagsRendered} />}
         </section>
         <AdTvAdminMobileBanner />
         <section className={styles.socialAndRelatedWrapper}>
           <ArticleRelatedPosts
-            relatedPosts={relatedPosts}
+            relatedPosts={relatedPostsInInputOrder || relatedPosts}
             shouldShowAds={shouldShowAds}
             page="story"
           />

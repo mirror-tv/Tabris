@@ -63,7 +63,7 @@ switch (ENV) {
 
   case 'dev':
     SITE_URL = 'https://dev.mnews.tw'
-    YOUTUBE_API_URL = 'https://dev.mnews.tw'
+    YOUTUBE_API_URL = 'https://yt-relay-tv-dev-439405143478.asia-east1.run.app'
     JSON_BASE_URL = 'https://storage.googleapis.com/v2-static-mnews-tw-dev/json'
     WEATHER_JSON_URL = `${JSON_BASE_URL}/weather.json`
     GTM_ID = 'GTM-TVZ26W8'
@@ -87,7 +87,7 @@ switch (ENV) {
 
   default:
     SITE_URL = 'https://dev.mnews.tw'
-    YOUTUBE_API_URL = 'https://dev.mnews.tw'
+    YOUTUBE_API_URL = 'https://yt-relay-tv-dev-439405143478.asia-east1.run.app'
     JSON_BASE_URL = 'https://storage.googleapis.com/v2-static-mnews-tw-dev/json'
     GTM_ID = 'GTM-TVZ26W8'
     GLOBAL_CACHE_SETTING = 0

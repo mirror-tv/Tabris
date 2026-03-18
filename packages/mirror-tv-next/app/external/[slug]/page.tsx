@@ -18,6 +18,7 @@ import ArticleInfo from '~/components/story/article-info'
 import { notFound } from 'next/navigation'
 import ArticleUpdateTime from '~/components/story/article-update-time'
 import ArticleTagList from '~/components/story/tags-list'
+import ArticleBrief from '~/components/story/article-brief'
 import JsonLd from '~/components/story/json-ld'
 import AdAfterStory from '~/components/story/ad-after-story'
 import {
@@ -27,11 +28,13 @@ import {
   FILTERED_SLUG,
 } from '~/constants/constant'
 import type { SingleExternalPost } from '~/graphql/query/external'
-
+import { GLOBAL_CACHE_SETTING } from '~/constants/environment-variables'
 import dynamic from 'next/dynamic'
 import MisoPageView from '~/components/shared/miso-pageview'
 import GA4SourceTracking from '~/components/story/ga4-source-tracking'
 import AdTvAdminMobileBanner from '~/components/shared/ad-tv-admin-mobile-banner'
+
+export const revalidate = GLOBAL_CACHE_SETTING
 
 const ContainerFullScreenAds = dynamic(
   () => import('~/components/ads/gpt/gpt-popup'),
@@ -316,6 +319,7 @@ const ExternalPage = async (props: ExternalPageTypes) => {
 
   const pageUrl = `${META_SITE_URL}/external/${params.slug}`
   const jsonLdData = generateExternalJsonLds(externalData, pageUrl)
+  const briefText = extractBriefText(externalData)
 
   const extra = {
     externalId: id,
@@ -363,6 +367,7 @@ const ExternalPage = async (props: ExternalPageTypes) => {
           vocals={[]}
           otherbyline={''}
         />
+        {briefText ? <ArticleBrief brief={briefText} /> : null}
         <section className={styles.contentWrapper}>
           <div
             className={styles.externalContent}

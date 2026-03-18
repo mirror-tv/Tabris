@@ -15,7 +15,7 @@ const UnorderListBlock = ({ data }: { data: ApiDataUnorderListBlock }) => {
   return (
     <ul className={styles.unOrderListBlock}>
       {blockContentData?.map((listData, index) => (
-        <li key={index}>{listData}</li>
+        <li key={index} dangerouslySetInnerHTML={{ __html: listData }} />
       ))}
     </ul>
   )

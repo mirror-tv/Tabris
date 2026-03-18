@@ -15,7 +15,7 @@ const OrderListBlock = ({ data }: { data: ApiDataOrderList }) => {
   return (
     <ol className={styles.orderListBlock}>
       {blockContentData.map((listData, index) => (
-        <li key={index}>{listData}</li>
+        <li key={index} dangerouslySetInnerHTML={{ __html: listData }} />
       ))}
     </ol>
   )
