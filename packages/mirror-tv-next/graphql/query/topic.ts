@@ -108,7 +108,8 @@ const fetchSingleTopicByTopicSlug = gql`
       heroVideo {
         url
       }
-      slideshow {
+      # 排序後的輪播文章
+      slideshow: slideshowInInputOrder {
         id
         slug
         name
@@ -116,11 +117,24 @@ const fetchSingleTopicByTopicSlug = gql`
           imageApiData
         }
       }
-      multivideo {
+      # 排序後的輪播影片
+      multivideo: multivideoInInputOrder {
         id
+        name
         youtubeUrl
         url
       }
+      # 排序後的 POST 相關文章
+      posts: postInInputOrder {
+        id
+        slug
+        name
+        state
+        heroImage {
+          imageApiData
+        }
+      }
+
       itemsCount: postCount(where: { state: { equals: "published" } })
     }
   }
@@ -136,7 +150,7 @@ const fetchPostItemsByTopicSlug = gql`
     topic: topics(
       where: { state: { equals: "published" }, slug: { equals: $topicSlug } }
     ) {
-      items: post(
+      items: postInInputOrder(
         where: { state: { equals: "published" } }
         take: $first
         skip: $skip
@@ -181,7 +195,7 @@ const fetchFeatureTopics = gql`
         imageApiData
       }
       sortDir
-      postDESC: post(
+      postDESC: postInInputOrder(
         take: $postFirst
         orderBy: { publishTime: desc }
         where: { state: { equals: "published" } }
@@ -189,7 +203,7 @@ const fetchFeatureTopics = gql`
         slug
         name
       }
-      postASC: post(
+      postASC: postInInputOrder(
         take: $postFirst
         orderBy: { publishTime: asc }
         where: { state: { equals: "published" } }
