@@ -124,8 +124,7 @@ const fetchSingleTopicByTopicSlug = gql`
         youtubeUrl
         url
       }
-      # 排序後的 POST 相關文章
-      posts: postInInputOrder {
+      posts: post {
         id
         slug
         name
@@ -150,7 +149,7 @@ const fetchPostItemsByTopicSlug = gql`
     topic: topics(
       where: { state: { equals: "published" }, slug: { equals: $topicSlug } }
     ) {
-      items: postInInputOrder(
+      items: post(
         where: { state: { equals: "published" } }
         take: $first
         skip: $skip
@@ -195,7 +194,7 @@ const fetchFeatureTopics = gql`
         imageApiData
       }
       sortDir
-      postDESC: postInInputOrder(
+      postDESC: post(
         take: $postFirst
         orderBy: { publishTime: desc }
         where: { state: { equals: "published" } }
@@ -203,7 +202,7 @@ const fetchFeatureTopics = gql`
         slug
         name
       }
-      postASC: postInInputOrder(
+      postASC: post(
         take: $postFirst
         orderBy: { publishTime: asc }
         where: { state: { equals: "published" } }
