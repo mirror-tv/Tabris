@@ -1,3 +1,5 @@
+import type { K6FlatHeroImage } from './hero-image'
+
 /**
  * Types for featured_categories_news.json
  */
@@ -14,18 +16,9 @@ export type RawFeaturedCategory = {
   createdAt?: string
 }
 
-export type RawFeaturedHeroImageResized = {
-  original?: string
-  w480?: string
-  w800?: string
-  w1200?: string
-  w1600?: string
-  w2400?: string
-}
-
 export type RawFeaturedPostHeroImage = {
   id?: string
-  resized?: RawFeaturedHeroImageResized
+  resized?: K6FlatHeroImage
 }
 
 export type RawFeaturedPostCategory = {

@@ -15,30 +15,42 @@ import {
 
 import { fetchStaticJson } from '~/utils/fetch-static-json'
 import { createDataFetchingChain } from '~/utils/fetch-function'
-import type { HeroImage } from '~/types/common'
+import type { FormattableHeroImage } from '~/types/hero-image'
 
-// New JSON format schema (for latest_posts.json)
-const NewHeroImageSchema = z.object({
-  original: z.string().optional(),
-  w1600: z.string().optional(),
-  w1200: z.string().optional(),
-  w800: z.string().optional(),
-  w480: z.string().optional(),
-})
+const ImageApiDataSchema = z
+  .object({
+    url: z.string().optional(),
+    original: z.object({ url: z.string() }).optional(),
+    w2400: z.object({ url: z.string() }).optional(),
+    w1600: z.object({ url: z.string() }).optional(),
+    w1200: z.object({ url: z.string() }).optional(),
+    w800: z.object({ url: z.string() }).optional(),
+    w480: z.object({ url: z.string() }).optional(),
+  })
+  .passthrough()
 
-// Legacy format schema (for GraphQL compatibility)
-const LegacyHeroImageSchema = z.object({
-  urlDesktopSized: z.string().optional(),
-  urlTabletSized: z.string().optional(),
-  urlMobileSized: z.string().optional(),
-  urlTinySized: z.string().optional(),
-  urlOriginal: z.string().optional(),
-})
+const HeroImageObjectSchema = z
+  .object({
+    original: z.string().optional(),
+    w2400: z.string().optional(),
+    w1600: z.string().optional(),
+    w1200: z.string().optional(),
+    w800: z.string().optional(),
+    w480: z.string().optional(),
+    urlDesktopSized: z.string().optional(),
+    urlTabletSized: z.string().optional(),
+    urlMobileSized: z.string().optional(),
+    urlTinySized: z.string().optional(),
+    urlOriginal: z.string().optional(),
+    imageApiData: z.union([z.string(), ImageApiDataSchema]).optional(),
+  })
+  .passthrough()
 
-// Combined schema that accepts both formats
-const HeroImageSchema = z.union([NewHeroImageSchema, LegacyHeroImageSchema])
-
-const FlexibleHeroImageSchema = z.union([z.string(), HeroImageSchema, z.null()])
+const FlexibleHeroImageSchema = z.union([
+  z.string(),
+  HeroImageObjectSchema,
+  z.null(),
+])
 
 const StaticEditorChoiceSchema = z.object({
   name: z.string(),
@@ -46,7 +58,7 @@ const StaticEditorChoiceSchema = z.object({
   heroImage: FlexibleHeroImageSchema.optional(),
   heroVideo: z
     .object({
-      coverPhoto: HeroImageSchema.nullable(),
+      coverPhoto: HeroImageObjectSchema.nullable(),
     })
     .nullable()
     .optional(),
@@ -92,7 +104,7 @@ const StaticLatestPostSchema = z.object({
     .optional(),
   heroVideo: z
     .object({
-      coverPhoto: HeroImageSchema.nullable(),
+      coverPhoto: HeroImageObjectSchema.nullable(),
     })
     .nullable()
     .optional(),
@@ -119,7 +131,7 @@ const ListingPostSchema = z.object({
   slug: z.string(),
   style: z.string().optional(),
   name: z.string(),
-  heroImage: HeroImageSchema.nullable(),
+  heroImage: HeroImageObjectSchema.nullable(),
   exclusive: z
     .any()
     .transform((val) => {
@@ -148,7 +160,7 @@ const PostWithCategorySchema = ListingPostSchema.extend({
   ),
   heroVideo: z
     .object({
-      coverPhoto: HeroImageSchema.nullable(),
+      coverPhoto: HeroImageObjectSchema.nullable(),
     })
     .nullable(),
 })
@@ -159,10 +171,10 @@ const GraphQLEditorChoicesResponseSchema = z.object({
       choice: z.object({
         name: z.string(),
         slug: z.string(),
-        heroImage: HeroImageSchema.nullable(),
+        heroImage: HeroImageObjectSchema.nullable(),
         heroVideo: z
           .object({
-            coverPhoto: HeroImageSchema.nullable(),
+            coverPhoto: HeroImageObjectSchema.nullable(),
           })
           .nullable(),
         exclusive: z
@@ -197,90 +209,19 @@ type GetLatestPostsServerActionType = {
   jsonPage: number
 }
 
-/**
- * Convert new heroImage format { original, w1600, w1200, w800, w480 } to legacy format { urlOriginal, urlDesktopSized, urlTabletSized, urlMobileSized, urlTinySized }
- * Filters out empty strings and returns null if no valid URLs are found
- */
-function convertHeroImageToLegacyFormat(
-  heroImage: z.infer<typeof FlexibleHeroImageSchema>
-): {
-  urlOriginal?: string
-  urlDesktopSized?: string
-  urlTabletSized?: string
-  urlMobileSized?: string
-  urlTinySized?: string
-} | null {
+function normalizeFlexibleHeroImage(
+  heroImage: z.infer<typeof FlexibleHeroImageSchema> | undefined
+): FormattableHeroImage {
   if (!heroImage) {
     return null
   }
 
-  // Handle string format
   if (typeof heroImage === 'string') {
-    return heroImage.trim() ? { urlOriginal: heroImage.trim() } : null
+    const urlOriginal = heroImage.trim()
+    return urlOriginal ? { urlOriginal } : null
   }
 
-  // If it's already in legacy format, filter out empty strings
-  if ('urlOriginal' in heroImage || 'urlDesktopSized' in heroImage) {
-    const result: {
-      urlOriginal?: string
-      urlDesktopSized?: string
-      urlTabletSized?: string
-      urlMobileSized?: string
-      urlTinySized?: string
-    } = {}
-
-    if (heroImage.urlOriginal?.trim()) {
-      result.urlOriginal = heroImage.urlOriginal.trim()
-    }
-    if (heroImage.urlDesktopSized?.trim()) {
-      result.urlDesktopSized = heroImage.urlDesktopSized.trim()
-    }
-    if (heroImage.urlTabletSized?.trim()) {
-      result.urlTabletSized = heroImage.urlTabletSized.trim()
-    }
-    if (heroImage.urlMobileSized?.trim()) {
-      result.urlMobileSized = heroImage.urlMobileSized.trim()
-    }
-    if (heroImage.urlTinySized?.trim()) {
-      result.urlTinySized = heroImage.urlTinySized.trim()
-    }
-
-    return Object.keys(result).length > 0 ? result : null
-  }
-
-  // Convert new format to legacy format
-  if ('original' in heroImage || 'w1600' in heroImage) {
-    const result: {
-      urlOriginal?: string
-      urlDesktopSized?: string
-      urlTabletSized?: string
-      urlMobileSized?: string
-      urlTinySized?: string
-    } = {}
-
-    // Only include non-empty strings
-    if (heroImage.original?.trim()) {
-      result.urlOriginal = heroImage.original.trim()
-    }
-    if (heroImage.w1600?.trim()) {
-      result.urlDesktopSized = heroImage.w1600.trim()
-    }
-    if (heroImage.w1200?.trim()) {
-      result.urlTabletSized = heroImage.w1200.trim()
-    } else if (heroImage.w1600?.trim()) {
-      result.urlTabletSized = heroImage.w1600.trim()
-    }
-    if (heroImage.w800?.trim()) {
-      result.urlMobileSized = heroImage.w800.trim()
-    }
-    if (heroImage.w480?.trim()) {
-      result.urlTinySized = heroImage.w480.trim()
-    }
-
-    return Object.keys(result).length > 0 ? result : null
-  }
-
-  return null
+  return heroImage
 }
 
 async function fetchLatestPostsAndEditorChoices({ page }: { page: number }) {
@@ -347,96 +288,38 @@ async function getLatestPostsAndEditorChoices({
       })
 
       const transformedChoices = (validatedData.choices || []).map((choice) => {
-        let heroImage: HeroImage | null = null
-
-        if (typeof choice.heroImage === 'string') {
-          heroImage = { urlOriginal: choice.heroImage }
-        } else if (choice.heroImage) {
-          const converted = convertHeroImageToLegacyFormat(choice.heroImage)
-          if (converted) {
-            heroImage = converted as HeroImage
-          }
-        }
-
-        const coverPhoto = choice.heroVideo?.coverPhoto
-          ? (convertHeroImageToLegacyFormat(
-              choice.heroVideo.coverPhoto
-            ) as HeroImage | null)
-          : null
-
         return {
           choice: {
             name: choice.name,
             slug: choice.slug,
             source: choice.source,
-            heroImage: (heroImage || {
-              urlOriginal: '',
-              urlDesktopSized: '',
-              urlTabletSized: '',
-              urlMobileSized: '',
-              urlTinySized: '',
-            }) as HeroImage,
+            heroImage: normalizeFlexibleHeroImage(choice.heroImage),
             heroVideo: choice.heroVideo
               ? {
-                  coverPhoto: (coverPhoto || {
-                    urlOriginal: '',
-                    urlDesktopSized: '',
-                    urlTabletSized: '',
-                    urlMobileSized: '',
-                    urlTinySized: '',
-                  }) as HeroImage | null,
+                  coverPhoto: choice.heroVideo.coverPhoto ?? null,
                 }
-              : {
-                  coverPhoto: {
-                    urlOriginal: '',
-                    urlDesktopSized: '',
-                    urlTabletSized: '',
-                    urlMobileSized: '',
-                    urlTinySized: '',
-                  } as HeroImage,
-                },
+              : null,
             exclusive: choice.exclusive ?? false,
           },
         }
       }) as EditorChoices[]
 
       const transformedPosts = validatedData.latest.map((post) => {
-        let heroImage: HeroImage | null = null
-
-        if (typeof post.heroImage === 'string') {
-          heroImage = { urlOriginal: post.heroImage }
-        } else if (post.heroImage) {
-          const converted = convertHeroImageToLegacyFormat(post.heroImage)
-          if (converted) {
-            heroImage = converted as HeroImage
-          }
-        }
-
-        const coverPhoto = post.heroVideo?.coverPhoto
-          ? (convertHeroImageToLegacyFormat(
-              post.heroVideo.coverPhoto
-            ) as HeroImage | null)
-          : null
-
         return {
           slug: post.slug,
           style: post.style,
           name: post.name,
-          heroImage: heroImage as HeroImage | null,
+          heroImage: normalizeFlexibleHeroImage(post.heroImage),
           publishTime: new Date(post.publishTime),
           categories: (post.categories || []).map((category) => ({
             slug: category.slug || category.name?.toLowerCase() || 'unknown',
             name: category.name,
           })),
-          heroVideo: {
-            coverPhoto: (coverPhoto || {
-              urlOriginal: '',
-              urlDesktopSized: '',
-              urlTabletSized: '',
-              urlMobileSized: '',
-              urlTinySized: '',
-            }) as HeroImage | null,
-          },
+          heroVideo: post.heroVideo
+            ? {
+                coverPhoto: post.heroVideo.coverPhoto ?? null,
+              }
+            : null,
           exclusive: post.exclusive,
           partner: post.partner,
         } as PostWithCategory
@@ -503,13 +386,12 @@ async function getLatestPostsAndEditorChoices({
           validatedEditorChoices.allEditorChoices.map((choice) => ({
             choice: {
               ...choice.choice,
-              heroImage: choice.choice.heroImage || {
-                urlOriginal: '',
-                urlDesktopSized: '',
-                urlTabletSized: '',
-                urlMobileSized: '',
-                urlTinySized: '',
-              },
+              heroImage: choice.choice.heroImage ?? null,
+              heroVideo: choice.choice.heroVideo
+                ? {
+                    coverPhoto: choice.choice.heroVideo.coverPhoto ?? null,
+                  }
+                : null,
             },
           }))
 
@@ -518,23 +400,9 @@ async function getLatestPostsAndEditorChoices({
             ...post,
             heroVideo: post.heroVideo
               ? {
-                  coverPhoto: post.heroVideo?.coverPhoto || {
-                    urlOriginal: '',
-                    urlDesktopSized: '',
-                    urlTabletSized: '',
-                    urlMobileSized: '',
-                    urlTinySized: '',
-                  },
+                  coverPhoto: post.heroVideo.coverPhoto ?? null,
                 }
-              : {
-                  coverPhoto: {
-                    urlOriginal: '',
-                    urlDesktopSized: '',
-                    urlTabletSized: '',
-                    urlMobileSized: '',
-                    urlTinySized: '',
-                  },
-                },
+              : null,
           })
         )
 
@@ -580,23 +448,9 @@ async function getLatestPostsAndEditorChoices({
         ...post,
         heroVideo: post.heroVideo
           ? {
-              coverPhoto: post.heroVideo?.coverPhoto || {
-                urlOriginal: '',
-                urlDesktopSized: '',
-                urlTabletSized: '',
-                urlMobileSized: '',
-                urlTinySized: '',
-              },
+              coverPhoto: post.heroVideo.coverPhoto ?? null,
             }
-          : {
-              coverPhoto: {
-                urlOriginal: '',
-                urlDesktopSized: '',
-                urlTabletSized: '',
-                urlMobileSized: '',
-                urlTinySized: '',
-              },
-            },
+          : null,
       })
     ) as PostWithCategory[]
 

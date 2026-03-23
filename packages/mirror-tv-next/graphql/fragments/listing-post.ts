@@ -1,11 +1,11 @@
 import gql from 'graphql-tag'
-import type { HeroImage } from '~/types/common'
+import type { FormattableHeroImage } from '~/types/hero-image'
 
 export type ListingPost = {
   slug: string
   style?: string | null
   name: string
-  heroImage: HeroImage | null
+  heroImage: FormattableHeroImage
   exclusive: boolean | null
   __typename?: 'Post'
 }

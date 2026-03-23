@@ -93,27 +93,6 @@ async function fetchVideoData() {
   return VideoDataSchema.parse(jsonData)
 }
 
-/**
- * Convert new heroImage format { w480, w800, original } to HeroImage format { urlOriginal, urlMobileSized, urlTabletSized }
- */
-function convertHeroImageToLegacyFormat(
-  heroImage: z.infer<typeof NewHeroImageSchema> | null
-): {
-  urlOriginal?: string
-  urlMobileSized?: string
-  urlTabletSized?: string
-} | null {
-  if (!heroImage) {
-    return null
-  }
-
-  return {
-    urlOriginal: heroImage.original,
-    urlMobileSized: heroImage.w800,
-    urlTabletSized: heroImage.w800,
-  }
-}
-
 async function fetchTopicVideoData() {
   const [topicData, videoData] = await Promise.all([
     fetchTopicData(),
@@ -182,7 +161,7 @@ async function getTopicVideo(): Promise<{
         slug: topic.slug,
         name: topic.name,
         sortDir: topic.sortDir,
-        heroImage: convertHeroImageToLegacyFormat(topic.heroImage),
+        heroImage: topic.heroImage,
         postDESC: topic.postDESC || [],
         postASC: topic.postASC || [],
       }))

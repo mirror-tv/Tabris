@@ -1,10 +1,10 @@
 import gql from 'graphql-tag'
 import { ListingPost, listingPost } from '../fragments/listing-post'
-import { HeroImage } from '~/types/common'
+import type { FormattableHeroImage } from '~/types/hero-image'
 
 export type PostCardItem = ListingPost & {
   publishTime: string
-  ogImage?: HeroImage | null
+  ogImage?: FormattableHeroImage
   __typename?: 'Post'
 }
 
@@ -15,7 +15,7 @@ export type PostWithCategory = ListingPost & {
     name: string
   }[]
   heroVideo?: {
-    coverPhoto: HeroImage | null
+    coverPhoto: FormattableHeroImage
   } | null
   __typename?: 'Post'
 }
