@@ -37,7 +37,9 @@ const Aside: React.FC = () => {
   return (
     <aside className={styles.aside}>
       <div className={styles.asideWrapper}>
-        <GPTAd pageKey={asideCategory} adKey="PC_R1" />
+        <div className={styles.gptAdContainer}>
+          <GPTAd pageKey={asideCategory} adKey="PC_R1" />
+        </div>
         <UiListPostsAside
           listTitle="即時新聞"
           page={asideCategory}
