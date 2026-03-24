@@ -11,7 +11,6 @@ import { getClient } from '~/apollo-client'
 import { fetchVideoPostsItems } from '~/app/_actions/category-video'
 import styles from '~/styles/pages/category-video-page.module.scss'
 import VideoPostsList from '~/components/category/video/video-posts-list'
-import type { HeroImage } from '~/types/common'
 import UiShowsList from '~/components/category/video/ui-shows-list'
 import UiLinksList from '~/components/category/video/ui-links-list'
 import type { PromotionVideo } from '~/graphql/query/promotion-video'
@@ -30,6 +29,7 @@ import {
 import UiAsideVideosList from '~/components/shared/ui-aside-videos-list'
 import { getVideo } from '~/app/_actions/share/video'
 import { fetchPromotionVideosServerAction } from '~/app/_actions/share/promotion-videos'
+import type { FormattableHeroImage } from '~/types/hero-image'
 
 export const revalidate = GLOBAL_CACHE_SETTING
 
@@ -52,7 +52,7 @@ type ReportItem = {
   publishTime: string
   slug: string
   source?: string
-  heroImage: HeroImage
+  heroImage: FormattableHeroImage
 }
 
 type RowPopularVideoData = {
