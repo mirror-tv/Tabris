@@ -1,4 +1,6 @@
-import 'server-only'
+// Runtime endpoint resolution for server-side data fetching.
+// Keep this separate from environment-variables.ts because Cloud Run can override endpoints at deploy time.
+// Avoid re-exporting this module through client-facing barrels such as ~/utils.
 import {
   API_ENDPOINT_OVERRIDE_FROM_ENV,
   ENABLE_K6_NEW_ENDPOINTS,

@@ -1,4 +1,7 @@
 // 這裡管理的是在 Build 階段就會寫死數值的環境變數 (通常為 `NEXT_PUBLCI_` 開頭)
+// Build-time environment settings selected by NEXT_PUBLIC_ENV.
+// Keep static site identity, analytics, and cache defaults here.
+// Do not place runtime endpoint toggles in this file.
 const ENV = process.env.NEXT_PUBLIC_ENV || 'local'
 
 let SITE_URL: string
