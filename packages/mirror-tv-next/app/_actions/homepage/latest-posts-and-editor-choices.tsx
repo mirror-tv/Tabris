@@ -31,17 +31,20 @@ const ImageApiDataSchema = z
 
 const HeroImageObjectSchema = z
   .object({
+    // K6 flat image format.
     original: z.string().optional(),
     w2400: z.string().optional(),
     w1600: z.string().optional(),
     w1200: z.string().optional(),
     w800: z.string().optional(),
     w480: z.string().optional(),
+    // Legacy hero image fields still returned by some GraphQL responses.
     urlDesktopSized: z.string().optional(),
     urlTabletSized: z.string().optional(),
     urlMobileSized: z.string().optional(),
     urlTinySized: z.string().optional(),
     urlOriginal: z.string().optional(),
+    // GraphQL / API image payload.
     imageApiData: z.union([z.string(), ImageApiDataSchema]).optional(),
   })
   .passthrough()
