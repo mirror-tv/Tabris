@@ -8,8 +8,8 @@ import {
 import PostsListManager from '~/components/category/posts-list-manager'
 import UiFeaturePost from '~/components/category/ui-feature-post'
 import UiHeadingBordered from '~/components/shared/ui-heading-bordered'
+import { FEATURE_POSTS_URL } from '~/constants/endpoint-config'
 import {
-  FEATURE_POSTS_URL,
   GLOBAL_CACHE_SETTING,
   SITE_URL,
 } from '~/constants/environment-variables'

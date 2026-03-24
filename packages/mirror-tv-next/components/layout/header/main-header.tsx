@@ -1,12 +1,9 @@
 import errors from '@twreporter/errors'
 import MobileNav from '~/components/layout/header/mobile-header/mobile-nav'
+import { HEADER_JSON_URL } from '~/constants/endpoint-config'
+import { GLOBAL_CACHE_SETTING } from '~/constants/environment-variables'
 import type { Category } from '~/graphql/query/category'
 import type { Sponsor } from '~/graphql/query/sponsors'
-
-import {
-  GLOBAL_CACHE_SETTING,
-  HEADER_JSON_URL,
-} from '~/constants/environment-variables'
 import type { RawShow, RawSponsor } from '~/types/header'
 import styles from './_styles/main-header.module.scss'
 import HeaderBottom from './header-bottom'

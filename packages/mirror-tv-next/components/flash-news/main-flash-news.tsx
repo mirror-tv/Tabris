@@ -1,8 +1,6 @@
 import errors from '@twreporter/errors'
-import {
-  FLASH_NEWS_JSON_URL,
-  GLOBAL_CACHE_SETTING,
-} from '~/constants/environment-variables'
+import { FLASH_NEWS_JSON_URL } from '~/constants/endpoint-config'
+import { GLOBAL_CACHE_SETTING } from '~/constants/environment-variables'
 import styles from './_styles/main-flash-news.module.scss'
 import type { FlashNews } from '~/types/common'
 import UiMobFlashNews from './ui-mob-flash-news'

@@ -1,8 +1,8 @@
 import type { YoutubeItem, YoutubeResponse } from '~/types/youtube'
 import type { FormatPlayListItems } from '~/types/api-data'
 import axios, { AxiosResponse } from 'axios'
+import { YOUTUBE_API_URL } from '~/constants/endpoint-config'
 import { FetchError } from './index'
-import { YOUTUBE_API_URL } from '~/constants/environment-variables'
 
 const formateYoutubeListRes = (
   response: YoutubeResponse,
