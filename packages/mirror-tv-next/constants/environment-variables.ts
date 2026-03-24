@@ -97,6 +97,7 @@ const POPULAR_VIDEOS_JSON_URL = `${JSON_BASE_URL}/popular-videonews-list.json`
 const FEATURE_POSTS_URL = `${JSON_BASE_URL}/featured_categories_news.json`
 const HEADER_JSON_URL = `${JSON_BASE_URL}/header.json`
 const FLASH_NEWS_JSON_URL = `${JSON_BASE_URL}/flash_news.json`
+const CATEGORY_VIDEO_JSON_URL = `${JSON_BASE_URL}/featured_category_video_posts.json`
 
 export {
   ENV,
@@ -115,4 +116,5 @@ export {
   WEATHER_JSON_URL,
   HOMEPAGE_TOPIC_JSON_URL,
   HOMEPAGE_VIDEO_JSON_URL,
+  CATEGORY_VIDEO_JSON_URL,
 }

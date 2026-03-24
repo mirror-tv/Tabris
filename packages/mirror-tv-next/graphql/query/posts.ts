@@ -108,46 +108,6 @@ const getPostsByCategorySlug = gql`
   ${listingPost}
 `
 
-const getVideoPostsByCategorySlug = gql`
-  query fetchVideoPostsByCategorySlug(
-    $category: String!
-    $first: Int = 10
-    $skip: Int = 0
-    $style: String
-    $withCount: Boolean = false
-    $filteredSlug: [String!] = [""]
-  ) {
-    allPosts: posts(
-      where: {
-        categories: {
-          some: { slug: { equals: $category } }
-          every: { slug: { notIn: ["ombuds"] } }
-        }
-        state: { equals: "published" }
-        slug: { notIn: $filteredSlug }
-        style: { equals: $style }
-      }
-      take: $first
-      skip: $skip
-      orderBy: { publishTime: desc }
-    ) {
-      ...listingPostFragment
-    }
-    postsCount(
-      where: {
-        categories: {
-          some: { slug: { equals: $category } }
-          every: { slug: { notIn: ["ombuds"] } }
-        }
-        state: { equals: "published" }
-        slug: { notIn: $filteredSlug }
-        style: { equals: $style }
-      }
-    ) @include(if: $withCount)
-  }
-  ${listingPost}
-`
-
 const getPostsWithCategory = gql`
   query getPostsWithCategory(
     $first: Int = 12
@@ -192,6 +152,5 @@ export {
   getPostsByTagName,
   getLatestPosts,
   getPostsByCategorySlug,
-  getVideoPostsByCategorySlug,
   getPostsWithCategory,
 }
