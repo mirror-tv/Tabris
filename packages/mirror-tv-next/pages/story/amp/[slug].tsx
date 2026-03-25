@@ -1,9 +1,7 @@
 import AMPLayout from '~/components/story/amp/layout'
-import {
-  ENV,
-  GLOBAL_CACHE_SETTING,
-  POPULAR_POSTS_URL,
-} from '~/constants/environment-variables'
+import { POPULAR_POSTS_URL } from '~/constants/endpoint-config'
+import { ENV } from '~/constants/environment'
+import { GLOBAL_CACHE_SETTING, GTM_ID } from '~/constants/environment-variables'
 import { getClient } from '~/apollo-client'
 import {
   fetchStoryBySlug as fetchStoryBySlugDocument,
@@ -31,7 +29,6 @@ import AmpApiDataRenderer from '~/components/story/amp/amp-renderer'
 import { SITE_TITLE, META_SITE_URL } from '~/constants/constant'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
-import { GTM_ID } from '~/constants/environment-variables'
 
 export const config = { amp: true }
 

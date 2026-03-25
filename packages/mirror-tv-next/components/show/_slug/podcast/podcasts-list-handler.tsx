@@ -1,6 +1,6 @@
 import errors from '@twreporter/errors'
 import type { Podcast } from '~/types/common'
-import { ENV } from '~/constants/environment-variables'
+import { ENV } from '~/constants/environment'
 import axios from 'axios'
 import PodcastsList from './podcasts-list'
 

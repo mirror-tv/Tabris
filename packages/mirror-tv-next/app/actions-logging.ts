@@ -2,7 +2,7 @@
 
 import { Logging } from '@google-cloud/logging'
 import { GCP_PROJECT_ID, GCP_LOG_NAME_PREFIX } from '~/constants/config'
-import { ENV } from '~/constants/environment-variables'
+import { ENV } from '~/constants/environment'
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-tw'
 import timezone from 'dayjs/plugin/timezone'

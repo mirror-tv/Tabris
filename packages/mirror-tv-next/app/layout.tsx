@@ -7,10 +7,10 @@ import Footer from '~/components/layout/footer'
 import MainHeader from '~/components/layout/header/main-header'
 import { ReferrerProvider } from '~/context/referrer-context'
 import { META_DESCRIPTION, SITE_TITLE } from '~/constants/constant'
+import { HEADER_JSON_URL } from '~/constants/endpoint-config'
 import {
   GLOBAL_CACHE_SETTING,
   GTM_ID,
-  HEADER_JSON_URL,
   SITE_URL,
 } from '~/constants/environment-variables'
 import '~/styles/global.css'
