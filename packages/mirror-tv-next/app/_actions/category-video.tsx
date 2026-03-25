@@ -1,10 +1,8 @@
 'use server'
 import errors from '@twreporter/errors'
 import { z } from 'zod'
-import {
-  CATEGORY_VIDEO_JSON_URL,
-  GLOBAL_CACHE_SETTING,
-} from '~/constants/environment-variables'
+import { GLOBAL_CACHE_SETTING } from '~/constants/environment-variables'
+import { CATEGORY_VIDEO_JSON_URL } from '~/constants/endpoint-config'
 import type { PostCardItem } from '~/graphql/query/posts'
 import type { FormattableHeroImage } from '~/types/hero-image'
 
