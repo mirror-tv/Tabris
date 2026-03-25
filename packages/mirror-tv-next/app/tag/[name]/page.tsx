@@ -14,6 +14,7 @@ import dynamic from 'next/dynamic'
 import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
 import { type External } from '~/graphql/query/externals'
 import { handleResponse } from '~/utils'
+import { combineAndSortedByPublishedTime } from '~/utils/post-handler'
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 
 export const revalidate = GLOBAL_CACHE_SETTING
@@ -26,11 +27,68 @@ export async function generateMetadata({
   const { name } = params
   const tagName: string = decodeURIComponent(name)
 
+  const canonicalUrl = `${SITE_URL}/tag/${encodeURIComponent(tagName)}`
+
+  let description: string | undefined
+  let totalCount = 0
+  try {
+    const [postsResult, externalsResult] = await Promise.allSettled([
+      fetchPostsItems({
+        page: 0,
+        tagName,
+        pageSize: 3,
+        isWithCount: true,
+      }),
+      fetchExternalsByTagName({
+        page: 0,
+        tagName,
+        pageSize: 3,
+        isWithCount: true,
+      }),
+    ])
+    const postsCount =
+      postsResult.status === 'fulfilled'
+        ? postsResult.value?._allPostsMeta?.count ?? 0
+        : 0
+    const externalsCount =
+      externalsResult.status === 'fulfilled'
+        ? externalsResult.value?._allExternalsMeta?.count ?? 0
+        : 0
+    totalCount = postsCount + externalsCount
+
+    const posts =
+      postsResult.status === 'fulfilled'
+        ? postsResult.value?.allPosts ?? []
+        : []
+    const externals =
+      externalsResult.status === 'fulfilled'
+        ? externalsResult.value?.allExternals ?? []
+        : []
+    const merged = combineAndSortedByPublishedTime([...posts, ...externals])
+    const titles = merged
+      .slice(0, 3)
+      .map((item: { name: string }) => item.name)
+      .filter(Boolean)
+    if (titles.length > 0) {
+      description = titles.join('、')
+    }
+  } catch {
+    description = undefined
+  }
+
+  const isNoindex = totalCount < 3
+
   return {
     metadataBase: new URL(SITE_URL),
     title: `${tagName} - 鏡新聞`,
+    description,
+    robots: isNoindex ? { index: false, follow: true } : undefined,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title: `${tagName} - 鏡新聞`,
+      description,
       images: {
         url: '/images/default-og-img.jpg',
       },

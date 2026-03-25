@@ -1,5 +1,6 @@
 import gql from 'graphql-tag'
 import type { HeroImage } from '~/types/common'
+import type { FormattableHeroImage } from '~/types/hero-image'
 import { ListingPost } from '../fragments/listing-post'
 
 export type Topic = {
@@ -58,7 +59,8 @@ export type SingleTopic = Topic & {
   itemsCount: number
 }
 
-export type FeatureTopic = Omit<Topic, 'briefApiData'> & {
+export type FeatureTopic = Omit<Topic, 'briefApiData' | 'heroImage'> & {
+  heroImage: FormattableHeroImage
   postDESC: {
     slug: string
     name: string
@@ -108,7 +110,8 @@ const fetchSingleTopicByTopicSlug = gql`
       heroVideo {
         url
       }
-      slideshow {
+      # 排序後的輪播文章
+      slideshow: slideshowInInputOrder {
         id
         slug
         name
@@ -116,11 +119,23 @@ const fetchSingleTopicByTopicSlug = gql`
           imageApiData
         }
       }
-      multivideo {
+      # 排序後的輪播影片
+      multivideo: multivideoInInputOrder {
         id
+        name
         youtubeUrl
         url
       }
+      posts: post {
+        id
+        slug
+        name
+        state
+        heroImage {
+          imageApiData
+        }
+      }
+
       itemsCount: postCount(where: { state: { equals: "published" } })
     }
   }

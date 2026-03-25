@@ -360,6 +360,13 @@ export default function AmpPage({
             margin-right: 12px;
             flex-shrink: 0;
           }
+          .amp-card-list-item-image-image {
+            display: block;
+            overflow: hidden;
+          }
+          .amp-card-list-item-image-image img {
+            object-fit: cover;
+          }
           .amp-post-list-title-text,
           .amp-related-list-title-text {
             font-size: 16px;
