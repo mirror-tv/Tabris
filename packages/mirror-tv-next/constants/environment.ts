@@ -1,16 +1,13 @@
 /**
  * Environment Detection
  *
- * Reads NEXT_PUBLIC_ENV.
+ * Reads NEXT_PUBLIC_ENV and exposes a canonical environment value.
  * Shared foundation for both build-time and runtime config modules.
  */
 
-// 'local' is only a fallback for local development/debugging.
-const ENV = process.env.NEXT_PUBLIC_ENV || 'local'
+type Environment = 'prod' | 'staging' | 'dev'
 
-type NormalizedEnvironment = 'prod' | 'staging' | 'dev'
-
-function normalizeEnvironment(env: string): NormalizedEnvironment {
+function normalizeEnvironment(env: string): Environment {
   switch (env) {
     case 'prod':
     case 'prod-k6':
@@ -25,5 +22,9 @@ function normalizeEnvironment(env: string): NormalizedEnvironment {
   }
 }
 
-export { ENV, normalizeEnvironment }
-export type { NormalizedEnvironment }
+// 'local' is only a fallback for local development/debugging.
+const RAW_ENV = process.env.NEXT_PUBLIC_ENV || 'local'
+const ENV = normalizeEnvironment(RAW_ENV)
+
+export { ENV }
+export type { Environment }

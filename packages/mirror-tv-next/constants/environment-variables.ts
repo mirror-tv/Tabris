@@ -6,16 +6,14 @@
  * Do not place runtime endpoint toggles or deploy-time endpoint overrides in this file.
  */
 
-import { ENV, normalizeEnvironment } from './environment'
+import { ENV } from './environment'
 
 let SITE_URL: string
 let GTM_ID: string
 let GLOBAL_CACHE_SETTING: number
 let GA4_ID: string
 
-const buildTimeEnv = normalizeEnvironment(ENV)
-
-switch (buildTimeEnv) {
+switch (ENV) {
   case 'prod':
     SITE_URL = 'https://mnews.tw'
     GTM_ID = 'GTM-PK7VRFX'

@@ -10,11 +10,7 @@ import {
   API_ENDPOINT_OVERRIDE_FROM_ENV,
   ENABLE_K6_NEW_ENDPOINTS,
 } from './config'
-import {
-  ENV,
-  normalizeEnvironment,
-  type NormalizedEnvironment,
-} from './environment'
+import { ENV, type Environment } from './environment'
 
 type ResolvedEndpointConfig = {
   API_ENDPOINT: string
@@ -23,8 +19,6 @@ type ResolvedEndpointConfig = {
 }
 
 const TIMESTAMP_FOR_CACHE = '?t=' + Date.now() / 10
-
-const endpointEnv = normalizeEnvironment(ENV)
 
 const LEGACY_PROD_ENDPOINT_CONFIG: ResolvedEndpointConfig = {
   API_ENDPOINT: 'https://api-v3.mnews.tw/api/graphql',
@@ -39,7 +33,7 @@ const K6_PROD_ENDPOINT_CONFIG: ResolvedEndpointConfig = {
 }
 
 const fixedEndpointConfigByEnvironment: Record<
-  Exclude<NormalizedEnvironment, 'prod'>,
+  Exclude<Environment, 'prod'>,
   ResolvedEndpointConfig
 > = {
   staging: {
@@ -59,8 +53,8 @@ const fixedEndpointConfigByEnvironment: Record<
 }
 
 function resolveEndpointConfig(): ResolvedEndpointConfig {
-  if (endpointEnv !== 'prod') {
-    return fixedEndpointConfigByEnvironment[endpointEnv]
+  if (ENV !== 'prod') {
+    return fixedEndpointConfigByEnvironment[ENV]
   }
 
   return ENABLE_K6_NEW_ENDPOINTS
