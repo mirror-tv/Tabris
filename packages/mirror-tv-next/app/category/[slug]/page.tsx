@@ -39,29 +39,6 @@ type FeaturePostsResponse = {
   allPosts: FeaturePost[]
 }
 
-/** Convert new featured_categories_news heroImage { resized } to HeroImage (legacy url* fields) */
-function convertFeaturedHeroImageToLegacy(
-  heroImage: RawFeaturedPost['heroImage']
-): FeaturePost['heroImage'] {
-  if (!heroImage?.resized) {
-    return {
-      urlOriginal: '',
-      urlDesktopSized: '',
-      urlTabletSized: '',
-      urlMobileSized: '',
-      urlTinySized: '',
-    }
-  }
-  const r = heroImage.resized
-  return {
-    urlOriginal: r.original ?? '',
-    urlDesktopSized: r.w1600 ?? r.w2400 ?? '',
-    urlTabletSized: r.w1200 ?? r.w1600 ?? '',
-    urlMobileSized: r.w800 ?? '',
-    urlTinySized: r.w480 ?? '',
-  }
-}
-
 /** Normalize featured_categories_news response to { allPosts: FeaturePost[] } for category feature-post lookup */
 function normalizeFeaturePostsResponse(
   data: FeaturePostsResponse | RawFeaturedCategoriesNewsJson | undefined
@@ -84,7 +61,7 @@ function normalizeFeaturePostsResponse(
         name: c.name ?? '',
         slug: c.slug ?? '',
       })),
-      heroImage: convertFeaturedHeroImageToLegacy(post.heroImage),
+      heroImage: post.heroImage,
     }))
     return { allPosts }
   }

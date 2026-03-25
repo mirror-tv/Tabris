@@ -25,6 +25,7 @@ import {
   FILTERED_SLUG,
 } from '~/constants/constant'
 import type { SinglePost } from '~/graphql/query/story'
+import { SITE_URL } from '~/constants/environment-variables'
 
 import dynamic from 'next/dynamic'
 import MisoPageView from '~/components/shared/miso-pageview'
@@ -332,6 +333,7 @@ const StoryPage = async (props: StoryPageTypes) => {
       <MisoPageView productIds={`story_${params.slug}`} />
       <GA4SourceTracking source={source} />
       <Article18Warning isAdult={!!isAdult} />
+      <link rel="amphtml" href={`${SITE_URL}/story/amp/${params.slug}`} />
       <section className={styles.article}>
         <ContainerFullScreenAds adKey="MB_NEWS" />
         <ArticleHeroImageAndVideo

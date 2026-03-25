@@ -4,6 +4,10 @@ import styles from './_styles/story.module.scss'
 import Script from 'next/script'
 import dynamic from 'next/dynamic'
 import AdH1Remover from '~/components/shared/ad-h1-remover'
+import {
+  GPTPlaceholderDesktop,
+  GPTPlaceholderMobile,
+} from '~/components/ads/gpt/gpt-placeholder'
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 export default function StoryPageLayout({
   children,
@@ -49,8 +53,12 @@ export default function StoryPageLayout({
       />
 
       <section className={styles.ads}>
-        <GPTAd pageKey="story" adKey="MB_M1" />
-        <GPTAd pageKey="all" adKey="PC_HD" />
+        <GPTPlaceholderMobile>
+          <GPTAd pageKey="story" adKey="MB_M1" />
+        </GPTPlaceholderMobile>
+        <GPTPlaceholderDesktop>
+          <GPTAd pageKey="all" adKey="PC_HD" />
+        </GPTPlaceholderDesktop>
       </section>
       <section className={styles.story}>
         <main className={styles.article}>{children}</main>
