@@ -1,13 +1,21 @@
-// Runtime endpoint resolution for server-side data fetching.
-// Keep this separate from environment-variables.ts because Cloud Run can override endpoints at deploy time.
-// Avoid re-exporting this module through client-facing barrels such as ~/utils.
+/**
+ * Runtime Endpoint Config
+ *
+ * Runtime endpoint resolution for server-side data fetching.
+ * Keep this separate from environment-variables.ts because Cloud Run can override endpoints at deploy time.
+ * Avoid re-exporting this module through client-facing barrels such as ~/utils.
+ */
+
 import {
   API_ENDPOINT_OVERRIDE_FROM_ENV,
   ENABLE_K6_NEW_ENDPOINTS,
 } from './config'
-import { ENV } from './environment-variables'
+import {
+  ENV,
+  normalizeEnvironment,
+  type NormalizedEnvironment,
+} from './environment'
 
-type EndpointEnvironment = 'prod' | 'staging' | 'dev'
 type ResolvedEndpointConfig = {
   API_ENDPOINT: string
   YOUTUBE_API_URL: string
@@ -16,20 +24,7 @@ type ResolvedEndpointConfig = {
 
 const TIMESTAMP_FOR_CACHE = '?t=' + Date.now() / 10
 
-const endpointEnvironment: EndpointEnvironment = (() => {
-  switch (ENV) {
-    case 'prod':
-    case 'prod-k6':
-      return 'prod'
-    case 'staging':
-    case 'staging-k6':
-      return 'staging'
-    case 'dev':
-    case 'dev-k6':
-    default:
-      return 'dev'
-  }
-})()
+const endpointEnv = normalizeEnvironment(ENV)
 
 const LEGACY_PROD_ENDPOINT_CONFIG: ResolvedEndpointConfig = {
   API_ENDPOINT: 'https://api-v3.mnews.tw/api/graphql',
@@ -44,7 +39,7 @@ const K6_PROD_ENDPOINT_CONFIG: ResolvedEndpointConfig = {
 }
 
 const fixedEndpointConfigByEnvironment: Record<
-  Exclude<EndpointEnvironment, 'prod'>,
+  Exclude<NormalizedEnvironment, 'prod'>,
   ResolvedEndpointConfig
 > = {
   staging: {
@@ -64,11 +59,11 @@ const fixedEndpointConfigByEnvironment: Record<
 }
 
 const resolvedEndpointConfig =
-  endpointEnvironment === 'prod'
+  endpointEnv === 'prod'
     ? ENABLE_K6_NEW_ENDPOINTS
       ? K6_PROD_ENDPOINT_CONFIG
       : LEGACY_PROD_ENDPOINT_CONFIG
-    : fixedEndpointConfigByEnvironment[endpointEnvironment]
+    : fixedEndpointConfigByEnvironment[endpointEnv]
 
 const API_ENDPOINT =
   API_ENDPOINT_OVERRIDE_FROM_ENV ?? resolvedEndpointConfig.API_ENDPOINT

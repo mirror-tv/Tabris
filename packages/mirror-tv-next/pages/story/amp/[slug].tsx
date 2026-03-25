@@ -1,10 +1,7 @@
 import AMPLayout from '~/components/story/amp/layout'
 import { POPULAR_POSTS_URL } from '~/constants/endpoint-config'
-import {
-  ENV,
-  GLOBAL_CACHE_SETTING,
-  GTM_ID,
-} from '~/constants/environment-variables'
+import { ENV } from '~/constants/environment'
+import { GLOBAL_CACHE_SETTING, GTM_ID } from '~/constants/environment-variables'
 import { getClient } from '~/apollo-client'
 import {
   fetchStoryBySlug as fetchStoryBySlugDocument,
