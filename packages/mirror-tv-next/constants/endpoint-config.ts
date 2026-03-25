@@ -58,12 +58,17 @@ const fixedEndpointConfigByEnvironment: Record<
   },
 }
 
-const resolvedEndpointConfig =
-  endpointEnv === 'prod'
-    ? ENABLE_K6_NEW_ENDPOINTS
-      ? K6_PROD_ENDPOINT_CONFIG
-      : LEGACY_PROD_ENDPOINT_CONFIG
-    : fixedEndpointConfigByEnvironment[endpointEnv]
+function resolveEndpointConfig(): ResolvedEndpointConfig {
+  if (endpointEnv !== 'prod') {
+    return fixedEndpointConfigByEnvironment[endpointEnv]
+  }
+
+  return ENABLE_K6_NEW_ENDPOINTS
+    ? K6_PROD_ENDPOINT_CONFIG
+    : LEGACY_PROD_ENDPOINT_CONFIG
+}
+
+const resolvedEndpointConfig = resolveEndpointConfig()
 
 const API_ENDPOINT =
   API_ENDPOINT_OVERRIDE_FROM_ENV ?? resolvedEndpointConfig.API_ENDPOINT
