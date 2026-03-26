@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
+import { POPULAR_VIDEOS_JSON_URL } from '~/constants/endpoint-config'
 import {
   GLOBAL_CACHE_SETTING,
   SITE_URL,
-  POPULAR_VIDEOS_JSON_URL,
 } from '~/constants/environment-variables'
 import { handleResponse, formatArticleCard, FormattedPostCard } from '~/utils'
 import { getClient } from '~/apollo-client'

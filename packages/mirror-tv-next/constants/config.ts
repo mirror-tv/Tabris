@@ -1,6 +1,12 @@
-// 這裡管理的是在 runtime 時，可被設定的環境變數 (通常沒有 `NEXT_PUBLIC_` 作為開頭)
-const API_ENDPOINT =
-  process.env.API_ENDPOINT ?? 'https://api-dev.mnews.tw/admin/api'
+/**
+ * Runtime Config
+ *
+ * Server-side process.env values without NEXT_PUBLIC_ prefix.
+ * Cloud Run can override these at deploy time without rebuilding the image.
+ */
+
+const API_ENDPOINT_OVERRIDE_FROM_ENV = process.env.API_ENDPOINT
+const ENABLE_K6_NEW_ENDPOINTS = process.env.ENABLE_K6_NEW_ENDPOINTS === 'true'
 const PROGRAMMABLE_SEARCH_API_KEY = process.env.PROGRAMMABLE_SEARCH_API_KEY
 const PROGRAMMABLE_SEARCH_ENGINE_ID = process.env.PROGRAMMABLE_SEARCH_ENGINE_ID
 const MISO_API_KEY = 'IHtn9b9tfPsO1EQpGV74OMf2syhELb6XVZe8u9FT'
@@ -8,7 +14,8 @@ const GCP_PROJECT_ID = 'mirror-tv-275709'
 const GCP_LOG_NAME_PREFIX = 'mnews'
 
 export {
-  API_ENDPOINT,
+  API_ENDPOINT_OVERRIDE_FROM_ENV,
+  ENABLE_K6_NEW_ENDPOINTS,
   PROGRAMMABLE_SEARCH_API_KEY,
   PROGRAMMABLE_SEARCH_ENGINE_ID,
   MISO_API_KEY,

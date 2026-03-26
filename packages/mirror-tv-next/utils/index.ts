@@ -14,7 +14,7 @@ import {
   doesHaveBrief,
 } from './post-handler'
 import { formatArticleCard } from './post-handler'
-import { formateYoutubeListRes, fetchYoutubeData } from './youtube'
+import { formateYoutubeListRes } from './youtube'
 import {
   addMaxWidthToFigureWithStyle,
   removeDuplicateFirstParagraph,
@@ -30,7 +30,6 @@ export {
   handleApiData,
   handleMetaDesc,
   formateYoutubeListRes,
-  fetchYoutubeData,
   FetchError,
   doesHaveBrief,
   addMaxWidthToFigureWithStyle,

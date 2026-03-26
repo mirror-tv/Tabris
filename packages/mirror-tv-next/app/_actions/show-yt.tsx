@@ -1,8 +1,7 @@
 'use server'
 import errors from '@twreporter/errors'
 import type { YoutubeResponse } from '~/types/youtube'
-
-import { fetchYoutubeData } from '~/utils'
+import { fetchYoutubeData } from '~/utils/server'
 
 type FetchYoutubeListProps = {
   list: { nextPageToken: string; id: string | undefined }

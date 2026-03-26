@@ -5,7 +5,7 @@ import { z } from 'zod'
 import {
   HOMEPAGE_TOPIC_JSON_URL,
   HOMEPAGE_VIDEO_JSON_URL,
-} from '~/constants/environment-variables'
+} from '~/constants/endpoint-config'
 import { createDataFetchingChain } from '~/utils/fetch-function'
 import type { Video } from '~/graphql/query/videos'
 import type { PromotionVideo } from '~/graphql/query/promotion-video'

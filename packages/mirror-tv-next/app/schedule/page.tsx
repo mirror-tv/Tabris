@@ -1,16 +1,17 @@
 import errors from '@twreporter/errors'
 import dayjs from 'dayjs'
 import type { Metadata } from 'next'
+import dynamic from 'next/dynamic'
+import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
 import ScheduleTable from '~/components/schedule/schedule-table'
+import { SCHEDULE_JSON_URL } from '~/constants/endpoint-config'
 import {
   GLOBAL_CACHE_SETTING,
-  SCHEDULE_JSON_URL,
   SITE_URL,
 } from '~/constants/environment-variables'
 import styles from '~/styles/pages/schedule-page.module.scss'
 import type { Schedule } from '~/types/common'
-import dynamic from 'next/dynamic'
-import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
+
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 
 export const revalidate = GLOBAL_CACHE_SETTING
