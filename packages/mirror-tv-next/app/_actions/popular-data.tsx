@@ -1,9 +1,7 @@
 'use server'
 import errors from '@twreporter/errors'
-import {
-  GLOBAL_CACHE_SETTING,
-  POPULAR_POSTS_URL,
-} from '~/constants/environment-variables'
+import { POPULAR_POSTS_URL } from '~/constants/endpoint-config'
+import { GLOBAL_CACHE_SETTING } from '~/constants/environment-variables'
 import {
   type RawPopularListJson,
   type RawPopularPost,

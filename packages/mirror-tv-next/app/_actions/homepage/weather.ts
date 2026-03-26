@@ -1,10 +1,8 @@
 'use server'
 
+import { WEATHER_JSON_URL } from '~/constants/endpoint-config'
+import { GLOBAL_CACHE_SETTING } from '~/constants/environment-variables'
 import { createErrorLogger } from '~/utils/log'
-import {
-  GLOBAL_CACHE_SETTING,
-  WEATHER_JSON_URL,
-} from '~/constants/environment-variables'
 import { type CityAndWeather } from '~/components/homepage/weather-main'
 
 export const fetchWeather = async (): Promise<CityAndWeather | undefined> => {

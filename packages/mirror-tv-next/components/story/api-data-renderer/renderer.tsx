@@ -132,6 +132,7 @@ import styles from './_styles/api-data-renderer.module.scss'
 import ImageBlock from './block-renderer/image-block'
 import UnstyledBlock from './block-renderer/unstyled-block'
 import dynamic from 'next/dynamic'
+import { STATIC_BASE_URL } from '~/constants/endpoint-config'
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 
 type ApiDataRendererPropsType = {
@@ -213,7 +214,13 @@ const ApiDataRenderer = ({
           case ApiDataBlockType.Annotation:
             return <AnnotationBlock key={apiDataBlock.id} data={apiDataBlock} />
           case ApiDataBlockType.Slideshow:
-            return <SlideShowBlock key={apiDataBlock.id} data={apiDataBlock} />
+            return (
+              <SlideShowBlock
+                key={apiDataBlock.id}
+                data={apiDataBlock}
+                staticBaseUrl={STATIC_BASE_URL}
+              />
+            )
           case ApiDataBlockType.Video:
             return <VideoBlock key={apiDataBlock.id} data={apiDataBlock} />
           case ApiDataBlockType.VideoV2: {
@@ -236,6 +243,7 @@ const ApiDataRenderer = ({
                   data={
                     v2.block as Parameters<typeof SlideShowBlock>[0]['data']
                   }
+                  staticBaseUrl={STATIC_BASE_URL}
                 />
               )
             return null

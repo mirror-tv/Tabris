@@ -1,9 +1,7 @@
 import fs from 'fs/promises'
+import { JSON_BASE_URL } from '~/constants/endpoint-config'
+import { GLOBAL_CACHE_SETTING } from '~/constants/environment-variables'
 import { isServer } from '~/utils/common'
-import {
-  GLOBAL_CACHE_SETTING,
-  JSON_BASE_URL,
-} from '~/constants/environment-variables'
 
 /**
  * Fetch static JSON from local GCS FUSE mount if on server, otherwise fallback to HTTP fetch.

@@ -12,7 +12,6 @@ import Image from 'next/image'
 import { useRef } from 'react'
 import { Navigation, Pagination } from 'swiper/modules'
 import { type PaginationOptions } from 'swiper/types'
-import { GCS_BASE_URL } from '~/constants/environment-variables'
 
 type DeviceType = 'original' | 'desktop' | 'tablet' | 'mobile' | 'tiny'
 
@@ -34,7 +33,15 @@ export interface ApiDataSlideshow extends ApiDataBlockBase {
   content: ApiDataSlideshowContent[]
 }
 
-export default function SlideShowBlock({ data }: { data: ApiDataSlideshow }) {
+type SlideShowBlockProps = {
+  data: ApiDataSlideshow
+  staticBaseUrl: string
+}
+
+export default function SlideShowBlock({
+  data,
+  staticBaseUrl,
+}: SlideShowBlockProps) {
   const { width } = useWindowDimensions()
   const swiperRef = useRef<SwiperRef>(null)
   if (!width) return null
@@ -67,8 +74,6 @@ export default function SlideShowBlock({ data }: { data: ApiDataSlideshow }) {
       `
     },
   }
-
-  console.log('slideData', slideData)
   return (
     <div className={styles.swiperContainer}>
       <Swiper
@@ -89,7 +94,7 @@ export default function SlideShowBlock({ data }: { data: ApiDataSlideshow }) {
             <div className={styles.slideShowImageContainer}>
               <Image
                 className={styles.slideShowImage}
-                src={`${GCS_BASE_URL}${item.image.url}`}
+                src={`${staticBaseUrl}${item.image.url}`}
                 alt="swiper slides"
                 fill
                 priority
