@@ -1,9 +1,10 @@
 'use client'
 import Image from '@readr-media/react-image'
-import { PostImage } from '~/utils'
+import type { PostImage } from '~/utils'
 
 type UiPostCardProps = {
   images: PostImage
+  imagesWebP?: PostImage
   alt: string
   priority: boolean
   rwd?: {
@@ -14,11 +15,11 @@ type UiPostCardProps = {
     default?: string
   }
   imgClassName?: string
-  imgId?: string
 }
 
 export default function ResponsiveImage({
   images,
+  imagesWebP,
   alt = '',
   priority = true,
   rwd = {
@@ -29,18 +30,17 @@ export default function ResponsiveImage({
     default: '100vw',
   },
   imgClassName = '',
-  imgId = '',
 }: UiPostCardProps) {
   return (
     <Image
       images={images}
+      imagesWebP={imagesWebP}
       alt={alt}
-      loadingImage="/images/loading.svg"
+      loadingImage={priority ? undefined : '/images/loading.svg'}
       defaultImage="/images/image-default.jpg"
       rwd={rwd}
       priority={priority}
       className={imgClassName}
-      imageProps={{ id: imgId }}
     />
   )
 }

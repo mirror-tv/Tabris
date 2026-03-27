@@ -24,13 +24,18 @@ const isFormatOld = (data: ImageData): data is ImageDataFormatOld => {
 
 const normalizeImageData = (imageData: ImageData) => {
   if (isFormatNew(imageData)) {
+    const isGif =
+      imageData.file?.url?.toLowerCase().endsWith('.gif') ??
+      imageData.name?.toLowerCase().endsWith('.gif') ??
+      false
+
     return {
-      images: imageData.resizedWebp ?? imageData.resized,
+      images: imageData.resized,
       alt: imageData.name || (imageData.desc ?? ''),
       description: imageData.desc ?? '',
       width: imageData.file?.width ?? 16,
       height: imageData.file?.height ?? 9,
-      isFormat1: true,
+      isFormat1: !isGif,
     }
   }
 
