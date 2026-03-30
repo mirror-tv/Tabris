@@ -175,6 +175,7 @@ const ApiDataRenderer = ({
       {parsedContentData?.map((apiDataBlock) => {
         switch (apiDataBlock.type) {
           case ApiDataBlockType.Unstyled:
+          case ApiDataBlockType.Section:
             if (!apiDataBlock.content?.[0]) {
               return null
             }
