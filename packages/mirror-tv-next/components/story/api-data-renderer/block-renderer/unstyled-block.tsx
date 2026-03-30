@@ -1,6 +1,10 @@
 'use client'
 import styles from './_styles/unstyled-block.module.scss'
-import { type ApiDataBlockBase, ApiDataBlockType } from './type'
+import {
+  type ApiDataBlockBase,
+  type ApiDataSection,
+  ApiDataBlockType,
+} from './type'
 import { sanitizeHtmlForAmp } from '~/utils/amp'
 import { getFirstElement } from '~/utils/common'
 import AnnotationBlock from './annotation-block'
@@ -55,7 +59,7 @@ const UnstyledBlock = ({
   className,
   isAmp,
 }: {
-  data: ApiDataUnstyled
+  data: ApiDataUnstyled | ApiDataSection
   className?: string
   isAmp?: boolean
 }) => {

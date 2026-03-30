@@ -56,7 +56,7 @@ export default function EditorChoicesSwiper({
             slidesPerView={1}
             loop={true}
             autoplay={{
-              delay: 500000,
+              delay: 5000,
               disableOnInteraction: false,
             }}
             pagination={pagination}
