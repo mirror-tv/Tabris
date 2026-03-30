@@ -33,6 +33,7 @@ enum ApiDataBlockType {
   QuoteBy = 'quoteby',
   Image = 'image',
   GptAd = 'gpt-ad',
+  Section = 'section',
 }
 type OrderListData = string[][]
 
@@ -48,6 +49,13 @@ interface ApiDataBlockBase {
 interface GptAd extends ApiDataBlockBase {
   type: ApiDataBlockType.GptAd
   content: string
+}
+
+/** 與 unstyled 相同欄位，CMS 可能以 section 型別包一段 HTML */
+export interface ApiDataSection extends ApiDataBlockBase {
+  type: ApiDataBlockType.Section
+  content: string | string[]
+  alignment: 'center'
 }
 
 interface ApiDataVideoV2Block extends ApiDataBlockBase {
@@ -67,6 +75,7 @@ export type ApiDataBlock =
   | ApiDataUnorderListBlock
   | ApiDataInfoBox
   | ApiDataUnstyled
+  | ApiDataSection
   | ApiHeadersBlock
   | ApiDataBlockquote
   | ApiDataOrderList
