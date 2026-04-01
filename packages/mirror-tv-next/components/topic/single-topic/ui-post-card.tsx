@@ -9,7 +9,7 @@ type Props = {
 }
 
 export default function UiPostCard({ item }: Props) {
-  const formattedHeroImage = formateHeroImage(item.heroImage ?? {})
+  const { images, imagesWebP } = formateHeroImage(item.heroImage ?? {})
   return (
     <Link
       href={`/story/${item.slug}`}
@@ -22,7 +22,8 @@ export default function UiPostCard({ item }: Props) {
             <div className={styles.categoryTag}>{item.categories[0].name}</div>
           )}
           <Image
-            images={formattedHeroImage}
+            images={images}
+            imagesWebP={imagesWebP}
             alt={item.title}
             loadingImage="/images/loading.svg"
             defaultImage="/images/image-default.jpg"

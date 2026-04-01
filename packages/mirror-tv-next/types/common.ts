@@ -14,6 +14,15 @@ export type ImageApiData = {
   w480?: { url: string }
 }
 
+export type K6FlatHeroImage = {
+  original?: string
+  w2400?: string
+  w1600?: string
+  w1200?: string
+  w800?: string
+  w480?: string
+}
+
 export type HeroImage = {
   urlDesktopSized?: string
   urlTabletSized?: string
@@ -22,6 +31,9 @@ export type HeroImage = {
   urlOriginal?: string
   /** GraphQL / API format */
   imageApiData?: string | ImageApiData
+  /** K6 / Lilith image format */
+  resized?: K6FlatHeroImage
+  resizedWebp?: K6FlatHeroImage
 }
 
 export type Schedule = {

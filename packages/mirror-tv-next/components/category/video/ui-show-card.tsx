@@ -24,6 +24,8 @@ export default function UiShowCard({
   name,
   id,
 }: UiShowCardProps) {
+  const { images, imagesWebP } = formateHeroImage(bannerImg ?? undefined)
+
   return (
     <Link
       className={`${styles.image} show-card__img`}
@@ -33,7 +35,8 @@ export default function UiShowCard({
       id={id}
     >
       <ResponsiveImage
-        images={formateHeroImage(bannerImg ?? undefined)}
+        images={images}
+        imagesWebP={imagesWebP}
         alt={name}
         rwd={{ mobile: '500px', tablet: '500px', desktop: '500px' }}
         priority={false}

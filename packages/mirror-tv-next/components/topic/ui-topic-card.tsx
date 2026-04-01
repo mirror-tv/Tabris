@@ -10,6 +10,7 @@ type UiPostCardProps = {
   title: string
   href: string
   images: PostImage
+  imagesWebP?: PostImage
   formattedBrief: ApiData[]
 }
 
@@ -17,6 +18,7 @@ export default function UiTopicCard({
   title = '',
   href = '',
   images,
+  imagesWebP,
   formattedBrief,
 }: UiPostCardProps) {
   const [brief, setBrief] = useState<string>('')
@@ -24,7 +26,7 @@ export default function UiTopicCard({
     setBrief(
       formattedBrief?.map((item) => item?.content?.[0] || '').join('<br>') ?? ''
     )
-  }, [])
+  }, [formattedBrief])
 
   return (
     <div className={styles.card}>
@@ -33,6 +35,7 @@ export default function UiTopicCard({
           <figure className={styles.cardImage}>
             <ResponsiveImage
               images={images}
+              imagesWebP={imagesWebP}
               alt={title}
               rwd={{ mobile: '500px', tablet: '500px', desktop: '500px' }}
               priority={false}

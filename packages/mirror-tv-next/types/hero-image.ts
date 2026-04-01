@@ -1,17 +1,11 @@
-import type { HeroImage } from './common'
+import type { HeroImage, K6FlatHeroImage } from './common'
 
-export type K6FlatHeroImage = {
-  original?: string
-  w2400?: string
-  w1600?: string
-  w1200?: string
-  w800?: string
-  w480?: string
-}
+export type { K6FlatHeroImage }
 
 export type K6NestedHeroImage = {
   id?: string
   resized?: K6FlatHeroImage
+  resizedWebp?: K6FlatHeroImage
 }
 
 export type FormattableHeroImage =

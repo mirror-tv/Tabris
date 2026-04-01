@@ -42,6 +42,7 @@ export default function Ui404() {
                   <div className={styles.img}>
                     <ResponsiveImage
                       images={article.images}
+                      imagesWebP={article.imagesWebP}
                       alt={article.name}
                       priority={false}
                       rwd={{

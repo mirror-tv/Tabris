@@ -10,6 +10,7 @@ export type UiPostCardProps = {
   href: string
   postStyle: string | undefined
   images: PostImage
+  imagesWebP?: PostImage
   label?: string
   exclusive?: boolean
 
@@ -23,6 +24,7 @@ export default function UiPostCard({
   date,
   href = '',
   images,
+  imagesWebP,
   postStyle = 'article',
   mobileLayoutDirection = 'column',
   postTitleHighlightText,
@@ -64,6 +66,7 @@ export default function UiPostCard({
         <figure className={styles.cardImage}>
           <ResponsiveImage
             images={images}
+            imagesWebP={imagesWebP}
             alt={title}
             rwd={{ mobile: '500px', tablet: '500px', desktop: '500px' }}
             priority={false}

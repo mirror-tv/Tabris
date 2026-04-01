@@ -66,7 +66,7 @@ export async function generateMetadata({
   }
 
   const description = handleMetaDesc(singleTopic?.briefHtml ?? '')
-  const heroImage = formateHeroImage(singleTopic?.heroImage)
+  const heroImage = formateHeroImage(singleTopic?.heroImage).images
   const ogImage =
     heroImage.w800 ||
     heroImage.w1600 ||

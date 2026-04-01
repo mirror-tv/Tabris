@@ -1,9 +1,8 @@
 import { type PostCardItem } from '~/graphql/query/posts'
 import { Topic } from '~/graphql/query/topic'
-import type { HeroImage, ImageApiData } from '~/types/common'
+import type { HeroImage, ImageApiData, K6FlatHeroImage } from '~/types/common'
 import type {
   FormattableHeroImage,
-  K6FlatHeroImage,
   K6NestedHeroImage,
 } from '~/types/hero-image'
 
@@ -16,6 +15,11 @@ export type PostImage = {
   w1600?: string
   w800?: string
   w400?: string
+}
+
+export type FormattedResponsiveImage = {
+  images: PostImage
+  imagesWebP?: PostImage
 }
 
 function parseImageApiData(
@@ -93,8 +97,14 @@ function formateImageApiDataToPostImage(
   return images
 }
 
-function formateK6HeroImage(heroImage: K6FlatHeroImage): PostImage {
-  const images = createDefaultPostImage()
+function formateK6HeroImage(
+  heroImage: K6FlatHeroImage | undefined,
+  { fallbackToDefault = true }: { fallbackToDefault?: boolean } = {}
+): PostImage | undefined {
+  if (!heroImage) {
+    return fallbackToDefault ? createDefaultPostImage() : undefined
+  }
+
   const original =
     toNonEmptyString(heroImage.original) ??
     toNonEmptyString(heroImage.w2400) ??
@@ -102,16 +112,21 @@ function formateK6HeroImage(heroImage: K6FlatHeroImage): PostImage {
     toNonEmptyString(heroImage.w1200) ??
     toNonEmptyString(heroImage.w800) ??
     toNonEmptyString(heroImage.w480)
+
+  if (!original) {
+    return fallbackToDefault ? createDefaultPostImage() : undefined
+  }
+
+  const images: PostImage = {
+    original,
+    w3200: original,
+  }
   const w2400 = toNonEmptyString(heroImage.w2400)
   const w1600 =
     toNonEmptyString(heroImage.w1600) ?? toNonEmptyString(heroImage.w1200)
   const w800 = toNonEmptyString(heroImage.w800)
   const w400 = toNonEmptyString(heroImage.w480)
 
-  if (original) {
-    images.original = original
-    images.w3200 = original
-  }
   if (w2400) {
     images.w2400 = w2400
   }
@@ -146,7 +161,10 @@ function isLegacyHeroImage(heroImage: unknown): heroImage is HeroImage {
 function isK6NestedHeroImage(
   heroImage: unknown
 ): heroImage is K6NestedHeroImage {
-  return isRecord(heroImage) && 'resized' in heroImage
+  return (
+    isRecord(heroImage) &&
+    ('resized' in heroImage || 'resizedWebp' in heroImage)
+  )
 }
 
 function isK6FlatHeroImage(heroImage: unknown): heroImage is K6FlatHeroImage {
@@ -166,26 +184,19 @@ function formatePostImage(post: Post | Topic): PostImage {
     return createDefaultPostImage()
   }
 
-  const imageApiData =
-    post.heroImage &&
-    isRecord(post.heroImage) &&
-    'imageApiData' in post.heroImage
-      ? post.heroImage.imageApiData
-      : undefined
-
-  return (
-    formateImageApiDataToPostImage(imageApiData) ?? createDefaultPostImage()
-  )
+  return formateHeroImage(post.heroImage ?? undefined).images
 }
 
 function formateHeroImage(
   heroImage: FormattableHeroImage | Record<string, never>
-) {
+): FormattedResponsiveImage {
   if (
     !heroImage ||
     (typeof heroImage === 'object' && Object.keys(heroImage).length === 0)
   ) {
-    return createDefaultPostImage()
+    return {
+      images: createDefaultPostImage(),
+    }
   }
 
   if (isLegacyHeroImage(heroImage)) {
@@ -213,22 +224,41 @@ function formateHeroImage(
       images.w400 = w400
     }
 
-    return images
+    return {
+      images,
+    }
   }
 
   if (isK6NestedHeroImage(heroImage)) {
-    return formateK6HeroImage(heroImage.resized ?? {})
+    const imageApiData =
+      isRecord(heroImage) && 'imageApiData' in heroImage
+        ? (heroImage.imageApiData as HeroImage['imageApiData'])
+        : undefined
+
+    return {
+      images:
+        formateK6HeroImage(heroImage.resized, { fallbackToDefault: false }) ??
+        formateImageApiDataToPostImage(imageApiData) ??
+        createDefaultPostImage(),
+      imagesWebP: formateK6HeroImage(heroImage.resizedWebp, {
+        fallbackToDefault: false,
+      }),
+    }
   }
 
   if (isK6FlatHeroImage(heroImage)) {
-    return formateK6HeroImage(heroImage)
+    return {
+      images: formateK6HeroImage(heroImage) ?? createDefaultPostImage(),
+    }
   }
 
   const images = formateImageApiDataToPostImage(
     'imageApiData' in heroImage ? heroImage.imageApiData : undefined
   )
 
-  return images ?? createDefaultPostImage()
+  return {
+    images: images ?? createDefaultPostImage(),
+  }
 }
 
 const getHeroImageOfAmp = (heroImage: PostImage): string => {

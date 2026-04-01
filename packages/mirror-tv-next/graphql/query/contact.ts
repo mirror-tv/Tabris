@@ -1,5 +1,6 @@
 import gql from 'graphql-tag'
 import type { HeroImage } from '~/types/common'
+import { heroImageFragment } from '../fragments/hero-image'
 
 export type Contact = {
   name: string
@@ -36,7 +37,7 @@ const fetchContactBySlug = gql`
       twitter
       bioApiData
       showhostImg {
-        imageApiData
+        ...heroImageFragment
       }
       relatedShows @include(if: $shouldFetchRelatedShows) {
         id
@@ -46,6 +47,7 @@ const fetchContactBySlug = gql`
       }
     }
   }
+  ${heroImageFragment}
 `
 const fetchContactsByAnchorPerson = gql`
   query fetchContactsByAnchorPerson {
@@ -59,10 +61,11 @@ const fetchContactsByAnchorPerson = gql`
       name
       slug
       anchorImg {
-        imageApiData
+        ...heroImageFragment
       }
     }
   }
+  ${heroImageFragment}
 `
 
 const fetchContactsByHost = gql`
@@ -74,10 +77,11 @@ const fetchContactsByHost = gql`
       name
       slug
       anchorImg {
-        imageApiData
+        ...heroImageFragment
       }
     }
   }
+  ${heroImageFragment}
 `
 
 const fetchContactsByInternational = gql`
@@ -92,10 +96,11 @@ const fetchContactsByInternational = gql`
       name
       slug
       anchorImg {
-        imageApiData
+        ...heroImageFragment
       }
     }
   }
+  ${heroImageFragment}
 `
 
 export {

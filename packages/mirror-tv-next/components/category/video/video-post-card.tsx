@@ -5,6 +5,7 @@ import UiExclusiveMark from '~/components/shared/ui-exclusive-mark'
 
 type VideoPostCardProps = {
   imageUrls: PostImage
+  imageUrlsWebP?: PostImage
   title: string
   href: string
   exclusive: boolean
@@ -12,6 +13,7 @@ type VideoPostCardProps = {
 
 export default function VideoPostCard({
   imageUrls,
+  imageUrlsWebP,
   title,
   href,
   exclusive,
@@ -26,6 +28,7 @@ export default function VideoPostCard({
       <figure className={styles.image}>
         <ResponsiveImage
           images={imageUrls}
+          imagesWebP={imageUrlsWebP}
           alt={title}
           rwd={{ mobile: '500px', tablet: '500px', desktop: '500px' }}
           priority={false}
