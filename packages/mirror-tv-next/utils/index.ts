@@ -1,5 +1,5 @@
 import type { FormattedResponsiveImage, PostImage } from './image-handler'
-import { formateHeroImage, formatePostImage } from './image-handler'
+import { formateHeroImage } from './image-handler'
 import {
   extractYoutubeId,
   handleApiData,
@@ -25,7 +25,6 @@ export {
   formatArticleCard,
   formateDateAtTaipei,
   formateHeroImage,
-  formatePostImage,
   handleResponse,
   handleApiData,
   handleMetaDesc,

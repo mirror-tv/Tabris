@@ -1,12 +1,8 @@
-import { type PostCardItem } from '~/graphql/query/posts'
-import { Topic } from '~/graphql/query/topic'
 import type { HeroImage, ImageApiData, K6FlatHeroImage } from '~/types/common'
 import type {
   FormattableHeroImage,
   K6NestedHeroImage,
 } from '~/types/hero-image'
-
-type Post = PostCardItem
 
 export type PostImage = {
   original: string
@@ -179,14 +175,6 @@ function isK6FlatHeroImage(heroImage: unknown): heroImage is K6FlatHeroImage {
   )
 }
 
-function formatePostImage(post: Post | Topic): PostImage {
-  if (!post) {
-    return createDefaultPostImage()
-  }
-
-  return formateHeroImage(post.heroImage ?? undefined).images
-}
-
 function formateHeroImage(
   heroImage: FormattableHeroImage | Record<string, never>
 ): FormattedResponsiveImage {
@@ -236,6 +224,8 @@ function formateHeroImage(
         : undefined
 
     return {
+      // GraphQL may include resized/resizedWebp keys with null values, so keep
+      // the fallback order explicit: resized -> imageApiData -> default image.
       images:
         formateK6HeroImage(heroImage.resized, { fallbackToDefault: false }) ??
         formateImageApiDataToPostImage(imageApiData) ??
@@ -272,4 +262,4 @@ const getHeroImageOfAmp = (heroImage: PostImage): string => {
   )
 }
 
-export { formateHeroImage, formatePostImage, getHeroImageOfAmp }
+export { formateHeroImage, getHeroImageOfAmp }
