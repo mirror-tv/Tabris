@@ -9,11 +9,12 @@ type Props = {
 }
 
 export default function AnchorImg({ heroImage }: Props) {
-  const formattedHeroImage = formateHeroImage(heroImage)
+  const { images, imagesWebP } = formateHeroImage(heroImage)
   return (
     <figure className={styles.imageWrapper}>
       <Image
-        images={formattedHeroImage}
+        images={images}
+        imagesWebP={imagesWebP}
         alt="主持人圖片"
         loadingImage="/images/loading.svg"
         defaultImage="/images/image-default.jpg"

@@ -19,6 +19,9 @@ export default function UiHostList({ hostList }: { hostList: HostOrStaff[] }) {
     <ol className={`${styles.list} host-list`}>
       {hostList.map((hostItem) => {
         const bios = formatBio(hostItem)[0]
+        const { images, imagesWebP } = formateHeroImage(
+          hostItem.showhostImg || {}
+        )
         return (
           <li key={hostItem.name}>
             <Link
@@ -29,7 +32,8 @@ export default function UiHostList({ hostList }: { hostList: HostOrStaff[] }) {
             >
               <figure className={styles.imageWrapper}>
                 <ResponsiveImage
-                  images={formateHeroImage(hostItem.showhostImg || {})}
+                  images={images}
+                  imagesWebP={imagesWebP}
                   alt="主持人圖片"
                   rwd={{
                     mobile: '80px',

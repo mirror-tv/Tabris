@@ -1,5 +1,6 @@
 import gql from 'graphql-tag'
 import type { HeroImage } from '~/types/common'
+import { heroImageFragment } from '../fragments/hero-image'
 
 export interface SingleRelatedPost {
   slug: string
@@ -77,7 +78,7 @@ const fetchStoryBySlug = gql`
         youtubeUrl
       }
       heroImage {
-        imageApiData
+        ...heroImageFragment
       }
       heroCaption
       briefApiData
@@ -141,6 +142,7 @@ const fetchStoryBySlug = gql`
       }
     }
   }
+  ${heroImageFragment}
 `
 
 export { fetchStoryBySlug }

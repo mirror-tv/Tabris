@@ -1,6 +1,18 @@
 'use client'
+import dynamic from 'next/dynamic'
+import type { ComponentType } from 'react'
 import styles from './_styles/youtube-embed.module.scss'
-import YouTube, { YouTubeProps } from 'react-youtube'
+import type { YouTubeProps } from 'react-youtube'
+
+const YouTube = dynamic(
+  () =>
+    import('react-youtube').then(
+      (module) => module.default as unknown as ComponentType<YouTubeProps>
+    ),
+  {
+    ssr: false,
+  }
+)
 
 type YoutubeEmbedProps = {
   youtubeId: string

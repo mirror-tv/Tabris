@@ -47,7 +47,7 @@ type StoryPageTypes = {
 }
 
 function getStoryOgImage(heroImage?: SinglePost['heroImage'] | null) {
-  const formattedHeroImage = formateHeroImage(heroImage ?? undefined)
+  const formattedHeroImage = formateHeroImage(heroImage ?? undefined).images
   return (
     formattedHeroImage.w1600 ||
     formattedHeroImage.w2400 ||
@@ -58,7 +58,7 @@ function getStoryOgImage(heroImage?: SinglePost['heroImage'] | null) {
 }
 
 function getStoryDableImage(heroImage?: SinglePost['heroImage'] | null) {
-  const formattedHeroImage = formateHeroImage(heroImage ?? undefined)
+  const formattedHeroImage = formateHeroImage(heroImage ?? undefined).images
   return (
     formattedHeroImage.w800 ||
     formattedHeroImage.w1600 ||

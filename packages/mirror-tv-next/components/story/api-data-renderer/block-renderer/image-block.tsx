@@ -6,6 +6,7 @@ import {
   type ImageDataFormatOld,
 } from './type'
 import ResponsiveImage from '~/components/shared/responsive-image'
+import type { PostImage } from '~/utils'
 
 // 聯合類型
 type ImageData = ImageDataFormatNew | ImageDataFormatOld
@@ -24,25 +25,47 @@ const isFormatOld = (data: ImageData): data is ImageDataFormatOld => {
   return 'desktop' in data
 }
 
+type ImageSources = {
+  original?: string
+  w480?: string
+  w800?: string
+  w1200?: string
+  w1600?: string
+  w2400?: string
+}
+
+function toPostImage(images: ImageSources): PostImage {
+  const original =
+    images.original ??
+    images.w1600 ??
+    images.w1200 ??
+    images.w800 ??
+    images.w480 ??
+    ''
+
+  return {
+    original,
+    w400: images.w480,
+    w800: images.w800 ?? images.w480,
+    w1600: images.w1600 ?? images.w1200,
+    w2400: images.w2400,
+    w3200: images.w2400 ?? images.original,
+  }
+}
+
 const normalizeImageData = (imageData: ImageData) => {
   if (isFormatNew(imageData)) {
     const isGif =
       imageData.file?.url?.toLowerCase().endsWith('.gif') ??
       imageData.name?.toLowerCase().endsWith('.gif') ??
       false
-    const src = isGif
-      ? imageData.resized
-      : imageData.resizedWebp ?? imageData.resized
-    const images = {
-      original: src.original ?? src.w1600 ?? src.w800 ?? src.w480 ?? '',
-      w800: src.w800,
-      w1600: src.w1600,
-      w2400: src.w2400,
-      w3200: src.w2400 ?? src.original,
-      w400: src.w480,
-    }
+
     return {
-      images,
+      images: toPostImage(imageData.resized),
+      imagesWebP:
+        isGif || !imageData.resizedWebp
+          ? undefined
+          : toPostImage(imageData.resizedWebp),
       alt: imageData.name || (imageData.desc ?? ''),
       description: imageData.desc ?? '',
       width: imageData.file?.width ?? 16,
@@ -62,7 +85,8 @@ const normalizeImageData = (imageData: ImageData) => {
     }
 
     return {
-      images,
+      images: toPostImage(images),
+      imagesWebP: undefined,
       alt: imageData.title || imageData.name,
       description: imageData.title,
       width: imageData.original.width || 16,
@@ -73,6 +97,7 @@ const normalizeImageData = (imageData: ImageData) => {
 
   return {
     images: { original: '' },
+    imagesWebP: undefined,
     alt: 'Image',
     description: '',
     width: 16,
@@ -96,6 +121,7 @@ const ImageBlock = ({ data }: { data: ApiImageBlock }) => {
       <div className={styles.imageCaption}>
         <ResponsiveImage
           images={normalizedData.images}
+          imagesWebP={normalizedData.imagesWebP}
           alt={normalizedData.alt}
           rwd={{ mobile: '800px', tablet: '1200px', desktop: '1200px' }}
           priority={false}

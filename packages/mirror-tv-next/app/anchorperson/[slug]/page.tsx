@@ -71,7 +71,7 @@ export async function generateMetadata({
   const bio = handleApiData(singleAnchor.bioApiData)
   const description = bio[0]?.content[0]?.slice(0, 20)
 
-  const formattedHeroImage = formateHeroImage(singleAnchor?.showhostImg)
+  const formattedHeroImage = formateHeroImage(singleAnchor?.showhostImg).images
   const ogImage =
     formattedHeroImage.w800 ||
     formattedHeroImage.w1600 ||
