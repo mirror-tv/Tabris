@@ -38,6 +38,19 @@ type SlideShowBlockProps = {
   staticBaseUrl: string
 }
 
+function resolveSlideImageSrc(url: string, staticBaseUrl: string) {
+  if (/^(https?:)?\/\//i.test(url)) {
+    return url
+  }
+
+  const normalizedBaseUrl = staticBaseUrl.endsWith('/')
+    ? staticBaseUrl.slice(0, -1)
+    : staticBaseUrl
+  const normalizedPath = url.startsWith('/') ? url : `/${url}`
+
+  return `${normalizedBaseUrl}${normalizedPath}`
+}
+
 export default function SlideShowBlock({
   data,
   staticBaseUrl,
@@ -94,7 +107,7 @@ export default function SlideShowBlock({
             <div className={styles.slideShowImageContainer}>
               <Image
                 className={styles.slideShowImage}
-                src={`${staticBaseUrl}${item.image.url}`}
+                src={resolveSlideImageSrc(item.image.url, staticBaseUrl)}
                 alt="swiper slides"
                 fill
                 priority
