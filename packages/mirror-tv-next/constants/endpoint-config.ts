@@ -38,7 +38,7 @@ const fixedEndpointConfigByEnvironment: Record<
 > = {
   staging: {
     API_ENDPOINT:
-      'https://mirrortv-cms-staging-439405143478.asia-east1.run.app/api/graphql',
+      'https://mirrortv-cms-gql-staging-439405143478.asia-east1.run.app/api/graphql',
     YOUTUBE_API_URL:
       'https://yt-relay-tv-staging-439405143478.asia-east1.run.app',
     STATIC_BASE_URL:
@@ -46,7 +46,7 @@ const fixedEndpointConfigByEnvironment: Record<
   },
   dev: {
     API_ENDPOINT:
-      'https://mirrortv-cms-dev-439405143478.asia-east1.run.app/api/graphql',
+      'https://mirrortv-cms-gql-dev-439405143478.asia-east1.run.app/api/graphql',
     YOUTUBE_API_URL: 'https://yt-relay-tv-dev-439405143478.asia-east1.run.app',
     STATIC_BASE_URL: 'https://storage.googleapis.com/v2-static-mnews-tw-dev',
   },
