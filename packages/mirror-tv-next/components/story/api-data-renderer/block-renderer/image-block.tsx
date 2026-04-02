@@ -6,6 +6,7 @@ import {
   type ImageDataFormatOld,
 } from './type'
 import ResponsiveImage from '~/components/shared/responsive-image'
+import type { K6FlatHeroImage } from '~/types/common'
 import { formateHeroImage } from '~/utils'
 
 // 聯合類型
@@ -48,7 +49,7 @@ const normalizeImageData = (imageData: ImageData) => {
   }
 
   if (isFormatOld(imageData)) {
-    const images = {
+    const images: K6FlatHeroImage = {
       w480: imageData.tiny.url,
       w800: imageData.mobile.url,
       w1200: imageData.tablet.url,
