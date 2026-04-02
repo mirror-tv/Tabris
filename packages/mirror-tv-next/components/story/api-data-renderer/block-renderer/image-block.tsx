@@ -6,7 +6,8 @@ import {
   type ImageDataFormatOld,
 } from './type'
 import ResponsiveImage from '~/components/shared/responsive-image'
-import type { PostImage } from '~/utils'
+import type { K6FlatHeroImage } from '~/types/common'
+import { formateHeroImage } from '~/utils'
 
 // 聯合類型
 type ImageData = ImageDataFormatNew | ImageDataFormatOld
@@ -25,47 +26,20 @@ const isFormatOld = (data: ImageData): data is ImageDataFormatOld => {
   return 'desktop' in data
 }
 
-type ImageSources = {
-  original?: string
-  w480?: string
-  w800?: string
-  w1200?: string
-  w1600?: string
-  w2400?: string
-}
-
-function toPostImage(images: ImageSources): PostImage {
-  const original =
-    images.original ??
-    images.w1600 ??
-    images.w1200 ??
-    images.w800 ??
-    images.w480 ??
-    ''
-
-  return {
-    original,
-    w400: images.w480,
-    w800: images.w800 ?? images.w480,
-    w1600: images.w1600 ?? images.w1200,
-    w2400: images.w2400,
-    w3200: images.w2400 ?? images.original,
-  }
-}
-
 const normalizeImageData = (imageData: ImageData) => {
   if (isFormatNew(imageData)) {
     const isGif =
       imageData.file?.url?.toLowerCase().endsWith('.gif') ??
       imageData.name?.toLowerCase().endsWith('.gif') ??
       false
+    const { images, imagesWebP } = formateHeroImage({
+      resized: imageData.resized,
+      resizedWebp: isGif ? undefined : imageData.resizedWebp,
+    })
 
     return {
-      images: toPostImage(imageData.resized),
-      imagesWebP:
-        isGif || !imageData.resizedWebp
-          ? undefined
-          : toPostImage(imageData.resizedWebp),
+      images,
+      imagesWebP,
       alt: imageData.name || (imageData.desc ?? ''),
       description: imageData.desc ?? '',
       width: imageData.file?.width ?? 16,
@@ -75,7 +49,7 @@ const normalizeImageData = (imageData: ImageData) => {
   }
 
   if (isFormatOld(imageData)) {
-    const images = {
+    const images: K6FlatHeroImage = {
       w480: imageData.tiny.url,
       w800: imageData.mobile.url,
       w1200: imageData.tablet.url,
@@ -85,7 +59,7 @@ const normalizeImageData = (imageData: ImageData) => {
     }
 
     return {
-      images: toPostImage(images),
+      images: formateHeroImage(images).images,
       imagesWebP: undefined,
       alt: imageData.title || imageData.name,
       description: imageData.title,
