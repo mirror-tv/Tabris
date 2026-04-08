@@ -139,6 +139,7 @@ export default function PostsListManager({
                   <UiPostCard
                     href={postItem.href}
                     images={postItem.images}
+                    imagesWebP={postItem.imagesWebP}
                     title={postItem.name}
                     date={postItem.publishTime}
                     postStyle={postItem.style}

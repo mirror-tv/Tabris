@@ -10,6 +10,7 @@ export type UiPostCardProps = {
   href: string
   postStyle: string | undefined
   images: PostImage
+  imagesWebP?: PostImage
   postTitleHighlightText?: string
   label?: string
   exclusive?: boolean
@@ -20,6 +21,7 @@ export default function UiPostCardHomepage({
   date,
   href = '',
   images,
+  imagesWebP,
   postStyle = 'article',
   label,
   exclusive = false,
@@ -43,6 +45,7 @@ export default function UiPostCardHomepage({
           {exclusive && label !== SALES_LABEL_NAME && <UiExclusiveMark />}
           <ResponsiveImage
             images={images}
+            imagesWebP={imagesWebP}
             alt={title}
             rwd={{ mobile: '500px', tablet: '500px', desktop: '500px' }}
             priority={false}

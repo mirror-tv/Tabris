@@ -1,5 +1,6 @@
 import gql from 'graphql-tag'
 import type { HeroImage } from '~/types/common'
+import { heroImageFragment } from '../fragments/hero-image'
 
 export type VideoEditorChoice = {
   videoEditor: {
@@ -31,17 +32,18 @@ const getVideoEditorChoice = gql`
         name
         style
         heroImage {
-          imageApiData
+          ...heroImageFragment
         }
         heroVideo {
           url
           coverPhoto {
-            imageApiData
+            ...heroImageFragment
           }
         }
       }
     }
   }
+  ${heroImageFragment}
 `
 
 export { getVideoEditorChoice }

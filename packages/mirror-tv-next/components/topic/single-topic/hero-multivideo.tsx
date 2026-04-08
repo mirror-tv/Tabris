@@ -33,7 +33,7 @@ export default function HeroMultiVideo({
   title,
   multivideo,
 }: HeroMultiVideoProps) {
-  const formattedHeroImage = formateHeroImage(heroImage)
+  const { images, imagesWebP } = formateHeroImage(heroImage)
 
   return (
     <section className={styles.sectionWrapper}>
@@ -71,7 +71,8 @@ export default function HeroMultiVideo({
           </Swiper>
         </div>
         <Image
-          images={formattedHeroImage}
+          images={images}
+          imagesWebP={imagesWebP}
           alt={title}
           defaultImage="/images/image-default.jpg"
           rwd={{

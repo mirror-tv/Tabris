@@ -7,7 +7,7 @@ import { Topic } from '~/graphql/query/topic'
 import styles from './_styles/topics-list-manager.module.scss'
 import type { ApiData } from '~/types/api-data'
 import type { PostImage } from '~/utils'
-import { formatePostImage, handleApiData } from '~/utils'
+import { formateHeroImage, handleApiData } from '~/utils'
 
 type TopicsListManagerProps = {
   pageSize: number
@@ -21,6 +21,7 @@ type FormatTopicCard = {
   href: string
   brief: ApiData[]
   images: PostImage
+  imagesWebP?: PostImage
 }
 
 export default function TopicsListManager({
@@ -44,12 +45,14 @@ export default function TopicsListManager({
 
   const formatTopicCard = (topic: Topic): FormatTopicCard => {
     const { id = '', slug = '', name = '', briefApiData } = topic || {}
+    const { images, imagesWebP } = formateHeroImage(topic.heroImage)
     return {
       id,
       title: name,
       href: `/topic/${slug}`,
       brief: transformBrief(briefApiData),
-      images: formatePostImage(topic),
+      images,
+      imagesWebP,
     }
   }
 
@@ -92,6 +95,7 @@ export default function TopicsListManager({
                   <UiTopicCard
                     href={item.href}
                     images={item.images}
+                    imagesWebP={item.imagesWebP}
                     title={item.title}
                     formattedBrief={item.brief}
                   />

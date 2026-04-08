@@ -24,6 +24,7 @@ export default function PopularPostsList({ title }: PopularPostsListType) {
       <WeatherMain />
       <ul className={styles.list}>
         {popularPosts?.slice(0, 10).map((post, index) => {
+          const { images, imagesWebP } = formateHeroImage(post.heroImage ?? {})
           return (
             <div
               className={`${styles.item} popular-list__item item`}
@@ -40,7 +41,8 @@ export default function PopularPostsList({ title }: PopularPostsListType) {
                   <Image
                     loadingImage="/images/loading.svg"
                     defaultImage="/images/image-default.jpg"
-                    images={formateHeroImage(post.heroImage ?? {})}
+                    images={images}
+                    imagesWebP={imagesWebP}
                     alt={post.name}
                     rwd={{
                       tablet: '100px',

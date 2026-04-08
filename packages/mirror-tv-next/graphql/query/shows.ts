@@ -1,5 +1,6 @@
 import gql from 'graphql-tag'
 import type { HeroImage } from '~/types/common'
+import { heroImageFragment } from '../fragments/hero-image'
 
 export type HostOrStaff = {
   slug: string
@@ -37,10 +38,10 @@ const fetchShowBySlug = gql`
       slug
       name
       bannerImg {
-        imageApiData
+        ...heroImageFragment
       }
       picture {
-        imageApiData
+        ...heroImageFragment
       }
       hostName(orderBy: [{ sortOrder: asc }, { id: desc }])
         @include(if: $shouldFetchHost) {
@@ -49,10 +50,10 @@ const fetchShowBySlug = gql`
         sortOrder
         bioApiData
         showhostImg @include(if: $squareHostImg) {
-          imageApiData
+          ...heroImageFragment
         }
         anchorImg @include(if: $rectHostImg) {
-          imageApiData
+          ...heroImageFragment
         }
       }
       staffName(orderBy: [{ sortOrder: asc }, { id: desc }])
@@ -62,10 +63,10 @@ const fetchShowBySlug = gql`
         sortOrder
         bioApiData
         showhostImg @include(if: $squareHostImg) {
-          imageApiData
+          ...heroImageFragment
         }
         anchorImg @include(if: $rectHostImg) {
-          imageApiData
+          ...heroImageFragment
         }
       }
       introduction
@@ -76,6 +77,7 @@ const fetchShowBySlug = gql`
       trailerPlaylist
     }
   }
+  ${heroImageFragment}
 `
 
 export { fetchShowBySlug }

@@ -1,5 +1,5 @@
-import type { PostImage } from './image-handler'
-import { formateHeroImage, formatePostImage } from './image-handler'
+import type { FormattedResponsiveImage, PostImage } from './image-handler'
+import { formateHeroImage } from './image-handler'
 import {
   extractYoutubeId,
   handleApiData,
@@ -25,7 +25,6 @@ export {
   formatArticleCard,
   formateDateAtTaipei,
   formateHeroImage,
-  formatePostImage,
   handleResponse,
   handleApiData,
   handleMetaDesc,
@@ -35,4 +34,9 @@ export {
   addMaxWidthToFigureWithStyle,
   removeDuplicateFirstParagraph,
 }
-export type { FormattedPostCard, PostImage, FormattedPostCardJson }
+export type {
+  FormattedPostCard,
+  FormattedPostCardJson,
+  FormattedResponsiveImage,
+  PostImage,
+}
