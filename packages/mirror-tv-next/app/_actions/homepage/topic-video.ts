@@ -7,6 +7,7 @@ import {
   HOMEPAGE_VIDEO_JSON_URL,
 } from '~/constants/endpoint-config'
 import { createDataFetchingChain } from '~/utils/fetch-function'
+import { appendTimestampForCache } from '~/utils/url'
 import type { Video } from '~/graphql/query/videos'
 import type { PromotionVideo } from '~/graphql/query/promotion-video'
 import type { FeatureTopic } from '~/graphql/query/topic'
@@ -85,7 +86,7 @@ async function fetchTopicData() {
 }
 
 async function fetchVideoData() {
-  const resp = await fetch(HOMEPAGE_VIDEO_JSON_URL)
+  const resp = await fetch(appendTimestampForCache(HOMEPAGE_VIDEO_JSON_URL))
   if (!resp.ok) {
     throw new Error(`HTTP error! status: ${resp.status}`)
   }
