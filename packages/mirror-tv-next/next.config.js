@@ -1,53 +1,37 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path')
 
+const mnewsImageHostnames = [
+  'v3.mnews.tw',
+  'www.mnews.tw',
+  'staging.mnews.tw',
+  'dev.mnews.tw',
+  'storage.googleapis.com',
+  'statics.mnews.tw',
+  'statics-staging.mnews.tw',
+  'statics-dev.mnews.tw',
+]
+
+const externalImageHostnames = [
+  'www.mirrormedia.mg',
+  'www.mirrormedia.com.tw',
+  'v3-statics.mirrormedia.mg',
+  'v3-statics-staging.mirrormedia.mg',
+  'v3-statics-dev.mirrormedia.mg',
+]
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
   swcMinify: true,
   images: {
-    remotePatterns: [
-      {
+    remotePatterns: [...mnewsImageHostnames, ...externalImageHostnames].map(
+      (hostname) => ({
         protocol: 'https',
-        hostname: 'www.mirrormedia.mg',
-        pathname: '**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'www.mnews.tw',
-        pathname: '**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'dev.mnews.tw',
-        pathname: '**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'staging.mnews.tw',
-        pathname: '**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'storage.googleapis.com',
-        pathname: '**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'statics.mnews.tw',
-        pathname: '**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'v3-statics.mirrormedia.mg',
-        pathname: '**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'v3-statics-dev.mirrormedia.mg',
-        pathname: '**',
-      },
-    ],
+        hostname,
+        pathname: '/**',
+      })
+    ),
   },
   output: 'standalone',
   async headers() {

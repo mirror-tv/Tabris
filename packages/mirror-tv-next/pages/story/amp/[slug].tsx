@@ -38,7 +38,7 @@ dayjs.extend(utc)
 function getStoryOgImage(
   heroImage: SinglePost['heroImage'] | null | undefined
 ) {
-  const formattedHeroImage = formateHeroImage(heroImage ?? undefined)
+  const formattedHeroImage = formateHeroImage(heroImage ?? undefined).images
   return (
     formattedHeroImage.w1600 ||
     formattedHeroImage.w2400 ||
@@ -180,7 +180,7 @@ export default function AmpPage({
     briefApiData,
   } = storyData
   const heroImgSrc =
-    getHeroImageOfAmp(formateHeroImage(heroImage ?? undefined)) ||
+    getHeroImageOfAmp(formateHeroImage(heroImage ?? undefined).images) ||
     '/images/image-default.jpg'
   const heroVideoId = extractYoutubeId(heroVideo?.youtubeUrl ?? '') ?? ''
 

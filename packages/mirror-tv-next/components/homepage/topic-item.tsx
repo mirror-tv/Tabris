@@ -13,6 +13,7 @@ type TopicListProps = {
 
 export default function TopicItem({ topic, isFirst }: TopicListProps) {
   const postsList = topic.sortDir === 'asc' ? topic.postASC : topic.postDESC
+  const { images, imagesWebP } = formateHeroImage(topic.heroImage ?? {})
   return (
     <li className={`${styles.item} ${isFirst ? styles.isFirst : ''}`}>
       {isFirst && (
@@ -24,7 +25,8 @@ export default function TopicItem({ topic, isFirst }: TopicListProps) {
         >
           <div className={`${styles.imgWrapper} topic__list__item feature`}>
             <Image
-              images={formateHeroImage(topic.heroImage ?? {})}
+              images={images}
+              imagesWebP={imagesWebP}
               alt={topic.name}
               loadingImage="/images/loading.svg"
               defaultImage="/images/image-default.jpg"

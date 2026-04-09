@@ -9,6 +9,7 @@ export type FormattedPostCard = {
   style?: string
   name: string
   images: PostImage
+  imagesWebP?: PostImage
   publishTime: Date
   label?: string
   __typename?: string
@@ -31,6 +32,7 @@ type FormatArticleCardInput = {
   ogImage?: FormattableHeroImage
   thumbnail?: string | null
   images?: PostImage | null
+  imagesWebP?: PostImage | null
   style?: string | null
   categories?: { name: string }[]
   partner?: { name: string; slug: string }
@@ -50,6 +52,7 @@ const formatArticleCard = (
     ogImage: 'ogImage' in post ? post.ogImage : null,
     thumbnail: 'thumbnail' in post ? post.thumbnail : null,
     images: 'images' in post ? post.images : null,
+    imagesWebP: 'imagesWebP' in post ? post.imagesWebP : null,
     style: 'style' in post ? post.style : undefined,
     categories: 'categories' in post ? post.categories : undefined,
     partner: 'partner' in post ? post.partner : undefined,
@@ -72,9 +75,9 @@ const formatArticleCard = (
     }
   }
 
+  const formattedHeroImage = formateHeroImage(heroImageForFormatting)
   const imageObj: PostImage =
-    postFormatArticleCardInput.images ??
-    formateHeroImage(heroImageForFormatting)
+    postFormatArticleCardInput.images ?? formattedHeroImage.images
 
   return {
     href:
@@ -86,6 +89,8 @@ const formatArticleCard = (
     style: postFormatArticleCardInput.style ?? 'article',
     name: postFormatArticleCardInput.name,
     images: imageObj,
+    imagesWebP:
+      postFormatArticleCardInput.imagesWebP ?? formattedHeroImage.imagesWebP,
     publishTime: new Date(postFormatArticleCardInput.publishTime),
     label: options?.label || postFormatArticleCardInput.categories?.[0]?.name,
     __typename: postFormatArticleCardInput.__typename ?? '',

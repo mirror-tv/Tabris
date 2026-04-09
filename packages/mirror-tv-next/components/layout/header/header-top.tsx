@@ -44,7 +44,7 @@ export default function HeaderTop({ sponsors }: HeaderTopProps) {
       </div>
       <div className={styles.sponsorsWrapper}>
         {sponsors.slice(0, 3).map((sponsor) => {
-          const formattedLogo = formateHeroImage(sponsor.logo ?? {})
+          const { images, imagesWebP } = formateHeroImage(sponsor.logo ?? {})
           return (
             <div key={sponsor.id}>
               <Link
@@ -55,7 +55,8 @@ export default function HeaderTop({ sponsors }: HeaderTopProps) {
               >
                 <ResponsiveImage
                   alt="Sponsor Logo"
-                  images={formattedLogo}
+                  images={images}
+                  imagesWebP={imagesWebP}
                   rwd={{ default: '100px' }}
                   priority={true}
                 />

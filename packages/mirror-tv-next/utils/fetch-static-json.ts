@@ -1,5 +1,5 @@
 import fs from 'fs/promises'
-import { JSON_BASE_URL } from '~/constants/endpoint-config'
+import { STATIC_BASE_URL } from '~/constants/endpoint-config'
 import { GLOBAL_CACHE_SETTING } from '~/constants/environment-variables'
 import { isServer } from '~/utils/common'
 
@@ -32,9 +32,7 @@ export async function fetchStaticJson<T = unknown>(
   }
 
   // 2. Fallback to HTTP fetch
-  // JSON_BASE_URL already contains the path (e.g., /json or /files/json)
-  // Only add pathPrefix for local file system, not for HTTP fetch
-  const url = `${JSON_BASE_URL}/${filename}`
+  const url = `${STATIC_BASE_URL}${pathPrefix}/${filename}`
   const res = await fetch(url, {
     next: { revalidate: GLOBAL_CACHE_SETTING },
   })

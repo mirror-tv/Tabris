@@ -100,7 +100,9 @@ export default function SideMenu({ categories, sponsors }: SideMenuProps) {
           <div className={styles.sponsorsBlock}>
             <div className={styles.sponsorsWrapper}>
               {sponsors.slice(0, 3).map((sponsor) => {
-                const formattedLogo = formateHeroImage(sponsor.mobile ?? {})
+                const { images, imagesWebP } = formateHeroImage(
+                  sponsor.mobile ?? {}
+                )
                 return (
                   <div key={sponsor.id}>
                     <Link
@@ -113,7 +115,8 @@ export default function SideMenu({ categories, sponsors }: SideMenuProps) {
                     >
                       <CallbackImage
                         alt="Sponsor Logo"
-                        images={formattedLogo}
+                        images={images}
+                        imagesWebP={imagesWebP}
                         loadingImage="/images/loading.svg"
                         defaultImage="/images/image-default.jpg"
                         rwd={{ default: '100px' }}

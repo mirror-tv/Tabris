@@ -1,6 +1,7 @@
 import gql from 'graphql-tag'
 import type { HeroImage } from '~/types/common'
 import type { FormattableHeroImage } from '~/types/hero-image'
+import { heroImageFragment } from '../fragments/hero-image'
 import { ListingPost } from '../fragments/listing-post'
 
 export type Topic = {
@@ -81,12 +82,13 @@ const getTopics = gql`
       name
       briefApiData
       heroImage {
-        imageApiData
+        ...heroImageFragment
       }
     }
     topicsCount: topicsCount(where: { state: { equals: "published" } })
       @include(if: $withCount)
   }
+  ${heroImageFragment}
 `
 
 const fetchSingleTopicByTopicSlug = gql`
@@ -105,7 +107,7 @@ const fetchSingleTopicByTopicSlug = gql`
       instagram
       line
       heroImage {
-        imageApiData
+        ...heroImageFragment
       }
       heroVideo {
         url
@@ -116,7 +118,7 @@ const fetchSingleTopicByTopicSlug = gql`
         slug
         name
         heroImage {
-          imageApiData
+          ...heroImageFragment
         }
       }
       # 排序後的輪播影片
@@ -132,13 +134,14 @@ const fetchSingleTopicByTopicSlug = gql`
         name
         state
         heroImage {
-          imageApiData
+          ...heroImageFragment
         }
       }
 
       itemsCount: postCount(where: { state: { equals: "published" } })
     }
   }
+  ${heroImageFragment}
 `
 
 const fetchPostItemsByTopicSlug = gql`
@@ -162,7 +165,7 @@ const fetchPostItemsByTopicSlug = gql`
         title: name
         publishTime
         heroImage {
-          imageApiData
+          ...heroImageFragment
         }
         categories {
           name
@@ -170,6 +173,7 @@ const fetchPostItemsByTopicSlug = gql`
       }
     }
   }
+  ${heroImageFragment}
 `
 
 const fetchPostSortDirBySlug = gql`
@@ -193,7 +197,7 @@ const fetchFeatureTopics = gql`
       slug
       name
       heroImage {
-        imageApiData
+        ...heroImageFragment
       }
       sortDir
       postDESC: post(
@@ -214,6 +218,7 @@ const fetchFeatureTopics = gql`
       }
     }
   }
+  ${heroImageFragment}
 `
 
 export {

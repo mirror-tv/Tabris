@@ -13,7 +13,7 @@ import { useRef, useState } from 'react'
 import { combineAndSortedByPublishedTime } from '~/utils/post-handler'
 import { type External } from '~/graphql/query/externals'
 
-type PostsListManagerProps = {
+type CategoryPostsListManagerProps = {
   categorySlug: string
   pageSize: number
   postsCount: number
@@ -25,7 +25,7 @@ type PostsListManagerProps = {
   categoryPosts: FormattedPostCard[]
 }
 
-export default function PostsListManager({
+export default function CategoryPostsListManager({
   categorySlug,
   pageSize,
   postsCount,
@@ -35,7 +35,7 @@ export default function PostsListManager({
   newestPostType,
   externals,
   categoryPosts,
-}: PostsListManagerProps) {
+}: CategoryPostsListManagerProps) {
   const isExternal = (post: FormattedPostCard) => post.__typename === 'External'
   const initPostsList = combineAndSortedByPublishedTime([
     ...categoryPosts,
@@ -151,6 +151,7 @@ export default function PostsListManager({
                     <UiPostCard
                       href={postItem.href}
                       images={postItem.images}
+                      imagesWebP={postItem.imagesWebP}
                       title={postItem.name}
                       date={postItem.publishTime}
                       postStyle={postItem.style}

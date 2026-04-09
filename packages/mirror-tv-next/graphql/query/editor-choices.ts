@@ -1,5 +1,6 @@
 import gql from 'graphql-tag'
 import type { FormattableHeroImage } from '~/types/hero-image'
+import { heroImageFragment } from '../fragments/hero-image'
 
 export type EditorChoices = {
   choice: {
@@ -25,17 +26,18 @@ const fetchEditorChoices = gql`
         name
         slug
         heroImage {
-          imageApiData
+          ...heroImageFragment
         }
         heroVideo {
           coverPhoto {
-            imageApiData
+            ...heroImageFragment
           }
         }
         exclusive
       }
     }
   }
+  ${heroImageFragment}
 `
 
 export { fetchEditorChoices }
