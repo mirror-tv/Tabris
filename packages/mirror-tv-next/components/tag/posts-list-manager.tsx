@@ -13,7 +13,7 @@ import { type External } from '~/graphql/query/externals'
 import InfiniteScrollList from '@readr-media/react-infinite-scroll-list'
 import { combineAndSortedByPublishedTime } from '~/utils/post-handler'
 
-type PostsListManagerProps = {
+type TagPostsListManagerProps = {
   tagName: string
   pageSize: number
   postsCount: number
@@ -22,14 +22,14 @@ type PostsListManagerProps = {
   externalsCount: number
 }
 
-export default function PostsListManager({
+export default function TagPostsListManager({
   tagName,
   pageSize,
   postsCount,
   initPostsList,
   initExternalsList,
   externalsCount,
-}: PostsListManagerProps) {
+}: TagPostsListManagerProps) {
   const initFetchList = combineAndSortedByPublishedTime([
     ...initPostsList,
     ...initExternalsList,

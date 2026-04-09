@@ -5,7 +5,7 @@ import {
   fetchExternalsByCategory,
   fetchPostsByCategory,
 } from '~/app/_actions/category/posts-by-category'
-import PostsListManager from '~/components/category/posts-list-manager'
+import CategoryPostsListManager from '~/components/category/posts-list-manager'
 import UiFeaturePost from '~/components/category/ui-feature-post'
 import UiHeadingBordered from '~/components/shared/ui-heading-bordered'
 import { FEATURE_POSTS_URL } from '~/constants/endpoint-config'
@@ -363,7 +363,7 @@ export default async function CategoryPage({
       {featurePost && (
         <div className={`${styles.listWrapper} list-latest-wrapper`}>
           <UiFeaturePost post={featurePost} />
-          <PostsListManager
+          <CategoryPostsListManager
             categorySlug={categoryData.slug}
             pageSize={PAGE_SIZE}
             postsCount={postsCount}
