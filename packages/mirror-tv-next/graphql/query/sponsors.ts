@@ -1,5 +1,6 @@
 import gql from 'graphql-tag'
 import type { HeroImage } from '~/types/common'
+import { heroImageFragment } from '../fragments/hero-image'
 
 export type Sponsor = {
   id: string
@@ -25,13 +26,13 @@ const fetchSponsors = gql`
       title
       url
       logo {
-        imageApiData
+        ...heroImageFragment
       }
       mobile {
-        imageApiData
+        ...heroImageFragment
       }
       tablet {
-        imageApiData
+        ...heroImageFragment
       }
       topic {
         id
@@ -40,6 +41,7 @@ const fetchSponsors = gql`
       }
     }
   }
+  ${heroImageFragment}
 `
 
 export { fetchSponsors }

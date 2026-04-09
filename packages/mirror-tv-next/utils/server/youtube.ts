@@ -1,7 +1,7 @@
 import 'server-only'
 import type { YoutubeResponse } from '~/types/youtube'
 import axios, { AxiosResponse } from 'axios'
-import { YOUTUBE_API_URL } from '~/constants/endpoint-config'
+import { YOUTUBE_API_ENDPOINT } from '~/constants/endpoint-config'
 import { FetchError } from '../common'
 
 async function fetchYoutubeData(url: string): Promise<YoutubeResponse> {
@@ -10,7 +10,7 @@ async function fetchYoutubeData(url: string): Promise<YoutubeResponse> {
       timeout: 3000,
     }
     const response: AxiosResponse = await axios.get(
-      `${YOUTUBE_API_URL}/api/youtube${url}`,
+      `${YOUTUBE_API_ENDPOINT}${url}`,
       axiosConfig
     )
     return response.data

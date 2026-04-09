@@ -15,7 +15,7 @@ export default function UiPostCard({ item }: Props) {
     return dayjs(date).format('YYYY/MM/DD HH:mm')
   }
 
-  const formattedHeroImage = formateHeroImage(item.heroImage ?? {})
+  const { images, imagesWebP } = formateHeroImage(item.heroImage ?? {})
 
   return (
     <Link
@@ -26,7 +26,8 @@ export default function UiPostCard({ item }: Props) {
     >
       <div className={styles.imageWrapper}>
         <Image
-          images={formattedHeroImage}
+          images={images}
+          imagesWebP={imagesWebP}
           alt={item.name}
           loadingImage="/images/loading.svg"
           defaultImage="/images/image-default.jpg"

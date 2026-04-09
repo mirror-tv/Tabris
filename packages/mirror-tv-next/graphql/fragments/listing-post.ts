@@ -1,5 +1,6 @@
 import gql from 'graphql-tag'
 import type { FormattableHeroImage } from '~/types/hero-image'
+import { heroImageFragment } from './hero-image'
 
 export type ListingPost = {
   slug: string
@@ -16,10 +17,11 @@ const listingPost = gql`
     style
     name
     heroImage {
-      imageApiData
+      ...heroImageFragment
     }
     exclusive
   }
+  ${heroImageFragment}
 `
 
 export { listingPost }

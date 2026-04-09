@@ -4,7 +4,7 @@ import {
   GLOBAL_CACHE_SETTING,
   SITE_URL,
 } from '~/constants/environment-variables'
-import PostsListManager from '~/components/tag/posts-list-manager'
+import TagPostsListManager from '~/components/tag/posts-list-manager'
 import {
   fetchPostsItems,
   fetchExternalsByTagName,
@@ -156,7 +156,7 @@ export default async function TagPage({
         {postsCount + externalsCount === 0 ? (
           <p>目前沒有相關的文章</p>
         ) : (
-          <PostsListManager
+          <TagPostsListManager
             tagName={tagName}
             pageSize={PAGE_SIZE}
             postsCount={postsCount}

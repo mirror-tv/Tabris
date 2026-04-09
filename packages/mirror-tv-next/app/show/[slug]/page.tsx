@@ -133,7 +133,7 @@ export async function generateMetadata({
         url: (() => {
           const formattedShowImage = formateHeroImage(
             showData.picture ?? showData.bannerImg ?? undefined
-          )
+          ).images
           const bestImage =
             formattedShowImage.w800 ||
             formattedShowImage.w1600 ||
@@ -225,6 +225,10 @@ export default async function ShowPage({
     },
   ]
 
+  const { images, imagesWebP } = formateHeroImage(
+    show.picture ?? show.bannerImg ?? undefined
+  )
+
   return (
     <>
       <GPTPlaceholderDesktop>
@@ -240,9 +244,8 @@ export default async function ShowPage({
         <h1 className={styles.title}>{show.name || '節目'}</h1>
         <figure className={styles.banner}>
           <ResponsiveImage
-            images={formateHeroImage(
-              show.picture ?? show.bannerImg ?? undefined
-            )}
+            images={images}
+            imagesWebP={imagesWebP}
             alt={show.name || 'show-banner'}
             rwd={{ desktop: '1200px' }}
             priority={true}

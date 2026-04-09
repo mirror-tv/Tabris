@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import { heroImageFragment } from '../fragments/hero-image'
 import { ListingPost, listingPost } from '../fragments/listing-post'
 import type { FormattableHeroImage } from '~/types/hero-image'
 
@@ -42,7 +43,7 @@ const getPostsByTagName = gql`
       publishTime
       ...listingPostFragment
       ogImage {
-        imageApiData
+        ...heroImageFragment
       }
     }
     postsCount(
@@ -55,6 +56,7 @@ const getPostsByTagName = gql`
     ) @include(if: $withCount)
   }
   ${listingPost}
+  ${heroImageFragment}
 `
 
 const getLatestPosts = gql`
@@ -133,7 +135,7 @@ const getPostsWithCategory = gql`
       }
       heroVideo {
         coverPhoto {
-          imageApiData
+          ...heroImageFragment
         }
       }
     }
@@ -146,6 +148,7 @@ const getPostsWithCategory = gql`
     ) @include(if: $withCount)
   }
   ${listingPost}
+  ${heroImageFragment}
 `
 
 export {

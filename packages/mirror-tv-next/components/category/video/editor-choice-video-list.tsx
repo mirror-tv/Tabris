@@ -6,7 +6,7 @@ import YoutubeEmbed from '~/components/shared/youtube-embed'
 import UiHeadingBordered from '~/components/shared/ui-heading-bordered'
 import { useCallback, useEffect, useState } from 'react'
 import ResponsiveImage from '~/components/shared/responsive-image'
-import { formateHeroImage } from '~/utils'
+import { formateHeroImage, type FormattedResponsiveImage } from '~/utils'
 
 type EditorChoiceVideoListProps = {
   title: string
@@ -22,7 +22,9 @@ export default function EditorChoiceVideoList({
   const selectItemToHighlight = (index: number) => {
     setHighLightIndex(index)
   }
-  const getImageUrls = (item: VideoEditorChoice['videoEditor']) => {
+  const getImageUrls = (
+    item: VideoEditorChoice['videoEditor']
+  ): FormattedResponsiveImage => {
     return formateHeroImage(
       item?.heroVideo?.coverPhoto ?? item?.heroImage ?? {}
     )
@@ -30,7 +32,7 @@ export default function EditorChoiceVideoList({
 
   const nextVideoCarousel = useCallback(() => {
     setHighLightIndex((prev) => (prev + 1) % videoLists.length)
-  }, [])
+  }, [videoLists.length])
 
   const handleEnded = useCallback(() => {
     setStatus(null)
@@ -65,6 +67,7 @@ export default function EditorChoiceVideoList({
         <div className={styles.list}>
           <div className={styles.scroll}>
             {videoLists.map(({ videoEditor }, index) => {
+              const { images, imagesWebP } = getImageUrls(videoEditor)
               return (
                 <div
                   key={videoEditor?.slug}
@@ -75,7 +78,8 @@ export default function EditorChoiceVideoList({
                 >
                   <picture>
                     <ResponsiveImage
-                      images={getImageUrls(videoEditor)}
+                      images={images}
+                      imagesWebP={imagesWebP}
                       alt={videoEditor?.name ?? 'hero image'}
                       rwd={{
                         mobile: '500px',
