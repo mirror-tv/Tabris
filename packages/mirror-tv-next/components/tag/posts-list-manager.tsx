@@ -36,13 +36,6 @@ export default function TagPostsListManager({
   ])
   const isExternal = (post: FormattedPostCard) => post.__typename === 'External'
 
-  /* 
-  關於改使用 useState，Gemini 的解釋：
-  如果一個值只在組件內部被讀取和修改，且它的變化不應該觸發重新渲染（例如，計時器 ID、DOM 元素引用），那麼 useRef 是合適的。
-  如果一個值雖然不直接渲染，但它的變化會影響到組件的行為或邏輯，而這些行為或邏輯的變化最終會導致 UI 的更新（即使是間接的），那麼 useState 通常是更安全的選擇，因為它能保證所有依賴這個值的邏輯都能在最新狀態下執行。
-  在您的情境中，differentPostsCount 顯然屬於後者。它決定了何時以及如何發送網絡請求，這些請求的結果最終會更新 postsList，而 postsList 的更新是會觸發 UI 渲染的。因此，確保 differentPostsCount 的即時性至關重要。
-  所以，雖然從「不直接渲染」的角度看 useRef 似乎合理，但從「狀態變化影響副作用邏輯」的角度看，useState 才是解決陳舊閉包問題並確保邏輯正確性的更佳選擇。我之前建議的方案（將 useRef 改為 useState，並使用 function 更新）就是為了解決這個核心問題
-  **/
   const [differentPostsCount, setDifferentPostsCount] = useState(() => {
     const renderedPosts = initFetchList
       .slice(0, pageSize)
@@ -145,6 +138,7 @@ export default function TagPostsListManager({
                     postStyle={postItem.style}
                     mobileLayoutDirection="column"
                     exclusive={postItem.exclusive ?? false}
+                    priority={index === 0}
                   />
                 </li>
               ))}

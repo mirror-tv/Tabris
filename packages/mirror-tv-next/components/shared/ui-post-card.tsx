@@ -13,6 +13,7 @@ export type UiPostCardProps = {
   imagesWebP?: PostImage
   label?: string
   exclusive?: boolean
+  priority?: boolean
 
   // Differentiate two usages in / and /category/:name pages
   mobileLayoutDirection: 'row' | 'column'
@@ -30,6 +31,7 @@ export default function UiPostCard({
   postTitleHighlightText,
   label = '',
   exclusive = false,
+  priority = false,
 }: UiPostCardProps) {
   const isVideoNews = postStyle === 'videoNews'
 
@@ -69,7 +71,7 @@ export default function UiPostCard({
             imagesWebP={imagesWebP}
             alt={title}
             rwd={{ mobile: '500px', tablet: '500px', desktop: '500px' }}
-            priority={false}
+            priority={priority}
           />
           {isVideoNews && <span className={styles.videoIcon}></span>}
           {exclusive && label !== SALES_LABEL_NAME && <UiExclusiveMark />}
