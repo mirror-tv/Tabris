@@ -9,8 +9,10 @@ export async function GET() {
       robotsContent = `# Source: Tabris/mirror-tv-next
 User-agent: Googlebot
 	Disallow: /login
+	Disallow: /search/
 
 User-agent: *
+	Disallow: /search/
 	Allow: /`
       break
 
