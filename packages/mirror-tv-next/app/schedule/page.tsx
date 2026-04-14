@@ -4,11 +4,12 @@ import type { Metadata } from 'next'
 import dynamic from 'next/dynamic'
 import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
 import ScheduleTable from '~/components/schedule/schedule-table'
-import { SCHEDULE_JSON_URL } from '~/constants/endpoint-config'
+import { SCHEDULE_FILENAME } from '~/constants/json-filenames'
 import {
   GLOBAL_CACHE_SETTING,
   SITE_URL,
 } from '~/constants/environment-variables'
+import { fetchStaticJson } from '~/utils/fetch-static-json'
 import styles from '~/styles/pages/schedule-page.module.scss'
 import type { Schedule } from '~/types/common'
 
@@ -35,16 +36,9 @@ type WeekDate = {
 
 async function getData() {
   try {
-    const res = await fetch(SCHEDULE_JSON_URL, {
-      next: { revalidate: GLOBAL_CACHE_SETTING },
+    return await fetchStaticJson<Schedule[]>(SCHEDULE_FILENAME, {
+      pathPrefix: '/files/documents',
     })
-
-    if (!res.ok) {
-      console.error('Failed to fetch schedule data')
-      return []
-    }
-
-    return res.json()
   } catch (err) {
     const annotatingError = errors.helpers.wrap(
       err,
@@ -61,7 +55,7 @@ async function getData() {
         }),
       })
     )
-    return
+    return []
   }
 }
 
