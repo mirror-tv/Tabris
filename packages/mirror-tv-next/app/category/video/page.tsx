@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { POPULAR_VIDEOS_FILENAME } from '~/constants/json-filenames'
 import {
   GLOBAL_CACHE_SETTING,
   SITE_URL,
@@ -80,7 +81,7 @@ export default async function VideoCategoryPage() {
   const fetchCategoryVideoData = () => fetchCategoryVideoJson()
 
   const fetchPopularPosts = () =>
-    fetchStaticJson<RowPopularVideoData>('popular-videonews-list.json')
+    fetchStaticJson<RowPopularVideoData>(POPULAR_VIDEOS_FILENAME)
 
   const fetchPromotionVideos = () =>
     fetchPromotionVideosServerAction({

@@ -1,6 +1,7 @@
 'use server'
 import errors from '@twreporter/errors'
 import { z } from 'zod'
+import { CATEGORY_VIDEO_FILENAME } from '~/constants/json-filenames'
 import type { PostCardItem } from '~/graphql/query/posts'
 import type { FormattableHeroImage } from '~/types/hero-image'
 import { fetchStaticJson } from '~/utils/fetch-static-json'
@@ -68,7 +69,7 @@ function postJsonToPostCardItem(
 async function fetchCategoryVideoJson(): Promise<
   z.infer<typeof CategoryVideoDataSchema>
 > {
-  const json = await fetchStaticJson('featured_category_video_posts.json')
+  const json = await fetchStaticJson(CATEGORY_VIDEO_FILENAME)
   return CategoryVideoDataSchema.parse(json)
 }
 

@@ -8,6 +8,7 @@ import {
 import CategoryPostsListManager from '~/components/category/posts-list-manager'
 import UiFeaturePost from '~/components/category/ui-feature-post'
 import UiHeadingBordered from '~/components/shared/ui-heading-bordered'
+import { FEATURE_POSTS_FILENAME } from '~/constants/json-filenames'
 import {
   GLOBAL_CACHE_SETTING,
   SITE_URL,
@@ -93,10 +94,7 @@ export async function generateMetadata({
 
   const fetchFeaturePosts = (): Promise<
     FeaturePostsResponse | RawFeaturedCategoriesNewsJson
-  > =>
-    fetchStaticJson<RawFeaturedCategoriesNewsJson>(
-      'featured_categories_news.json'
-    )
+  > => fetchStaticJson<RawFeaturedCategoriesNewsJson>(FEATURE_POSTS_FILENAME)
 
   const [featurePostResult] = await Promise.allSettled([fetchFeaturePosts()])
 
@@ -213,10 +211,7 @@ export default async function CategoryPage({
 
   const fetchFeaturePosts = (): Promise<
     FeaturePostsResponse | RawFeaturedCategoriesNewsJson
-  > =>
-    fetchStaticJson<RawFeaturedCategoriesNewsJson>(
-      'featured_categories_news.json'
-    )
+  > => fetchStaticJson<RawFeaturedCategoriesNewsJson>(FEATURE_POSTS_FILENAME)
 
   const fetchSalesPosts = () => fetchSales({ take: 4, pageName: 'category' })
   const [featurePostResult, salesResult] = await Promise.allSettled([

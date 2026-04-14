@@ -1,6 +1,7 @@
 import AMPLayout from '~/components/story/amp/layout'
 import { ENV } from '~/constants/environment'
 import { GTM_ID } from '~/constants/environment-variables'
+import { POPULAR_POSTS_FILENAME } from '~/constants/json-filenames'
 import { getClient } from '~/apollo-client'
 import {
   fetchStoryBySlug as fetchStoryBySlugDocument,
@@ -545,7 +546,7 @@ export const getServerSideProps: GetServerSideProps<{
   }
 
   const fetchPopularList = () =>
-    fetchStaticJson<{ report: RawPopularPost[] }>('popularlist.json')
+    fetchStaticJson<{ report: RawPopularPost[] }>(POPULAR_POSTS_FILENAME)
 
   const client = getClient()
 

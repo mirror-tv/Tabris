@@ -2,6 +2,10 @@
 
 import errors from '@twreporter/errors'
 import { z } from 'zod'
+import {
+  HOMEPAGE_TOPIC_FILENAME,
+  HOMEPAGE_VIDEO_FILENAME,
+} from '~/constants/json-filenames'
 import { createDataFetchingChain } from '~/utils/fetch-function'
 import { fetchStaticJson } from '~/utils/fetch-static-json'
 import type { Video } from '~/graphql/query/videos'
@@ -73,12 +77,14 @@ const VideoDataSchema = z.object({
 })
 
 async function fetchTopicData() {
-  const jsonData = await fetchStaticJson('topic.json')
+  const jsonData = await fetchStaticJson(HOMEPAGE_TOPIC_FILENAME)
   return TopicDataSchema.parse(jsonData)
 }
 
 async function fetchVideoData() {
-  const jsonData = await fetchStaticJson('video.json', { cacheBust: true })
+  const jsonData = await fetchStaticJson(HOMEPAGE_VIDEO_FILENAME, {
+    cacheBust: true,
+  })
   return VideoDataSchema.parse(jsonData)
 }
 

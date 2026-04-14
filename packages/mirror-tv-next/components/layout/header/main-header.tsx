@@ -1,5 +1,6 @@
 import errors from '@twreporter/errors'
 import MobileNav from '~/components/layout/header/mobile-header/mobile-nav'
+import { HEADER_FILENAME } from '~/constants/json-filenames'
 import type { Category } from '~/graphql/query/category'
 import type { Sponsor } from '~/graphql/query/sponsors'
 import type { RawHeaderJson, RawShow, RawSponsor } from '~/types/header'
@@ -11,7 +12,7 @@ import HeaderTop from './header-top'
 
 async function getData() {
   try {
-    const data = await fetchStaticJson<RawHeaderJson>('header.json')
+    const data = await fetchStaticJson<RawHeaderJson>(HEADER_FILENAME)
 
     // Transform new JSON format { categories, shows, sponsors } to HeaderData format { allCategories, allShows, allSponsors }
     return {

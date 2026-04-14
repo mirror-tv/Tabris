@@ -1,4 +1,5 @@
 import errors from '@twreporter/errors'
+import { FLASH_NEWS_FILENAME } from '~/constants/json-filenames'
 import { fetchStaticJson } from '~/utils/fetch-static-json'
 import styles from './_styles/main-flash-news.module.scss'
 import type { FlashNews } from '~/types/common'
@@ -10,7 +11,7 @@ async function getData() {
     return await fetchStaticJson<{
       posts?: FlashNews[]
       allPosts?: FlashNews[]
-    }>('flash_news.json')
+    }>(FLASH_NEWS_FILENAME)
   } catch (err) {
     const annotatingError = errors.helpers.wrap(
       err,

@@ -7,6 +7,7 @@ import Footer from '~/components/layout/footer'
 import MainHeader from '~/components/layout/header/main-header'
 import { ReferrerProvider } from '~/context/referrer-context'
 import { META_DESCRIPTION, SITE_TITLE } from '~/constants/constant'
+import { HEADER_FILENAME } from '~/constants/json-filenames'
 import {
   GLOBAL_CACHE_SETTING,
   GTM_ID,
@@ -90,7 +91,7 @@ export default async function RootLayout({
     'Error occurs while fetching latest posts'
   )
   try {
-    const data = await fetchStaticJson<RawHeaderJson>('header.json')
+    const data = await fetchStaticJson<RawHeaderJson>(HEADER_FILENAME)
 
     // Transform new JSON format { categories, shows, sponsors } to HeaderData format { allCategories, allShows, allSponsors }
     initialHeaderData = {

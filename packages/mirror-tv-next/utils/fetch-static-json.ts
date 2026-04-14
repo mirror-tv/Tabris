@@ -5,7 +5,7 @@ import { isServer } from '~/utils/common'
 import { appendTimestampForCache } from '~/utils/url'
 
 type FetchStaticJsonOptions = {
-  hasFilePrefix?: boolean
+  pathPrefix?: '/json' | '/files/json' | '/files/documents'
   cacheBust?: boolean
 }
 
@@ -18,9 +18,8 @@ export async function fetchStaticJson<T = unknown>(
   filename: string,
   options: FetchStaticJsonOptions = {}
 ): Promise<T> {
-  const { hasFilePrefix = false, cacheBust = false } = options
+  const { pathPrefix = '/json', cacheBust = false } = options
   const GCS_FUSE_MOUNT_DIR = process.env.GCS_FUSE_MOUNT_DIR
-  const pathPrefix = hasFilePrefix ? '/files/json' : '/json'
 
   // 1. Try reading from local file system only when mount dir is explicitly set (e.g. in production with GCS FUSE)
   if (isServer() && GCS_FUSE_MOUNT_DIR) {
@@ -32,7 +31,7 @@ export async function fetchStaticJson<T = unknown>(
     } catch (err) {
       // Fallback to fetch if file not found or unreadable
       console.warn(
-        `[fetchStaticJson] Local read failed for ${filename}, falling back to HTTP fetch.`,
+        `[fetchStaticJson] Local read failed for ${pathPrefix}/${filename}, falling back to HTTP fetch.`,
         err
       )
     }

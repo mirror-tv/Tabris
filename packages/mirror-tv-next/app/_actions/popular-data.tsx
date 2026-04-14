@@ -1,5 +1,6 @@
 'use server'
 import errors from '@twreporter/errors'
+import { POPULAR_POSTS_FILENAME } from '~/constants/json-filenames'
 import {
   type RawPopularListJson,
   type RawPopularPost,
@@ -9,7 +10,7 @@ import { fetchStaticJson } from '~/utils/fetch-static-json'
 async function fetchPopularPosts(): Promise<{ data: RawPopularPost[] }> {
   try {
     const rawData = await fetchStaticJson<RawPopularListJson>(
-      'popularlist.json'
+      POPULAR_POSTS_FILENAME
     )
     const data = JSON.parse(JSON.stringify(rawData)) as RawPopularListJson
     // Ensure data is parsed and not referencing the original object
