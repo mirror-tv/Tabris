@@ -6,7 +6,7 @@
  * Avoid re-exporting this module through client-facing barrels such as ~/utils.
  */
 
-import { API_ENDPOINT_OVERRIDE_FROM_ENV } from './config'
+import { API_ENDPOINT_OVERRIDE_FROM_ENV } from './runtime-config'
 import { ENV, type Environment } from './environment'
 
 type ResolvedEndpointConfig = {
