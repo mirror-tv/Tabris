@@ -8,23 +8,25 @@ export async function GET() {
     case 'prod':
       robotsContent = `# Source: Tabris/mirror-tv-next
 User-agent: Googlebot
-	Disallow: /login
+  Disallow: /login
+  Disallow: /search/
 
 User-agent: *
-	Allow: /`
+Disallow: /search/
+  Allow: /`
       break
 
     case 'staging':
       robotsContent = `# Source: Tabris/mirror-tv-next
 User-agent: *
-	Disallow: /`
+  Disallow: /`
       break
 
     case 'dev':
     default:
       robotsContent = `# Source: Tabris/mirror-tv-next
 User-agent: *
-	Disallow: /`
+  Disallow: /`
       break
   }
 
