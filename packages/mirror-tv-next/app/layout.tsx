@@ -7,7 +7,6 @@ import Footer from '~/components/layout/footer'
 import MainHeader from '~/components/layout/header/main-header'
 import { ReferrerProvider } from '~/context/referrer-context'
 import { META_DESCRIPTION, SITE_TITLE } from '~/constants/constant'
-import { HEADER_JSON_URL } from '~/constants/endpoint-config'
 import {
   GLOBAL_CACHE_SETTING,
   GTM_ID,
@@ -20,8 +19,14 @@ import { fetchPopularPosts } from '~/app/_actions/popular-data'
 import { type RawPopularPost } from '~/types/popular-post'
 import { getLatestPostsAside } from '~/app/_actions/share/get-latest-posts'
 import { type PostCardItem } from '~/graphql/query/posts'
-import type { HeaderData, RawShow, RawSponsor } from '~/types/header'
+import type {
+  HeaderData,
+  RawHeaderJson,
+  RawShow,
+  RawSponsor,
+} from '~/types/header'
 import { handleResponse } from '~/utils'
+import { fetchStaticJson } from '~/utils/fetch-static-json'
 import styles from '../styles/pages/layout.module.scss'
 
 export const revalidate = GLOBAL_CACHE_SETTING
@@ -85,9 +90,7 @@ export default async function RootLayout({
     'Error occurs while fetching latest posts'
   )
   try {
-    const data = await fetch(HEADER_JSON_URL, {
-      next: { revalidate: GLOBAL_CACHE_SETTING },
-    }).then((res) => res.json())
+    const data = await fetchStaticJson<RawHeaderJson>('header.json')
 
     // Transform new JSON format { categories, shows, sponsors } to HeaderData format { allCategories, allShows, allSponsors }
     initialHeaderData = {

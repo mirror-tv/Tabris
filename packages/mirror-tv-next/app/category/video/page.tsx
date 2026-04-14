@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { POPULAR_VIDEOS_JSON_URL } from '~/constants/endpoint-config'
 import {
   GLOBAL_CACHE_SETTING,
   SITE_URL,
@@ -32,6 +31,7 @@ import UiAsideVideosList from '~/components/shared/ui-aside-videos-list'
 import { getVideo } from '~/app/_actions/share/video'
 import { fetchPromotionVideosServerAction } from '~/app/_actions/share/promotion-videos'
 import type { FormattableHeroImage } from '~/types/hero-image'
+import { fetchStaticJson } from '~/utils/fetch-static-json'
 
 export const revalidate = GLOBAL_CACHE_SETTING
 
@@ -80,12 +80,7 @@ export default async function VideoCategoryPage() {
   const fetchCategoryVideoData = () => fetchCategoryVideoJson()
 
   const fetchPopularPosts = () =>
-    fetch(POPULAR_VIDEOS_JSON_URL, {
-      next: { revalidate: GLOBAL_CACHE_SETTING },
-    }).then((res) => {
-      // use type assertion to eliminate any
-      return res.json() as unknown as RowPopularVideoData
-    })
+    fetchStaticJson<RowPopularVideoData>('popular-videonews-list.json')
 
   const fetchPromotionVideos = () =>
     fetchPromotionVideosServerAction({

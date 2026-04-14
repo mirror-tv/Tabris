@@ -2,12 +2,8 @@
 
 import errors from '@twreporter/errors'
 import { z } from 'zod'
-import {
-  HOMEPAGE_TOPIC_JSON_URL,
-  HOMEPAGE_VIDEO_JSON_URL,
-} from '~/constants/endpoint-config'
 import { createDataFetchingChain } from '~/utils/fetch-function'
-import { appendTimestampForCache } from '~/utils/url'
+import { fetchStaticJson } from '~/utils/fetch-static-json'
 import type { Video } from '~/graphql/query/videos'
 import type { PromotionVideo } from '~/graphql/query/promotion-video'
 import type { FeatureTopic } from '~/graphql/query/topic'
@@ -77,20 +73,12 @@ const VideoDataSchema = z.object({
 })
 
 async function fetchTopicData() {
-  const resp = await fetch(HOMEPAGE_TOPIC_JSON_URL)
-  if (!resp.ok) {
-    throw new Error(`HTTP error! status: ${resp.status}`)
-  }
-  const jsonData = await resp.json()
+  const jsonData = await fetchStaticJson('topic.json')
   return TopicDataSchema.parse(jsonData)
 }
 
 async function fetchVideoData() {
-  const resp = await fetch(appendTimestampForCache(HOMEPAGE_VIDEO_JSON_URL))
-  if (!resp.ok) {
-    throw new Error(`HTTP error! status: ${resp.status}`)
-  }
-  const jsonData = await resp.json()
+  const jsonData = await fetchStaticJson('video.json', { cacheBust: true })
   return VideoDataSchema.parse(jsonData)
 }
 

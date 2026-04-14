@@ -2,6 +2,12 @@ import fs from 'fs/promises'
 import { STATIC_BASE_URL } from '~/constants/endpoint-config'
 import { GLOBAL_CACHE_SETTING } from '~/constants/environment-variables'
 import { isServer } from '~/utils/common'
+import { appendTimestampForCache } from '~/utils/url'
+
+type FetchStaticJsonOptions = {
+  hasFilePrefix?: boolean
+  cacheBust?: boolean
+}
 
 /**
  * Fetch static JSON from local GCS FUSE mount if on server, otherwise fallback to HTTP fetch.
@@ -10,8 +16,9 @@ import { isServer } from '~/utils/common'
  */
 export async function fetchStaticJson<T = unknown>(
   filename: string,
-  hasFilePrefix: boolean = false
+  options: FetchStaticJsonOptions = {}
 ): Promise<T> {
+  const { hasFilePrefix = false, cacheBust = false } = options
   const GCS_FUSE_MOUNT_DIR = process.env.GCS_FUSE_MOUNT_DIR
   const pathPrefix = hasFilePrefix ? '/files/json' : '/json'
 
@@ -32,7 +39,9 @@ export async function fetchStaticJson<T = unknown>(
   }
 
   // 2. Fallback to HTTP fetch
-  const url = `${STATIC_BASE_URL}${pathPrefix}/${filename}`
+  const url = cacheBust
+    ? appendTimestampForCache(`${STATIC_BASE_URL}${pathPrefix}/${filename}`)
+    : `${STATIC_BASE_URL}${pathPrefix}/${filename}`
   const res = await fetch(url, {
     next: { revalidate: GLOBAL_CACHE_SETTING },
   })

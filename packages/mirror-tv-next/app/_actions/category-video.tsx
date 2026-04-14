@@ -1,10 +1,9 @@
 'use server'
 import errors from '@twreporter/errors'
 import { z } from 'zod'
-import { GLOBAL_CACHE_SETTING } from '~/constants/environment-variables'
-import { CATEGORY_VIDEO_JSON_URL } from '~/constants/endpoint-config'
 import type { PostCardItem } from '~/graphql/query/posts'
 import type { FormattableHeroImage } from '~/types/hero-image'
+import { fetchStaticJson } from '~/utils/fetch-static-json'
 
 type FetchMoreItemsType = {
   page: number
@@ -69,13 +68,7 @@ function postJsonToPostCardItem(
 async function fetchCategoryVideoJson(): Promise<
   z.infer<typeof CategoryVideoDataSchema>
 > {
-  const resp = await fetch(CATEGORY_VIDEO_JSON_URL, {
-    next: { revalidate: GLOBAL_CACHE_SETTING },
-  })
-  if (!resp.ok) {
-    throw new Error(`category video json HTTP ${resp.status}`)
-  }
-  const json = await resp.json()
+  const json = await fetchStaticJson('featured_category_video_posts.json')
   return CategoryVideoDataSchema.parse(json)
 }
 

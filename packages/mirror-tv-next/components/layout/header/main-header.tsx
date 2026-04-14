@@ -1,10 +1,9 @@
 import errors from '@twreporter/errors'
 import MobileNav from '~/components/layout/header/mobile-header/mobile-nav'
-import { HEADER_JSON_URL } from '~/constants/endpoint-config'
-import { GLOBAL_CACHE_SETTING } from '~/constants/environment-variables'
 import type { Category } from '~/graphql/query/category'
 import type { Sponsor } from '~/graphql/query/sponsors'
-import type { RawShow, RawSponsor } from '~/types/header'
+import type { RawHeaderJson, RawShow, RawSponsor } from '~/types/header'
+import { fetchStaticJson } from '~/utils/fetch-static-json'
 import styles from './_styles/main-header.module.scss'
 import HeaderBottom from './header-bottom'
 import HeaderNav from './header-nav'
@@ -12,16 +11,7 @@ import HeaderTop from './header-top'
 
 async function getData() {
   try {
-    const res = await fetch(HEADER_JSON_URL, {
-      next: { revalidate: GLOBAL_CACHE_SETTING },
-    })
-
-    if (!res.ok) {
-      console.error('Failed to fetch header data')
-      return { allSponsors: [], allCategories: [], allShows: [] }
-    }
-
-    const data = await res.json()
+    const data = await fetchStaticJson<RawHeaderJson>('header.json')
 
     // Transform new JSON format { categories, shows, sponsors } to HeaderData format { allCategories, allShows, allSponsors }
     return {
@@ -44,8 +34,8 @@ async function getData() {
       })),
       allSponsors: (data.sponsors || []).map((sponsor: RawSponsor) => ({
         id: sponsor.id,
-        title: sponsor.title,
-        url: sponsor.url,
+        title: sponsor.title ?? '',
+        url: sponsor.url ?? '',
         logo: sponsor.logo
           ? {
               urlMobileSized: sponsor.logo.w480 || '',

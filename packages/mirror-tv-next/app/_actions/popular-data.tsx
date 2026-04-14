@@ -1,24 +1,16 @@
 'use server'
 import errors from '@twreporter/errors'
-import { POPULAR_POSTS_URL } from '~/constants/endpoint-config'
-import { GLOBAL_CACHE_SETTING } from '~/constants/environment-variables'
 import {
   type RawPopularListJson,
   type RawPopularPost,
 } from '~/types/popular-post'
+import { fetchStaticJson } from '~/utils/fetch-static-json'
 
 async function fetchPopularPosts(): Promise<{ data: RawPopularPost[] }> {
   try {
-    const res = await fetch(POPULAR_POSTS_URL, {
-      next: { revalidate: GLOBAL_CACHE_SETTING },
-    })
-
-    if (!res.ok) {
-      console.error('Failed to fetch popular posts data')
-      return { data: [] } as { data: RawPopularPost[] }
-    }
-
-    const rawData = (await res.json()) as RawPopularListJson
+    const rawData = await fetchStaticJson<RawPopularListJson>(
+      'popularlist.json'
+    )
     const data = JSON.parse(JSON.stringify(rawData)) as RawPopularListJson
     // Ensure data is parsed and not referencing the original object
     // https://github.com/vercel/next.js/issues/47447

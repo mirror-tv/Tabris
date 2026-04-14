@@ -8,7 +8,6 @@ import {
 import CategoryPostsListManager from '~/components/category/posts-list-manager'
 import UiFeaturePost from '~/components/category/ui-feature-post'
 import UiHeadingBordered from '~/components/shared/ui-heading-bordered'
-import { FEATURE_POSTS_URL } from '~/constants/endpoint-config'
 import {
   GLOBAL_CACHE_SETTING,
   SITE_URL,
@@ -27,6 +26,7 @@ import {
   handleResponse,
 } from '~/utils'
 import { fetchSales } from '~/app/_actions/share/sales'
+import { fetchStaticJson } from '~/utils/fetch-static-json'
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 import { SALES_LABEL_NAME } from '~/constants/constant'
 import { fetchCategoryData } from '~/app/_actions/category/category-data'
@@ -94,9 +94,9 @@ export async function generateMetadata({
   const fetchFeaturePosts = (): Promise<
     FeaturePostsResponse | RawFeaturedCategoriesNewsJson
   > =>
-    fetch(FEATURE_POSTS_URL, {
-      next: { revalidate: GLOBAL_CACHE_SETTING },
-    }).then((res) => res.json())
+    fetchStaticJson<RawFeaturedCategoriesNewsJson>(
+      'featured_categories_news.json'
+    )
 
   const [featurePostResult] = await Promise.allSettled([fetchFeaturePosts()])
 
@@ -214,9 +214,9 @@ export default async function CategoryPage({
   const fetchFeaturePosts = (): Promise<
     FeaturePostsResponse | RawFeaturedCategoriesNewsJson
   > =>
-    fetch(FEATURE_POSTS_URL, {
-      next: { revalidate: GLOBAL_CACHE_SETTING },
-    }).then((res) => res.json())
+    fetchStaticJson<RawFeaturedCategoriesNewsJson>(
+      'featured_categories_news.json'
+    )
 
   const fetchSalesPosts = () => fetchSales({ take: 4, pageName: 'category' })
   const [featurePostResult, salesResult] = await Promise.allSettled([
