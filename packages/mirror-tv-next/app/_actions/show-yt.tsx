@@ -1,11 +1,23 @@
 'use server'
 import errors from '@twreporter/errors'
+import axios from 'axios'
+import { YOUTUBE_API_ENDPOINT } from '~/constants/endpoint-config'
 import type { YoutubeResponse } from '~/types/youtube'
-import { fetchYoutubeData } from '~/utils/server'
 
 type FetchYoutubeListProps = {
   list: { nextPageToken: string; id: string | undefined }
   take: number
+}
+
+async function fetchYoutubeData(url: string): Promise<YoutubeResponse> {
+  const response = await axios.get<YoutubeResponse>(
+    `${YOUTUBE_API_ENDPOINT}${url}`,
+    {
+      timeout: 3000,
+    }
+  )
+
+  return response.data
 }
 
 async function fetchYoutubeList({

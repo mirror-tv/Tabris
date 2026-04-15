@@ -1,7 +1,7 @@
 'use client'
 import { useEffect } from 'react'
 import { formateDateAtTaipei } from '~/utils/date-handler'
-import { MISO_API_KEY } from '~/constants/config'
+import { MISO_API_KEY } from '~/constants/constant'
 import { useParams, useRouter } from 'next/navigation'
 import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
 import GptAd from '~/components/ads/gpt/gpt-ad'
