@@ -15,7 +15,7 @@ let GA4_ID: string
 
 switch (ENV) {
   case 'prod':
-    SITE_URL = 'https://mnews.tw'
+    SITE_URL = 'https://www.mnews.tw'
     GTM_ID = 'GTM-PK7VRFX'
     GLOBAL_CACHE_SETTING = 0
     GA4_ID = 'G-SZR4JRJ0G2'
