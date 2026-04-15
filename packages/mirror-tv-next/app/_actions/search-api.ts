@@ -4,7 +4,7 @@ import { URL_PROGRAMABLE_SEARCH } from '~/constants/constant'
 import {
   PROGRAMMABLE_SEARCH_API_KEY,
   PROGRAMMABLE_SEARCH_ENGINE_ID,
-} from '~/constants/config'
+} from '~/constants/runtime-config'
 import type { SearchItem, SearchResponse } from '~/types/search'
 
 export async function searchAPI(

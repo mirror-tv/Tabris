@@ -1,23 +1,15 @@
 'use server'
 
-import { WEATHER_JSON_URL } from '~/constants/endpoint-config'
-import { GLOBAL_CACHE_SETTING } from '~/constants/environment-variables'
+import { WEATHER_FILENAME } from '~/constants/json-filenames'
 import { createErrorLogger } from '~/utils/log'
 import { type CityAndWeather } from '~/components/homepage/weather-main'
+import { fetchStaticJson } from '~/utils/fetch-static-json'
 
 export const fetchWeather = async (): Promise<CityAndWeather | undefined> => {
   const errorLogger = createErrorLogger('Error occurs while fetching weather')
 
   try {
-    const resp = await fetch(WEATHER_JSON_URL, {
-      next: { revalidate: GLOBAL_CACHE_SETTING },
-    })
-
-    if (!resp.ok) {
-      throw new Error(`HTTP error! status: ${resp.status}`)
-    }
-
-    const rawWeatherData = await resp.json()
+    const rawWeatherData = await fetchStaticJson(WEATHER_FILENAME)
     const data = JSON.parse(JSON.stringify(rawWeatherData))
     // Ensure data is parsed and not referencing the original object
     // https://github.com/vercel/next.js/issues/47447

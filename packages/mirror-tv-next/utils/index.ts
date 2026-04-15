@@ -5,7 +5,6 @@ import {
   handleApiData,
   handleMetaDesc,
   handleResponse,
-  FetchError,
 } from './common'
 import { formateDateAtTaipei } from './date-handler'
 import {
@@ -29,7 +28,6 @@ export {
   handleApiData,
   handleMetaDesc,
   formateYoutubeListRes,
-  FetchError,
   doesHaveBrief,
   addMaxWidthToFigureWithStyle,
   removeDuplicateFirstParagraph,

@@ -1,7 +1,7 @@
 'use server'
 
 import { Logging } from '@google-cloud/logging'
-import { GCP_PROJECT_ID, GCP_LOG_NAME_PREFIX } from '~/constants/config'
+import { GCP_LOG_NAME_PREFIX, GCP_PROJECT_ID } from '~/constants/constant'
 import { ENV } from '~/constants/environment'
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-tw'

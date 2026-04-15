@@ -1,5 +1,5 @@
 'use client'
-import { MISO_API_KEY } from '../../constants/config'
+import { MISO_API_KEY } from '../../constants/constant'
 import { useEffect } from 'react'
 
 export default function MisoPageView({ productIds }: { productIds: string }) {

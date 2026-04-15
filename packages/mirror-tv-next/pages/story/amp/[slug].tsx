@@ -1,7 +1,7 @@
 import AMPLayout from '~/components/story/amp/layout'
-import { POPULAR_POSTS_URL } from '~/constants/endpoint-config'
 import { ENV } from '~/constants/environment'
-import { GLOBAL_CACHE_SETTING, GTM_ID } from '~/constants/environment-variables'
+import { GTM_ID } from '~/constants/environment-variables'
+import { POPULAR_POSTS_FILENAME } from '~/constants/json-filenames'
 import { getClient } from '~/apollo-client'
 import {
   fetchStoryBySlug as fetchStoryBySlugDocument,
@@ -29,6 +29,7 @@ import AmpApiDataRenderer from '~/components/story/amp/amp-renderer'
 import { SITE_TITLE, META_SITE_URL } from '~/constants/constant'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
+import { fetchStaticJson } from '~/utils/fetch-static-json'
 
 export const config = { amp: true }
 
@@ -545,11 +546,7 @@ export const getServerSideProps: GetServerSideProps<{
   }
 
   const fetchPopularList = () =>
-    fetch(POPULAR_POSTS_URL, {
-      next: { revalidate: GLOBAL_CACHE_SETTING },
-    }).then((res) => {
-      return res.json() as unknown as { report: RawPopularPost[] }
-    })
+    fetchStaticJson<{ report: RawPopularPost[] }>(POPULAR_POSTS_FILENAME)
 
   const client = getClient()
 
