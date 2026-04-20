@@ -23,16 +23,29 @@ export async function fetchStaticJson<T = unknown>(
 
   // 1. Try reading from local file system only when mount dir is explicitly set (e.g. in production with GCS FUSE)
   if (isServer() && GCS_FUSE_MOUNT_DIR) {
+    // Structure: [mount_dir]/[prefix]/[filename]
+    const filePath = `${GCS_FUSE_MOUNT_DIR}${pathPrefix}/${filename}`
+
     try {
-      // Structure: [mount_dir]/[prefix]/[filename]
-      const filePath = `${GCS_FUSE_MOUNT_DIR}${pathPrefix}/${filename}`
       const content = await fs.readFile(filePath, 'utf-8')
       return JSON.parse(content) as T
     } catch (err) {
       // Fallback to fetch if file not found or unreadable
       console.warn(
-        `[fetchStaticJson] Local read failed for ${pathPrefix}/${filename}, falling back to HTTP fetch.`,
-        err
+        JSON.stringify({
+          severity: 'WARNING',
+          message:
+            '[fetchStaticJson] Local read failed, falling back to HTTP fetch',
+          filename,
+          pathPrefix,
+          filePath,
+          mountDir: GCS_FUSE_MOUNT_DIR,
+          cacheBust,
+          error:
+            err instanceof Error
+              ? { name: err.name, message: err.message }
+              : String(err),
+        })
       )
     }
   }
@@ -46,6 +59,22 @@ export async function fetchStaticJson<T = unknown>(
   })
 
   if (!res.ok) {
+    console.error(
+      JSON.stringify({
+        severity: 'ERROR',
+        message: '[fetchStaticJson] HTTP fallback failed',
+        filename,
+        pathPrefix,
+        mountDir: GCS_FUSE_MOUNT_DIR ?? null,
+        usedLocalMount: Boolean(GCS_FUSE_MOUNT_DIR),
+        usedHttpFallback: true,
+        cacheBust,
+        url,
+        status: res.status,
+        statusText: res.statusText,
+        revalidate: GLOBAL_CACHE_SETTING,
+      })
+    )
     throw new Error(
       `[fetchStaticJson] Failed to fetch ${url}: ${res.status} ${res.statusText}`
     )
