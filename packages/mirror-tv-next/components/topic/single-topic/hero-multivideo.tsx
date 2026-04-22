@@ -33,7 +33,7 @@ export default function HeroMultiVideo({
   title,
   multivideo,
 }: HeroMultiVideoProps) {
-  const formattedHeroImage = formateHeroImage(heroImage)
+  const { images, imagesWebP } = formateHeroImage(heroImage)
 
   return (
     <section className={styles.sectionWrapper}>
@@ -58,7 +58,8 @@ export default function HeroMultiVideo({
             className={styles.swiper}
           >
             {multivideo.map((video, index) => {
-              const videoUrl = video.youtubeUrl ? video.youtubeUrl : video.url
+              const videoUrl = video.youtubeUrl ?? video.url ?? ''
+              if (!videoUrl) return null
               return (
                 <SwiperSlide key={index} className={styles.swiperSlide}>
                   <div className={styles.slideVideoContainer}>
@@ -70,7 +71,8 @@ export default function HeroMultiVideo({
           </Swiper>
         </div>
         <Image
-          images={formattedHeroImage}
+          images={images}
+          imagesWebP={imagesWebP}
           alt={title}
           defaultImage="/images/image-default.jpg"
           rwd={{

@@ -1,12 +1,18 @@
 import errors from '@twreporter/errors'
 import type { Podcast } from '~/types/common'
-import { fetchStaticJson } from '~/utils/fetch-static-json'
+import { ENV } from '~/constants/environment'
+import axios from 'axios'
 import PodcastsList from './podcasts-list'
 
 export default async function PodcastsListHandler() {
   let podcasts: Podcast[]
   try {
-    podcasts = await fetchStaticJson<Podcast[]>('podcast_list.json')
+    const podcastsEndpoint =
+      ENV === 'prod' || ENV === 'staging'
+        ? 'https://www.mnews.tw/json/podcast_list.json'
+        : 'https://dev.mnews.tw/json/podcast_list.json'
+    const response = await axios.get(podcastsEndpoint)
+    podcasts = response.data
   } catch (err) {
     const annotatingError = errors.helpers.wrap(
       err,

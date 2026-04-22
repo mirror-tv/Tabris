@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import { GA4_ID } from '~/constants/environment-variables'
 
 interface GA4SourceTrackingProps {
-  source?: string
+  source?: string | null
 }
 
 declare global {

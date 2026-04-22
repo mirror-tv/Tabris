@@ -1,6 +1,7 @@
 import AMPLayout from '~/components/story/amp/layout'
-import { ENV, POPULAR_POSTS_FILE_NAME } from '~/constants/environment-variables'
-import { fetchStaticJson } from '~/utils/fetch-static-json'
+import { ENV } from '~/constants/environment'
+import { GTM_ID } from '~/constants/environment-variables'
+import { POPULAR_POSTS_FILENAME } from '~/constants/json-filenames'
 import { getClient } from '~/apollo-client'
 import {
   fetchStoryBySlug as fetchStoryBySlugDocument,
@@ -18,6 +19,7 @@ import {
   formatArticleCard,
   handleResponse,
   extractYoutubeId,
+  handleApiData,
 } from '~/utils'
 import { type RawPopularPost } from '~/types/popular-post'
 import { getLatestPosts, PostCardItem } from '~/graphql/query/posts'
@@ -27,23 +29,34 @@ import AmpApiDataRenderer from '~/components/story/amp/amp-renderer'
 import { SITE_TITLE, META_SITE_URL } from '~/constants/constant'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
-import { GTM_ID } from '~/constants/environment-variables'
+import { fetchStaticJson } from '~/utils/fetch-static-json'
 
 export const config = { amp: true }
 
 // 初始化 dayjs
 dayjs.extend(utc)
 
+function getStoryOgImage(
+  heroImage: SinglePost['heroImage'] | null | undefined
+) {
+  const formattedHeroImage = formateHeroImage(heroImage ?? undefined).images
+  return (
+    formattedHeroImage.w1600 ||
+    formattedHeroImage.w2400 ||
+    formattedHeroImage.w800 ||
+    formattedHeroImage.w3200 ||
+    formattedHeroImage.original
+  )
+}
+
 function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
   const category = storyData.categories?.[0]
   const logoUrl = '/images/logo.png'
   const title = storyData.title
-  const brief = storyData.briefApiData
-    ? JSON.parse(storyData.briefApiData)
-        .map((item: { content?: string[] }) => item.content?.join('') || '')
-        .join('')
-    : ''
-  const image = storyData.heroImage?.urlDesktopSized
+  const brief = handleApiData(storyData.briefApiData)
+    .map((item: { content?: string[] }) => item.content?.join('') || '')
+    .join('')
+  const image = getStoryOgImage(storyData.heroImage)
   const writer = storyData.writers?.[0]
   const authorName = writer?.name || SITE_TITLE
   const publishTime = storyData.publishTime
@@ -168,17 +181,15 @@ export default function AmpPage({
     briefApiData,
   } = storyData
   const heroImgSrc =
-    getHeroImageOfAmp(formateHeroImage(heroImage)) ||
+    getHeroImageOfAmp(formateHeroImage(heroImage ?? undefined).images) ||
     '/images/image-default.jpg'
-  const heroVideoId = extractYoutubeId(heroVideo?.youtubeUrl) ?? ''
+  const heroVideoId = extractYoutubeId(heroVideo?.youtubeUrl ?? '') ?? ''
 
-  const brief = briefApiData
-    ? JSON.parse(briefApiData)
-        .map((item: { content?: string[] }) => item.content?.join('') || '')
-        .join('')
-    : ''
+  const brief = handleApiData(briefApiData)
+    .map((item: { content?: string[] }) => item.content?.join('') || '')
+    .join('')
   const tags = storyData.tags?.map((tag) => tag.name).join(', ')
-  const image = storyData.heroImage?.urlDesktopSized
+  const image = getStoryOgImage(storyData.heroImage)
   const pageUrl = `${META_SITE_URL}/story/${slug}`
   const category = storyData.categories?.[0]
   const publishedDateIso = dayjs(publishTime).utcOffset(8).toISOString()
@@ -347,6 +358,13 @@ export default function AmpPage({
             margin-right: 12px;
             flex-shrink: 0;
           }
+          .amp-card-list-item-image-image {
+            display: block;
+            overflow: hidden;
+          }
+          .amp-card-list-item-image-image img {
+            object-fit: cover;
+          }
           .amp-post-list-title-text,
           .amp-related-list-title-text {
             font-size: 16px;
@@ -419,7 +437,11 @@ export default function AmpPage({
                 ></amp-youtube>
               ) : (
                 <figure className="image-wrapper">
-                  <amp-img src={heroImgSrc} layout="fill" alt={heroCaption} />
+                  <amp-img
+                    src={heroImgSrc}
+                    layout="fill"
+                    alt={heroCaption ?? ''}
+                  />
                 </figure>
               )}
               {!!heroCaption && (
@@ -438,17 +460,17 @@ export default function AmpPage({
               designers={designers}
               engineers={engineers}
               vocals={vocals}
-              otherbyline={otherbyline}
+              otherbyline={otherbyline ?? ''}
             />
             <section className="brief-wrapper">
               <AmpApiDataRenderer
-                contentData={briefApiData}
+                contentData={briefApiData ?? ''}
                 isStoryBrief={true}
                 currentUrl={`/story/amp/${slug}`}
               />
             </section>
             <AmpApiDataRenderer
-              contentData={contentApiData}
+              contentData={contentApiData ?? ''}
               isStoryBrief={false}
               currentUrl={`/story/amp/${slug}`}
             />
@@ -524,7 +546,7 @@ export const getServerSideProps: GetServerSideProps<{
   }
 
   const fetchPopularList = () =>
-    fetchStaticJson<{ report: RawPopularPost[] }>(POPULAR_POSTS_FILE_NAME)
+    fetchStaticJson<{ report: RawPopularPost[] }>(POPULAR_POSTS_FILENAME)
 
   const client = getClient()
 

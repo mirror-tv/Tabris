@@ -9,7 +9,7 @@ type Props = {
 }
 
 export default function UiContactCard({ item }: Props) {
-  const formattedHeroImage = formateHeroImage(item.anchorImg)
+  const { images, imagesWebP } = formateHeroImage(item.anchorImg)
   return (
     <Link
       href={`/anchorperson/${item.slug}`}
@@ -20,7 +20,8 @@ export default function UiContactCard({ item }: Props) {
         <figure>
           <div className={styles.imageWrapper}>
             <Image
-              images={formattedHeroImage}
+              images={images}
+              imagesWebP={imagesWebP}
               alt={item.name}
               loadingImage="/images/loading.svg"
               defaultImage="/images/image-default.jpg"

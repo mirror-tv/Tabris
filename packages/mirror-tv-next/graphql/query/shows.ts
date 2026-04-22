@@ -1,5 +1,6 @@
 import gql from 'graphql-tag'
 import type { HeroImage } from '~/types/common'
+import { heroImageFragment } from '../fragments/hero-image'
 
 export type HostOrStaff = {
   slug: string
@@ -33,53 +34,39 @@ const fetchShowBySlug = gql`
     $squareHostImg: Boolean = false
     $rectHostImg: Boolean = false
   ) {
-    allShows(where: { slug: $slug }) {
+    allShows: shows(where: { slug: { equals: $slug } }) {
       slug
       name
       bannerImg {
-        urlDesktopSized
-        urlMobileSized
-        urlTabletSized
-        urlOriginal
+        ...heroImageFragment
       }
       picture {
-        urlDesktopSized
-        urlMobileSized
-        urlTabletSized
-        urlOriginal
+        ...heroImageFragment
       }
-      hostName(sortBy: [sortOrder_ASC, id_DESC])
+      hostName(orderBy: [{ sortOrder: asc }, { id: desc }])
         @include(if: $shouldFetchHost) {
         slug
         name
         sortOrder
         bioApiData
         showhostImg @include(if: $squareHostImg) {
-          urlMobileSized
-          urlTabletSized
-          urlOriginal
+          ...heroImageFragment
         }
         anchorImg @include(if: $rectHostImg) {
-          urlMobileSized
-          urlTabletSized
-          urlOriginal
+          ...heroImageFragment
         }
       }
-      staffName(sortBy: [sortOrder_ASC, id_DESC])
+      staffName(orderBy: [{ sortOrder: asc }, { id: desc }])
         @include(if: $shouldFetchStaff) {
         slug
         name
         sortOrder
         bioApiData
         showhostImg @include(if: $squareHostImg) {
-          urlMobileSized
-          urlTabletSized
-          urlOriginal
+          ...heroImageFragment
         }
         anchorImg @include(if: $rectHostImg) {
-          urlMobileSized
-          urlTabletSized
-          urlOriginal
+          ...heroImageFragment
         }
       }
       introduction
@@ -90,6 +77,7 @@ const fetchShowBySlug = gql`
       trailerPlaylist
     }
   }
+  ${heroImageFragment}
 `
 
 export { fetchShowBySlug }

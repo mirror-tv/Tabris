@@ -135,6 +135,7 @@ export default function VideoPostsList({
                 <VideoPostsCard
                   title={post.name}
                   imageUrls={post.images}
+                  imageUrlsWebP={post.imagesWebP}
                   href={post.href}
                   exclusive={post.exclusive ?? false}
                 />

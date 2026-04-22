@@ -4,7 +4,7 @@ import styles from './_styles/ui-aside-video-list.module.scss'
 import UiHeadingBordered from './ui-heading-bordered'
 import YoutubeEmbed from './youtube-embed'
 import { extractYoutubeId } from '~/utils'
-import { YouTubeEvent } from 'react-youtube'
+import type { YouTubeEvent } from 'react-youtube'
 
 type UiAsideVideosListProps = {
   title: string

@@ -12,7 +12,12 @@ import {
 import type { SingleAnchor } from '~/graphql/query/contact'
 import { fetchContactBySlug } from '~/graphql/query/contact'
 import styles from '~/styles/pages/single-anchorperson-page.module.scss'
-import { formateYoutubeListRes, handleApiData, handleResponse } from '~/utils'
+import {
+  formateHeroImage,
+  formateYoutubeListRes,
+  handleApiData,
+  handleResponse,
+} from '~/utils'
 import dynamic from 'next/dynamic'
 import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
@@ -66,6 +71,14 @@ export async function generateMetadata({
   const bio = handleApiData(singleAnchor.bioApiData)
   const description = bio[0]?.content[0]?.slice(0, 20)
 
+  const formattedHeroImage = formateHeroImage(singleAnchor?.showhostImg).images
+  const ogImage =
+    formattedHeroImage.w800 ||
+    formattedHeroImage.w1600 ||
+    formattedHeroImage.w2400 ||
+    formattedHeroImage.w3200 ||
+    formattedHeroImage.original
+
   return {
     metadataBase: new URL(SITE_URL),
     title: `${singleAnchor?.name} - 鏡新聞`,
@@ -74,9 +87,7 @@ export async function generateMetadata({
       title: `${singleAnchor?.name} - 鏡新聞`,
       description: description !== '' ? description : META_DESCRIPTION,
       siteName: SITE_TITLE,
-      images:
-        singleAnchor?.showhostImg?.urlMobileSized ??
-        '/images/default-og-img.jpg',
+      images: ogImage,
     },
   }
 }

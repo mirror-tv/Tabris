@@ -1,8 +1,10 @@
 import { type ApiDataBlockBase, ApiDataBlockType } from './type'
 import styles from './_styles/youtube-block.module.scss'
 import { extractYoutubeId } from '~/utils'
+
+/** YouTube block content: youtubeId + description */
 type ContentYoutube = {
-  id: string
+  youtubeId: string
   description: string
 }
 
@@ -22,7 +24,7 @@ const YoutubeBlock = ({
   isAmp?: boolean
 }) => {
   const youtubeData = data.content[0]
-  const rawYoutubeId = youtubeData.id
+  const rawYoutubeId = youtubeData.youtubeId
   const youtubeDescription = youtubeData.description
 
   let youtubeId = rawYoutubeId?.trim() || ''

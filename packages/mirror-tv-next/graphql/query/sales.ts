@@ -14,10 +14,13 @@ type Sale = {
 
 const getSales = gql`
   query fetchSales($first: Int = 4) {
-    allSales(
-      where: { state: published, adPost: { state: published } }
-      sortBy: [sortOrder_ASC, updatedAt_DESC]
-      first: $first
+    allSales: sales(
+      where: {
+        state: { equals: published }
+        adPost: { state: { equals: "published" } }
+      }
+      take: $first
+      orderBy: [{ sortOrder: asc }, { updatedAt: desc }]
     ) {
       id
       adPost {

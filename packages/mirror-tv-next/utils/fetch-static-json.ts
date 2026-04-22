@@ -1,9 +1,13 @@
 import fs from 'fs/promises'
+import { STATIC_BASE_URL } from '~/constants/endpoint-config'
+import { GLOBAL_CACHE_SETTING } from '~/constants/environment-variables'
 import { isServer } from '~/utils/common'
-import {
-  GLOBAL_CACHE_SETTING,
-  JSON_BASE_URL,
-} from '~/constants/environment-variables'
+import { appendTimestampForCache } from '~/utils/url'
+
+type FetchStaticJsonOptions = {
+  pathPrefix?: '/json' | '/files/json' | '/files/documents'
+  cacheBust?: boolean
+}
 
 /**
  * Fetch static JSON from local GCS FUSE mount if on server, otherwise fallback to HTTP fetch.
@@ -12,34 +16,65 @@ import {
  */
 export async function fetchStaticJson<T = unknown>(
   filename: string,
-  hasFilePrefix: boolean = false
+  options: FetchStaticJsonOptions = {}
 ): Promise<T> {
-  const GCS_FUSE_MOUNT_DIR = process.env.GCS_FUSE_MOUNT_DIR ?? '/statics'
-  const pathPrefix = hasFilePrefix ? '/files/json' : '/json'
+  const { pathPrefix = '/json', cacheBust = false } = options
+  const GCS_FUSE_MOUNT_DIR = process.env.GCS_FUSE_MOUNT_DIR
 
-  // 1. Try reading from local file system if on server
-  if (isServer()) {
+  // 1. Try reading from local file system only when mount dir is explicitly set (e.g. in production with GCS FUSE)
+  if (isServer() && GCS_FUSE_MOUNT_DIR) {
+    // Structure: [mount_dir]/[prefix]/[filename]
+    const filePath = `${GCS_FUSE_MOUNT_DIR}${pathPrefix}/${filename}`
+
     try {
-      // Structure: [mount_dir]/[prefix]/[filename]
-      const filePath = `${GCS_FUSE_MOUNT_DIR}${pathPrefix}/${filename}`
       const content = await fs.readFile(filePath, 'utf-8')
       return JSON.parse(content) as T
     } catch (err) {
       // Fallback to fetch if file not found or unreadable
       console.warn(
-        `[fetchStaticJson] Local read failed for ${filename}, falling back to HTTP fetch.`,
-        err
+        JSON.stringify({
+          severity: 'WARNING',
+          message:
+            '[fetchStaticJson] Local read failed, falling back to HTTP fetch',
+          filename,
+          pathPrefix,
+          filePath,
+          mountDir: GCS_FUSE_MOUNT_DIR,
+          cacheBust,
+          error:
+            err instanceof Error
+              ? { name: err.name, message: err.message }
+              : String(err),
+        })
       )
     }
   }
 
   // 2. Fallback to HTTP fetch
-  const url = `${JSON_BASE_URL}${pathPrefix}/${filename}`
+  const url = cacheBust
+    ? appendTimestampForCache(`${STATIC_BASE_URL}${pathPrefix}/${filename}`)
+    : `${STATIC_BASE_URL}${pathPrefix}/${filename}`
   const res = await fetch(url, {
     next: { revalidate: GLOBAL_CACHE_SETTING },
   })
 
   if (!res.ok) {
+    console.error(
+      JSON.stringify({
+        severity: 'ERROR',
+        message: '[fetchStaticJson] HTTP fallback failed',
+        filename,
+        pathPrefix,
+        mountDir: GCS_FUSE_MOUNT_DIR ?? null,
+        usedLocalMount: Boolean(GCS_FUSE_MOUNT_DIR),
+        usedHttpFallback: true,
+        cacheBust,
+        url,
+        status: res.status,
+        statusText: res.statusText,
+        revalidate: GLOBAL_CACHE_SETTING,
+      })
+    )
     throw new Error(
       `[fetchStaticJson] Failed to fetch ${url}: ${res.status} ${res.statusText}`
     )

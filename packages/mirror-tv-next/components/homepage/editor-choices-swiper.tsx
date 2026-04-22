@@ -71,6 +71,9 @@ export default function EditorChoicesSwiper({
           >
             {editorChoices.map((item) => {
               const { choice } = item
+              const { images, imagesWebP } = formateHeroImage(
+                choice.heroImage ?? (choice.heroVideo?.coverPhoto || {})
+              )
               return (
                 <SwiperSlide
                   key={choice.slug}
@@ -90,9 +93,8 @@ export default function EditorChoicesSwiper({
                     <Image
                       loadingImage="/images/loading.svg"
                       defaultImage="/images/image-default.jpg"
-                      images={formateHeroImage(
-                        choice.heroImage ?? (choice.heroVideo?.coverPhoto || {})
-                      )}
+                      images={images}
+                      imagesWebP={imagesWebP}
                       alt={choice.name}
                       rwd={{
                         tablet: '100px',

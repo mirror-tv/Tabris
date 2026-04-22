@@ -5,15 +5,16 @@ import type { HeroImage } from '~/types/common'
 import { formateHeroImage } from '~/utils'
 
 type Props = {
-  heroImage: HeroImage
+  heroImage: HeroImage | null
 }
 
 export default function AnchorImg({ heroImage }: Props) {
-  const formattedHeroImage = formateHeroImage(heroImage)
+  const { images, imagesWebP } = formateHeroImage(heroImage)
   return (
     <figure className={styles.imageWrapper}>
       <Image
-        images={formattedHeroImage}
+        images={images}
+        imagesWebP={imagesWebP}
         alt="主持人圖片"
         loadingImage="/images/loading.svg"
         defaultImage="/images/image-default.jpg"

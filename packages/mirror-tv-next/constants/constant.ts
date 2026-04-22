@@ -5,6 +5,9 @@ const META_DESCRIPTION: string =
 const META_SITE_URL = 'https://www.mnews.tw'
 const TV_AD_ADMIN_OEN_URL = 'https://mnews.oen.tw/'
 const CUSTOMER_SERVICE_EMAIL = 'mnews.cs@mnews.tw'
+const MISO_API_KEY = 'IHtn9b9tfPsO1EQpGV74OMf2syhELb6XVZe8u9FT'
+const GCP_PROJECT_ID = 'mirror-tv-275709'
+const GCP_LOG_NAME_PREFIX = 'mnews'
 
 const HEADER_BOTTOM_LINKS = {
   ombuds: '/ombuds',
@@ -52,4 +55,7 @@ export {
   META_SITE_URL,
   TV_AD_ADMIN_OEN_URL,
   CUSTOMER_SERVICE_EMAIL,
+  MISO_API_KEY,
+  GCP_PROJECT_ID,
+  GCP_LOG_NAME_PREFIX,
 }

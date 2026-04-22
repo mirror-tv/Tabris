@@ -1,11 +1,10 @@
-import type { PostImage } from './image-handler'
-import { formateHeroImage, formatePostImage } from './image-handler'
+import type { FormattedResponsiveImage, PostImage } from './image-handler'
+import { formateHeroImage } from './image-handler'
 import {
   extractYoutubeId,
   handleApiData,
   handleMetaDesc,
   handleResponse,
-  FetchError,
 } from './common'
 import { formateDateAtTaipei } from './date-handler'
 import {
@@ -14,7 +13,7 @@ import {
   doesHaveBrief,
 } from './post-handler'
 import { formatArticleCard } from './post-handler'
-import { formateYoutubeListRes, fetchYoutubeData } from './youtube'
+import { formateYoutubeListRes } from './youtube'
 import {
   addMaxWidthToFigureWithStyle,
   removeDuplicateFirstParagraph,
@@ -25,15 +24,17 @@ export {
   formatArticleCard,
   formateDateAtTaipei,
   formateHeroImage,
-  formatePostImage,
   handleResponse,
   handleApiData,
   handleMetaDesc,
   formateYoutubeListRes,
-  fetchYoutubeData,
-  FetchError,
   doesHaveBrief,
   addMaxWidthToFigureWithStyle,
   removeDuplicateFirstParagraph,
 }
-export type { FormattedPostCard, PostImage, FormattedPostCardJson }
+export type {
+  FormattedPostCard,
+  FormattedPostCardJson,
+  FormattedResponsiveImage,
+  PostImage,
+}

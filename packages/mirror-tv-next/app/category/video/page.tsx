@@ -1,17 +1,18 @@
 import type { Metadata } from 'next'
+import { POPULAR_VIDEOS_FILENAME } from '~/constants/json-filenames'
 import {
   GLOBAL_CACHE_SETTING,
   SITE_URL,
 } from '~/constants/environment-variables'
-import { fetchStaticJson } from '~/utils/fetch-static-json'
 import { handleResponse, formatArticleCard, FormattedPostCard } from '~/utils'
-import type { Category } from '~/graphql/query/category'
-import { fetchFeatureCategories } from '~/graphql/query/categories'
 import { getClient } from '~/apollo-client'
-import { fetchVideoPostsItems } from '~/app/_actions/category-video'
+import {
+  fetchCategoryVideoJson,
+  sortCategoriesForVideoPage,
+  postJsonToPostCardItem,
+} from '~/app/_actions/category-video'
 import styles from '~/styles/pages/category-video-page.module.scss'
 import VideoPostsList from '~/components/category/video/video-posts-list'
-import type { HeroImage } from '~/types/common'
 import UiShowsList from '~/components/category/video/ui-shows-list'
 import UiLinksList from '~/components/category/video/ui-links-list'
 import type { PromotionVideo } from '~/graphql/query/promotion-video'
@@ -30,7 +31,8 @@ import {
 import UiAsideVideosList from '~/components/shared/ui-aside-videos-list'
 import { getVideo } from '~/app/_actions/share/video'
 import { fetchPromotionVideosServerAction } from '~/app/_actions/share/promotion-videos'
-import { getTopicVideo } from '~/app/_actions/homepage/topic-video'
+import type { FormattableHeroImage } from '~/types/hero-image'
+import { fetchStaticJson } from '~/utils/fetch-static-json'
 
 export const revalidate = GLOBAL_CACHE_SETTING
 
@@ -53,7 +55,7 @@ type ReportItem = {
   publishTime: string
   slug: string
   source?: string
-  heroImage: HeroImage
+  heroImage: FormattableHeroImage
 }
 
 type RowPopularVideoData = {
@@ -69,28 +71,17 @@ export default async function VideoCategoryPage() {
     categorySlug: string
     categoryName: string
   }[] = []
-  let allCategories: Category[] = []
   let allPromotionVideos: PromotionVideo[] = []
   let otherStreamings: Video[] = []
-
+  let liveVideo: Video[] = []
   let allVideoEditorChoices: VideoEditorChoice[] = []
-
-  const { data: homepageData } = await getTopicVideo()
-  const liveVideo: Video[] = homepageData.allVideos?.[0]
-    ? [homepageData.allVideos[0]]
-    : []
 
   const client = getClient()
 
-  const fetchAllCategory = () =>
-    client.query<{
-      allCategories: Category[]
-    }>({
-      query: fetchFeatureCategories,
-    })
+  const fetchCategoryVideoData = () => fetchCategoryVideoJson()
 
   const fetchPopularPosts = () =>
-    fetchStaticJson<RowPopularVideoData>('popular-videonews-list.json')
+    fetchStaticJson<RowPopularVideoData>(POPULAR_VIDEOS_FILENAME)
 
   const fetchPromotionVideos = () =>
     fetchPromotionVideosServerAction({
@@ -100,28 +91,27 @@ export default async function VideoCategoryPage() {
 
   const fetchOtherStreaming = () => getVideo({ name: 'live-cam', take: 2 })
 
+  const fetchLiveVideo = () => getVideo({ name: 'mnews-live', take: 1 })
+
   const fetchVideoEditorChoice = () =>
     client.query<{ allVideoEditorChoices: VideoEditorChoice[] }>({
       query: getVideoEditorChoice,
     })
 
   const responses = await Promise.allSettled([
-    fetchAllCategory(),
+    fetchCategoryVideoData(),
     fetchPopularPosts(),
     fetchPromotionVideos(),
     fetchOtherStreaming(),
+    fetchLiveVideo(),
     fetchVideoEditorChoice(),
   ])
 
-  allCategories = handleResponse(
-    responses[0] as PromiseSettledResult<Record<string, unknown>>,
-    (response: Record<string, unknown> | undefined) => {
-      const data = response as
-        | Awaited<ReturnType<typeof fetchAllCategory>>
-        | undefined
-      return data?.data?.allCategories ?? []
-    },
-    'Error occurs while fetching category data in video category page'
+  const categoryVideoJson = handleResponse(
+    responses[0],
+    (data: Awaited<ReturnType<typeof fetchCategoryVideoJson>> | undefined) =>
+      data ?? { categories: [] },
+    'Error occurs while fetching category video JSON in video category page'
   )
 
   popularVideos = handleResponse(
@@ -157,8 +147,16 @@ export default async function VideoCategoryPage() {
     'Error occurs while fetching other streaming videos in video category page'
   )
 
+  liveVideo = handleResponse(
+    responses[4],
+    (data: Awaited<ReturnType<typeof fetchLiveVideo>> | undefined) => {
+      return data?.data?.allVideos ?? []
+    },
+    'Error occurs while fetching live videos in video category page'
+  )
+
   allVideoEditorChoices = handleResponse(
-    responses[4] as PromiseSettledResult<Record<string, unknown>>,
+    responses[5] as PromiseSettledResult<Record<string, unknown>>,
     (response: Record<string, unknown> | undefined) => {
       const data = response as
         | Awaited<ReturnType<typeof fetchVideoEditorChoice>>
@@ -168,47 +166,19 @@ export default async function VideoCategoryPage() {
     'Error occurs while fetching video editor choices in video category page'
   )
 
-  const fetchVideoPostsByCategory = (slug: string) =>
-    fetchVideoPostsItems({
-      page: 0,
-      categorySlug: slug,
-      isWithCount: true,
-      pageSize: PAGE_SIZE,
-    })
-
-  const videoPostsResponses = await Promise.allSettled(
-    allCategories.map((category) => fetchVideoPostsByCategory(category.slug))
+  const sortedCategories = sortCategoriesForVideoPage(
+    categoryVideoJson.categories ?? []
   )
-
-  const getCategoryNameBySlug = (slug: string) => {
-    const category = allCategories.find((category) => category.slug === slug)
-    return category ? category.name : ''
-  }
-
-  categoryPosts = videoPostsResponses.map((res) => {
-    return handleResponse(
-      res,
-      (
-        videoPostsData:
-          | Awaited<ReturnType<typeof fetchVideoPostsByCategory>>
-          | undefined
-      ) => {
-        return {
-          categorySlug: videoPostsData?.categorySlug ?? '',
-          categoryName: getCategoryNameBySlug(
-            videoPostsData?.categorySlug ?? ''
-          ),
-          posts:
-            videoPostsData?.data?.allPosts?.map((post) => {
-              return formatArticleCard(post)
-            }) ?? [],
-          count: videoPostsData?.data?._allPostsMeta?.count ?? 0,
-        }
-      },
-      'Error occurs while fetching video posts in video category page'
-    )
-  })
-  categoryPosts = categoryPosts.filter((item) => item.count)
+  categoryPosts = sortedCategories
+    .map((cat) => ({
+      categorySlug: cat.slug,
+      categoryName: cat.name,
+      posts: cat.posts
+        .slice(0, PAGE_SIZE)
+        .map((p) => formatArticleCard(postJsonToPostCardItem(p))),
+      count: cat.posts.length,
+    }))
+    .filter((item) => item.count > 0)
 
   return (
     <>

@@ -1,18 +1,14 @@
 import gql from 'graphql-tag'
+import type { HeroImage } from '~/types/common'
+import { heroImageFragment } from '../fragments/hero-image'
 
 export type Sponsor = {
   id: string
   title: string
   url: string
-  logo: {
-    urlMobileSized: string
-  } | null
-  mobile: {
-    urlMobileSized: string
-  } | null
-  tablet: {
-    urlMobileSized: string
-  } | null
+  logo: HeroImage | null
+  mobile: HeroImage | null
+  tablet: HeroImage | null
   topic: {
     id: string
     slug: string
@@ -22,21 +18,21 @@ export type Sponsor = {
 
 const fetchSponsors = gql`
   query fetchSponsors {
-    allSponsors(
-      where: { state: published }
-      sortBy: [sortOrder_ASC, createdAt_DESC]
+    allSponsors: sponsors(
+      where: { state: { equals: "published" } }
+      orderBy: [{ sortOrder: asc }, { createdAt: desc }]
     ) {
       id
       title
       url
       logo {
-        urlMobileSized
+        ...heroImageFragment
       }
       mobile {
-        urlMobileSized
+        ...heroImageFragment
       }
       tablet {
-        urlMobileSized
+        ...heroImageFragment
       }
       topic {
         id
@@ -45,5 +41,7 @@ const fetchSponsors = gql`
       }
     }
   }
+  ${heroImageFragment}
 `
+
 export { fetchSponsors }
