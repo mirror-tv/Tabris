@@ -30,6 +30,7 @@ export async function fetchStaticJson<T = unknown>(
       const content = await fs.readFile(filePath, 'utf-8')
       return JSON.parse(content) as T
     } catch (err) {
+      const error = err as NodeJS.ErrnoException;
       // Fallback to fetch if file not found or unreadable
       console.warn(
         JSON.stringify({
