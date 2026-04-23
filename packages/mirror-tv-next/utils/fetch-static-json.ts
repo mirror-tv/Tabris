@@ -30,7 +30,11 @@ export async function fetchStaticJson<T = unknown>(
       const content = await fs.readFile(filePath, 'utf-8')
       return JSON.parse(content) as T
     } catch (err) {
-      const error = err as NodeJS.ErrnoException;
+      const isError = err instanceof Error;
+  
+      // 透過轉型取得 Node.js 專有的屬性
+      // 我們先將其視為 any 或特定的 NodeJS.ErrnoException
+      const nodeErr = err as NodeJS.ErrnoException;
       // Fallback to fetch if file not found or unreadable
       console.warn(
         JSON.stringify({
@@ -45,11 +49,11 @@ export async function fetchStaticJson<T = unknown>(
           error:
             err instanceof Error
               ? {
-                name: err.name, 
-                message: err.message, 
-                code: err.code,   // 例如: 'ENOENT' 或 'EACCES'
-                errno: err.errno, // 系統錯誤編號，2 是找不到，13 是權限拒絕
-                syscall: err.syscall // 發生錯誤的系統呼叫，例如 'open' 或 'stat'
+            name: nodeErr.name, 
+            message: nodeErr.message, 
+            code: nodeErr.code,       // 現在認得到了
+            errno: nodeErr.errno,     // 系統錯誤編號
+            syscall: nodeErr.syscall, // 發生錯誤的系統呼叫
               }
               : String(err),
         })
