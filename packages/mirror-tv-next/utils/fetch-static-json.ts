@@ -43,7 +43,13 @@ export async function fetchStaticJson<T = unknown>(
           cacheBust,
           error:
             err instanceof Error
-              ? { name: err.name, message: err.message }
+              ? {
+                name: err.name, 
+                message: err.message, 
+                code: err.code,   // 例如: 'ENOENT' 或 'EACCES'
+                errno: err.errno, // 系統錯誤編號，2 是找不到，13 是權限拒絕
+                syscall: err.syscall // 發生錯誤的系統呼叫，例如 'open' 或 'stat'
+              }
               : String(err),
         })
       )
