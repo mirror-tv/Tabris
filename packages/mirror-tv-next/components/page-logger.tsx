@@ -33,7 +33,9 @@ export default function PageLogger({
       })
     }
 
-    log()
+    void log().catch((err) => {
+      console.error('[PageLogger] failed to log page view', err)
+    })
   }, [clientReferrer, currentUrl, extra, initialReferrer, screenSize])
 
   return null
