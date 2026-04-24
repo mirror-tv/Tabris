@@ -25,43 +25,67 @@ export default function PostListWithFirstPage({
   const [jsonPosts, setJsonPosts] = useState<FormattedPostCard[]>(initPosts)
   const [hasShowSecondPage, setHasShowSecondPage] = useState(false)
   const fetchMorePosts = async (page: number) => {
-    if (source === 'json') {
-      const postsResponse = await getLatestPostsAndEditorChoices({
-        first: HOMEPAGE_POSTS_PAGE_SIZE,
-        skip: 0,
-        withCount: false,
-        filteredSlug: filteredSlug,
-        jsonPage: page,
+    const withTimeout = <T,>(p: Promise<T>, label: string): Promise<T> => {
+      let timer: ReturnType<typeof setTimeout> | undefined
+      const timeout = new Promise<never>((_, reject) => {
+        timer = setTimeout(() => {
+          reject(new Error(`[homepage latest] timeout at ${label}`))
+        }, 5000)
       })
-
-      const additionalPosts =
-        postsResponse?.data?.latest?.map((post) => formatArticleCard(post)) ||
-        []
-
-      if (additionalPosts.length > 0) {
-        const existingSlugs = new Set(jsonPosts.map((post) => post.slug))
-        const newPosts = additionalPosts.filter(
-          (post) => !existingSlugs.has(post.slug)
-        )
-        setJsonPosts((prevPosts) => {
-          return [...newPosts, ...prevPosts]
-        })
-        return newPosts
-      }
-
-      return []
+      return Promise.race([p, timeout]).finally(() => {
+        if (timer) clearTimeout(timer)
+      }) as Promise<T>
     }
 
-    const postsResponse = await getLatestPostsAndEditorChoices({
-      first: HOMEPAGE_POSTS_PAGE_SIZE,
-      skip: HOMEPAGE_POSTS_PAGE_SIZE * (page - 1) - renderedSalesLength,
-      withCount: false,
-      filteredSlug: filteredSlug,
-      jsonPage: 0,
-    })
-    return (
-      postsResponse?.data?.latest?.map((post) => formatArticleCard(post)) || []
-    )
+    try {
+      if (source === 'json') {
+        const postsResponse = await withTimeout(
+          getLatestPostsAndEditorChoices({
+            first: HOMEPAGE_POSTS_PAGE_SIZE,
+            skip: 0,
+            withCount: false,
+            filteredSlug: filteredSlug,
+            jsonPage: page,
+          }),
+          'json-branch'
+        )
+
+        const additionalPosts =
+          postsResponse?.data?.latest?.map((post) => formatArticleCard(post)) ||
+          []
+
+        if (additionalPosts.length > 0) {
+          const existingSlugs = new Set(jsonPosts.map((post) => post.slug))
+          const newPosts = additionalPosts.filter(
+            (post) => !existingSlugs.has(post.slug)
+          )
+          setJsonPosts((prevPosts) => {
+            return [...newPosts, ...prevPosts]
+          })
+          return newPosts
+        }
+
+        return []
+      }
+
+      const postsResponse = await withTimeout(
+        getLatestPostsAndEditorChoices({
+          first: HOMEPAGE_POSTS_PAGE_SIZE,
+          skip: HOMEPAGE_POSTS_PAGE_SIZE * (page - 1) - renderedSalesLength,
+          withCount: false,
+          filteredSlug: filteredSlug,
+          jsonPage: 0,
+        }),
+        'graphql-branch'
+      )
+
+      return (
+        postsResponse?.data?.latest?.map((post) => formatArticleCard(post)) ||
+        []
+      )
+    } catch (err) {
+      return []
+    }
   }
 
   return (
