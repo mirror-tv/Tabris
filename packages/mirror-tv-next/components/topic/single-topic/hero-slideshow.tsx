@@ -33,7 +33,7 @@ export default function HeroSlideshow({
   title,
   slideshow,
 }: HeroSlideshowProps) {
-  const formattedHeroImage = formateHeroImage(heroImage)
+  const { images, imagesWebP } = formateHeroImage(heroImage)
 
   return (
     <section className={styles.sectionWrapper}>
@@ -58,7 +58,8 @@ export default function HeroSlideshow({
             className={styles.swiper}
           >
             {slideshow.map((slide, index) => {
-              const formattedSlideImage = formateHeroImage(slide.heroImage)
+              const { images: slideImages, imagesWebP: slideImagesWebP } =
+                formateHeroImage(slide.heroImage)
 
               return (
                 <SwiperSlide key={index} className={styles.swiperSlide}>
@@ -69,7 +70,8 @@ export default function HeroSlideshow({
                       rel="noopener noreferrer"
                     >
                       <Image
-                        images={formattedSlideImage}
+                        images={slideImages}
+                        imagesWebP={slideImagesWebP}
                         alt={slide.name}
                         loadingImage="/images/loading.svg"
                         defaultImage="/images/image-default.jpg"
@@ -91,7 +93,8 @@ export default function HeroSlideshow({
           </Swiper>
         </div>
         <Image
-          images={formattedHeroImage}
+          images={images}
+          imagesWebP={imagesWebP}
           alt={title}
           defaultImage="/images/image-default.jpg"
           rwd={{

@@ -66,25 +66,25 @@ function handleMetaDesc(str: string) {
   return formatedStr.length > 123 ? formatedStr + '...' : formatedStr
 }
 
-function handleApiData(apiData: string): ApiData[] {
+function handleApiData(apiData: unknown): ApiData[] {
   try {
-    const rawString = apiData ?? ''
-    const content = JSON.parse(rawString)
+    if (!apiData) return []
 
-    return content?.filter((item: ApiData) => item) || []
+    // already parsed
+    if (Array.isArray(apiData)) {
+      return (apiData as ApiData[]).filter(Boolean)
+    }
+
+    // common case: stringified JSON array
+    if (typeof apiData === 'string') {
+      const parsed = JSON.parse(apiData) as unknown
+      return Array.isArray(parsed) ? (parsed as ApiData[]).filter(Boolean) : []
+    }
+
+    // any other shape is not supported by ApiData renderer
+    return []
   } catch {
     return []
-  }
-}
-
-class FetchError extends Error {
-  public code: number
-
-  constructor(url: string, message: string = 'Not Found', code: number = 404) {
-    const errorMessage = `${message}, url: ${url}`
-    super(errorMessage)
-    this.name = this.constructor.name
-    this.code = code
   }
 }
 
@@ -96,6 +96,5 @@ export {
   handleResponse,
   handleApiData,
   handleMetaDesc,
-  FetchError,
   getFirstElement,
 }

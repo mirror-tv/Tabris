@@ -10,6 +10,7 @@ type UiPostCardAsideProps = {
   postStyle: string
   page: 'category' | 'story'
   images: PostImage
+  imagesWebP?: PostImage
   exclusive: boolean
 }
 
@@ -18,6 +19,7 @@ export default function UiPostCardAside({
   date,
   href = '',
   images,
+  imagesWebP,
   postStyle = 'post',
   page = 'category',
   exclusive = false,
@@ -40,6 +42,7 @@ export default function UiPostCardAside({
       >
         <ResponsiveImage
           images={images}
+          imagesWebP={imagesWebP}
           alt={title}
           rwd={{ mobile: '500px', tablet: '500px', desktop: '500px' }}
           priority={false}

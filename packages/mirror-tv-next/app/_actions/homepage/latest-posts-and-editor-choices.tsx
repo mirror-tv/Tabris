@@ -15,31 +15,59 @@ import {
 
 import { fetchStaticJson } from '~/utils/fetch-static-json'
 import { createDataFetchingChain } from '~/utils/fetch-function'
+import type { FormattableHeroImage } from '~/types/hero-image'
 
-const HeroImageSchema = z.object({
-  urlDesktopSized: z.string().optional(),
-  urlTabletSized: z.string().optional(),
-  urlMobileSized: z.string().optional(),
-  urlTinySized: z.string().optional(),
-  urlOriginal: z.string().optional(),
-})
+const ImageApiDataSchema = z
+  .object({
+    url: z.string().optional(),
+    original: z.object({ url: z.string() }).optional(),
+    w2400: z.object({ url: z.string() }).optional(),
+    w1600: z.object({ url: z.string() }).optional(),
+    w1200: z.object({ url: z.string() }).optional(),
+    w800: z.object({ url: z.string() }).optional(),
+    w480: z.object({ url: z.string() }).optional(),
+  })
+  .passthrough()
 
-const FlexibleHeroImageSchema = z.union([z.string(), HeroImageSchema, z.null()])
+const HeroImageObjectSchema = z
+  .object({
+    // K6 flat image format.
+    original: z.string().optional(),
+    w2400: z.string().optional(),
+    w1600: z.string().optional(),
+    w1200: z.string().optional(),
+    w800: z.string().optional(),
+    w480: z.string().optional(),
+    // Legacy hero image fields still returned by some GraphQL responses.
+    urlDesktopSized: z.string().optional(),
+    urlTabletSized: z.string().optional(),
+    urlMobileSized: z.string().optional(),
+    urlTinySized: z.string().optional(),
+    urlOriginal: z.string().optional(),
+    // GraphQL / API image payload.
+    imageApiData: z.union([z.string(), ImageApiDataSchema]).optional(),
+  })
+  .passthrough()
+
+const FlexibleHeroImageSchema = z.union([
+  z.string(),
+  HeroImageObjectSchema,
+  z.null(),
+])
 
 const StaticEditorChoiceSchema = z.object({
   name: z.string(),
   slug: z.string(),
-  heroImage: FlexibleHeroImageSchema,
+  heroImage: FlexibleHeroImageSchema.optional(),
   heroVideo: z
     .object({
-      coverPhoto: HeroImageSchema.nullable(),
+      coverPhoto: HeroImageObjectSchema.nullable(),
     })
     .nullable()
     .optional(),
   source: z.string(),
   exclusive: z
     .any()
-    .optional()
     .transform((val) => {
       if (val === null || val === undefined) return null
       if (typeof val === 'boolean') return val
@@ -54,7 +82,7 @@ const StaticLatestPostSchema = z.object({
   slug: z.string(),
   style: z.string().optional(),
   name: z.string(),
-  thumbnail: z.string().nullable().optional(),
+  thumbnail: z.string().optional(),
   partner: z
     .object({
       name: z.string(),
@@ -68,7 +96,7 @@ const StaticLatestPostSchema = z.object({
     if (val === null || val === undefined) return new Date().toISOString()
     return String(val)
   }),
-  heroImage: FlexibleHeroImageSchema,
+  heroImage: FlexibleHeroImageSchema.optional(),
   categories: z
     .array(
       z.object({
@@ -79,13 +107,12 @@ const StaticLatestPostSchema = z.object({
     .optional(),
   heroVideo: z
     .object({
-      coverPhoto: HeroImageSchema.nullable(),
+      coverPhoto: HeroImageObjectSchema.nullable(),
     })
     .nullable()
     .optional(),
   exclusive: z
     .any()
-    .optional()
     .transform((val) => {
       if (val === null || val === undefined) return null
       if (typeof val === 'boolean') return val
@@ -107,10 +134,9 @@ const ListingPostSchema = z.object({
   slug: z.string(),
   style: z.string().optional(),
   name: z.string(),
-  heroImage: HeroImageSchema.nullable(),
+  heroImage: HeroImageObjectSchema.nullable(),
   exclusive: z
     .any()
-    .optional()
     .transform((val) => {
       if (val === null || val === undefined) return null
       if (typeof val === 'boolean') return val
@@ -137,7 +163,7 @@ const PostWithCategorySchema = ListingPostSchema.extend({
   ),
   heroVideo: z
     .object({
-      coverPhoto: HeroImageSchema.nullable(),
+      coverPhoto: HeroImageObjectSchema.nullable(),
     })
     .nullable(),
 })
@@ -148,10 +174,10 @@ const GraphQLEditorChoicesResponseSchema = z.object({
       choice: z.object({
         name: z.string(),
         slug: z.string(),
-        heroImage: HeroImageSchema.nullable(),
+        heroImage: HeroImageObjectSchema.nullable(),
         heroVideo: z
           .object({
-            coverPhoto: HeroImageSchema.nullable(),
+            coverPhoto: HeroImageObjectSchema.nullable(),
           })
           .nullable(),
         exclusive: z
@@ -186,8 +212,23 @@ type GetLatestPostsServerActionType = {
   jsonPage: number
 }
 
+function normalizeFlexibleHeroImage(
+  heroImage: z.infer<typeof FlexibleHeroImageSchema> | undefined
+): FormattableHeroImage {
+  if (!heroImage) {
+    return null
+  }
+
+  if (typeof heroImage === 'string') {
+    const urlOriginal = heroImage.trim()
+    return urlOriginal ? { urlOriginal } : null
+  }
+
+  return heroImage
+}
+
 async function fetchLatestPostsAndEditorChoices({ page }: { page: number }) {
-  const jsonData = await fetchStaticJson(`latest_posts0${page}.json`, true)
+  const jsonData = await fetchStaticJson(`latest_posts0${page}.json`)
   const result = StaticHomepageResponseSchema.safeParse(jsonData)
 
   if (!result.success) {
@@ -238,178 +279,157 @@ async function getLatestPostsAndEditorChoices({
   }
 
   if (jsonPage) {
-    data = await createDataFetchingChain<{
+    type JsonChainResult = {
       latest: PostWithCategory[]
       choices: EditorChoices[]
       _allPostsMeta?: { count: number }
       source: 'json' | 'graphql'
-    }>(
-      errorLogger,
-      { latest: [], choices: [], source: 'graphql' as const },
-      async () => {
-        const validatedData = await fetchLatestPostsAndEditorChoices({
-          page: jsonPage,
-        })
+    }
+    const fetchFromJson = async (): Promise<JsonChainResult> => {
+      const validatedData = await fetchLatestPostsAndEditorChoices({
+        page: jsonPage,
+      })
 
-        const transformedChoices = (validatedData.choices || []).map(
-          (choice) => ({
-            choice: {
-              name: choice.name,
-              slug: choice.slug,
-              source: choice.source,
-              heroImage:
-                typeof choice.heroImage === 'string'
-                  ? { urlOriginal: choice.heroImage }
-                  : choice.heroImage || {
-                      urlOriginal: '',
-                      urlDesktopSized: '',
-                      urlTabletSized: '',
-                      urlMobileSized: '',
-                      urlTinySized: '',
-                    },
-              heroVideo: choice.heroVideo || {
-                coverPhoto: {
-                  urlOriginal: '',
-                  urlDesktopSized: '',
-                  urlTabletSized: '',
-                  urlMobileSized: '',
-                  urlTinySized: '',
-                },
-              },
-              exclusive: choice.exclusive ?? false,
-            },
-          })
-        )
+      const transformedChoices = (validatedData.choices || []).map((choice) => {
+        return {
+          choice: {
+            name: choice.name,
+            slug: choice.slug,
+            source: choice.source,
+            heroImage: normalizeFlexibleHeroImage(choice.heroImage),
+            heroVideo: choice.heroVideo
+              ? {
+                  coverPhoto: choice.heroVideo.coverPhoto ?? null,
+                }
+              : null,
+            exclusive: choice.exclusive ?? false,
+          },
+        }
+      }) as EditorChoices[]
 
-        const transformedPosts = validatedData.latest.map((post) => ({
+      const transformedPosts = validatedData.latest.map((post) => {
+        return {
           slug: post.slug,
           style: post.style,
           name: post.name,
-          partner: post.partner,
-          thumbnail: post.thumbnail,
-          heroImage:
-            typeof post.heroImage === 'string'
-              ? { urlOriginal: post.heroImage }
-              : post.heroImage,
+          heroImage: normalizeFlexibleHeroImage(post.heroImage),
           publishTime: new Date(post.publishTime),
           categories: (post.categories || []).map((category) => ({
             slug: category.slug || category.name?.toLowerCase() || 'unknown',
             name: category.name,
           })),
-          heroVideo: {
-            coverPhoto: post.heroVideo?.coverPhoto || {
-              urlOriginal: '',
-              urlDesktopSized: '',
-              urlTabletSized: '',
-              urlMobileSized: '',
-              urlTinySized: '',
-            },
+          heroVideo: post.heroVideo
+            ? {
+                coverPhoto: post.heroVideo.coverPhoto ?? null,
+              }
+            : null,
+          exclusive: post.exclusive,
+          partner: post.partner,
+        } as PostWithCategory
+      }) as PostWithCategory[]
+
+      return {
+        latest: transformedPosts as PostWithCategory[],
+        choices: transformedChoices as EditorChoices[],
+        _allPostsMeta: withCount ? { count: 200 } : undefined,
+        source: 'json',
+      } as JsonChainResult
+    }
+
+    const fetchFromGraphQL = async (): Promise<JsonChainResult> => {
+      const client = getClient()
+
+      const [editorChoicesResult, latestPostsResult] = await Promise.all([
+        client.query<{
+          allEditorChoices: EditorChoices[]
+        }>({
+          query: fetchEditorChoices,
+        }),
+        client.query<{
+          allPosts: PostWithCategory[]
+          _allPostsMeta?: { count: number }
+        }>({
+          query: getPostsWithCategory,
+          variables: {
+            first,
+            skip,
+            withCount,
+            filteredSlug,
           },
-          exclusive: post.exclusive ?? false,
+        }),
+      ])
+
+      const editorChoicesValidation =
+        GraphQLEditorChoicesResponseSchema.safeParse(editorChoicesResult.data)
+      const latestPostsValidation = GraphQLLatestPostsResponseSchema.safeParse(
+        latestPostsResult.data
+      )
+
+      if (!editorChoicesValidation.success) {
+        throw new Error(
+          `GraphQL EditorChoices validation failed: ${JSON.stringify(
+            editorChoicesValidation.error.issues
+          )}`
+        )
+      }
+      if (!latestPostsValidation.success) {
+        throw new Error(
+          `GraphQL LatestPosts validation failed: ${JSON.stringify(
+            latestPostsValidation.error.issues
+          )}`
+        )
+      }
+
+      const validatedEditorChoices = editorChoicesValidation.data
+      const validatedLatestPosts = latestPostsValidation.data
+
+      const transformedGraphQLChoices =
+        validatedEditorChoices.allEditorChoices.map((choice) => ({
+          choice: {
+            ...choice.choice,
+            heroImage: choice.choice.heroImage ?? null,
+            heroVideo: choice.choice.heroVideo
+              ? {
+                  coverPhoto: choice.choice.heroVideo.coverPhoto ?? null,
+                }
+              : null,
+          },
         }))
 
-        const transformedData = {
-          latest: transformedPosts,
-          choices: transformedChoices,
-          _allPostsMeta: withCount ? { count: 200 } : undefined,
-          source: 'json' as const,
-        }
+      const transformedGraphQLPosts = validatedLatestPosts.allPosts.map(
+        (post) => ({
+          ...post,
+          heroVideo: post.heroVideo
+            ? {
+                coverPhoto: post.heroVideo.coverPhoto ?? null,
+              }
+            : null,
+        })
+      )
 
-        return transformedData
-      },
-      async () => {
-        const client = getClient()
+      return {
+        latest: transformedGraphQLPosts as PostWithCategory[],
+        choices: transformedGraphQLChoices as EditorChoices[],
+        _allPostsMeta: validatedLatestPosts._allPostsMeta,
+        source: 'graphql' as const,
+      } as JsonChainResult
+    }
 
-        const [editorChoicesResult, latestPostsResult] = await Promise.all([
-          client.query<{
-            allEditorChoices: EditorChoices[]
-          }>({
-            query: fetchEditorChoices,
-          }),
-          client.query<{
-            allPosts: PostWithCategory[]
-            _allPostsMeta?: { count: number }
-          }>({
-            query: getPostsWithCategory,
-            variables: {
-              first,
-              skip,
-              withCount,
-              filteredSlug,
-            },
-          }),
-        ])
-
-        const editorChoicesValidation =
-          GraphQLEditorChoicesResponseSchema.safeParse(editorChoicesResult.data)
-        const latestPostsValidation =
-          GraphQLLatestPostsResponseSchema.safeParse(latestPostsResult.data)
-
-        if (!editorChoicesValidation.success) {
-          throw new Error(
-            `GraphQL EditorChoices validation failed: ${JSON.stringify(
-              editorChoicesValidation.error.issues
-            )}`
-          )
-        }
-        if (!latestPostsValidation.success) {
-          throw new Error(
-            `GraphQL LatestPosts validation failed: ${JSON.stringify(
-              latestPostsValidation.error.issues
-            )}`
-          )
-        }
-
-        const validatedEditorChoices = editorChoicesValidation.data
-        const validatedLatestPosts = latestPostsValidation.data
-
-        const transformedGraphQLChoices =
-          validatedEditorChoices.allEditorChoices.map((choice) => ({
-            choice: {
-              ...choice.choice,
-              heroImage: choice.choice.heroImage || {
-                urlOriginal: '',
-                urlDesktopSized: '',
-                urlTabletSized: '',
-                urlMobileSized: '',
-                urlTinySized: '',
-              },
-            },
-          }))
-
-        const transformedGraphQLPosts = validatedLatestPosts.allPosts.map(
-          (post) => ({
-            ...post,
-            heroVideo: post.heroVideo
-              ? {
-                  coverPhoto: post.heroVideo?.coverPhoto || {
-                    urlOriginal: '',
-                    urlDesktopSized: '',
-                    urlTabletSized: '',
-                    urlMobileSized: '',
-                    urlTinySized: '',
-                  },
-                }
-              : {
-                  coverPhoto: {
-                    urlOriginal: '',
-                    urlDesktopSized: '',
-                    urlTabletSized: '',
-                    urlMobileSized: '',
-                    urlTinySized: '',
-                  },
-                },
-          })
-        )
-
-        return {
-          latest: transformedGraphQLPosts,
-          choices: transformedGraphQLChoices as EditorChoices[],
-          _allPostsMeta: validatedLatestPosts._allPostsMeta,
-          source: 'graphql' as const,
-        }
+    if (jsonPage > 1) {
+      try {
+        data = await fetchFromJson()
+      } catch (err) {
+        errorLogger(err)
+        data = { latest: [], choices: [], source: 'json' as const }
       }
-    )
+    } else {
+      data = await createDataFetchingChain<JsonChainResult>(
+        errorLogger,
+        { latest: [], choices: [], source: 'graphql' as const },
+        fetchFromJson as unknown as () => Promise<JsonChainResult>,
+        fetchFromGraphQL
+      )
+    }
   } else {
     const client = getClient()
 
@@ -444,25 +464,11 @@ async function getLatestPostsAndEditorChoices({
         ...post,
         heroVideo: post.heroVideo
           ? {
-              coverPhoto: post.heroVideo?.coverPhoto || {
-                urlOriginal: '',
-                urlDesktopSized: '',
-                urlTabletSized: '',
-                urlMobileSized: '',
-                urlTinySized: '',
-              },
+              coverPhoto: post.heroVideo.coverPhoto ?? null,
             }
-          : {
-              coverPhoto: {
-                urlOriginal: '',
-                urlDesktopSized: '',
-                urlTabletSized: '',
-                urlMobileSized: '',
-                urlTinySized: '',
-              },
-            },
+          : null,
       })
-    )
+    ) as PostWithCategory[]
 
     data = {
       latest: transformedGraphQLPosts,

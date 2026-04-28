@@ -9,7 +9,7 @@ type UiFeaturePostProps = {
 }
 
 export default function UiFeaturePost({ post }: UiFeaturePostProps) {
-  const { href, style, name, images, publishTime, exclusive } = post
+  const { href, style, name, images, imagesWebP, publishTime, exclusive } = post
 
   return (
     <a
@@ -24,6 +24,7 @@ export default function UiFeaturePost({ post }: UiFeaturePostProps) {
       <span className={[styles.imageWrapper, 'article-img-wrapper'].join(' ')}>
         <ResponsiveImage
           images={images}
+          imagesWebP={imagesWebP}
           alt={name}
           rwd={{ mobile: '500px', tablet: '500px', desktop: '500px' }}
           priority={false}

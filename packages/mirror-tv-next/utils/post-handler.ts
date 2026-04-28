@@ -1,7 +1,7 @@
 import { formateHeroImage } from './image-handler'
 import type { PostImage } from '~/utils/image-handler'
-import { type HeroImage } from '~/types/common'
 import type { ApiData } from '~/types/api-data'
+import type { FormattableHeroImage } from '~/types/hero-image'
 
 export type FormattedPostCard = {
   href: string
@@ -9,6 +9,7 @@ export type FormattedPostCard = {
   style?: string
   name: string
   images: PostImage
+  imagesWebP?: PostImage
   publishTime: Date
   label?: string
   __typename?: string
@@ -27,11 +28,12 @@ type FormatArticleCardInput = {
   slug: string
   name: string
   publishTime: string | Date
-  heroImage?: HeroImage | null
-  ogImage?: HeroImage | null
+  heroImage?: FormattableHeroImage
+  ogImage?: FormattableHeroImage
   thumbnail?: string | null
   images?: PostImage | null
-  style?: string
+  imagesWebP?: PostImage | null
+  style?: string | null
   categories?: { name: string }[]
   partner?: { name: string; slug: string }
   __typename?: string
@@ -50,6 +52,7 @@ const formatArticleCard = (
     ogImage: 'ogImage' in post ? post.ogImage : null,
     thumbnail: 'thumbnail' in post ? post.thumbnail : null,
     images: 'images' in post ? post.images : null,
+    imagesWebP: 'imagesWebP' in post ? post.imagesWebP : null,
     style: 'style' in post ? post.style : undefined,
     categories: 'categories' in post ? post.categories : undefined,
     partner: 'partner' in post ? post.partner : undefined,
@@ -57,17 +60,24 @@ const formatArticleCard = (
       '__typename' in post ? String(post['__typename'] ?? '') : undefined,
     exclusive: 'exclusive' in post ? post.exclusive ?? false : false,
   }
+
+  let heroImageForFormatting: FormattableHeroImage =
+    postFormatArticleCardInput.heroImage ?? postFormatArticleCardInput.ogImage
+
+  if (!heroImageForFormatting && postFormatArticleCardInput.thumbnail) {
+    heroImageForFormatting = {
+      imageApiData: {
+        url: postFormatArticleCardInput.thumbnail ?? undefined,
+        original: {
+          url: postFormatArticleCardInput.thumbnail ?? undefined,
+        },
+      },
+    }
+  }
+
+  const formattedHeroImage = formateHeroImage(heroImageForFormatting)
   const imageObj: PostImage =
-    postFormatArticleCardInput.images ??
-    formateHeroImage(
-      postFormatArticleCardInput.heroImage ??
-        postFormatArticleCardInput.ogImage ??
-        (postFormatArticleCardInput.thumbnail
-          ? {
-              urlOriginal: postFormatArticleCardInput.thumbnail ?? undefined,
-            }
-          : undefined)
-    )
+    postFormatArticleCardInput.images ?? formattedHeroImage.images
 
   return {
     href:
@@ -79,6 +89,8 @@ const formatArticleCard = (
     style: postFormatArticleCardInput.style ?? 'article',
     name: postFormatArticleCardInput.name,
     images: imageObj,
+    imagesWebP:
+      postFormatArticleCardInput.imagesWebP ?? formattedHeroImage.imagesWebP,
     publishTime: new Date(postFormatArticleCardInput.publishTime),
     label: options?.label || postFormatArticleCardInput.categories?.[0]?.name,
     __typename: postFormatArticleCardInput.__typename ?? '',

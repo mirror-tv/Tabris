@@ -2,8 +2,12 @@
 
 import errors from '@twreporter/errors'
 import { z } from 'zod'
-import { fetchStaticJson } from '~/utils/fetch-static-json'
+import {
+  HOMEPAGE_TOPIC_FILENAME,
+  HOMEPAGE_VIDEO_FILENAME,
+} from '~/constants/json-filenames'
 import { createDataFetchingChain } from '~/utils/fetch-function'
+import { fetchStaticJson } from '~/utils/fetch-static-json'
 import type { Video } from '~/graphql/query/videos'
 import type { PromotionVideo } from '~/graphql/query/promotion-video'
 import type { FeatureTopic } from '~/graphql/query/topic'
@@ -12,68 +16,75 @@ type VideoWithRequiredDescription = Omit<Video, 'description'> & {
   description: string
 }
 
-const HeroImageSchema = z.object({
-  urlDesktopSized: z.string().optional(),
-  urlTabletSized: z.string().optional(),
-  urlMobileSized: z.string().optional(),
-  urlTinySized: z.string().optional(),
-  urlOriginal: z.string().optional(),
+// New JSON format schema (for topic.json)
+const NewHeroImageSchema = z.object({
+  w480: z.string().optional(),
+  w800: z.string().optional(),
+  original: z.string().optional(),
+})
+
+const TopicItemSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  slug: z.string(),
+  heroImage: NewHeroImageSchema.nullable(),
+  sortDir: z.string().optional(),
+  postDESC: z
+    .array(
+      z.object({
+        slug: z.string(),
+        name: z.string(),
+      })
+    )
+    .optional(),
+  postASC: z
+    .array(
+      z.object({
+        slug: z.string(),
+        name: z.string(),
+      })
+    )
+    .optional(),
 })
 
 const TopicDataSchema = z.object({
-  allTopics: z.array(
-    z.object({
-      id: z.string(),
-      name: z.string(),
-      slug: z.string(),
-      heroImage: HeroImageSchema.nullable(),
-      sortDir: z.string().optional(),
-      postDESC: z
-        .array(
-          z.object({
-            slug: z.string(),
-            name: z.string(),
-          })
-        )
-        .optional(),
-      postASC: z
-        .array(
-          z.object({
-            slug: z.string(),
-            name: z.string(),
-          })
-        )
-        .optional(),
-    })
-  ),
+  topics: z.array(TopicItemSchema).optional(),
+  allTopics: z.array(TopicItemSchema).optional(), // Backward compatibility
   timestamp: z.string().optional(),
 })
 
+/** Matches video.json: videos[].id,name,youtubeUrl,url,description,createdAt; promotionVideos[].id,ytUrl; timestamp? */
+const VideoItemSchema = z.object({
+  id: z.string(),
+  name: z.string().optional(),
+  youtubeUrl: z.string(),
+  url: z.string(),
+  description: z.string().optional(),
+  createdAt: z.string().optional(),
+})
+
+const PromotionVideoItemSchema = z.object({
+  id: z.string(),
+  ytUrl: z.string(),
+})
+
 const VideoDataSchema = z.object({
-  allVideos: z.array(
-    z.object({
-      id: z.string(),
-      youtubeUrl: z.string(),
-      url: z.string(),
-      description: z.string().nullable().optional(),
-    })
-  ),
-  allPromotionVideos: z.array(
-    z.object({
-      id: z.string(),
-      ytUrl: z.string(),
-    })
-  ),
+  videos: z.array(VideoItemSchema).optional(),
+  allVideos: z.array(VideoItemSchema).optional(), // Backward compatibility
+  promotionVideos: z.array(PromotionVideoItemSchema).optional(),
+  allPromotionVideos: z.array(PromotionVideoItemSchema).optional(), // Backward compatibility
   timestamp: z.string().optional(),
 })
 
 async function fetchTopicData() {
-  const jsonData = await fetchStaticJson('topic.json', true)
+  const jsonData = await fetchStaticJson(HOMEPAGE_TOPIC_FILENAME)
   return TopicDataSchema.parse(jsonData)
 }
 
 async function fetchVideoData() {
-  const jsonData = await fetchStaticJson('video.json', true)
+  const jsonData = await fetchStaticJson(HOMEPAGE_VIDEO_FILENAME, {
+    cacheBust: true,
+  })
   return VideoDataSchema.parse(jsonData)
 }
 
@@ -83,10 +94,18 @@ async function fetchTopicVideoData() {
     fetchVideoData(),
   ])
 
+  // Support both new format (topics) and old format (allTopics)
+  const topics = topicData.topics || topicData.allTopics || []
+
+  // Support both new format (videos, promotionVideos) and old format (allVideos, allPromotionVideos)
+  const videos = videoData.videos || videoData.allVideos || []
+  const promotionVideos =
+    videoData.promotionVideos || videoData.allPromotionVideos || []
+
   return {
-    allTopics: topicData.allTopics,
-    allVideos: videoData.allVideos,
-    allPromotionVideos: videoData.allPromotionVideos,
+    allTopics: topics,
+    allVideos: videos,
+    allPromotionVideos: promotionVideos,
   }
 }
 
@@ -133,14 +152,11 @@ async function getTopicVideo(): Promise<{
 
       // Transform data to match component expectations
       const transformedTopics = validatedData.allTopics.map((topic) => ({
-        ...topic,
-        heroImage: topic.heroImage || {
-          urlOriginal: '',
-          urlDesktopSized: '',
-          urlTabletSized: '',
-          urlMobileSized: '',
-          urlTinySized: '',
-        },
+        id: topic.id,
+        slug: topic.slug,
+        name: topic.name,
+        sortDir: topic.sortDir,
+        heroImage: topic.heroImage,
         postDESC: topic.postDESC || [],
         postASC: topic.postASC || [],
       }))

@@ -1,7 +1,10 @@
 import errors from '@twreporter/errors'
 import dayjs from 'dayjs'
 import type { Metadata } from 'next'
+import dynamic from 'next/dynamic'
+import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
 import ScheduleTable from '~/components/schedule/schedule-table'
+import { SCHEDULE_FILENAME } from '~/constants/json-filenames'
 import {
   GLOBAL_CACHE_SETTING,
   SITE_URL,
@@ -9,8 +12,7 @@ import {
 import { fetchStaticJson } from '~/utils/fetch-static-json'
 import styles from '~/styles/pages/schedule-page.module.scss'
 import type { Schedule } from '~/types/common'
-import dynamic from 'next/dynamic'
-import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
+
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 
 export const revalidate = GLOBAL_CACHE_SETTING
@@ -34,7 +36,9 @@ type WeekDate = {
 
 async function getData() {
   try {
-    return await fetchStaticJson<Schedule[]>('tv-schedule.json')
+    return await fetchStaticJson<Schedule[]>(SCHEDULE_FILENAME, {
+      pathPrefix: '/files/documents',
+    })
   } catch (err) {
     const annotatingError = errors.helpers.wrap(
       err,
@@ -58,7 +62,7 @@ async function getData() {
 export default async function SchedulePage() {
   let schedule: Schedule[] = []
 
-  schedule = (await getData()) ?? []
+  schedule = await getData()
 
   const dayOfWeekMap: { [key: string]: string } = {
     Monday: '星期一',

@@ -65,7 +65,6 @@ export default async function LatestAndEditorChoicesWithLive({
     filteredSlug: [],
     jsonPage: 1,
   })
-
   filteredSlug = filteredSlug.concat(
     editorChoices?.map((item) => item.choice.slug)
   )
@@ -91,7 +90,7 @@ export default async function LatestAndEditorChoicesWithLive({
 
   return (
     <>
-      <section className={`${styles.liveAndEditor}`}>
+      <section className={styles.liveAndEditor}>
         <MNewsLives mnewsLives={mnewsLives} />
         <EditorChoicesSwiper editorChoices={editorChoices} />
       </section>

@@ -4,9 +4,16 @@ import { formateHeroImage } from '~/utils'
 import type { HeroImage } from '~/types/common'
 import Link from 'next/link'
 
+// Legacy BannerImage format for backward compatibility
+type LegacyBannerImage = {
+  urlMobileSized?: string
+  urlTabletSized?: string
+  urlOriginal?: string
+}
+
 type UiShowCardProps = {
   slug: string
-  bannerImg: HeroImage
+  bannerImg: HeroImage | LegacyBannerImage | null
   name: string
   id: string
 }
@@ -17,6 +24,8 @@ export default function UiShowCard({
   name,
   id,
 }: UiShowCardProps) {
+  const { images, imagesWebP } = formateHeroImage(bannerImg ?? undefined)
+
   return (
     <Link
       className={`${styles.image} show-card__img`}
@@ -26,12 +35,12 @@ export default function UiShowCard({
       id={id}
     >
       <ResponsiveImage
-        images={formateHeroImage(bannerImg)}
+        images={images}
+        imagesWebP={imagesWebP}
         alt={name}
         rwd={{ mobile: '500px', tablet: '500px', desktop: '500px' }}
         priority={false}
         imgClassName="show-card__img"
-        imgId={id}
       />
     </Link>
   )

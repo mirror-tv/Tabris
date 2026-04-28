@@ -1,19 +1,22 @@
 'use server'
 import errors from '@twreporter/errors'
-import { POPULAR_POSTS_FILE_NAME } from '~/constants/environment-variables'
-import { type RawPopularPost } from '~/types/popular-post'
+import { POPULAR_POSTS_FILENAME } from '~/constants/json-filenames'
+import {
+  type RawPopularListJson,
+  type RawPopularPost,
+} from '~/types/popular-post'
 import { fetchStaticJson } from '~/utils/fetch-static-json'
 
 async function fetchPopularPosts(): Promise<{ data: RawPopularPost[] }> {
   try {
-    const rawData = await fetchStaticJson<{ report: RawPopularPost[] }>(
-      POPULAR_POSTS_FILE_NAME
+    const rawData = await fetchStaticJson<RawPopularListJson>(
+      POPULAR_POSTS_FILENAME
     )
-    const data = JSON.parse(JSON.stringify(rawData))
+    const data = JSON.parse(JSON.stringify(rawData)) as RawPopularListJson
     // Ensure data is parsed and not referencing the original object
     // https://github.com/vercel/next.js/issues/47447
 
-    return { data: data.report }
+    return { data: (data.report ?? []) as RawPopularPost[] }
   } catch (err) {
     const annotatingError = errors.helpers.wrap(
       err,

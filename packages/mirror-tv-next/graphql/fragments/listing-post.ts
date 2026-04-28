@@ -1,12 +1,14 @@
 import gql from 'graphql-tag'
-import type { HeroImage } from '~/types/common'
+import type { FormattableHeroImage } from '~/types/hero-image'
+import { heroImageFragment } from './hero-image'
 
 export type ListingPost = {
   slug: string
-  style?: string
+  style?: string | null
   name: string
-  heroImage: HeroImage | null
+  heroImage: FormattableHeroImage
   exclusive: boolean | null
+  __typename?: 'Post'
 }
 
 const listingPost = gql`
@@ -15,14 +17,11 @@ const listingPost = gql`
     style
     name
     heroImage {
-      urlOriginal
-      urlDesktopSized
-      urlTabletSized
-      urlMobileSized
-      urlTinySized
+      ...heroImageFragment
     }
     exclusive
   }
+  ${heroImageFragment}
 `
 
 export { listingPost }

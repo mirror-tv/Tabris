@@ -1,25 +1,26 @@
 import gql from 'graphql-tag'
 import type { HeroImage } from '~/types/common'
+import { heroImageFragment } from '../fragments/hero-image'
 
 export type Contact = {
   name: string
   slug: string
-  anchorImg: HeroImage
+  anchorImg: HeroImage | null
 }
 
 export type SingleAnchor = Contact & {
   facebook: string | null
   instagram: string | null
   twitter: string | null
-  bioApiData: string
-  showhostImg: HeroImage
+  bioApiData: string | null
+  showhostImg: HeroImage | null
   relatedShows?: {
     id: string
     name: string
     playList01: string | null
     playList02: string | null
   }[]
-  __typename: string
+  __typename?: string
 }
 
 const fetchContactBySlug = gql`
@@ -27,16 +28,16 @@ const fetchContactBySlug = gql`
     $slug: String!
     $shouldFetchRelatedShows: Boolean = false
   ) {
-    allContacts(where: { slug: $slug, isResigned_not: true }) {
+    allContacts: contacts(
+      where: { slug: { equals: $slug }, isResigned: { not: { equals: true } } }
+    ) {
       name
       facebook
       instagram
       twitter
       bioApiData
       showhostImg {
-        urlMobileSized
-        urlTabletSized
-        urlDesktopSized
+        ...heroImageFragment
       }
       relatedShows @include(if: $shouldFetchRelatedShows) {
         id
@@ -46,54 +47,60 @@ const fetchContactBySlug = gql`
       }
     }
   }
+  ${heroImageFragment}
 `
 const fetchContactsByAnchorPerson = gql`
   query fetchContactsByAnchorPerson {
-    allContacts(
-      where: { anchorperson: true, isResigned_not: true }
-      sortBy: [sortOrder_ASC, updatedAt_DESC]
+    allContacts: contacts(
+      where: {
+        anchorperson: { equals: true }
+        isResigned: { not: { equals: true } }
+      }
+      orderBy: [{ sortOrder: asc }, { updatedAt: desc }]
     ) {
       name
       slug
       anchorImg {
-        urlTabletSized
-        urlMobileSized
-        urlOriginal
+        ...heroImageFragment
       }
     }
   }
+  ${heroImageFragment}
 `
 
 const fetchContactsByHost = gql`
   query fetchContactsByHost {
-    allContacts(
-      where: { host: true, isResigned_not: true }
-      sortBy: [sortOrder_ASC, updatedAt_DESC]
+    allContacts: contacts(
+      where: { host: { equals: true }, isResigned: { not: { equals: true } } }
+      orderBy: [{ sortOrder: asc }, { updatedAt: desc }]
     ) {
       name
       slug
       anchorImg {
-        urlTabletSized
-        urlMobileSized
+        ...heroImageFragment
       }
     }
   }
+  ${heroImageFragment}
 `
 
 const fetchContactsByInternational = gql`
   query fetchContactsByInternational {
-    allContacts(
-      where: { international: true, isResigned_not: true }
-      sortBy: [sortOrder_ASC, updatedAt_DESC]
+    allContacts: contacts(
+      where: {
+        international: { equals: true }
+        isResigned: { not: { equals: true } }
+      }
+      orderBy: [{ sortOrder: asc }, { updatedAt: desc }]
     ) {
       name
       slug
       anchorImg {
-        urlTabletSized
-        urlMobileSized
+        ...heroImageFragment
       }
     }
   }
+  ${heroImageFragment}
 `
 
 export {

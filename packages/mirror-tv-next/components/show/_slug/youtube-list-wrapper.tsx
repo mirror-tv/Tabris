@@ -29,7 +29,10 @@ export default async function YoutubeListWrapper({
   const youtubeListIds = urls
     .filter((url): url is string => url !== null)
     .map((url, index) => getListIdAndName(url, index))
-    .filter((item): item is YoutubeListInfoFormatted => item?.url !== null)
+    .filter(
+      (item): item is YoutubeListInfoFormatted =>
+        item !== null && item.url !== null
+    )
 
   const listResponse = await Promise.allSettled(
     youtubeListIds.map((item) =>

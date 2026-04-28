@@ -43,32 +43,39 @@ export default function ShowListHandler({
     >
       {(renderList) => (
         <ol className={`${styles.showList} show-list `}>
-          {renderList.map((item) => (
-            <Link
-              id={item.id}
-              key={item.id}
-              className={`${styles.item} GTM-homepage-show-card`}
-              href={`/show/${item.slug}`}
-              target="_blank"
-              rel="noreferrer noopener"
-            >
-              <Image
+          {renderList.map((item) => {
+            const { images, imagesWebP } = formateHeroImage(
+              item.bannerImg || {}
+            )
+
+            return (
+              <Link
+                id={item.id}
                 key={item.id}
-                loadingImage="/images/loading.svg"
-                defaultImage="/images/image-default.jpg"
-                images={formateHeroImage(item.bannerImg || {})}
-                alt="loading banner image"
-                objectFit="cover"
-                rwd={{
-                  mobile: '500px',
-                  tablet: '500px',
-                  laptop: '500px',
-                  desktop: '500px',
-                  default: '500px',
-                }}
-              />
-            </Link>
-          ))}
+                className={`${styles.item} GTM-homepage-show-card`}
+                href={`/show/${item.slug}`}
+                target="_blank"
+                rel="noreferrer noopener"
+              >
+                <Image
+                  key={item.id}
+                  loadingImage="/images/loading.svg"
+                  defaultImage="/images/image-default.jpg"
+                  images={images}
+                  imagesWebP={imagesWebP}
+                  alt="loading banner image"
+                  objectFit="cover"
+                  rwd={{
+                    mobile: '500px',
+                    tablet: '500px',
+                    laptop: '500px',
+                    desktop: '500px',
+                    default: '500px',
+                  }}
+                />
+              </Link>
+            )
+          })}
         </ol>
       )}
     </InfiniteScrollList>
