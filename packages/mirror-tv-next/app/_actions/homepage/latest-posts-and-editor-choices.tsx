@@ -335,88 +335,101 @@ async function getLatestPostsAndEditorChoices({
         source: 'json',
       } as JsonChainResult
     }
-    data = await createDataFetchingChain<JsonChainResult>(
-      errorLogger,
-      { latest: [], choices: [], source: 'graphql' as const },
-      fetchFromJson as unknown as () => Promise<JsonChainResult>,
-      async (): Promise<JsonChainResult> => {
-        const client = getClient()
 
-        const [editorChoicesResult, latestPostsResult] = await Promise.all([
-          client.query<{
-            allEditorChoices: EditorChoices[]
-          }>({
-            query: fetchEditorChoices,
-          }),
-          client.query<{
-            allPosts: PostWithCategory[]
-            _allPostsMeta?: { count: number }
-          }>({
-            query: getPostsWithCategory,
-            variables: {
-              first,
-              skip,
-              withCount,
-              filteredSlug,
-            },
-          }),
-        ])
+    const fetchFromGraphQL = async (): Promise<JsonChainResult> => {
+      const client = getClient()
 
-        const editorChoicesValidation =
-          GraphQLEditorChoicesResponseSchema.safeParse(editorChoicesResult.data)
-        const latestPostsValidation =
-          GraphQLLatestPostsResponseSchema.safeParse(latestPostsResult.data)
+      const [editorChoicesResult, latestPostsResult] = await Promise.all([
+        client.query<{
+          allEditorChoices: EditorChoices[]
+        }>({
+          query: fetchEditorChoices,
+        }),
+        client.query<{
+          allPosts: PostWithCategory[]
+          _allPostsMeta?: { count: number }
+        }>({
+          query: getPostsWithCategory,
+          variables: {
+            first,
+            skip,
+            withCount,
+            filteredSlug,
+          },
+        }),
+      ])
 
-        if (!editorChoicesValidation.success) {
-          throw new Error(
-            `GraphQL EditorChoices validation failed: ${JSON.stringify(
-              editorChoicesValidation.error.issues
-            )}`
-          )
-        }
-        if (!latestPostsValidation.success) {
-          throw new Error(
-            `GraphQL LatestPosts validation failed: ${JSON.stringify(
-              latestPostsValidation.error.issues
-            )}`
-          )
-        }
+      const editorChoicesValidation =
+        GraphQLEditorChoicesResponseSchema.safeParse(editorChoicesResult.data)
+      const latestPostsValidation = GraphQLLatestPostsResponseSchema.safeParse(
+        latestPostsResult.data
+      )
 
-        const validatedEditorChoices = editorChoicesValidation.data
-        const validatedLatestPosts = latestPostsValidation.data
+      if (!editorChoicesValidation.success) {
+        throw new Error(
+          `GraphQL EditorChoices validation failed: ${JSON.stringify(
+            editorChoicesValidation.error.issues
+          )}`
+        )
+      }
+      if (!latestPostsValidation.success) {
+        throw new Error(
+          `GraphQL LatestPosts validation failed: ${JSON.stringify(
+            latestPostsValidation.error.issues
+          )}`
+        )
+      }
 
-        const transformedGraphQLChoices =
-          validatedEditorChoices.allEditorChoices.map((choice) => ({
-            choice: {
-              ...choice.choice,
-              heroImage: choice.choice.heroImage ?? null,
-              heroVideo: choice.choice.heroVideo
-                ? {
-                    coverPhoto: choice.choice.heroVideo.coverPhoto ?? null,
-                  }
-                : null,
-            },
-          }))
+      const validatedEditorChoices = editorChoicesValidation.data
+      const validatedLatestPosts = latestPostsValidation.data
 
-        const transformedGraphQLPosts = validatedLatestPosts.allPosts.map(
-          (post) => ({
-            ...post,
-            heroVideo: post.heroVideo
+      const transformedGraphQLChoices =
+        validatedEditorChoices.allEditorChoices.map((choice) => ({
+          choice: {
+            ...choice.choice,
+            heroImage: choice.choice.heroImage ?? null,
+            heroVideo: choice.choice.heroVideo
               ? {
-                  coverPhoto: post.heroVideo.coverPhoto ?? null,
+                  coverPhoto: choice.choice.heroVideo.coverPhoto ?? null,
                 }
               : null,
-          })
-        )
+          },
+        }))
 
-        return {
-          latest: transformedGraphQLPosts as PostWithCategory[],
-          choices: transformedGraphQLChoices as EditorChoices[],
-          _allPostsMeta: validatedLatestPosts._allPostsMeta,
-          source: 'graphql' as const,
-        } as JsonChainResult
+      const transformedGraphQLPosts = validatedLatestPosts.allPosts.map(
+        (post) => ({
+          ...post,
+          heroVideo: post.heroVideo
+            ? {
+                coverPhoto: post.heroVideo.coverPhoto ?? null,
+              }
+            : null,
+        })
+      )
+
+      return {
+        latest: transformedGraphQLPosts as PostWithCategory[],
+        choices: transformedGraphQLChoices as EditorChoices[],
+        _allPostsMeta: validatedLatestPosts._allPostsMeta,
+        source: 'graphql' as const,
+      } as JsonChainResult
+    }
+
+    if (jsonPage > 1) {
+      try {
+        data = await fetchFromJson()
+      } catch (err) {
+        errorLogger(err)
+        data = { latest: [], choices: [], source: 'json' as const }
       }
-    )
+    } else {
+      data = await createDataFetchingChain<JsonChainResult>(
+        errorLogger,
+        { latest: [], choices: [], source: 'graphql' as const },
+        fetchFromJson as unknown as () => Promise<JsonChainResult>,
+        fetchFromGraphQL
+      )
+    }
   } else {
     const client = getClient()
 
