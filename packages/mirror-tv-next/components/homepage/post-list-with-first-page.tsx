@@ -60,7 +60,7 @@ export default function PostListWithFirstPage({
             (post) => !existingSlugs.has(post.slug)
           )
           setJsonPosts((prevPosts) => {
-            return [...newPosts, ...prevPosts]
+            return [...prevPosts, ...newPosts]
           })
           return newPosts
         }
