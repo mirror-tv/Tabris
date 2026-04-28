@@ -1,5 +1,6 @@
 import gql from 'graphql-tag'
 import type { HeroImage } from '~/types/common'
+import { heroImageFragment } from '../fragments/hero-image'
 
 export type VideoEditorChoice = {
   videoEditor: {
@@ -9,40 +10,40 @@ export type VideoEditorChoice = {
     heroImage: HeroImage | null
     heroVideo: {
       url: string
-      coverPhoto: HeroImage
+      coverPhoto: HeroImage | null
     } | null
   } | null
 }
 
 const getVideoEditorChoice = gql`
   query fetchVideoEditorChoices {
-    allVideoEditorChoices(
+    allVideoEditorChoices: videoEditorChoices(
       where: {
-        state: published
-        videoEditor: { state: published, style: videoNews }
+        state: { equals: "published" }
+        videoEditor: {
+          state: { equals: "published" }
+          style: { equals: "videoNews" }
+        }
       }
-      sortBy: order_ASC
+      orderBy: { order: asc }
     ) {
       videoEditor {
         slug
         name
         style
         heroImage {
-          urlMobileSized
-          urlOriginal
+          ...heroImageFragment
         }
         heroVideo {
           url
           coverPhoto {
-            urlMobileSized
-            urlTabletSized
-            urlDesktopSized
-            urlOriginal
+            ...heroImageFragment
           }
         }
       }
     }
   }
+  ${heroImageFragment}
 `
 
 export { getVideoEditorChoice }

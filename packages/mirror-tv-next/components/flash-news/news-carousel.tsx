@@ -4,10 +4,10 @@ import type { FlashNews } from '~/types/common'
 import styles from './_styles/news-carousel.module.scss'
 
 type NewsCarouselProps = {
-  flashNews: FlashNews[]
+  flashNews?: FlashNews[]
 }
 
-export default function NewsCarousel({ flashNews }: NewsCarouselProps) {
+export default function NewsCarousel({ flashNews = [] }: NewsCarouselProps) {
   const [currentIdx, setCurrentIdx] = useState(0)
   const [move, setMove] = useState(-1)
   const [shouldTransition, setShouldTransition] = useState(false)

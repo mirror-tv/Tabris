@@ -1,4 +1,4 @@
-import type { HeroImage } from './common'
+import type { FormattableHeroImage } from './hero-image'
 
 export type ApiData = {
   id: string
@@ -22,7 +22,7 @@ export type FeaturePost = {
   style: string
   publishTime: string
   categories: Category[]
-  heroImage: HeroImage
+  heroImage: FormattableHeroImage
 }
 
 export type FormatPlayListItems = {

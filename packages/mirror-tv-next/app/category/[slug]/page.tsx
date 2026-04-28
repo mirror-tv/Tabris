@@ -5,18 +5,21 @@ import {
   fetchExternalsByCategory,
   fetchPostsByCategory,
 } from '~/app/_actions/category/posts-by-category'
-import PostsListManager from '~/components/category/posts-list-manager'
+import CategoryPostsListManager from '~/components/category/posts-list-manager'
 import UiFeaturePost from '~/components/category/ui-feature-post'
 import UiHeadingBordered from '~/components/shared/ui-heading-bordered'
+import { FEATURE_POSTS_FILENAME } from '~/constants/json-filenames'
 import {
-  FEATURE_POSTS_FILE_NAME,
   GLOBAL_CACHE_SETTING,
   SITE_URL,
 } from '~/constants/environment-variables'
-import { fetchStaticJson } from '~/utils/fetch-static-json'
 import { type Category } from '~/graphql/query/category'
 import styles from '~/styles/pages/category.module.scss'
 import { FeaturePost } from '~/types/api-data'
+import type {
+  RawFeaturedCategoriesNewsJson,
+  RawFeaturedPost,
+} from '~/types/featured-categories-news'
 import {
   FormattedPostCard,
   formatArticleCard,
@@ -24,6 +27,7 @@ import {
   handleResponse,
 } from '~/utils'
 import { fetchSales } from '~/app/_actions/share/sales'
+import { fetchStaticJson } from '~/utils/fetch-static-json'
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 import { SALES_LABEL_NAME } from '~/constants/constant'
 import { fetchCategoryData } from '~/app/_actions/category/category-data'
@@ -34,6 +38,35 @@ export const revalidate = GLOBAL_CACHE_SETTING
 
 type FeaturePostsResponse = {
   allPosts: FeaturePost[]
+}
+
+/** Normalize featured_categories_news response to { allPosts: FeaturePost[] } for category feature-post lookup */
+function normalizeFeaturePostsResponse(
+  data: FeaturePostsResponse | RawFeaturedCategoriesNewsJson | undefined
+): FeaturePostsResponse | undefined {
+  if (!data) return undefined
+  if ('allPosts' in data && Array.isArray(data.allPosts)) {
+    return data as FeaturePostsResponse
+  }
+  if ('posts' in data && Array.isArray(data.posts)) {
+    const raw = data as RawFeaturedCategoriesNewsJson
+    const allPosts: FeaturePost[] = raw.posts.map((post: RawFeaturedPost) => ({
+      id: post.id,
+      name: post.name,
+      subtitle: post.subtitle ?? '',
+      slug: post.slug,
+      style: post.style,
+      publishTime: post.publishTime,
+      categories: (post.categories ?? []).map((c) => ({
+        id: c.id ?? '',
+        name: c.name ?? '',
+        slug: c.slug ?? '',
+      })),
+      heroImage: post.heroImage,
+    }))
+    return { allPosts }
+  }
+  return undefined
 }
 
 export async function generateMetadata({
@@ -59,18 +92,23 @@ export async function generateMetadata({
 
   let firstPost = null
 
-  const fetchFeaturePosts = (): Promise<FeaturePostsResponse> =>
-    fetchStaticJson(FEATURE_POSTS_FILE_NAME)
+  const fetchFeaturePosts = (): Promise<
+    FeaturePostsResponse | RawFeaturedCategoriesNewsJson
+  > => fetchStaticJson<RawFeaturedCategoriesNewsJson>(FEATURE_POSTS_FILENAME)
 
   const [featurePostResult] = await Promise.allSettled([fetchFeaturePosts()])
 
   firstPost = handleResponse(
     featurePostResult,
     (response: Awaited<ReturnType<typeof fetchFeaturePosts>> | undefined) => {
-      if (!response?.allPosts) return null
-      const post = response.allPosts.find((post: FeaturePost) => {
+      const normalized = normalizeFeaturePostsResponse(response)
+      if (!normalized?.allPosts) return null
+      const post = normalized.allPosts.find((post: FeaturePost) => {
         return post.categories.some((category) => {
-          return category.id === categoryData.id
+          return (
+            category.id === categoryData.id ||
+            category.slug === categoryData.slug
+          )
         })
       })
       return post ? formatArticleCard(post) : null
@@ -171,8 +209,9 @@ export default async function CategoryPage({
     return notFound()
   }
 
-  const fetchFeaturePosts = (): Promise<FeaturePostsResponse> =>
-    fetchStaticJson(FEATURE_POSTS_FILE_NAME)
+  const fetchFeaturePosts = (): Promise<
+    FeaturePostsResponse | RawFeaturedCategoriesNewsJson
+  > => fetchStaticJson<RawFeaturedCategoriesNewsJson>(FEATURE_POSTS_FILENAME)
 
   const fetchSalesPosts = () => fetchSales({ take: 4, pageName: 'category' })
   const [featurePostResult, salesResult] = await Promise.allSettled([
@@ -183,10 +222,13 @@ export default async function CategoryPage({
   featurePost = handleResponse(
     featurePostResult,
     (response: Awaited<ReturnType<typeof fetchFeaturePosts>> | undefined) => {
-      if (!response?.allPosts) return null
-      const post = response.allPosts.find((post: FeaturePost) => {
+      const normalized = normalizeFeaturePostsResponse(response)
+      if (!normalized?.allPosts) return null
+      const post = normalized.allPosts.find((post: FeaturePost) => {
         return post.categories.some(
-          (category) => category.id === categoryData.id
+          (category) =>
+            category.id === categoryData.id ||
+            category.slug === categoryData.slug
         )
       })
       return post ? formatArticleCard(post) : null
@@ -316,7 +358,7 @@ export default async function CategoryPage({
       {featurePost && (
         <div className={`${styles.listWrapper} list-latest-wrapper`}>
           <UiFeaturePost post={featurePost} />
-          <PostsListManager
+          <CategoryPostsListManager
             categorySlug={categoryData.slug}
             pageSize={PAGE_SIZE}
             postsCount={postsCount}

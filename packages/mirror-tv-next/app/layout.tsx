@@ -7,13 +7,12 @@ import Footer from '~/components/layout/footer'
 import MainHeader from '~/components/layout/header/main-header'
 import { ReferrerProvider } from '~/context/referrer-context'
 import { META_DESCRIPTION, SITE_TITLE } from '~/constants/constant'
+import { HEADER_FILENAME } from '~/constants/json-filenames'
 import {
   GLOBAL_CACHE_SETTING,
   GTM_ID,
   SITE_URL,
-  HEADER_JSON_FILE_NAME,
 } from '~/constants/environment-variables'
-import { fetchStaticJson } from '~/utils/fetch-static-json'
 import '~/styles/global.css'
 import CompassFit from '~/components/ads/compass-fit'
 import TagManagerWrapper from '~/app/tag-manager'
@@ -21,8 +20,14 @@ import { fetchPopularPosts } from '~/app/_actions/popular-data'
 import { type RawPopularPost } from '~/types/popular-post'
 import { getLatestPostsAside } from '~/app/_actions/share/get-latest-posts'
 import { type PostCardItem } from '~/graphql/query/posts'
-import type { HeaderData } from '~/types/header'
+import type {
+  HeaderData,
+  RawHeaderJson,
+  RawShow,
+  RawSponsor,
+} from '~/types/header'
 import { handleResponse } from '~/utils'
+import { fetchStaticJson } from '~/utils/fetch-static-json'
 import styles from '../styles/pages/layout.module.scss'
 
 export const revalidate = GLOBAL_CACHE_SETTING
@@ -86,8 +91,49 @@ export default async function RootLayout({
     'Error occurs while fetching latest posts'
   )
   try {
-    const data = await fetchStaticJson<HeaderData>(HEADER_JSON_FILE_NAME)
-    initialHeaderData = data
+    const data = await fetchStaticJson<RawHeaderJson>(HEADER_FILENAME)
+
+    // Transform new JSON format { categories, shows, sponsors } to HeaderData format { allCategories, allShows, allSponsors }
+    initialHeaderData = {
+      allCategories: data.categories || [],
+      allShows: (data.shows || []).map((show: RawShow) => ({
+        id: show.id,
+        slug: show.slug,
+        name: show.name,
+        sortOrder: show.sortOrder,
+        listShow: show.listShow,
+        bannerImg: show.bannerImg
+          ? {
+              urlMobileSized:
+                show.bannerImg.w800 || show.bannerImg.original || '',
+              urlTabletSized:
+                show.bannerImg.w800 || show.bannerImg.original || '',
+              urlOriginal: show.bannerImg.original || '',
+            }
+          : null,
+      })),
+      allSponsors: (data.sponsors || []).map((sponsor: RawSponsor) => ({
+        id: sponsor.id,
+        title: sponsor.title,
+        url: sponsor.url,
+        logo: sponsor.logo
+          ? {
+              urlMobileSized: sponsor.logo.w480 || '',
+            }
+          : null,
+        mobile: sponsor.mobile
+          ? {
+              urlMobileSized: sponsor.mobile.w480 || '',
+            }
+          : null,
+        tablet: sponsor.tablet
+          ? {
+              urlMobileSized: sponsor.tablet.w480 || '',
+            }
+          : null,
+        topic: sponsor.topic,
+      })),
+    }
   } catch (error) {
     console.error('Failed to fetch header data:', error)
   }

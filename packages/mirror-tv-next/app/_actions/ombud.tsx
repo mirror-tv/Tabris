@@ -26,7 +26,10 @@ async function fetchOmbudsPosts({
 }: FetchOmbudsPostsProps): Promise<OmbudsResponse> {
   const client = getClient()
   try {
-    const { data } = await client.query<OmbudsResponse>({
+    const { data } = await client.query<{
+      allPosts: Post[]
+      postsCount?: number
+    }>({
       query: fetchOmbudsPostsByCategorySlug,
       variables: {
         first: pageSize,
@@ -35,7 +38,10 @@ async function fetchOmbudsPosts({
         withCount: isWithCount,
       },
     })
-    return data
+    return {
+      allPosts: data?.allPosts ?? [],
+      _allPostsMeta: { count: data?.postsCount ?? 0 },
+    }
   } catch (err) {
     const annotatingError = errors.helpers.wrap(
       err,

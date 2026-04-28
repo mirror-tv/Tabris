@@ -6,6 +6,8 @@ import {
   type ImageDataFormatOld,
 } from './type'
 import ResponsiveImage from '~/components/shared/responsive-image'
+import type { K6FlatHeroImage } from '~/types/common'
+import { formateHeroImage } from '~/utils'
 
 // 聯合類型
 type ImageData = ImageDataFormatNew | ImageDataFormatOld
@@ -26,18 +28,28 @@ const isFormatOld = (data: ImageData): data is ImageDataFormatOld => {
 
 const normalizeImageData = (imageData: ImageData) => {
   if (isFormatNew(imageData)) {
+    const isGif =
+      imageData.file?.url?.toLowerCase().endsWith('.gif') ??
+      imageData.name?.toLowerCase().endsWith('.gif') ??
+      false
+    const { images, imagesWebP } = formateHeroImage({
+      resized: imageData.resized,
+      resizedWebp: isGif ? undefined : imageData.resizedWebp,
+    })
+
     return {
-      images: imageData.resizedWebp ?? imageData.resized,
-      alt: imageData.title || imageData.name,
-      description: imageData.description,
-      width: imageData.imageFile?.width || 16,
-      height: imageData.imageFile?.height || 9,
+      images,
+      imagesWebP,
+      alt: imageData.name || (imageData.desc ?? ''),
+      description: imageData.desc ?? '',
+      width: imageData.file?.width ?? 16,
+      height: imageData.file?.height ?? 9,
       isFormat1: true,
     }
   }
 
   if (isFormatOld(imageData)) {
-    const images = {
+    const images: K6FlatHeroImage = {
       w480: imageData.tiny.url,
       w800: imageData.mobile.url,
       w1200: imageData.tablet.url,
@@ -47,7 +59,8 @@ const normalizeImageData = (imageData: ImageData) => {
     }
 
     return {
-      images,
+      images: formateHeroImage(images).images,
+      imagesWebP: undefined,
       alt: imageData.title || imageData.name,
       description: imageData.title,
       width: imageData.original.width || 16,
@@ -58,6 +71,7 @@ const normalizeImageData = (imageData: ImageData) => {
 
   return {
     images: { original: '' },
+    imagesWebP: undefined,
     alt: 'Image',
     description: '',
     width: 16,
@@ -81,6 +95,7 @@ const ImageBlock = ({ data }: { data: ApiImageBlock }) => {
       <div className={styles.imageCaption}>
         <ResponsiveImage
           images={normalizedData.images}
+          imagesWebP={normalizedData.imagesWebP}
           alt={normalizedData.alt}
           rwd={{ mobile: '800px', tablet: '1200px', desktop: '1200px' }}
           priority={false}

@@ -7,10 +7,10 @@ type PromotionVideo = {
 
 const getPromotionVideos = gql`
   query getPromotionVideos($first: Int = 5) {
-    allPromotionVideos(
-      where: { state: published }
-      first: $first
-      sortBy: [sortOrder_ASC, updatedAt_DESC]
+    allPromotionVideos: promotionVideos(
+      where: { state: { equals: "published" } }
+      take: $first
+      orderBy: [{ sortOrder: asc }, { updatedAt: desc }]
     ) {
       id
       ytUrl

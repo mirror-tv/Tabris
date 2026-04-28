@@ -5,8 +5,8 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 
-import { createCustomToken, getFirebaseUser } from '@/utils/firebase-admin'
 import { createErrorLogger } from '@/utils/error-handler'
+import { createCustomToken, getFirebaseUser } from '@/utils/firebase-admin'
 import { getMemberByEmail } from '@/utils/member'
 import { verifyOTP } from '@/utils/otp-storage'
 
@@ -86,10 +86,15 @@ export async function POST(request: NextRequest) {
         },
         user: userPayload,
       })
-    } catch (firebaseError: any) {
+    } catch (firebaseError: unknown) {
+      const firebaseErrorMessage =
+        typeof (firebaseError as { message?: unknown })?.message === 'string'
+          ? ((firebaseError as { message: string }).message ?? '')
+          : ''
+
       // Firebase 相關錯誤處理
       if (
-        firebaseError?.message?.includes('Firebase Admin SDK 環境變數未設定')
+        firebaseErrorMessage.includes('Firebase Admin SDK 環境變數未設定')
       ) {
         createErrorLogger('Firebase 環境變數未設定')(firebaseError)
         return NextResponse.json(
@@ -103,7 +108,7 @@ export async function POST(request: NextRequest) {
       }
 
       // 如果 Firebase 帳號不存在，回傳明確的錯誤訊息
-      if (firebaseError?.message?.includes('Firebase 帳號不存在')) {
+      if (firebaseErrorMessage.includes('Firebase 帳號不存在')) {
         createErrorLogger('Firebase 帳號不存在')(firebaseError)
         return NextResponse.json(
           {

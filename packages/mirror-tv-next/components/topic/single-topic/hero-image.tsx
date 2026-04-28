@@ -10,12 +10,13 @@ type HeroImageProps = {
 }
 
 export default function HeroImage({ heroImage, title }: HeroImageProps) {
-  const formattedHeroImage = formateHeroImage(heroImage)
+  const { images, imagesWebP } = formateHeroImage(heroImage)
 
   return (
     <section className={styles.sectionWrapper}>
       <Image
-        images={formattedHeroImage}
+        images={images}
+        imagesWebP={imagesWebP}
         alt={title}
         defaultImage="/images/image-default.jpg"
         rwd={{

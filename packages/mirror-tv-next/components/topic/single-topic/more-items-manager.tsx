@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import UiLoadMoreButton from '~/components/shared/ui-load-more-button'
 import { fetchTopicItems } from '~/app/_actions/signal-topic'
-import type { Post } from '~/graphql/query/topic'
+import type { Post, PostOrderByInput } from '~/graphql/query/topic'
 import styles from './_styles/more-items-manager.module.scss'
 import UiPostCard from './ui-post-card'
 
@@ -10,7 +10,7 @@ type Props = {
   slug: string
   itemsCount: number
   initialPostItems: Post[]
-  sortBy: string
+  sortBy: PostOrderByInput
 }
 
 export default function MoreItemsManager({
