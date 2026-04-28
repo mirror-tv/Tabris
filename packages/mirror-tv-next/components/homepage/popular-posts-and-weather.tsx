@@ -38,34 +38,21 @@ export default function PopularPostsList({ title }: PopularPostsListType) {
               >
                 <p className={styles.index}>{index + 1}.</p>
                 <div className={styles.imageWrapper}>
-                  {post.slug.includes('sot') ? (
-                    <Image
-                      loadingImage="/images/loading.svg"
-                      defaultImage="/images/image-default.jpg"
-                      images={images}
-                      imagesWebP={imagesWebP}
-                      alt={post.name}
-                      rwd={{
-                        tablet: '100px',
-                        desktop: '1000px',
-                      }}
-                      priority={false}
-                      objectFit="contain"
-                    />
-                  ) : (
-                    <Image
-                      loadingImage="/images/loading.svg"
-                      defaultImage="/images/image-default.jpg"
-                      images={images}
-                      imagesWebP={imagesWebP}
-                      alt={post.name}
-                      rwd={{
-                        tablet: '100px',
-                        desktop: '1000px',
-                      }}
-                      priority={false}
-                    />
-                  )}
+                  <Image
+                    loadingImage="/images/loading.svg"
+                    defaultImage="/images/image-default.jpg"
+                    images={images}
+                    imagesWebP={imagesWebP}
+                    alt={post.name}
+                    rwd={{
+                      tablet: '100px',
+                      desktop: '1000px',
+                    }}
+                    priority={false}
+                    objectFit={
+                      post.slug.includes('contain') ? 'contain' : 'cover'
+                    }
+                  />
                 </div>
                 <p className={styles.name}>{post.name}</p>
               </Link>
