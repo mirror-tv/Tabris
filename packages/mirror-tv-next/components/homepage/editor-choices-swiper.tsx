@@ -90,18 +90,34 @@ export default function EditorChoicesSwiper({
                     rel="noreferrer noopener"
                   >
                     {choice.exclusive && <UiExclusiveMark />}
-                    <Image
-                      loadingImage="/images/loading.svg"
-                      defaultImage="/images/image-default.jpg"
-                      images={images}
-                      imagesWebP={imagesWebP}
-                      alt={choice.name}
-                      rwd={{
-                        tablet: '100px',
-                        desktop: '1000px',
-                      }}
-                      priority={false}
-                    />
+                    {choice.slug.includes('sot') ? (
+                      <Image
+                        loadingImage="/images/loading.svg"
+                        defaultImage="/images/image-default.jpg"
+                        images={images}
+                        imagesWebP={imagesWebP}
+                        alt={choice.name}
+                        rwd={{
+                          tablet: '100px',
+                          desktop: '1000px',
+                        }}
+                        priority={false}
+                        objectFit="contain"
+                      />
+                    ) : (
+                      <Image
+                        loadingImage="/images/loading.svg"
+                        defaultImage="/images/image-default.jpg"
+                        images={images}
+                        imagesWebP={imagesWebP}
+                        alt={choice.name}
+                        rwd={{
+                          tablet: '100px',
+                          desktop: '1000px',
+                        }}
+                        priority={false}
+                      />
+                    )}
                     <a
                       className={`${styles.nameWrapper} GTM-editor-choices-link`}
                       href={
