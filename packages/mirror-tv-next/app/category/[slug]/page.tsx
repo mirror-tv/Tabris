@@ -31,7 +31,7 @@ import { fetchStaticJson } from '~/utils/fetch-static-json'
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 import { SALES_LABEL_NAME } from '~/constants/constant'
 import { fetchCategoryData } from '~/app/_actions/category/category-data'
-import PageLogger from '~/components/page-logger'
+import PageLogger from '~/components/tracking/page-logger'
 import { notFound } from 'next/navigation'
 
 export const revalidate = GLOBAL_CACHE_SETTING

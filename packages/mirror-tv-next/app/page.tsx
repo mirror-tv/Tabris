@@ -1,4 +1,4 @@
-import PageLogger from '~/components/page-logger'
+import PageLogger from '~/components/tracking/page-logger'
 import dynamic from 'next/dynamic'
 import MainFlashNews from '~/components/flash-news/main-flash-news'
 import styles from '~/styles/pages/page.module.scss'

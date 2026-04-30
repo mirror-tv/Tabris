@@ -49,9 +49,9 @@ export function parseUserAgentInfo() {
   const userAgent = headersList.get('user-agent') || ''
   const ipAddress =
     headersList.get('x-forwarded-for') || headersList.get('remote-addr') || ''
-  const pathname = headersList.get('referer') || ''
+  const refererUrl = headersList.get('referer') || ''
 
   const parsedData = parseUserAgent(userAgent)
 
-  return { ipAddress, pathname, ...parsedData }
+  return { ipAddress, refererUrl, ...parsedData }
 }
