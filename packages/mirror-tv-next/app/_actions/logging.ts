@@ -107,6 +107,6 @@ function parsePageType(url: string) {
     case 'topic':
       return parsed[2] ? 'topic' : 'topic-listing'
     default:
-      return parsed[1] || 'unknown'
+      return parsed[1]
   }
 }
