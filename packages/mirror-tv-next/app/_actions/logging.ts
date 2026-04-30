@@ -3,6 +3,7 @@
 import { Logging } from '@google-cloud/logging'
 import { GCP_LOG_NAME_PREFIX, GCP_PROJECT_ID } from '~/constants/constant'
 import { ENV } from '~/constants/environment'
+import { SITE_URL } from '~/constants/environment-variables'
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-tw'
 import timezone from 'dayjs/plugin/timezone'
@@ -13,10 +14,12 @@ dayjs.extend(utc)
 dayjs.extend(timezone)
 
 export async function logPageView({
+  currentUrl,
   referrer,
   screenSize,
   extra = {},
 }: {
+  currentUrl: string
   referrer: string
   screenSize: { width: number; height: number }
   extra?: Record<string, unknown>
@@ -43,12 +46,13 @@ export async function logPageView({
       isInAppBrowser,
       isWebview,
       ipAddress,
-      pathname,
+      refererUrl,
     } = parseUserAgentInfo()
     const { name: browserName, version: browserVersion } = browser
     const { model: deviceModel, vendor: deviceVendor } = device
     const { name: osName, version: osVersion } = os
-    const pageType = parsePageType(pathname)
+    const pageURL = currentUrl || refererUrl
+    const pageType = parsePageType(pageURL)
     const metadata = {
       resource: { type: 'global' },
       severity: 'INFO',
@@ -68,7 +72,7 @@ export async function logPageView({
     }
 
     const jsonPayload = {
-      pageURL: pathname,
+      pageURL,
       pageType,
       screenSize,
       isInAppBrowser,
@@ -85,7 +89,16 @@ export async function logPageView({
 }
 
 function parsePageType(url: string) {
-  const { pathname } = new URL(url)
+  if (!url) return 'unknown'
+
+  let pathname = ''
+
+  try {
+    pathname = new URL(url, SITE_URL).pathname
+  } catch {
+    return 'unknown'
+  }
+
   const parsed = pathname.split('/')
 
   switch (parsed[1]) {
@@ -94,6 +107,6 @@ function parsePageType(url: string) {
     case 'topic':
       return parsed[2] ? 'topic' : 'topic-listing'
     default:
-      return parsed[1] ?? ''
+      return parsed[1] || 'unknown'
   }
 }
