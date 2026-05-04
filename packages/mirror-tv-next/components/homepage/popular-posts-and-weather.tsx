@@ -49,9 +49,7 @@ export default function PopularPostsList({ title }: PopularPostsListType) {
                       desktop: '1000px',
                     }}
                     priority={false}
-                    objectFit={
-                      post.slug.includes('contain') ? 'contain' : 'cover'
-                    }
+                    objectFit={post.slug.includes('sot') ? 'contain' : 'cover'}
                   />
                 </div>
                 <p className={styles.name}>{post.name}</p>
