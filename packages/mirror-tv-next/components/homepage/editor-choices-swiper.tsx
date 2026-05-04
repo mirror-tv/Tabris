@@ -101,6 +101,9 @@ export default function EditorChoicesSwiper({
                         desktop: '1000px',
                       }}
                       priority={false}
+                      objectFit={
+                        choice.slug.includes('sot') ? 'contain' : 'cover'
+                      }
                     />
                     <a
                       className={`${styles.nameWrapper} GTM-editor-choices-link`}

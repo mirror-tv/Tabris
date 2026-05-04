@@ -102,6 +102,7 @@ export default function PostListWithFirstPage({
               postStyle={postItem.style}
               label={postItem.label}
               exclusive={postItem.exclusive ?? false}
+              slug={postItem.slug ?? ''}
             />
           </li>
         ))}
