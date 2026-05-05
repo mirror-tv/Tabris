@@ -15,6 +15,7 @@ type UiPostCardProps = {
     default?: string
   }
   imgClassName?: string
+  slug?: string
 }
 
 export default function ResponsiveImage({
@@ -30,6 +31,7 @@ export default function ResponsiveImage({
     default: '100vw',
   },
   imgClassName = '',
+  slug,
 }: UiPostCardProps) {
   return (
     <Image
@@ -41,6 +43,7 @@ export default function ResponsiveImage({
       rwd={rwd}
       priority={priority}
       className={imgClassName}
+      objectFit={slug?.includes('sot') ? 'contain' : 'cover'}
     />
   )
 }

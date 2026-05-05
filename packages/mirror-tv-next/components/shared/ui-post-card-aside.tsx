@@ -12,6 +12,7 @@ type UiPostCardAsideProps = {
   images: PostImage
   imagesWebP?: PostImage
   exclusive: boolean
+  slug: string
 }
 
 export default function UiPostCardAside({
@@ -23,6 +24,7 @@ export default function UiPostCardAside({
   postStyle = 'post',
   page = 'category',
   exclusive = false,
+  slug = '',
 }: UiPostCardAsideProps) {
   const isVideoNews = postStyle === 'videoNews'
   const isCategoryPage = (type: string) => type === 'category'
@@ -46,6 +48,7 @@ export default function UiPostCardAside({
           alt={title}
           rwd={{ mobile: '500px', tablet: '500px', desktop: '500px' }}
           priority={false}
+          slug={slug}
         />
         {isVideoNews && <span className={styles.videoIcon}></span>}
         {exclusive && <UiExclusiveMark />}

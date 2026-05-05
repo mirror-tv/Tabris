@@ -51,6 +51,7 @@ export default function UiListPostsAside({
                   postStyle={item.style ?? ''}
                   date={item.publishTime}
                   exclusive={item.exclusive ?? false}
+                  slug={item.slug ?? ''}
                 />
               </li>
             </div>
