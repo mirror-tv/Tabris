@@ -1,8 +1,20 @@
 import fs from 'fs/promises'
+import zlib from 'zlib'
+import { promisify } from 'util'
 import { STATIC_BASE_URL } from '~/constants/endpoint-config'
 import { GLOBAL_CACHE_SETTING } from '~/constants/environment-variables'
 import { isServer } from '~/utils/common'
 import { appendTimestampForCache } from '~/utils/url'
+
+const gunzip = promisify(zlib.gunzip)
+
+// GCS objects uploaded with `Content-Encoding: gzip` are stored as compressed
+// bytes; GCS Fuse exposes raw bytes (no transparent decode), so we sniff the
+// gzip magic header (RFC 1952) and gunzip when present. The bucket contains a
+// mix of gzipped and plain JSON files, so unconditional decompression would
+// break the plain ones.
+const GZIP_MAGIC_0 = 0x1f
+const GZIP_MAGIC_1 = 0x8b
 
 type FetchStaticJsonOptions = {
   pathPrefix?: '/json' | '/files/json' | '/files/documents'
@@ -26,15 +38,24 @@ export async function fetchStaticJson<T = unknown>(
     // Structure: [mount_dir]/[prefix]/[filename]
     const filePath = `${GCS_FUSE_MOUNT_DIR}${pathPrefix}/${filename}`
 
+    let decompressed = false
     try {
-      const content = await fs.readFile(filePath, 'utf-8')
+      const buffer = await fs.readFile(filePath)
+      const isGzip =
+        buffer.length >= 2 &&
+        buffer[0] === GZIP_MAGIC_0 &&
+        buffer[1] === GZIP_MAGIC_1
+      let content: string
+      if (isGzip) {
+        const inflated = await gunzip(buffer)
+        decompressed = true
+        content = inflated.toString('utf-8')
+      } else {
+        content = buffer.toString('utf-8')
+      }
       return JSON.parse(content) as T
     } catch (err) {
-      const isError = err instanceof Error;
-  
-      // 透過轉型取得 Node.js 專有的屬性
-      // 我們先將其視為 any 或特定的 NodeJS.ErrnoException
-      const nodeErr = err as NodeJS.ErrnoException;
+      const nodeErr = err as NodeJS.ErrnoException
       // Fallback to fetch if file not found or unreadable
       console.warn(
         JSON.stringify({
@@ -46,15 +67,16 @@ export async function fetchStaticJson<T = unknown>(
           filePath,
           mountDir: GCS_FUSE_MOUNT_DIR,
           cacheBust,
+          decompressed,
           error:
             err instanceof Error
               ? {
-            name: nodeErr.name, 
-            message: nodeErr.message, 
-            code: nodeErr.code,       // 現在認得到了
-            errno: nodeErr.errno,     // 系統錯誤編號
-            syscall: nodeErr.syscall, // 發生錯誤的系統呼叫
-              }
+                  name: nodeErr.name,
+                  message: nodeErr.message,
+                  code: nodeErr.code,
+                  errno: nodeErr.errno,
+                  syscall: nodeErr.syscall,
+                }
               : String(err),
         })
       )
