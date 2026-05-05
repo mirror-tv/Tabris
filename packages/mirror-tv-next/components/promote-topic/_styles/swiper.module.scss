@@ -21,7 +21,7 @@ $CARD_WIDTH: 124px;
 
   :global(.swiper-pagination) {
     position: absolute;
-    bottom: 10px !important;
+    bottom: 6px !important;
     z-index: 2;
     display: flex;
     align-items: center;
@@ -36,7 +36,7 @@ $CARD_WIDTH: 124px;
     width: 6px;
     height: 6px;
     cursor: pointer;
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: #003366;
     border-radius: 50%;
     opacity: 1;
   }
