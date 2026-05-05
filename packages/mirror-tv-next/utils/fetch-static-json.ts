@@ -38,6 +38,7 @@ export async function fetchStaticJson<T = unknown>(
     // Structure: [mount_dir]/[prefix]/[filename]
     const filePath = `${GCS_FUSE_MOUNT_DIR}${pathPrefix}/${filename}`
 
+    let phase: 'read' | 'gunzip' | 'parse' = 'read'
     let decompressed = false
     try {
       const buffer = await fs.readFile(filePath)
@@ -47,12 +48,14 @@ export async function fetchStaticJson<T = unknown>(
         buffer[1] === GZIP_MAGIC_1
       let content: string
       if (isGzip) {
+        phase = 'gunzip'
         const inflated = await gunzip(buffer)
         decompressed = true
         content = inflated.toString('utf-8')
       } else {
         content = buffer.toString('utf-8')
       }
+      phase = 'parse'
       return JSON.parse(content) as T
     } catch (err) {
       const nodeErr = err as NodeJS.ErrnoException
@@ -67,6 +70,7 @@ export async function fetchStaticJson<T = unknown>(
           filePath,
           mountDir: GCS_FUSE_MOUNT_DIR,
           cacheBust,
+          phase,
           decompressed,
           error:
             err instanceof Error
