@@ -9,6 +9,7 @@ type VideoPostCardProps = {
   title: string
   href: string
   exclusive: boolean
+  slug?: string
 }
 
 export default function VideoPostCard({
@@ -17,6 +18,7 @@ export default function VideoPostCard({
   title,
   href,
   exclusive,
+  slug = '',
 }: VideoPostCardProps) {
   return (
     <a
@@ -32,6 +34,7 @@ export default function VideoPostCard({
           alt={title}
           rwd={{ mobile: '500px', tablet: '500px', desktop: '500px' }}
           priority={false}
+          slug={slug}
         />
         {exclusive && <UiExclusiveMark />}
         <span className={styles.videoIcon}></span>

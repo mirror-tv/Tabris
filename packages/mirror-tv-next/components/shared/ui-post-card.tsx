@@ -18,6 +18,7 @@ export type UiPostCardProps = {
   // Differentiate two usages in / and /category/:name pages
   mobileLayoutDirection: 'row' | 'column'
   postTitleHighlightText?: string
+  slug?: string
 }
 
 export default function UiPostCard({
@@ -32,6 +33,7 @@ export default function UiPostCard({
   label = '',
   exclusive = false,
   priority = false,
+  slug = '',
 }: UiPostCardProps) {
   const isVideoNews = postStyle === 'videoNews'
 
@@ -72,6 +74,7 @@ export default function UiPostCard({
             alt={title}
             rwd={{ mobile: '500px', tablet: '500px', desktop: '500px' }}
             priority={priority}
+            slug={slug}
           />
           {isVideoNews && <span className={styles.videoIcon}></span>}
           {exclusive && label !== SALES_LABEL_NAME && <UiExclusiveMark />}

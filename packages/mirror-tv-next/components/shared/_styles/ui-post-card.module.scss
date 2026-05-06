@@ -25,6 +25,7 @@
     width: 100%;
     padding-top: 66.66%;
     position: relative;
+    background-color: black;
     @include media-breakpoint-up(xl) {
       min-width: 180px;
       min-height: 120px;

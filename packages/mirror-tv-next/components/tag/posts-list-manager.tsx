@@ -139,6 +139,7 @@ export default function TagPostsListManager({
                     mobileLayoutDirection="column"
                     exclusive={postItem.exclusive ?? false}
                     priority={index === 0}
+                    slug={postItem.slug}
                   />
                 </li>
               ))}
