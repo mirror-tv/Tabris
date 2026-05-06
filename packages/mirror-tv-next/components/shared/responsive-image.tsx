@@ -1,6 +1,6 @@
 'use client'
 import Image from '@readr-media/react-image'
-import type { PostImage } from '~/utils'
+import { getSotThumbnailObjectFit, type PostImage } from '~/utils'
 
 type UiPostCardProps = {
   images: PostImage
@@ -43,7 +43,7 @@ export default function ResponsiveImage({
       rwd={rwd}
       priority={priority}
       className={imgClassName}
-      objectFit={slug?.includes('sot') ? 'contain' : 'cover'}
+      objectFit={getSotThumbnailObjectFit(slug)}
     />
   )
 }

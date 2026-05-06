@@ -18,6 +18,7 @@ import {
   addMaxWidthToFigureWithStyle,
   removeDuplicateFirstParagraph,
 } from './content-handler'
+import { isSotPost, getSotThumbnailObjectFit } from './post-style'
 
 export {
   extractYoutubeId,
@@ -31,6 +32,8 @@ export {
   doesHaveBrief,
   addMaxWidthToFigureWithStyle,
   removeDuplicateFirstParagraph,
+  isSotPost,
+  getSotThumbnailObjectFit,
 }
 export type {
   FormattedPostCard,
