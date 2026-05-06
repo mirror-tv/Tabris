@@ -23,6 +23,7 @@
   width: 100%;
   padding-top: 44.435556%;
   position: relative;
+  background-color: black;
   @include media-breakpoint-up(xl) {
     min-width: calc((2 / 3) * 100%);
     overflow: hidden;
