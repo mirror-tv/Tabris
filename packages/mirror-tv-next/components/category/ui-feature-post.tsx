@@ -9,7 +9,16 @@ type UiFeaturePostProps = {
 }
 
 export default function UiFeaturePost({ post }: UiFeaturePostProps) {
-  const { href, style, name, images, imagesWebP, publishTime, exclusive } = post
+  const {
+    href,
+    style,
+    name,
+    images,
+    imagesWebP,
+    publishTime,
+    exclusive,
+    slug,
+  } = post
 
   return (
     <a
@@ -29,6 +38,7 @@ export default function UiFeaturePost({ post }: UiFeaturePostProps) {
           rwd={{ mobile: '500px', tablet: '500px', desktop: '500px' }}
           priority={false}
           imgClassName="article-img"
+          slug={slug}
         />
         {exclusive && <UiExclusiveMark />}
         {style === 'videoNews' && <span className={styles.videoIcon}></span>}

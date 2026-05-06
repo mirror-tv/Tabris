@@ -24,6 +24,7 @@
     padding-top: calc(9 / 16 * 100%);
     position: relative;
     overflow: hidden;
+    background-color: black;
     @include media-breakpoint-up(md) {
       padding-top: calc(121.5px / 216px * 100%);
     }

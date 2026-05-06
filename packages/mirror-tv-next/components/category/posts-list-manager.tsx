@@ -158,6 +158,7 @@ export default function CategoryPostsListManager({
                       label={postItem.label ?? ''}
                       mobileLayoutDirection="row"
                       exclusive={postItem.exclusive ?? false}
+                      slug={postItem.slug}
                     />
                   </li>
                 )
