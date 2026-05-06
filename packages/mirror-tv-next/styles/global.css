@@ -59,6 +59,15 @@ p {
   display: none !important;
 }
 
+/* SOT thumbnails: site-wide safety net for any thumbnail inside an anchor
+ * that links to a SOT story/external post. Covers third-party widgets
+ * (Compass-Fit) and any component that does not pass the slug prop down. */
+a[href*='/story/'][href*='sot'] img,
+a[href*='/external/'][href*='sot'] img {
+  object-fit: contain !important;
+  background-color: black;
+}
+
 /*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
 
 /* Document
