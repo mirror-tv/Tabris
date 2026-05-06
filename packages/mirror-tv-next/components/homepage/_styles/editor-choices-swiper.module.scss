@@ -37,14 +37,14 @@
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  height: 43px;
-  padding: 8px;
+  height: 60px;
+  padding: 8px 20px;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000 30%);
   @include media-breakpoint-up(md) {
     height: fit-content;
   }
   @include media-breakpoint-up(md) {
-    padding: 22px 40px;
+    padding: 20px 40px;
   }
 }
 
@@ -56,7 +56,7 @@
   color: #fff;
   text-align: left;
   word-wrap: break-word;
-  -webkit-line-clamp: 1;
+  -webkit-line-clamp: 2;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   overflow: hidden;
