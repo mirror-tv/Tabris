@@ -138,6 +138,7 @@ export default function VideoPostsList({
                   imageUrlsWebP={post.imagesWebP}
                   href={post.href}
                   exclusive={post.exclusive ?? false}
+                  slug={post.slug}
                 />
               </SwiperSlide>
             )
