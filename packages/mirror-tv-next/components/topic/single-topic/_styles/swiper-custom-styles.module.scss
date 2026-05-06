@@ -2,11 +2,6 @@
 @import '/styles/theme/variable';
 
 .heroSwiper {
-  --swiper-pagination-bullet-width: 12px;
-  --swiper-pagination-bullet-height: 12px;
-  --swiper-pagination-bullet-inactive-color: #{$color-yellow};
-  --swiper-pagination-color: #{$color-grey};
-
   :global(.swiper-button-prev:after),
   :global(.swiper-button-next:after) {
     display: none;
@@ -41,5 +36,9 @@
   :global(.swiper-button-next:hover:before),
   :global(.swiper-button-prev:hover:before) {
     border-color: #f4f5f6;
+  }
+
+  :global(.swiper-pagination-bullet) {
+    background: $color-yellow !important;
   }
 }
