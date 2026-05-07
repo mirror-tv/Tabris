@@ -1,0 +1,44 @@
+@import '/styles/theme/breakpoints';
+@import '/styles/theme/variable';
+
+.heroSwiper {
+  :global(.swiper-button-prev:after),
+  :global(.swiper-button-next:after) {
+    display: none;
+  }
+
+  :global(.swiper-button-prev:before) {
+    content: '';
+    border: solid #f4f5f6df;
+    border-width: 0 2px 2px 0;
+    display: none;
+    padding: 5px;
+    transform: rotate(135deg);
+
+    @include media-breakpoint-up(md) {
+      display: block;
+    }
+  }
+
+  :global(.swiper-button-next:before) {
+    content: '';
+    border: solid #f4f5f6df;
+    border-width: 0 2px 2px 0;
+    display: none;
+    padding: 5px;
+    transform: rotate(-45deg);
+
+    @include media-breakpoint-up(md) {
+      display: block;
+    }
+  }
+
+  :global(.swiper-button-next:hover:before),
+  :global(.swiper-button-prev:hover:before) {
+    border-color: #f4f5f6;
+  }
+
+  :global(.swiper-pagination-bullet) {
+    background: $color-yellow !important;
+  }
+}

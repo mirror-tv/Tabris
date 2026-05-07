@@ -3,7 +3,7 @@ import Image from '@readr-media/react-image'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import type { Multivideo } from '~/graphql/query/topic'
 import styles from './_styles/hero-multivideo.module.scss'
-import './_styles/swiper-custom-styles.scss'
+import customSwiperStyles from './_styles/swiper-custom-styles.module.scss'
 import type { HeroImage } from '~/types/common'
 import { formateHeroImage } from '~/utils'
 import HeroVideo from './hero-video'
@@ -55,7 +55,7 @@ export default function HeroMultiVideo({
             mousewheel={true}
             keyboard={true}
             modules={[Autoplay, Navigation, Pagination, Mousewheel, Keyboard]}
-            className={styles.swiper}
+            className={`${styles.swiper} ${customSwiperStyles.heroSwiper}`}
           >
             {multivideo.map((video, index) => {
               const videoUrl = video.youtubeUrl ?? video.url ?? ''
