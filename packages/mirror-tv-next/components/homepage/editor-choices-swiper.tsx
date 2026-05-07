@@ -17,7 +17,7 @@ import {
   Pagination,
 } from 'swiper/modules'
 import Image from '@readr-media/react-image'
-import { formateHeroImage } from '~/utils'
+import { formateHeroImage, getSotThumbnailObjectFit } from '~/utils'
 import { useRef } from 'react'
 import { PaginationOptions } from 'swiper/types'
 import UiExclusiveMark from '../shared/ui-exclusive-mark'
@@ -101,6 +101,7 @@ export default function EditorChoicesSwiper({
                         desktop: '1000px',
                       }}
                       priority={false}
+                      objectFit={getSotThumbnailObjectFit(choice.slug)}
                     />
                     <a
                       className={`${styles.nameWrapper} GTM-editor-choices-link`}

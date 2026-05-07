@@ -1,4 +1,4 @@
-import PageLogger from '~/components/page-logger'
+import PageLogger from '~/components/tracking/page-logger'
 import ArticleRelatedPosts from '~/components/story/article-related-posts'
 import ArticleSocialList from '~/components/story/article-social-list'
 import { Metadata } from 'next'
@@ -30,7 +30,7 @@ import {
 import type { SingleExternalPost } from '~/graphql/query/external'
 import { GLOBAL_CACHE_SETTING } from '~/constants/environment-variables'
 import dynamic from 'next/dynamic'
-import MisoPageView from '~/components/shared/miso-pageview'
+import MisoPageView from '~/components/tracking/miso-pageview'
 import GA4SourceTracking from '~/components/story/ga4-source-tracking'
 import AdTvAdminMobileBanner from '~/components/shared/ad-tv-admin-mobile-banner'
 

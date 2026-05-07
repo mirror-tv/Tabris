@@ -11,7 +11,7 @@ import styles from '~/styles/pages/topic-page.module.scss'
 import dynamic from 'next/dynamic'
 import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
-import PageLogger from '~/components/page-logger'
+import PageLogger from '~/components/tracking/page-logger'
 
 export const revalidate = GLOBAL_CACHE_SETTING
 

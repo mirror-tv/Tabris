@@ -87,6 +87,7 @@ export default function EditorChoiceVideoList({
                         desktop: '500px',
                       }}
                       priority={false}
+                      slug={videoEditor?.slug ?? ''}
                     />
                     <span className={styles.videoIcon}></span>
                   </picture>

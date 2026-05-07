@@ -3,7 +3,7 @@ import { useData } from '~/context/data-context'
 import styles from './_styles/popular-posts-and-weather.module.scss'
 import Link from 'next/link'
 import UiHeadingBordered from '../shared/ui-heading-bordered'
-import { formateHeroImage } from '~/utils'
+import { formateHeroImage, getSotThumbnailObjectFit } from '~/utils'
 import Image from '@readr-media/react-image'
 import WeatherMain from './weather-main'
 
@@ -49,6 +49,7 @@ export default function PopularPostsList({ title }: PopularPostsListType) {
                       desktop: '1000px',
                     }}
                     priority={false}
+                    objectFit={getSotThumbnailObjectFit(post.slug)}
                   />
                 </div>
                 <p className={styles.name}>{post.name}</p>

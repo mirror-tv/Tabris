@@ -14,6 +14,7 @@ export type UiPostCardProps = {
   postTitleHighlightText?: string
   label?: string
   exclusive?: boolean
+  slug?: string
 }
 
 export default function UiPostCardHomepage({
@@ -25,6 +26,7 @@ export default function UiPostCardHomepage({
   postStyle = 'article',
   label,
   exclusive = false,
+  slug = '',
 }: UiPostCardProps) {
   const isVideoNews = postStyle === 'videoNews'
 
@@ -49,6 +51,7 @@ export default function UiPostCardHomepage({
             alt={title}
             rwd={{ mobile: '500px', tablet: '500px', desktop: '500px' }}
             priority={false}
+            slug={slug}
           />
           {isVideoNews && <span className={styles.videoIcon}></span>}
         </figure>
