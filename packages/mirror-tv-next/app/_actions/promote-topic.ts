@@ -85,7 +85,9 @@ async function fetchPromoteTopics(): Promise<PromoteTopicData[]> {
   try {
     const rawData = await fetchStaticJson(PROMOTE_TOPICS_FILENAME)
     const data = promoteTopicsSchema.parse(rawData)
-    return normalizePromoteTopics(data.promoteTopics)
+    return normalizePromoteTopics(data.promoteTopics).sort(
+      (a, b) => (a.order ?? Infinity) - (b.order ?? Infinity)
+    )
   } catch (error) {
     errorLogger(error)
     return []
