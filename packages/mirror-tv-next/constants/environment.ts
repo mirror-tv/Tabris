@@ -26,8 +26,5 @@ function normalizeEnvironment(env: string): Environment {
 const RAW_ENV = process.env.NEXT_PUBLIC_ENV || 'local'
 const ENV = normalizeEnvironment(RAW_ENV)
 
-const IS_PREVIEW_MODE = process.env.NEXT_PUBLIC_IS_PREVIEW_MODE === 'true'
-const SITE_BASE_PATH = IS_PREVIEW_MODE ? '/preview-server' : ''
-
-export { ENV, IS_PREVIEW_MODE, SITE_BASE_PATH }
+export { ENV }
 export type { Environment }
