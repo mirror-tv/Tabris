@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { type CSSProperties, useState } from 'react'
 import styles from './_styles/search-bar.module.scss'
 import Image from 'next/image'
 import { withBasePath } from '~/constants/with-base-path'
@@ -28,11 +28,14 @@ const MobileSearchBar = () => {
   const searchIconClassName = isSearchBarShown
     ? `${styles.logo} ${styles.isActive}`
     : styles.logo
+  const searchIconStyle = {
+    '--search-icon-url': `url(${withBasePath('/icons/icon-search.svg')})`,
+  } as CSSProperties
 
   return (
     <div className={styles.searchBarContainer}>
       <button onClick={toggleSearchBar}>
-        <div className={searchIconClassName} />
+        <div className={searchIconClassName} style={searchIconStyle} />
       </button>
       {isSearchBarShown && (
         <section className={styles.searchBarSection}>
