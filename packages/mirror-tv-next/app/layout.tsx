@@ -5,6 +5,7 @@ import { Noto_Sans } from 'next/font/google'
 import Script from 'next/script'
 import Footer from '~/components/layout/footer'
 import MainHeader from '~/components/layout/header/main-header'
+import PromoteTopic from '~/components/promote-topic'
 import { ReferrerProvider } from '~/context/referrer-context'
 import { META_DESCRIPTION, SITE_TITLE } from '~/constants/constant'
 import { HEADER_FILENAME } from '~/constants/json-filenames'
@@ -210,6 +211,7 @@ export default async function RootLayout({
           >
             <MainHeader />
             <TagManagerWrapper />
+            <PromoteTopic />
             <div className={styles.main}>{children}</div>
             <Footer />
           </DataProvider>
