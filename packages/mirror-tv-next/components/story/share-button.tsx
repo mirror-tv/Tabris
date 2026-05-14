@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import styles from './_styles/share-button.module.scss'
+import { withBasePath } from '~/constants/with-base-path'
 
 type ShareType = 'facebook' | 'line' | 'twitter' | 'copy'
 
@@ -107,7 +108,11 @@ const ShareButton = ({ type, url, className }: ShareButtonProps) => {
           rel="noopener noreferrer"
         >
           <span>
-            <img src={config.icon} alt={config.alt} loading="lazy" />
+            <img
+              src={withBasePath(config.icon)}
+              alt={config.alt}
+              loading="lazy"
+            />
           </span>
         </a>
       </div>
@@ -123,7 +128,7 @@ const ShareButton = ({ type, url, className }: ShareButtonProps) => {
       onClick={handleCopyClick}
     >
       <span>
-        <img src={config.icon} alt={config.alt} loading="lazy" />
+        <img src={withBasePath(config.icon)} alt={config.alt} loading="lazy" />
       </span>
     </button>
   )

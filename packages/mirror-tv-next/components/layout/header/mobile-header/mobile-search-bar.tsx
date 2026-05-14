@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import styles from './_styles/search-bar.module.scss'
 import Image from 'next/image'
+import { withBasePath } from '~/constants/with-base-path'
 
 const MobileSearchBar = () => {
   const [isSearchBarShown, setIsSearchBarShown] = useState(false)
@@ -49,7 +50,7 @@ const MobileSearchBar = () => {
               <button onClick={handleResetKeyword}>
                 <Image
                   className={styles.resetIcon}
-                  src="/icons/icon-cross.svg"
+                  src={withBasePath('/icons/icon-cross.svg')}
                   alt="search icon"
                   width={16}
                   height={16}

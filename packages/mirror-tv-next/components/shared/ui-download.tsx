@@ -1,4 +1,5 @@
 import styles from './_styles/ui-download.module.scss'
+import { withBasePath } from '~/constants/with-base-path'
 
 export type DownloadItem = {
   id: string
@@ -28,7 +29,7 @@ export default function UiDownload({ downloads }: UiDownloadProps) {
           >
             <span className={styles.title}>{download.name}</span>
             <img
-              src="/icons/download.svg"
+              src={withBasePath('/icons/download.svg')}
               alt="download"
               className={styles.btn}
             />

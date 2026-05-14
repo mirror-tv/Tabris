@@ -2,6 +2,7 @@ import Image from 'next/image'
 import styles from './_styles/blockquote-block.module.scss'
 import { type ApiDataBlockBase, ApiDataBlockType } from './type'
 import { getFirstElement } from '~/utils/common'
+import { withBasePath } from '~/constants/with-base-path'
 
 export interface ApiDataBlockquote extends ApiDataBlockBase {
   type: ApiDataBlockType.Blockquote
@@ -20,7 +21,11 @@ const BlockquoteBlock = ({ data }: { data: ApiDataBlockquote }) => {
     <div className={styles.blockquoteBlock}>
       <div className={mergeClasses(styles.imageContainer, styles.start)}>
         <div className={styles.imageWrapper}>
-          <Image src="/icons/icon-quote-start.svg" alt="quote start" fill />
+          <Image
+            src={withBasePath('/icons/icon-quote-start.svg')}
+            alt="quote start"
+            fill
+          />
         </div>
       </div>
       <blockquote>
@@ -28,7 +33,11 @@ const BlockquoteBlock = ({ data }: { data: ApiDataBlockquote }) => {
       </blockquote>
       <div className={mergeClasses(styles.imageContainer, styles.end)}>
         <div className={styles.imageWrapper}>
-          <Image src="/icons/icon-quote-end.svg" alt="quote end" fill />
+          <Image
+            src={withBasePath('/icons/icon-quote-end.svg')}
+            alt="quote end"
+            fill
+          />
         </div>
       </div>
     </div>

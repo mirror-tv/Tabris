@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import type { Category } from '~/graphql/query/category'
 import type { Sponsor } from '~/graphql/query/sponsors'
+import { withBasePath } from '~/constants/with-base-path'
 import styles from './_styles/mobile-nav.module.scss'
 import SideMenu from './side-menu'
 import MobileSearchBar from './mobile-search-bar'
@@ -17,7 +18,7 @@ export default function MobileNav({ categories, sponsors }: MobileNavProps) {
       <div className={styles.logo}>
         <Link href="/">
           <Image
-            src="/icons/mnews-logo-white.svg"
+            src={withBasePath('/icons/mnews-logo-white.svg')}
             alt="mnews logo"
             width={162}
             height={30}

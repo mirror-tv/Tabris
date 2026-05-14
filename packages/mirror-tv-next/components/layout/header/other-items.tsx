@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { HEADER_BOTTOM_LINKS } from '~/constants/constant'
+import { withBasePath } from '~/constants/with-base-path'
 import styles from './_styles/other-items.module.scss'
 
 export default function OtherItems(): JSX.Element {
@@ -43,7 +44,7 @@ export default function OtherItems(): JSX.Element {
             >
               {item.iconSrc ? (
                 <Image
-                  src={item.iconSrc}
+                  src={withBasePath(item.iconSrc)}
                   alt={item.alt || ''}
                   width={20}
                   height={20}

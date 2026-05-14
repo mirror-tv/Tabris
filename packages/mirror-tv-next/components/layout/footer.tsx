@@ -4,6 +4,7 @@ import {
   CUSTOMER_SERVICE_EMAIL,
   HEADER_BOTTOM_LINKS,
 } from '~/constants/constant'
+import { withBasePath } from '~/constants/with-base-path'
 import styles from './_styles/footer.module.scss'
 
 const footerRightList = [
@@ -58,7 +59,7 @@ export default function Footer(): JSX.Element {
             <div className={styles.logo}>
               <Link href="/">
                 <Image
-                  src="/icons/mnews-logo-white.svg"
+                  src={withBasePath('/icons/mnews-logo-white.svg')}
                   alt="mnews logo"
                   priority
                   width={163}
@@ -77,7 +78,7 @@ export default function Footer(): JSX.Element {
                     rel="noopener noreferrer"
                   >
                     <Image
-                      src={link.src}
+                      src={withBasePath(link.src)}
                       alt={link.alt}
                       width={20}
                       height={20}
@@ -127,7 +128,12 @@ export default function Footer(): JSX.Element {
           {socialLinks.map((link, index) => (
             <li className={styles.icon} key={index}>
               <Link href={link.href} target="_blank" rel="noopener noreferrer">
-                <Image src={link.src} alt={link.alt} width={20} height={20} />
+                <Image
+                  src={withBasePath(link.src)}
+                  alt={link.alt}
+                  width={20}
+                  height={20}
+                />
               </Link>
             </li>
           ))}
