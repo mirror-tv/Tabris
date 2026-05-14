@@ -35,7 +35,11 @@ import { SITE_BASE_PATH } from './site-base-path.cjs'
  */
 function withBasePath(path: string): string {
   if (!path.startsWith('/') || path.startsWith('//')) return path
-  if (SITE_BASE_PATH && path.startsWith(`${SITE_BASE_PATH}/`)) return path
+  if (
+    SITE_BASE_PATH &&
+    (path === SITE_BASE_PATH || path.startsWith(`${SITE_BASE_PATH}/`))
+  )
+    return path
   return `${SITE_BASE_PATH}${path}`
 }
 
