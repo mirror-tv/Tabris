@@ -5,6 +5,7 @@ import type { Sponsor } from '~/graphql/query/sponsors'
 import { formateHeroImage } from '~/utils'
 import ResponsiveImage from '~/components/shared/responsive-image'
 import { TV_AD_ADMIN_OEN_URL } from '~/constants/constant'
+import { withBasePath } from '~/constants/with-base-path'
 
 type HeaderTopProps = {
   sponsors: Sponsor[]
@@ -17,7 +18,7 @@ export default function HeaderTop({ sponsors }: HeaderTopProps) {
         <div className={[styles.logo, 'top-wrapper__left'].join(' ')}>
           <Link href="/" className="logo">
             <Image
-              src="/icons/mnews-logo.svg"
+              src={withBasePath('/icons/mnews-logo.svg')}
               alt="mnews logo"
               priority
               width={192}
@@ -34,7 +35,7 @@ export default function HeaderTop({ sponsors }: HeaderTopProps) {
             rel="noreferrer noopener"
           >
             <Image
-              src="/images/tv-ad-admin-banner.gif"
+              src={withBasePath('/images/tv-ad-admin-banner.gif')}
               alt="Mnews TV Ad Admin Banner"
               width={1266}
               height={712}

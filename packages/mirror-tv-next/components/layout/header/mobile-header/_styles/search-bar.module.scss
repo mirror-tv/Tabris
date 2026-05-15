@@ -62,8 +62,8 @@
   width: 28px;
   height: 26px;
   background-color: #ffffff;
-  mask: url('/icons/icon-search.svg') 0 0/28px 26px;
-  -webkit-mask: url('/icons/icon-search.svg') 0 0/28px 26px;
+  mask: var(--search-icon-url) 0 0/28px 26px;
+  -webkit-mask: var(--search-icon-url) 0 0/28px 26px;
 }
 
 .searchIconWrapper {

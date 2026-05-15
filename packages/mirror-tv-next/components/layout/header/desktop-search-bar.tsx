@@ -2,6 +2,7 @@
 import styles from './_styles/header-search-bar.module.scss'
 import Image from 'next/image'
 import { FormEvent, useState } from 'react'
+import { withBasePath } from '~/constants/with-base-path'
 
 const HeaderSearchBar = () => {
   const [keyword, setKeyword] = useState('')
@@ -23,7 +24,7 @@ const HeaderSearchBar = () => {
       <button type="submit" className={`${styles.searchButton} search-icon`}>
         <Image
           className={styles.searchInputIcon}
-          src="/icons/icon-search.svg"
+          src={withBasePath('/icons/icon-search.svg')}
           alt="search icon"
           fill
         />
