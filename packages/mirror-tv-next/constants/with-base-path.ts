@@ -12,6 +12,8 @@ import { SITE_BASE_PATH } from './site-base-path.cjs'
  *   visible header logo/banner, `ResponsiveImage` fallbacks, share icons,
  *   blockquote icons, and attachment download icons. Pages outside the preview
  *   surface (category, topic, show, errors, etc.) are intentionally NOT wrapped.
+ *   SEO metadata, JSON-LD, Open Graph, and Twitter card image paths are also
+ *   out of scope for this round and are not wrapped here.
  *
  *   If preview mode is later extended to cover more pages, expand the helper's
  *   usage to those pages' callsites at that time — do not pre-wrap everything.
@@ -21,8 +23,6 @@ import { SITE_BASE_PATH } from './site-base-path.cjs'
  *
  * Do NOT use for:
  *   - Callsites only reached by non-preview pages — out of scope
- *   - SEO metadata, JSON-LD, Open Graph, or Twitter card image paths — those
- *     are not part of the visible preview image fix and may need absolute URLs
  *   - External absolute URLs (`https://...`) — basePath does not apply
  *   - Bundler-handled imports (`import Foo from '~/public/icons/foo.svg'`)
  *     — webpack/svgr resolves the final URL at build time
