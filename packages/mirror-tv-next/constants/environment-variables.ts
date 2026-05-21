@@ -2,6 +2,7 @@
  * Build-time Config
  *
  * Build-time environment settings selected by NEXT_PUBLIC_ENV.
+ * Standalone NEXT_PUBLIC_* flags (not selected by ENV) also belong here.
  * Keep static site identity, analytics, and cache defaults here.
  * Do not place runtime endpoint toggles or deploy-time endpoint overrides in this file.
  */
@@ -37,4 +38,6 @@ switch (ENV) {
     break
 }
 
-export { GLOBAL_CACHE_SETTING, GTM_ID, SITE_URL, GA4_ID }
+const IS_PREVIEW_MODE = process.env.NEXT_PUBLIC_IS_PREVIEW_MODE === 'true'
+
+export { GLOBAL_CACHE_SETTING, GTM_ID, SITE_URL, GA4_ID, IS_PREVIEW_MODE }

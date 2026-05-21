@@ -1,5 +1,6 @@
 'use client'
 import Image from '@readr-media/react-image'
+import { withBasePath } from '~/constants/with-base-path'
 import { getSotThumbnailObjectFit, type PostImage } from '~/utils'
 
 type UiPostCardProps = {
@@ -38,8 +39,8 @@ export default function ResponsiveImage({
       images={images}
       imagesWebP={imagesWebP}
       alt={alt}
-      loadingImage={priority ? undefined : '/images/loading.svg'}
-      defaultImage="/images/image-default.jpg"
+      loadingImage={priority ? undefined : withBasePath('/images/loading.svg')}
+      defaultImage={withBasePath('/images/image-default.jpg')}
       rwd={rwd}
       priority={priority}
       className={imgClassName}

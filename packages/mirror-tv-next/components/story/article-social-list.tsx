@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import styles from './_styles/article-social-list.module.scss'
 import { socialMediaConfig, socialMediaOrder } from '~/constants/social-medial'
+import { withBasePath } from '~/constants/with-base-path'
 
 const ArticleSocialList = () => {
   return (
@@ -18,7 +19,7 @@ const ArticleSocialList = () => {
           const { image, href } = socialMediaData
           const imageConfig = {
             alt: socialMedia,
-            src: image || defaultImageSrc,
+            src: withBasePath(image || defaultImageSrc),
             width: imageSize,
             height: imageSize,
           } satisfies Parameters<typeof Image>[0]
