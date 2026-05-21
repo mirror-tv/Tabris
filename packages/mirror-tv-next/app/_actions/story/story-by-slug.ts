@@ -1,6 +1,8 @@
 'use server'
 
+import { unstable_noStore as noStore } from 'next/cache'
 import { getClient } from '~/apollo-client'
+import { IS_PREVIEW_MODE } from '~/constants/environment-variables'
 import {
   fetchStoryBySlug as fetchStoryBySlugDocument,
   SinglePost,
@@ -13,6 +15,12 @@ import errors from '@twreporter/errors'
 export async function fetchStoryBySlug(
   slug: string
 ): Promise<{ allPosts: SinglePost[] }> {
+  // Preview mode should always read the latest CMS state instead of reusing
+  // static rendering or RSC cache from a previous request.
+  if (IS_PREVIEW_MODE) {
+    noStore()
+  }
+
   const client = getClient()
   try {
     const { data } = await client.query<{
