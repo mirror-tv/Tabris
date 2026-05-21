@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import { IS_PREVIEW_MODE } from '~/constants/environment'
+import { IS_PREVIEW_MODE } from '~/constants/environment-variables'
 import type { HeroImage } from '~/types/common'
 import { heroImageFragment } from '../fragments/hero-image'
 

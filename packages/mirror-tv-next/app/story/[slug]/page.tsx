@@ -26,9 +26,8 @@ import {
 } from '~/constants/constant'
 import type { SinglePost } from '~/graphql/query/story'
 import { SITE_URL } from '~/constants/environment-variables'
-import { IS_PREVIEW_MODE } from '~/constants/environment'
 
-import nextDynamic from 'next/dynamic'
+import dynamic from 'next/dynamic'
 import MisoPageView from '~/components/tracking/miso-pageview'
 import GA4SourceTracking from '~/components/story/ga4-source-tracking'
 import UiDownload from '~/components/shared/ui-download'
@@ -36,14 +35,12 @@ import Article18Warning from '~/components/shared/article-18-warning'
 import AdTvAdminMobileBanner from '~/components/shared/ad-tv-admin-mobile-banner'
 import { handleApiData } from '~/utils'
 
-const ContainerFullScreenAds = nextDynamic(
+const ContainerFullScreenAds = dynamic(
   () => import('~/components/ads/gpt/gpt-popup'),
   {
     ssr: false,
   }
 )
-
-export const dynamic = IS_PREVIEW_MODE ? 'force-dynamic' : 'auto'
 
 type StoryPageTypes = {
   params: { slug: string }
