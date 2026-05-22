@@ -96,7 +96,8 @@ function generateExternalJsonLds(
   externalData: SingleExternalPost,
   pageUrl: string
 ) {
-  const category = externalData.categories?.[0]
+  const category =
+    externalData.categoriesInInputOrder?.[0] || externalData.categories?.[0]
   const logoUrl = '/images/logo.png' // 需要確認實際的 logo 路徑
 
   // 將時間轉換為台北時區
@@ -169,7 +170,8 @@ function generateBreadcrumbList(
   externalData: SingleExternalPost,
   pageUrl: string
 ) {
-  const category = externalData.categories?.[0]
+  const category =
+    externalData.categoriesInInputOrder?.[0] || externalData.categories?.[0]
   const items = [
     {
       '@type': 'ListItem',
@@ -223,7 +225,8 @@ export async function generateMetadata({
   const pageUrl = `${META_SITE_URL}/external/${params.slug}`
   const writer = externalData.byline
   const authorName = writer || SITE_TITLE
-  const category = externalData.categories?.[0]
+  const category =
+    externalData.categoriesInInputOrder?.[0] || externalData.categories?.[0]
   const publishTime = externalData.publishTime
   const updateTime = externalData.updatedAt || externalData.publishTime
 
@@ -286,6 +289,7 @@ const ExternalPage = async (props: ExternalPageTypes) => {
     content_original,
     heroCaption,
     categories,
+    categoriesInInputOrder,
     name: title,
     publishTime,
     thumbnail,
@@ -320,6 +324,7 @@ const ExternalPage = async (props: ExternalPageTypes) => {
   const pageUrl = `${META_SITE_URL}/external/${params.slug}`
   const jsonLdData = generateExternalJsonLds(externalData, pageUrl)
   const briefText = extractBriefText(externalData)
+  const category = categoriesInInputOrder?.[0] || categories?.[0]
 
   const extra = {
     externalId: id,
@@ -353,9 +358,9 @@ const ExternalPage = async (props: ExternalPageTypes) => {
           title={title}
           publishTime={publishTimeTaipei}
           category={
-            categories?.[0]
-              ? { slug: categories[0].slug, title: categories[0].name }
-              : { slug: '', title: '' }
+            category
+              ? { title: category.name, slug: category.slug }
+              : { title: '', slug: '' }
           }
           writers={
             partner?.name ? [{ name: partner?.name || '', slug: '' }] : []

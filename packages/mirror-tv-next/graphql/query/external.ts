@@ -29,6 +29,11 @@ export interface SingleExternalPost {
     slug: string
     name: string
   }[]
+  categoriesInInputOrder?: {
+    id: string
+    name: string
+    slug: string
+  }[]
   // subtitle?: string
   publishTime: string
   byline?: string | null
@@ -62,6 +67,11 @@ const fetchExternalBySlug = gql`
         slug
       }
       categories {
+        id
+        slug
+        name
+      }
+      categoriesInInputOrder {
         id
         slug
         name
