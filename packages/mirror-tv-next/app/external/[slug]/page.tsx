@@ -92,12 +92,17 @@ function extractBriefText(externalData: SingleExternalPost): string {
   return brief
 }
 
+function getPrimaryCategory(externalData: SingleExternalPost) {
+  return (
+    externalData.categoriesInInputOrder?.[0] || externalData.categories?.[0]
+  )
+}
+
 function generateExternalJsonLds(
   externalData: SingleExternalPost,
   pageUrl: string
 ) {
-  const category =
-    externalData.categoriesInInputOrder?.[0] || externalData.categories?.[0]
+  const category = getPrimaryCategory(externalData)
   const logoUrl = '/images/logo.png' // 需要確認實際的 logo 路徑
 
   // 將時間轉換為台北時區
@@ -109,7 +114,7 @@ function generateExternalJsonLds(
   const jsonLdBreadcrumbList = {
     '@context': 'http://schema.org/',
     '@type': 'BreadcrumbList',
-    itemListElement: generateBreadcrumbList(externalData, pageUrl),
+    itemListElement: generateBreadcrumbList(externalData, pageUrl, category),
   }
   const brief = extractBriefText(externalData)
 
@@ -168,10 +173,9 @@ function generateExternalJsonLds(
 
 function generateBreadcrumbList(
   externalData: SingleExternalPost,
-  pageUrl: string
+  pageUrl: string,
+  category = getPrimaryCategory(externalData)
 ) {
-  const category =
-    externalData.categoriesInInputOrder?.[0] || externalData.categories?.[0]
   const items = [
     {
       '@type': 'ListItem',
@@ -225,8 +229,7 @@ export async function generateMetadata({
   const pageUrl = `${META_SITE_URL}/external/${params.slug}`
   const writer = externalData.byline
   const authorName = writer || SITE_TITLE
-  const category =
-    externalData.categoriesInInputOrder?.[0] || externalData.categories?.[0]
+  const category = getPrimaryCategory(externalData)
   const publishTime = externalData.publishTime
   const updateTime = externalData.updatedAt || externalData.publishTime
 
@@ -289,7 +292,6 @@ const ExternalPage = async (props: ExternalPageTypes) => {
     content_original,
     heroCaption,
     categories,
-    categoriesInInputOrder,
     name: title,
     publishTime,
     thumbnail,
@@ -324,7 +326,7 @@ const ExternalPage = async (props: ExternalPageTypes) => {
   const pageUrl = `${META_SITE_URL}/external/${params.slug}`
   const jsonLdData = generateExternalJsonLds(externalData, pageUrl)
   const briefText = extractBriefText(externalData)
-  const category = categoriesInInputOrder?.[0] || categories?.[0]
+  const category = getPrimaryCategory(externalData)
 
   const extra = {
     externalId: id,

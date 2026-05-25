@@ -31,8 +31,8 @@ export interface SingleExternalPost {
   }[]
   categoriesInInputOrder?: {
     id: string
-    name: string
     slug: string
+    name: string
   }[]
   // subtitle?: string
   publishTime: string
