@@ -83,6 +83,10 @@ function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
     .map((item: { content?: string[] }) => item.content?.join('') || '')
     .join('')
 
+  const keywordsArray =
+    storyData.tagsInInputOrder?.map((tag: { name: string }) => tag.name) ||
+    storyData.tags?.map((tag: { name: string }) => tag.name)
+
   const jsonLdBreadcrumbList = {
     '@context': 'http://schema.org/',
     '@type': 'BreadcrumbList',
@@ -116,6 +120,7 @@ function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
     url: pageUrl,
     thumbnailUrl: getStoryOgImage(storyData.heroImage),
     articleSection: categoryName,
+    keywords: keywordsArray,
   }
 
   let jsonLdPerson
@@ -311,7 +316,6 @@ const StoryPage = async (props: StoryPageTypes) => {
 
   const pageUrl = `${META_SITE_URL}/story/${params.slug}`
   const jsonLdData = generateStoryJsonLds(storyData, pageUrl)
-
   // 為了通過 BigQuery 的型別規則，故用 toString() 將陣列轉成字串，來統一以下部分屬性有值和無值時的型別，非 view log 相關用途請勿更動
   const extra = {
     storyId: id,
