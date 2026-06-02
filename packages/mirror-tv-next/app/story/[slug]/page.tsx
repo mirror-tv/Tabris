@@ -83,9 +83,8 @@ function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
     .map((item: { content?: string[] }) => item.content?.join('') || '')
     .join('')
 
-  const keywordsArray =
-    storyData.tagsInInputOrder?.map((tag: { name: string }) => tag.name) ||
-    storyData.tags?.map((tag: { name: string }) => tag.name)
+  const tagsRendered = storyData.tagsInInputOrder || storyData.tags
+  const keywords = tagsRendered?.map((tag) => tag.name).join(', ') || ''
 
   const jsonLdBreadcrumbList = {
     '@context': 'http://schema.org/',
@@ -120,7 +119,7 @@ function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
     url: pageUrl,
     thumbnailUrl: getStoryOgImage(storyData.heroImage),
     articleSection: categoryName,
-    keywords: keywordsArray,
+    keywords,
   }
 
   let jsonLdPerson
