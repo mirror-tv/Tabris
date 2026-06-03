@@ -68,7 +68,10 @@ const AdAfterStory: React.FC = () => {
               title="每日精選"
               className={styles.dailySelection}
             />
-            <div id="_popIn_recommend" className="popin_recommend" />
+            <div
+              id="_popIn_recommend"
+              className={`popin_recommend ${styles.popinRecommend}`}
+            />
           </>
         )}
       </LazyRenderWrapper>

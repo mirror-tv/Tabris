@@ -48,4 +48,11 @@
       }
     }
   }
+  .popinAd {
+    min-height: 230px;
+
+    @media (min-width: 768px) {
+      min-height: 160px;
+    }
+  }
 }
