@@ -74,7 +74,7 @@ function getStoryDableImage(heroImage?: SinglePost['heroImage'] | null) {
   )
 }
 
-function preferNonEmptyList<T>(preferred: T[] | undefined, fallback: T[]) {
+function preferNonEmptyList<T>(preferred: T[] | undefined, fallback: T[]): T[] {
   return preferred?.length ? preferred : fallback
 }
 
