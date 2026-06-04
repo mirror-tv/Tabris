@@ -1,6 +1,11 @@
 import gql from 'graphql-tag'
+import { IS_PREVIEW_MODE } from '~/constants/environment-variables'
 import type { HeroImage } from '~/types/common'
 import { heroImageFragment } from '../fragments/hero-image'
+
+const postStateFilter = IS_PREVIEW_MODE
+  ? ''
+  : ', state: { notIn: ["invisible"] }'
 
 export interface SingleRelatedPost {
   slug: string
@@ -65,7 +70,7 @@ export interface SinglePost {
 const fetchStoryBySlug = gql`
   query fetchStoryBySlug($slug: String!) {
     allPosts: posts(
-      where: { slug: { equals: $slug }, state: { notIn: ["invisible"] } }
+      where: { slug: { equals: $slug }${postStateFilter} }
     ) {
       id
       title: name

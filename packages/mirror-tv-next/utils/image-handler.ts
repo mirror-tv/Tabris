@@ -3,6 +3,7 @@ import type {
   FormattableHeroImage,
   K6NestedHeroImage,
 } from '~/types/hero-image'
+import { withBasePath } from '~/constants/with-base-path'
 
 export type PostImage = {
   original: string
@@ -47,7 +48,7 @@ function toNonEmptyString(value?: string | null) {
 
 function createDefaultPostImage(): PostImage {
   return {
-    original: '/images/image-default.jpg',
+    original: withBasePath('/images/image-default.jpg'),
   }
 }
 

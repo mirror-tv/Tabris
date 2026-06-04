@@ -1,5 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path')
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { SITE_BASE_PATH } = require('./constants/site-base-path.cjs')
 
 const mnewsImageHostnames = [
   'v3.mnews.tw',
@@ -22,6 +24,7 @@ const externalImageHostnames = [
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  basePath: SITE_BASE_PATH,
   reactStrictMode: false,
   swcMinify: true,
   images: {

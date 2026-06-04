@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { HEADER_BOTTOM_LINKS } from '~/constants/constant'
+import { withBasePath } from '~/constants/with-base-path'
 import type { Category } from '~/graphql/query/category'
 import type { Show } from '~/types/header'
 import type { Sponsor } from '~/graphql/query/sponsors'
@@ -87,7 +88,7 @@ export default function SideMenu({ categories, sponsors }: SideMenuProps) {
         className={toggleButtonClasses}
       >
         <Image
-          src="/icons/side-menu-icon.svg"
+          src={withBasePath('/icons/side-menu-icon.svg')}
           alt="menu icon"
           width={28}
           height={26}
@@ -117,8 +118,8 @@ export default function SideMenu({ categories, sponsors }: SideMenuProps) {
                         alt="Sponsor Logo"
                         images={images}
                         imagesWebP={imagesWebP}
-                        loadingImage="/images/loading.svg"
-                        defaultImage="/images/image-default.jpg"
+                        loadingImage={withBasePath('/images/loading.svg')}
+                        defaultImage={withBasePath('/images/image-default.jpg')}
                         rwd={{ default: '100px' }}
                         priority={true}
                       />
@@ -205,7 +206,12 @@ export default function SideMenu({ categories, sponsors }: SideMenuProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Image src={link.src} alt={link.alt} width={20} height={20} />
+                  <Image
+                    src={withBasePath(link.src)}
+                    alt={link.alt}
+                    width={20}
+                    height={20}
+                  />
                 </Link>
               </li>
             ))}
