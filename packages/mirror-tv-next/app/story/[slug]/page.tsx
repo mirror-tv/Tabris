@@ -46,6 +46,13 @@ type StoryPageTypes = {
   params: { slug: string }
 }
 
+type RenderedStoryLists = {
+  categories: SinglePost['categories']
+  writers: SinglePost['writers']
+  tags: SinglePost['tags']
+  relatedPosts: SinglePost['relatedPosts']
+}
+
 function getStoryOgImage(heroImage?: SinglePost['heroImage'] | null) {
   const formattedHeroImage = formateHeroImage(heroImage ?? undefined).images
   return (
@@ -67,11 +74,42 @@ function getStoryDableImage(heroImage?: SinglePost['heroImage'] | null) {
   )
 }
 
-function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
-  const category =
-    storyData.categoriesInInputOrder?.[0] || storyData.categories?.[0]
+function preferNonEmptyList<T>(preferred: T[] | undefined, fallback: T[]): T[] {
+  return preferred?.length ? preferred : fallback
+}
+
+// The backend relationship fields (categories/writers/tags/relatedPosts) are not
+// guaranteed to follow the editor's manual order; matching ...InInputOrder fields
+// return the ordered version, but they can be empty on older posts.
+// Normalize here once: prefer the ordered version, fall back to the raw
+// relationship field when it is empty.
+
+function resolveRenderedStoryLists(storyData: SinglePost): RenderedStoryLists {
+  return {
+    categories: preferNonEmptyList(
+      storyData.categoriesInInputOrder,
+      storyData.categories
+    ),
+    writers: preferNonEmptyList(
+      storyData.writersInInputOrder,
+      storyData.writers
+    ),
+    tags: preferNonEmptyList(storyData.tagsInInputOrder, storyData.tags),
+    relatedPosts: preferNonEmptyList(
+      storyData.relatedPostsInInputOrder,
+      storyData.relatedPosts
+    ),
+  }
+}
+
+function generateStoryJsonLds(
+  storyData: SinglePost,
+  pageUrl: string,
+  lists: RenderedStoryLists
+) {
+  const category = lists.categories[0]
   const categoryName = category?.title
-  const writerRendered = storyData.writersInInputOrder || storyData.writers
+  const writerRendered = lists.writers
   const logoUrl = '/images/logo.png' // 需要確認實際的 logo 路徑
 
   const publishTime = storyData.publishTime
@@ -83,13 +121,12 @@ function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
     .map((item: { content?: string[] }) => item.content?.join('') || '')
     .join('')
 
-  const tagsRendered = storyData.tagsInInputOrder || storyData.tags
-  const keywords = tagsRendered?.map((tag) => tag.name).join(', ') || ''
+  const keywords = lists.tags.map((tag) => tag.name).join(', ')
 
   const jsonLdBreadcrumbList = {
     '@context': 'http://schema.org/',
     '@type': 'BreadcrumbList',
-    itemListElement: generateBreadcrumbList(storyData, pageUrl),
+    itemListElement: generateBreadcrumbList(storyData, pageUrl, lists),
   }
 
   const jsonLdNewsArticle = {
@@ -146,9 +183,12 @@ function generateStoryJsonLds(storyData: SinglePost, pageUrl: string) {
   ].filter(Boolean)
 }
 
-function generateBreadcrumbList(storyData: SinglePost, pageUrl: string) {
-  const category =
-    storyData.categoriesInInputOrder?.[0] || storyData.categories?.[0]
+function generateBreadcrumbList(
+  storyData: SinglePost,
+  pageUrl: string,
+  lists: RenderedStoryLists
+) {
+  const category = lists.categories[0]
   const items = [
     {
       '@type': 'ListItem',
@@ -191,14 +231,14 @@ export async function generateMetadata({
   const brief = handleApiData(storyData.briefApiData)
     .map((item: { content?: string[] }) => item.content?.join('') || '')
     .join('')
-  const tagsRendered = storyData.tagsInInputOrder || storyData.tags
+  const lists = resolveRenderedStoryLists(storyData)
+  const tagsRendered = lists.tags
   const image = getStoryOgImage(storyData.heroImage)
   const dableImage = getStoryDableImage(storyData.heroImage)
   const pageUrl = `${META_SITE_URL}/story/${params.slug}`
-  const writerRendered = storyData.writersInInputOrder || storyData.writers
-  const authorName = writerRendered?.[0]?.name || SITE_TITLE
-  const category =
-    storyData.categoriesInInputOrder?.[0] || storyData.categories?.[0]
+  const authorNames = lists.writers.map((writer) => writer.name)
+  const authorName = authorNames[0] || SITE_TITLE
+  const category = lists.categories[0]
   const publishTime = storyData.publishTime
   const updateTime = storyData.updatedAt || storyData.publishTime
   const isExclusive = storyData.exclusive ?? false
@@ -219,7 +259,7 @@ export async function generateMetadata({
       type: 'article',
       publishedTime: publishedDateIso,
       modifiedTime: modifiedDateIso,
-      authors: writerRendered ? [writerRendered?.[0]?.name] : [],
+      authors: authorNames,
       section: category?.title,
     },
     twitter: {
@@ -228,10 +268,8 @@ export async function generateMetadata({
       description: brief,
       images: image ? [image] : [],
     },
-    keywords: tagsRendered
-      ? tagsRendered.map((tag) => tag.name).join(', ')
-      : '',
-    authors: writerRendered ? [{ name: writerRendered?.[0]?.name }] : [],
+    keywords: tagsRendered.map((tag) => tag.name).join(', '),
+    authors: authorNames.map((name) => ({ name })),
     category: category?.title,
     alternates: {
       canonical: pageUrl,
@@ -266,16 +304,10 @@ const StoryPage = async (props: StoryPageTypes) => {
   const {
     id,
     contentApiData,
-    relatedPosts,
-    relatedPostsInInputOrder,
     heroImage,
     heroCaption,
-    categories,
-    categoriesInInputOrder,
     title,
     publishTime,
-    writers,
-    writersInInputOrder,
     photographers,
     cameraOperators,
     designers,
@@ -285,8 +317,6 @@ const StoryPage = async (props: StoryPageTypes) => {
     briefApiData,
     style,
     heroVideo,
-    tags,
-    tagsInInputOrder,
     updatedAt,
     source,
     download,
@@ -297,14 +327,15 @@ const StoryPage = async (props: StoryPageTypes) => {
     'YYYY.MM.DD HH:mm',
     '臺北時間'
   )
-  const categoriesRendered = categoriesInInputOrder || categories
-  const writersRendered = writersInInputOrder || writers
-  const tagsRendered = tagsInInputOrder || tags
+  const lists = resolveRenderedStoryLists(storyData)
+  const categoriesRendered = lists.categories
+  const writersRendered = lists.writers
+  const tagsRendered = lists.tags
 
   const shouldShowAds =
     !(
-      categoriesRendered?.length === 1 &&
-      categoriesRendered?.[0]?.slug === 'ombuds'
+      categoriesRendered.length === 1 &&
+      categoriesRendered[0]?.slug === 'ombuds'
     ) && !FILTERED_SLUG.includes(params.slug)
 
   const updatedTime = updatedAt
@@ -314,7 +345,8 @@ const StoryPage = async (props: StoryPageTypes) => {
   const hasBrief = doesHaveBrief(handleApiData(briefApiData))
 
   const pageUrl = `${META_SITE_URL}/story/${params.slug}`
-  const jsonLdData = generateStoryJsonLds(storyData, pageUrl)
+  const jsonLdData = generateStoryJsonLds(storyData, pageUrl, lists)
+
   // 為了通過 BigQuery 的型別規則，故用 toString() 將陣列轉成字串，來統一以下部分屬性有值和無值時的型別，非 view log 相關用途請勿更動
   const extra = {
     storyId: id,
@@ -349,8 +381,8 @@ const StoryPage = async (props: StoryPageTypes) => {
         <ArticleInfo
           title={title}
           publishTime={publishTimeTaipei}
-          category={categoriesRendered?.[0]}
-          writers={writersRendered || []}
+          category={categoriesRendered[0]}
+          writers={writersRendered}
           photographers={photographers}
           cameraOperators={cameraOperators}
           designers={designers}
@@ -371,7 +403,7 @@ const StoryPage = async (props: StoryPageTypes) => {
         <AdTvAdminMobileBanner />
         <section className={styles.socialAndRelatedWrapper}>
           <ArticleRelatedPosts
-            relatedPosts={relatedPostsInInputOrder || relatedPosts}
+            relatedPosts={lists.relatedPosts}
             shouldShowAds={shouldShowAds}
             page="story"
           />
