@@ -31,7 +31,7 @@ const AdDableWidget: React.FC = () => {
 
           const dablePluginSrc = '//static.dable.io/dist/plugin.min.js'
           const hasDablePlugin = !!document.querySelector(
-            `script[src="${dablePluginSrc}"]`
+            'script[src*="static.dable.io/dist/plugin.min.js"]'
           )
           if (!hasDablePlugin) {
             const scriptElement = document.createElement('script')
