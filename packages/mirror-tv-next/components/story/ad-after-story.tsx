@@ -18,50 +18,47 @@ const AdAfterStory: React.FC = () => {
     <>
       <LazyRenderWrapper
         callbackFn={() => {
-          const initDable = () => {
-            const dableFunction = (window as unknown as { dable?: unknown })
-              .dable
-            const isDableReady =
-              typeof dableFunction === 'function' ||
-              (typeof dableFunction === 'object' &&
-                dableFunction &&
-                'q' in dableFunction)
-
-            if (isDableReady) {
-              try {
-                if (typeof dableFunction === 'function') {
-                  dableFunction('setService', 'mnews.tw')
-                  dableFunction(
-                    'renderWidgetByWidth',
-                    'dablewidget_2Xnxwk7d_xXAWmB7G'
-                  )
-                } else {
-                  ;(dableFunction as { q: unknown[] }).q.push([
-                    'setService',
-                    'mnews.tw',
-                  ])
-                  ;(dableFunction as { q: unknown[] }).q.push([
-                    'renderWidgetByWidth',
-                    'dablewidget_2Xnxwk7d_xXAWmB7G',
-                  ])
-                }
-              } catch (error) {
-                console.error('dable initialization failed:', error)
-              }
-            } else {
-              setTimeout(initDable, 1000)
-            }
+          type DableFunction = ((...args: unknown[]) => void) & {
+            q?: unknown[][]
+          }
+          const dableWindow = window as Window & {
+            dable?: DableFunction
           }
 
-          setTimeout(initDable, 2000)
+          if (!dableWindow.dable) {
+            const queuedDable = ((...args: unknown[]) => {
+              ;(queuedDable.q = queuedDable.q || []).push(args)
+            }) as DableFunction
+            dableWindow.dable = queuedDable
+          }
+
+          const dablePluginSrc = '//static.dable.io/dist/plugin.min.js'
+          const hasDablePlugin = !!document.querySelector(
+            `script[src="${dablePluginSrc}"]`
+          )
+          if (!hasDablePlugin) {
+            const scriptElement = document.createElement('script')
+            scriptElement.async = true
+            scriptElement.charset = 'utf-8'
+            scriptElement.src = dablePluginSrc
+            document.head.appendChild(scriptElement)
+          }
+
+          dableWindow.dable?.('setService', 'mnews.tw')
+          dableWindow.dable?.('sendLogOnce')
+          dableWindow.dable?.(
+            'renderWidgetByWidth',
+            'dablewidget_2Xnxwk7d_xXAWmB7G'
+          )
         }}
       >
         <div
           id="dablewidget_2Xnxwk7d_xXAWmB7G"
           data-widget_id-pc="2Xnxwk7d"
           data-widget_id-mo="xXAWmB7G"
-          className="dable-widget-last"
+          className={`dable-widget-last ${styles.dableWidgetLast}`}
         />
+
         {width && width >= 1200 && (
           <>
             <UiHeadingBordered
