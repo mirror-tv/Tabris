@@ -30,15 +30,11 @@ const YoutubeBlock = ({
   let youtubeId = rawYoutubeId?.trim() || ''
 
   if (youtubeId.includes('youtube.com') || youtubeId.includes('youtu.be')) {
-    const extractedId = extractYoutubeId(youtubeId)
-    if (extractedId) {
-      youtubeId = extractedId
-    }
+    youtubeId = extractYoutubeId(youtubeId) ?? ''
   } else {
     youtubeId = youtubeId.replace(/^\/+|\/+$/g, '')
   }
 
-  // 沒有有效 youtubeId 就不渲染，避免 <amp-youtube> 缺 data-videoid 而 AMP 驗證失敗
   if (!youtubeId) return null
 
   return (
