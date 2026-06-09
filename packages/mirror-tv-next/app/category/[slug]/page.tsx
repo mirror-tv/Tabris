@@ -81,6 +81,9 @@ export async function generateMetadata({
     return {
       metadataBase: new URL(SITE_URL),
       title: '分類 - 鏡新聞',
+      alternates: {
+        canonical: `${SITE_URL}/category/${slug}`,
+      },
       openGraph: {
         title: '分類 - 鏡新聞',
         images: {
@@ -184,6 +187,9 @@ export async function generateMetadata({
   return {
     metadataBase: new URL(SITE_URL),
     title: `${categoryData.name} - 鏡新聞`,
+    alternates: {
+      canonical: `${SITE_URL}/category/${slug}`,
+    },
     openGraph: {
       title: `${categoryData.name} - 鏡新聞`,
       images: {

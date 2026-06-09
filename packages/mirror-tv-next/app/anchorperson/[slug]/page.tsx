@@ -83,6 +83,9 @@ export async function generateMetadata({
     metadataBase: new URL(SITE_URL),
     title: `${singleAnchor?.name} - 鏡新聞`,
     description: description !== '' ? description : META_DESCRIPTION,
+    alternates: {
+      canonical: `${SITE_URL}/anchorperson/${params.slug}`,
+    },
     openGraph: {
       title: `${singleAnchor?.name} - 鏡新聞`,
       description: description !== '' ? description : META_DESCRIPTION,

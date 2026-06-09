@@ -18,6 +18,9 @@ export const revalidate = GLOBAL_CACHE_SETTING
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: '專題 - 鏡新聞',
+  alternates: {
+    canonical: `${SITE_URL}/topic`,
+  },
   openGraph: {
     title: '專題 - 鏡新聞',
     images: {
