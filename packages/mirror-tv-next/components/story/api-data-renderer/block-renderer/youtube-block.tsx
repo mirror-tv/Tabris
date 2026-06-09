@@ -38,6 +38,9 @@ const YoutubeBlock = ({
     youtubeId = youtubeId.replace(/^\/+|\/+$/g, '')
   }
 
+  // 沒有有效 youtubeId 就不渲染，避免 <amp-youtube> 缺 data-videoid 而 AMP 驗證失敗
+  if (!youtubeId) return null
+
   return (
     <div className={styles.youtubeContainer}>
       {isAmp ? (
