@@ -1,4 +1,5 @@
 .dailySelection {
+  max-width: fit-content;
   border-image: linear-gradient(
       180deg,
       #153047 35%,
@@ -12,6 +13,7 @@
     color: #153047 !important;
   }
 }
+
 .popinRecommend {
   min-height: 344px;
 }
