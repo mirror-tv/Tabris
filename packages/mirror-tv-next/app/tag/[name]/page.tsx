@@ -76,15 +76,15 @@ export async function generateMetadata({
     description = undefined
   }
 
-  const isNoindex = totalCount < 3
+  const isIndex = totalCount >= 5
 
   return {
     metadataBase: new URL(SITE_URL),
     title: `${tagName} - 鏡新聞`,
     description,
-    robots: isNoindex ? { index: false, follow: true } : undefined,
+    robots: { index: isIndex, follow: true },
     alternates: {
-      canonical: canonicalUrl,
+      canonical: isIndex ? canonicalUrl : undefined,
     },
     openGraph: {
       title: `${tagName} - 鏡新聞`,

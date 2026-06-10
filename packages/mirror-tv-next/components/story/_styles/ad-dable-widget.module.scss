@@ -1,0 +1,8 @@
+.dableWidgetLast {
+  min-height: 1050px;
+
+  @media (max-width: 767px) {
+    aspect-ratio: 343 / 1800;
+    min-height: 1800px;
+  }
+}
