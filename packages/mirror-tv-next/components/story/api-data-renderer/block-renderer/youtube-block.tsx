@@ -30,7 +30,7 @@ const YoutubeBlock = ({
   let youtubeId = rawYoutubeId?.trim() || ''
 
   if (youtubeId.includes('youtube.com') || youtubeId.includes('youtu.be')) {
-    youtubeId = extractYoutubeId(youtubeId) ?? ''
+    youtubeId = extractYoutubeId(youtubeId)
   } else {
     youtubeId = youtubeId.replace(/^\/+|\/+$/g, '')
   }
