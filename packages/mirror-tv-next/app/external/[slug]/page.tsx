@@ -306,13 +306,22 @@ const ExternalPage = async (props: ExternalPageTypes) => {
     '臺北時間'
   )
 
+  const publishDateTime = formateDateAtTaipei(
+    new Date(publishTime),
+    'YYYY-MM-DDTHH:mm:ss+08:00'
+  )
+
   const shouldShowAds =
     !(categories?.length === 1 && categories?.[0]?.slug === 'ombuds') &&
     !FILTERED_SLUG.includes(params.slug)
 
-  const updatedTime = updatedAt
-    ? formateDateAtTaipei(new Date(updatedAt), 'YYYY.MM.DD HH:mm', '臺北時間')
-    : ''
+  const updatedTime =
+    updatedAt &&
+    formateDateAtTaipei(new Date(updatedAt), 'YYYY.MM.DD HH:mm', '臺北時間')
+
+  const updatedDateTime =
+    updatedAt &&
+    formateDateAtTaipei(new Date(updatedAt), 'YYYY-MM-DDTHH:mm:ss+08:00')
 
   // 處理 content_original
   // 1. 先移除與 heroCaption 重複的第一段
@@ -356,9 +365,11 @@ const ExternalPage = async (props: ExternalPageTypes) => {
             heroVideo={undefined}
           />
         )}
+
         <ArticleInfo
           title={title}
           publishTime={publishTimeTaipei}
+          publishDateTime={publishDateTime}
           category={
             category
               ? { title: category.name, slug: category.slug }
@@ -380,7 +391,10 @@ const ExternalPage = async (props: ExternalPageTypes) => {
             className={styles.externalContent}
             dangerouslySetInnerHTML={{ __html: processedContent ?? '' }}
           />
-          {updatedTime && <ArticleUpdateTime updateTime={updatedTime} />}
+          <ArticleUpdateTime
+            updateTime={updatedTime}
+            updateDateTime={updatedDateTime}
+          />
           {!!tags.length && <ArticleTagList tags={tags} />}
         </section>
         <AdTvAdminMobileBanner />

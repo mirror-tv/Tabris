@@ -327,6 +327,12 @@ const StoryPage = async (props: StoryPageTypes) => {
     'YYYY.MM.DD HH:mm',
     '臺北時間'
   )
+
+  const publishDateTime = formateDateAtTaipei(
+    new Date(publishTime),
+    'YYYY-MM-DDTHH:mm:ss+08:00'
+  )
+
   const lists = resolveRenderedStoryLists(storyData)
   const categoriesRendered = lists.categories
   const writersRendered = lists.writers
@@ -338,9 +344,13 @@ const StoryPage = async (props: StoryPageTypes) => {
       categoriesRendered[0]?.slug === 'ombuds'
     ) && !FILTERED_SLUG.includes(params.slug)
 
-  const updatedTime = updatedAt
-    ? formateDateAtTaipei(new Date(updatedAt), 'YYYY.MM.DD HH:mm', '臺北時間')
-    : ''
+  const updatedTime =
+    updatedAt &&
+    formateDateAtTaipei(new Date(updatedAt), 'YYYY.MM.DD HH:mm', '臺北時間')
+
+  const updatedDateTime =
+    updatedAt &&
+    formateDateAtTaipei(new Date(updatedAt), 'YYYY-MM-DDTHH:mm:ss+08:00')
 
   const hasBrief = doesHaveBrief(handleApiData(briefApiData))
 
@@ -381,6 +391,7 @@ const StoryPage = async (props: StoryPageTypes) => {
         <ArticleInfo
           title={title}
           publishTime={publishTimeTaipei}
+          publishDateTime={publishDateTime}
           category={categoriesRendered[0]}
           writers={writersRendered}
           photographers={photographers}
@@ -397,7 +408,10 @@ const StoryPage = async (props: StoryPageTypes) => {
             isStoryBrief={false}
           />
           {!!download?.length && <UiDownload downloads={download} />}
-          {updatedTime && <ArticleUpdateTime updateTime={updatedTime} />}
+          <ArticleUpdateTime
+            updateTime={updatedTime}
+            updateDateTime={updatedDateTime}
+          />
           {!!tagsRendered?.length && <ArticleTagList tags={tagsRendered} />}
         </section>
         <AdTvAdminMobileBanner />
