@@ -13,6 +13,9 @@ const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: '公評人專區 - 鏡新聞',
+  alternates: {
+    canonical: `${SITE_URL}/ombuds`,
+  },
   openGraph: {
     title: '公評人專區 - 鏡新聞',
     images: {

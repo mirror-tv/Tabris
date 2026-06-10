@@ -40,6 +40,9 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: '影音 - 鏡新聞',
   description: '最新最熱門，深入淺出的影音新聞。',
+  alternates: {
+    canonical: `${SITE_URL}/category/video`,
+  },
   openGraph: {
     title: '影音 - 鏡新聞',
     description: '最新最熱門，深入淺出的影音新聞。',

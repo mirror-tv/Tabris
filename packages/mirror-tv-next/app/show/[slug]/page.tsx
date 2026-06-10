@@ -162,6 +162,9 @@ export async function generateMetadata({
     ...(data.metadataBase && { metadataBase: data.metadataBase }),
     ...(data.title && { title: data.title }),
     ...(data.description && { description: data.description }),
+    alternates: {
+      canonical: `${SITE_URL}/show/${slug}`,
+    },
     openGraph: {
       ...(data.openGraph?.title && { title: data.openGraph.title }),
       ...(data.openGraph?.description && {
