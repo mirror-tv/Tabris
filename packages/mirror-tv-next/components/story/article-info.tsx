@@ -5,7 +5,8 @@ import ShareButton from './share-button'
 
 type ArticleHeroImageProps = {
   title: string
-  publishTime: string
+  publishTime?: string
+  publishDateTime?: string
   category: SinglePost['categories'][0]
   writers: SinglePost['writers']
   photographers: SinglePost['photographers']
@@ -19,6 +20,7 @@ type ArticleHeroImageProps = {
 export default function ArticleInfo({
   title,
   publishTime,
+  publishDateTime,
   category,
   writers,
   photographers,
@@ -47,8 +49,10 @@ export default function ArticleInfo({
     <>
       <section className={styles.categoryAndPublishTime}>
         <span className={styles.category}>{category?.title}</span>
-        {publishTime && (
-          <span className="amp-pub-cat-publishTime">{publishTime}</span>
+        {publishTime && publishDateTime && (
+          <time dateTime={publishDateTime} className="amp-pub-cat-publishTime">
+            {publishTime}
+          </time>
         )}
       </section>
       <h1 className={styles.title}>{title}</h1>
