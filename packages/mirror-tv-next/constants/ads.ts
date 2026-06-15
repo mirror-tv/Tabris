@@ -68,10 +68,8 @@ const GPT_UNITS: GPTUnits = {
     PC_HD: {
       adUnit: 'mnews_masthead_top_970x400',
       adSize: [
-        [970, 400],
         [970, 250],
         [970, 90],
-        [1, 1],
       ],
     },
   },
@@ -173,11 +171,7 @@ const GPT_UNITS: GPTUnits = {
     },
     MB_M1: {
       adUnit: 'mnews_m_article_top_300x250',
-      adSize: [
-        [300, 250],
-        [336, 280],
-        [1, 1],
-      ],
+      adSize: [[300, 250]],
     },
     MB_M2: {
       adUnit: 'mnews_m_article_middle_300x250',
