@@ -11,7 +11,12 @@ function formateDateAtTaipei(
   dayjs.extend(timezone)
   dayjs.tz.setDefault('Asia/Taipei')
   const taipeiTime = dayjs(date).tz('Asia/Taipei').format(formateString)
-  return `${taipeiTime} ${suffixStr}`
+
+  if (suffixStr) {
+    return `${taipeiTime} ${suffixStr}`
+  }
+
+  return taipeiTime
 }
 
 function getNextThursdayNoon() {
