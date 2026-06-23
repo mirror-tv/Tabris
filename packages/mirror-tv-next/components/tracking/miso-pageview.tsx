@@ -7,6 +7,10 @@ export default function MisoPageView({ productIds }: { productIds: string }) {
     const misocmd = window.misocmd || (window.misocmd = [])
     misocmd.push(() => {
       const MisoClient = window.MisoClient
+      if (!MisoClient) {
+        return
+      }
+
       const client = new MisoClient(MISO_API_KEY)
       client.api.interactions.upload({
         type: 'product_detail_page_view',
