@@ -1,3 +1,4 @@
+import errors from '@twreporter/errors'
 import BlockquoteBlock from './block-renderer/blockquote-block'
 import HeadersBlock from './block-renderer/headers-block'
 import OrderListBlock from './block-renderer/order-list-block'
@@ -133,19 +134,29 @@ import ImageBlock from './block-renderer/image-block'
 import UnstyledBlock from './block-renderer/unstyled-block'
 import dynamic from 'next/dynamic'
 import { STATIC_BASE_URL } from '~/constants/endpoint-config'
+import { getClient } from '~/apollo-client'
+import {
+  fetchPostVideoObjects,
+  type PostVideoObjects,
+} from '~/graphql/query/video-object'
+
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 
 type ApiDataRendererPropsType = {
+  postId?: string
   contentData: string | ApiData
   isStoryBrief?: boolean
 }
 
-const ApiDataRenderer = ({
+const ApiDataRenderer = async ({
+  postId,
   contentData,
   isStoryBrief,
 }: ApiDataRendererPropsType) => {
   // Handle both string and already-parsed object cases
   let parsedContentData: ApiData
+  let fetchVideoObjectBySlugResponse: PostVideoObjects['post'] | null = null
+
   if (typeof contentData === 'string') {
     try {
       parsedContentData = JSON.parse(contentData)
@@ -170,8 +181,56 @@ const ApiDataRenderer = ({
     parsedContentData?.splice(4, 0, newObject)
   }
 
+  if (
+    postId &&
+    parsedContentData?.some((block) => block.type === ApiDataBlockType.Youtube)
+  ) {
+    try {
+      const client = getClient()
+      const { data } = await client.query<PostVideoObjects>({
+        query: fetchPostVideoObjects,
+        variables: {
+          id: postId,
+        },
+      })
+      fetchVideoObjectBySlugResponse = data?.post
+    } catch (error) {
+      const annotatingError = errors.helpers.wrap(
+        error,
+        'UnhandledError',
+        'Error occurs while fetching VideoObject by id'
+      )
+
+      console.error(
+        JSON.stringify({
+          severity: 'ERROR',
+          message: errors.helpers.printAll(annotatingError, {
+            withStack: false,
+            withPayload: true,
+          }),
+        })
+      )
+    }
+  }
   return (
     <article className={styles.apiDataArticle}>
+      {fetchVideoObjectBySlugResponse?.videoObjects &&
+        fetchVideoObjectBySlugResponse.videoObjects.length > 0 && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(
+                fetchVideoObjectBySlugResponse.videoObjects.map((vo) => {
+                  return {
+                    ...vo,
+                    '@context': 'https://schema.org',
+                    '@type': 'VideoObject',
+                  }
+                })
+              ).replace(/</g, '\\\\u003c'),
+            }}
+          />
+        )}
       {parsedContentData?.map((apiDataBlock) => {
         switch (apiDataBlock.type) {
           case ApiDataBlockType.Unstyled:
