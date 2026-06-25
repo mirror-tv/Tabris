@@ -36,6 +36,9 @@ const YoutubeBlock = ({
     youtubeId = youtubeId.split(/[?&]/)[0].slice(0, 11) // 只取前 11 碼（YouTube ID 固定長度）
   }
   if (!youtubeId) return null
+  const youtubeUrl = `https://www.youtube.com/embed/${youtubeId}${
+    youtubeDescription ? `?si=${youtubeDescription}` : ''
+  }`
 
   return (
     <div className={styles.youtubeContainer}>
@@ -49,8 +52,7 @@ const YoutubeBlock = ({
         ></amp-youtube>
       ) : (
         <iframe
-          src={`https://www.youtube.com/embed/${youtubeId}
-            ${youtubeDescription ? `?si=${youtubeDescription}` : ''}`}
+          src={youtubeUrl}
           title={youtubeDescription}
           className={styles.youtubeIframe}
         />
