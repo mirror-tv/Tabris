@@ -33,8 +33,8 @@ const YoutubeBlock = ({
     youtubeId = extractYoutubeId(youtubeId)
   } else {
     youtubeId = youtubeId.replace(/^\/+|\/+$/g, '')
+    youtubeId = youtubeId.split(/[?&]/)[0].slice(0, 11) // 只取前 11 碼（YouTube ID 固定長度）
   }
-
   if (!youtubeId) return null
 
   return (
@@ -49,7 +49,8 @@ const YoutubeBlock = ({
         ></amp-youtube>
       ) : (
         <iframe
-          src={`https://www.youtube.com/embed/${youtubeId}?si=${youtubeDescription}`}
+          src={`https://www.youtube.com/embed/${youtubeId}
+            ${youtubeDescription ? `?si=${youtubeDescription}` : ''}`}
           title={youtubeDescription}
           className={styles.youtubeIframe}
         />
