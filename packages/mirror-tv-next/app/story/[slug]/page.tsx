@@ -124,13 +124,13 @@ function generateStoryJsonLds(
   const keywords = lists.tags.map((tag) => tag.name).join(', ')
 
   const jsonLdBreadcrumbList = {
-    '@context': 'http://schema.org/',
+    '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: generateBreadcrumbList(storyData, pageUrl, lists),
   }
 
   const jsonLdNewsArticle = {
-    '@context': 'https://schema.org/',
+    '@context': 'https://schema.org',
     '@type': 'NewsArticle',
     mainEntityOfPage: {
       '@type': 'WebPage',
@@ -162,7 +162,7 @@ function generateStoryJsonLds(
   let jsonLdPerson
   if (writerRendered?.length) {
     jsonLdPerson = {
-      '@context': 'http://schema.org/',
+      '@context': 'https://schema.org',
       '@type': 'Person',
       name: writerRendered?.[0]?.name,
       brand: {
@@ -404,6 +404,7 @@ const StoryPage = async (props: StoryPageTypes) => {
         {hasBrief && <ArticleBrief brief={handleApiData(briefApiData)} />}
         <section className={styles.contentWrapper}>
           <ApiDataRenderer
+            postId={id}
             contentData={contentApiData ?? ''}
             isStoryBrief={false}
           />
