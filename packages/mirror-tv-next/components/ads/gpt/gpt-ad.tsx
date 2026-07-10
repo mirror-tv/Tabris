@@ -113,7 +113,6 @@ const GPTAdRoot = ({
         if (
           typeof window === 'undefined' ||
           !window.googletag ||
-          typeof window.googletag.pubads !== 'function' ||
           !window.googletag.cmd
         ) {
           return
