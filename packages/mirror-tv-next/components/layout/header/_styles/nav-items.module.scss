@@ -96,9 +96,15 @@
   max-width: 560px;
   height: 28px;
 
+  visibility: hidden;
+
   @include media-breakpoint-up(xl) {
     max-width: 960px;
   }
+}
+
+.ready {
+  visibility: visible;
 }
 
 .restOfCategories {

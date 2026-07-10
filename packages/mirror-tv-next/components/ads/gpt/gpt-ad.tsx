@@ -109,9 +109,18 @@ const GPTAdRoot = ({
       })
 
       return () => {
-        const pubads = window.googletag.pubads()
+        // googletag / pubads 可能在 unmount 時尚未 ready，需先 guard
+        if (
+          typeof window === 'undefined' ||
+          !window.googletag ||
+          typeof window.googletag.pubads !== 'function' ||
+          !window.googletag.cmd
+        ) {
+          return
+        }
 
         window.googletag.cmd.push(() => {
+          const pubads = window.googletag.pubads()
           window.googletag.destroySlots([adSlot])
           if (onSlotRequested) {
             pubads.removeEventListener('slotRequested', handleOnSlotRequested)
