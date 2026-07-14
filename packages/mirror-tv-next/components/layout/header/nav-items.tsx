@@ -112,21 +112,30 @@ export default function NavItems({ categories }: NavItemProps) {
     const row = visibleItemsRef.current
     if (!row) return
 
+    let isMounted = true
     resetRenderedCategory()
     setIsReady(true)
 
-    const ro = new ResizeObserver(() => resetRenderedCategory())
-    ro.observe(row)
-
-    // Chinese glyph widths shift once web fonts finish loading.
-    if (typeof document !== 'undefined' && 'fonts' in document) {
-      document.fonts.ready.then(() => resetRenderedCategory())
+    let ro: ResizeObserver | null = null
+    if (typeof window !== 'undefined' && 'ResizeObserver' in window) {
+      ro = new ResizeObserver(() => {
+        if (isMounted) resetRenderedCategory()
+      })
+      ro.observe(row)
     }
 
-    return () => ro.disconnect()
+    if (typeof document !== 'undefined' && 'fonts' in document) {
+      document.fonts.ready.then(() => {
+        if (isMounted) resetRenderedCategory()
+      })
+    }
+
+    return () => {
+      isMounted = false
+      if (ro) ro.disconnect()
+    }
   }, [categories, resetRenderedCategory])
 
-  // Splitting shows into multiple columns with 7 shows each
   const columns = useMemo(() => {
     const result: Show[][] = []
     const showsPerColumn = 7
