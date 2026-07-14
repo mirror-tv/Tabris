@@ -112,26 +112,20 @@ export default function NavItems({ categories }: NavItemProps) {
     const row = visibleItemsRef.current
     if (!row) return
 
-    let isMounted = true
     resetRenderedCategory()
     setIsReady(true)
 
     let ro: ResizeObserver | null = null
-    if (typeof window !== 'undefined' && 'ResizeObserver' in window) {
-      ro = new ResizeObserver(() => {
-        if (isMounted) resetRenderedCategory()
-      })
+    if ('ResizeObserver' in window) {
+      ro = new ResizeObserver(() => resetRenderedCategory())
       ro.observe(row)
     }
 
-    if (typeof document !== 'undefined' && 'fonts' in document) {
-      document.fonts.ready.then(() => {
-        if (isMounted) resetRenderedCategory()
-      })
+    if ('fonts' in document) {
+      document.fonts.ready.then(() => resetRenderedCategory())
     }
 
     return () => {
-      isMounted = false
       if (ro) ro.disconnect()
     }
   }, [categories, resetRenderedCategory])
