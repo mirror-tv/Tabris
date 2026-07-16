@@ -16,18 +16,11 @@ type VideoWithRequiredDescription = Omit<Video, 'description'> & {
   description: string
 }
 
-// New JSON format schema (for topic.json)
-const NewHeroImageSchema = z.object({
-  w480: z.string().optional(),
-  w800: z.string().optional(),
-  original: z.string().optional(),
-})
-
 const TopicItemSchema = z.object({
   id: z.string(),
   name: z.string(),
   slug: z.string(),
-  heroImage: NewHeroImageSchema.nullable(),
+  heroImage: z.string().nullable(),
   sortDir: z.string().optional(),
   postDESC: z
     .array(

@@ -3,10 +3,9 @@ import styles from './_styles/show-list-handler.module.scss'
 import InfiniteScrollList from '@readr-media/react-infinite-scroll-list'
 import useWindowDimensions from '~/hooks/use-window-dimensions'
 import { useMemo } from 'react'
-import Image from '@readr-media/react-image'
-import { formateHeroImage } from '~/utils'
 import Link from 'next/link'
 import type { Show } from '~/types/header'
+import NextResponsiveImage from '../shared/next-responsive-image'
 
 type ShowListHandlerProps = {
   initShows: Show[]
@@ -44,10 +43,6 @@ export default function ShowListHandler({
       {(renderList) => (
         <ol className={`${styles.showList} show-list `}>
           {renderList.map((item) => {
-            const { images, imagesWebP } = formateHeroImage(
-              item.bannerImg || {}
-            )
-
             return (
               <Link
                 id={item.id}
@@ -57,22 +52,24 @@ export default function ShowListHandler({
                 target="_blank"
                 rel="noreferrer noopener"
               >
-                <Image
-                  key={item.id}
-                  loadingImage="/images/loading.svg"
-                  defaultImage="/images/image-default.jpg"
-                  images={images}
-                  imagesWebP={imagesWebP}
-                  alt="loading banner image"
-                  objectFit="cover"
-                  rwd={{
-                    mobile: '500px',
-                    tablet: '500px',
-                    laptop: '500px',
-                    desktop: '500px',
-                    default: '500px',
-                  }}
-                />
+                {item.bannerImg?.urlOriginal && (
+                  <NextResponsiveImage
+                    fill
+                    loading="lazy"
+                    placeholder="blur"
+                    blurDataURL="/images/loading.svg"
+                    src={item.bannerImg?.urlOriginal?.replace(
+                      /\.(jpg|png)$/i,
+                      '.webP'
+                    )}
+                    sizes="(max-width: 768px) 50vw, 30vw"
+                    srcSet={[480, 800]}
+                    alt={item.name}
+                    priority={false}
+                    style={{ aspectRatio: '32 / 12' }}
+                    fallback={item.bannerImg?.urlOriginal}
+                  />
+                )}
               </Link>
             )
           })}
