@@ -112,6 +112,7 @@ export default function SideMenu({ categories, sponsors }: SideMenuProps) {
                           ? sponsor.url
                           : `/topic/${sponsor.topic?.slug}`
                       }
+                      prefetch={false}
                       className={styles.sponsorItem}
                     >
                       <CallbackImage
@@ -139,7 +140,11 @@ export default function SideMenu({ categories, sponsors }: SideMenuProps) {
                 path === '/category/video' ? styles.active : ''
               }`}
             >
-              <Link href="/category/video" className="category-nav__link">
+              <Link
+                href="/category/video"
+                prefetch={false}
+                className="category-nav__link"
+              >
                 影音
               </Link>
             </li>
@@ -154,6 +159,7 @@ export default function SideMenu({ categories, sponsors }: SideMenuProps) {
                 >
                   <Link
                     href={`/category/${category.slug}`}
+                    prefetch={false}
                     className={`category-nav__link ${
                       category.style === 'highlight' ? styles.highlight : ''
                     }`}
@@ -181,7 +187,9 @@ export default function SideMenu({ categories, sponsors }: SideMenuProps) {
                       isActive ? styles.activeShow : ''
                     }`}
                   >
-                    <Link href={`/show/${show.slug}`}>{show.name}</Link>
+                    <Link href={`/show/${show.slug}`} prefetch={false}>
+                      {show.name}
+                    </Link>
                   </li>
                 )
               })}
@@ -194,7 +202,9 @@ export default function SideMenu({ categories, sponsors }: SideMenuProps) {
           <ul className={styles.items}>
             {bottomLinks.map((link, index) => (
               <li className={styles.otherLi} key={index}>
-                <Link href={link.href}>{link.text}</Link>
+                <Link href={link.href} prefetch={false}>
+                  {link.text}
+                </Link>
               </li>
             ))}
           </ul>

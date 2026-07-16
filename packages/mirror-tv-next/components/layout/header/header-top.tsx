@@ -16,7 +16,7 @@ export default function HeaderTop({ sponsors }: HeaderTopProps) {
     <div className={styles.wrapper}>
       <div className={styles.logoWrapper}>
         <div className={[styles.logo, 'top-wrapper__left'].join(' ')}>
-          <Link href="/" className="logo">
+          <Link href="/" prefetch={false} className="logo">
             <Image
               src={withBasePath('/icons/mnews-logo.svg')}
               alt="mnews logo"
@@ -52,6 +52,7 @@ export default function HeaderTop({ sponsors }: HeaderTopProps) {
                 href={
                   sponsor.url ? sponsor.url : `/topic/${sponsor.topic?.slug}`
                 }
+                prefetch={false}
                 className={styles.sponsorItem}
               >
                 <ResponsiveImage

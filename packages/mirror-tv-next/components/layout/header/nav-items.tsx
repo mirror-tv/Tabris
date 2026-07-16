@@ -31,6 +31,7 @@ const CategoryNavItem = memo(function CategoryNavItem({
     <div className={`${styles.li} ${isActive ? styles.active : ''}`}>
       <Link
         href={`/category/${category.slug}`}
+        prefetch={false}
         className={`category-nav__link ${
           category.style === 'highlight' ? styles.highlight : ''
         }`}
@@ -171,7 +172,11 @@ export default function NavItems({ categories }: NavItemProps) {
               path === '/category/video' ? styles.active : ''
             }`}
           >
-            <Link href="/category/video" className="category-nav__link">
+            <Link
+              href="/category/video"
+              prefetch={false}
+              className="category-nav__link"
+            >
               影音
             </Link>
           </div>
@@ -202,7 +207,9 @@ export default function NavItems({ categories }: NavItemProps) {
                   <ul key={columnIndex} className={styles.showColumn}>
                     {column.map((show) => (
                       <li key={show.id} className={styles.showItem}>
-                        <Link href={`/show/${show.slug}`}>{show.name}</Link>
+                        <Link href={`/show/${show.slug}`} prefetch={false}>
+                          {show.name}
+                        </Link>
                       </li>
                     ))}
                   </ul>
@@ -239,6 +246,7 @@ export default function NavItems({ categories }: NavItemProps) {
             >
               <Link
                 href={`/category/${category.slug}`}
+                prefetch={false}
                 className="category-nav__link"
               >
                 {category.name}

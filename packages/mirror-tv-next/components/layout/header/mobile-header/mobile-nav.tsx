@@ -16,7 +16,7 @@ export default function MobileNav({ categories, sponsors }: MobileNavProps) {
   return (
     <div className={styles.navWrapper}>
       <div className={styles.logo}>
-        <Link href="/">
+        <Link href="/" prefetch={false}>
           <Image
             src={withBasePath('/icons/mnews-logo-white.svg')}
             alt="mnews logo"

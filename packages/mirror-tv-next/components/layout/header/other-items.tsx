@@ -38,6 +38,7 @@ export default function OtherItems(): JSX.Element {
           <li key={index} className={item.iconSrc ? styles.icon : styles.li}>
             <Link
               href={item.href}
+              prefetch={false}
               target={item.iconSrc ? '_blank' : undefined}
               rel={item.iconSrc ? 'noopener noreferrer' : undefined}
               className="category-nav__link"
