@@ -117,21 +117,9 @@ export default async function RootLayout({
         id: sponsor.id,
         title: sponsor.title,
         url: sponsor.url,
-        logo: sponsor.logo
-          ? {
-              urlMobileSized: sponsor.logo.w480 || '',
-            }
-          : null,
-        mobile: sponsor.mobile
-          ? {
-              urlMobileSized: sponsor.mobile.w480 || '',
-            }
-          : null,
-        tablet: sponsor.tablet
-          ? {
-              urlMobileSized: sponsor.tablet.w480 || '',
-            }
-          : null,
+        logo: sponsor.logo,
+        mobile: sponsor.mobile,
+        tablet: sponsor.tablet,
         topic: sponsor.topic,
       })),
     }

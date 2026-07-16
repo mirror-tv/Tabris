@@ -1,8 +1,8 @@
 import styles from './_styles/ui-post-card-homepage.module.scss'
 import { formateDateAtTaipei, PostImage } from '~/utils'
-import ResponsiveImage from '../shared/responsive-image'
 import UiExclusiveMark from '../shared/ui-exclusive-mark'
 import { SALES_LABEL_NAME } from '~/constants/constant'
+import NextResponsiveImage from '../shared/next-responsive-image'
 
 export type UiPostCardProps = {
   title: string
@@ -10,11 +10,9 @@ export type UiPostCardProps = {
   href: string
   postStyle: string | undefined
   images: PostImage
-  imagesWebP?: PostImage
   postTitleHighlightText?: string
   label?: string
   exclusive?: boolean
-  slug?: string
 }
 
 export default function UiPostCardHomepage({
@@ -22,11 +20,9 @@ export default function UiPostCardHomepage({
   date,
   href = '',
   images,
-  imagesWebP,
   postStyle = 'article',
   label,
   exclusive = false,
-  slug = '',
 }: UiPostCardProps) {
   const isVideoNews = postStyle === 'videoNews'
 
@@ -45,13 +41,18 @@ export default function UiPostCardHomepage({
             </span>
           )}
           {exclusive && label !== SALES_LABEL_NAME && <UiExclusiveMark />}
-          <ResponsiveImage
-            images={images}
-            imagesWebP={imagesWebP}
+          <NextResponsiveImage
+            fill
+            loading="lazy"
+            placeholder="blur"
+            blurDataURL="/images/loading.svg"
+            src={images.original.replace(/\.jpg$/i, '.webP')}
+            sizes="(max-width: 768px) 50vw, 30vw"
+            srcSet={[480, 800]}
             alt={title}
-            rwd={{ mobile: '500px', tablet: '500px', desktop: '500px' }}
             priority={false}
-            slug={slug}
+            fallback={images.original}
+            style={{ aspectRatio: '3 / 2' }}
           />
           {isVideoNews && <span className={styles.videoIcon}></span>}
         </figure>

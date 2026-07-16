@@ -1,14 +1,13 @@
 import gql from 'graphql-tag'
-import type { HeroImage } from '~/types/common'
 import { heroImageFragment } from '../fragments/hero-image'
 
 export type Sponsor = {
   id: string
   title: string
   url: string
-  logo: HeroImage | null
-  mobile: HeroImage | null
-  tablet: HeroImage | null
+  logo: string | null
+  mobile: string | null
+  tablet: string | null
   topic: {
     id: string
     slug: string

@@ -1,10 +1,9 @@
 'use client'
 import { type FeatureTopic } from '~/graphql/query/topic'
-import Image from '@readr-media/react-image'
-import { formateHeroImage } from '~/utils'
 import Link from 'next/link'
 import styles from './_styles/topic-item.module.scss'
 import UiMoreTopicBtn from './ui-more-topic-btn'
+import NextResponsiveImage from '../shared/next-responsive-image'
 
 type TopicListProps = {
   isFirst: boolean
@@ -13,7 +12,7 @@ type TopicListProps = {
 
 export default function TopicItem({ topic, isFirst }: TopicListProps) {
   const postsList = topic.sortDir === 'asc' ? topic.postASC : topic.postDESC
-  const { images, imagesWebP } = formateHeroImage(topic.heroImage ?? {})
+
   return (
     <li className={`${styles.item} ${isFirst ? styles.isFirst : ''}`}>
       {isFirst && (
@@ -24,19 +23,21 @@ export default function TopicItem({ topic, isFirst }: TopicListProps) {
           className={styles.imgWrapper}
         >
           <div className={`${styles.imgWrapper} topic__list__item feature`}>
-            <Image
-              images={images}
-              imagesWebP={imagesWebP}
-              alt={topic.name}
-              loadingImage="/images/loading.svg"
-              defaultImage="/images/image-default.jpg"
-              rwd={{
-                tablet: '676px',
-                laptop: '676px',
-                desktop: '581px',
-              }}
-              key={topic.slug}
-            />
+            {topic.heroImage && (
+              <NextResponsiveImage
+                fill
+                loading="lazy"
+                placeholder="blur"
+                blurDataURL="/images/loading.svg"
+                src={topic.heroImage.replace(/\.(jpg|png)$/i, '.webP')}
+                sizes="(max-width: 768px) 50vw, 30vw"
+                srcSet={[480, 800]}
+                alt={topic.name}
+                priority={false}
+                fallback={topic.heroImage}
+                style={{ aspectRatio: '581 / 324' }}
+              />
+            )}
           </div>
         </Link>
       )}

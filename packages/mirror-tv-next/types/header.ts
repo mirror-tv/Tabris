@@ -25,15 +25,9 @@ type Sponsor = {
   id: string
   title: string | null
   url: string | null
-  logo: {
-    urlMobileSized: string
-  } | null
-  mobile: {
-    urlMobileSized: string
-  } | null
-  tablet: {
-    urlMobileSized: string
-  } | null
+  logo: string | null
+  mobile: string | null
+  tablet: string | null
   topic: {
     id: string
     slug: string
@@ -71,9 +65,9 @@ export type RawSponsor = {
   id: string
   title: string | null
   url: string | null
-  logo: RawSponsorImage | null
-  mobile: RawSponsorImage | null
-  tablet: RawSponsorImage | null
+  logo: string | null
+  mobile: string | null
+  tablet: string | null
   topic: {
     id: string
     slug: string

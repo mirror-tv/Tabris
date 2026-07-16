@@ -96,13 +96,11 @@ export default function PostListWithFirstPage({
             <UiPostCardHomepage
               href={postItem.href}
               images={postItem.images}
-              imagesWebP={postItem.imagesWebP}
               title={postItem.name}
               date={postItem.publishTime}
               postStyle={postItem.style}
               label={postItem.label}
               exclusive={postItem.exclusive ?? false}
-              slug={postItem.slug ?? ''}
             />
           </li>
         ))}
@@ -142,13 +140,11 @@ export default function PostListWithFirstPage({
                   <UiPostCardHomepage
                     href={postItem.href}
                     images={postItem.images}
-                    imagesWebP={postItem.imagesWebP}
                     title={postItem.name}
                     date={postItem.publishTime}
                     postStyle={postItem.style}
                     label={postItem.label}
                     exclusive={postItem.exclusive ?? false}
-                    slug={postItem.slug ?? ''}
                   />
                 </li>
               ))}

@@ -58,7 +58,7 @@ const FlexibleHeroImageSchema = z.union([
 const StaticEditorChoiceSchema = z.object({
   name: z.string(),
   slug: z.string(),
-  heroImage: FlexibleHeroImageSchema.optional(),
+  heroImage: z.string().nullable(),
   heroVideo: z
     .object({
       coverPhoto: HeroImageObjectSchema.nullable(),
@@ -96,7 +96,7 @@ const StaticLatestPostSchema = z.object({
     if (val === null || val === undefined) return new Date().toISOString()
     return String(val)
   }),
-  heroImage: FlexibleHeroImageSchema.optional(),
+  heroImage: z.string().nullable(),
   categories: z
     .array(
       z.object({
@@ -174,7 +174,7 @@ const GraphQLEditorChoicesResponseSchema = z.object({
       choice: z.object({
         name: z.string(),
         slug: z.string(),
-        heroImage: HeroImageObjectSchema.nullable(),
+        heroImage: z.string().nullable(),
         heroVideo: z
           .object({
             coverPhoto: HeroImageObjectSchema.nullable(),
@@ -296,7 +296,7 @@ async function getLatestPostsAndEditorChoices({
             name: choice.name,
             slug: choice.slug,
             source: choice.source,
-            heroImage: normalizeFlexibleHeroImage(choice.heroImage),
+            heroImage: choice.heroImage,
             heroVideo: choice.heroVideo
               ? {
                   coverPhoto: choice.heroVideo.coverPhoto ?? null,
@@ -387,7 +387,7 @@ async function getLatestPostsAndEditorChoices({
         validatedEditorChoices.allEditorChoices.map((choice) => ({
           choice: {
             ...choice.choice,
-            heroImage: choice.choice.heroImage ?? null,
+            heroImage: choice.choice.heroImage,
             heroVideo: choice.choice.heroVideo
               ? {
                   coverPhoto: choice.choice.heroVideo.coverPhoto ?? null,

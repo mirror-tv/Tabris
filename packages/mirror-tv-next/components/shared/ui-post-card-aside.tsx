@@ -1,7 +1,7 @@
 import styles from './_styles/ui-post-card-aside.module.scss'
 import { formateDateAtTaipei, PostImage } from '~/utils'
-import ResponsiveImage from './responsive-image'
 import UiExclusiveMark from './ui-exclusive-mark'
+import NextResponsiveImage from './next-responsive-image'
 
 type UiPostCardAsideProps = {
   title: string
@@ -10,9 +10,7 @@ type UiPostCardAsideProps = {
   postStyle: string
   page: 'category' | 'story'
   images: PostImage
-  imagesWebP?: PostImage
   exclusive: boolean
-  slug: string
 }
 
 export default function UiPostCardAside({
@@ -20,11 +18,9 @@ export default function UiPostCardAside({
   date,
   href = '',
   images,
-  imagesWebP,
   postStyle = 'post',
   page = 'category',
   exclusive = false,
-  slug = '',
 }: UiPostCardAsideProps) {
   const isVideoNews = postStyle === 'videoNews'
   const isCategoryPage = (type: string) => type === 'category'
@@ -42,13 +38,18 @@ export default function UiPostCardAside({
       <figure
         className={[styles.image, styles[figureClassNameByProps]].join(' ')}
       >
-        <ResponsiveImage
-          images={images}
-          imagesWebP={imagesWebP}
+        <NextResponsiveImage
+          fill
+          loading="lazy"
+          placeholder="blur"
+          blurDataURL="/images/loading.svg"
+          src={images.original.replace(/\.jpg$/i, '.webP')}
+          sizes="(max-width: 768px) 50vw, 30vw"
+          srcSet={[480, 800]}
           alt={title}
-          rwd={{ mobile: '500px', tablet: '500px', desktop: '500px' }}
           priority={false}
-          slug={slug}
+          fallback={images.original}
+          style={{ aspectRatio: '3 / 2' }}
         />
         {isVideoNews && <span className={styles.videoIcon}></span>}
         {exclusive && <UiExclusiveMark />}
