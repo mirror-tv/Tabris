@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import Link from 'next/link'
+import Link from '~/components/shared/link'
 import styles from './_styles/social-icon.module.scss'
 
 type Props = {

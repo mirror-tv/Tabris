@@ -3,7 +3,7 @@
 import { Varela_Round } from 'next/font/google'
 import Image from 'next/image'
 
-import Link from 'next/link'
+import Link from '~/components/shared/link'
 import ResponsiveImage from '~/components/shared/responsive-image'
 import styles from './_styles/ui-404.module.scss'
 import type { FormattedPostCard } from '~/utils'

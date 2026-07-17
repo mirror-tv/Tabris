@@ -1,6 +1,6 @@
 'use client'
 import Image from 'next/image'
-import Link from 'next/link'
+import Link from '~/components/shared/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { HEADER_BOTTOM_LINKS } from '~/constants/constant'

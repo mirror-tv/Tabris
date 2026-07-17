@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import Link from 'next/link'
+import Link from '~/components/shared/link'
 import styles from './_styles/header-top.module.scss'
 import type { Sponsor } from '~/graphql/query/sponsors'
 import { TV_AD_ADMIN_OEN_URL } from '~/constants/constant'

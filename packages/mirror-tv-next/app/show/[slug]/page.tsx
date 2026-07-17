@@ -1,6 +1,6 @@
 import errors from '@twreporter/errors'
 import styles from './_styles/show.module.scss'
-import Link from 'next/link'
+import Link from '~/components/shared/link'
 import Image from 'next/image'
 import {
   GLOBAL_CACHE_SETTING,
