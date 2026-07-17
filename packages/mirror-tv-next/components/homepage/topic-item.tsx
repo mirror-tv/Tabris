@@ -1,6 +1,6 @@
 'use client'
 import { type FeatureTopic } from '~/graphql/query/topic'
-import Link from 'next/link'
+import Link from '~/components/shared/link'
 import styles from './_styles/topic-item.module.scss'
 import UiMoreTopicBtn from './ui-more-topic-btn'
 import NextResponsiveImage from '../shared/next-responsive-image'

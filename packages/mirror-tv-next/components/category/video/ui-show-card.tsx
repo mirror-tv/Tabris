@@ -1,5 +1,5 @@
 import styles from './_styles/ui-show-card.module.scss'
-import Link from 'next/link'
+import Link from '~/components/shared/link'
 import NextResponsiveImage from '~/components/shared/next-responsive-image'
 
 type UiShowCardProps = {

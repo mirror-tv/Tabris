@@ -1,5 +1,5 @@
 import React from 'react'
-import Link from 'next/link'
+import Link from '~/components/shared/link'
 import styles from './_styles/tag.module.scss'
 import type { SinglePost } from '~/graphql/query/story'
 

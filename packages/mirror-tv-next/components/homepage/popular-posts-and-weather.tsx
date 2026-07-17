@@ -1,7 +1,7 @@
 'use client'
 import { useData } from '~/context/data-context'
 import styles from './_styles/popular-posts-and-weather.module.scss'
-import Link from 'next/link'
+import Link from '~/components/shared/link'
 import UiHeadingBordered from '../shared/ui-heading-bordered'
 import { formateHeroImage, getSotThumbnailObjectFit } from '~/utils'
 import Image from '@readr-media/react-image'

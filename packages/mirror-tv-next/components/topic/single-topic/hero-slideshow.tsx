@@ -1,6 +1,6 @@
 'use client'
 import Image from '@readr-media/react-image'
-import Link from 'next/link'
+import Link from '~/components/shared/link'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import type { Slideshow } from '~/graphql/query/topic'
 import styles from './_styles/hero-slideshow.module.scss'

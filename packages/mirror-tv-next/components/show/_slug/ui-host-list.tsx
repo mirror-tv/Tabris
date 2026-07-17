@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import Link from '~/components/shared/link'
 import ResponsiveImage from '~/components/shared/responsive-image'
 import styles from './_styles/ui-host-list.module.scss'
 import { HostOrStaff } from '~/graphql/query/shows'
