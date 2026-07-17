@@ -1,31 +1,20 @@
 import styles from './_styles/ui-show-card.module.scss'
-import ResponsiveImage from '~/components/shared/responsive-image'
-import { formateHeroImage } from '~/utils'
-import type { HeroImage } from '~/types/common'
 import Link from 'next/link'
-
-// Legacy BannerImage format for backward compatibility
-type LegacyBannerImage = {
-  urlMobileSized?: string
-  urlTabletSized?: string
-  urlOriginal?: string
-}
+import NextResponsiveImage from '~/components/shared/next-responsive-image'
 
 type UiShowCardProps = {
   slug: string
-  bannerImg: HeroImage | LegacyBannerImage | null
+  bannerImage: string | null
   name: string
   id: string
 }
 
 export default function UiShowCard({
   slug,
-  bannerImg,
+  bannerImage,
   name,
   id,
 }: UiShowCardProps) {
-  const { images, imagesWebP } = formateHeroImage(bannerImg ?? undefined)
-
   return (
     <Link
       className={`${styles.image} show-card__img`}
@@ -34,13 +23,21 @@ export default function UiShowCard({
       rel="noopener noreferrer"
       id={id}
     >
-      <ResponsiveImage
-        images={images}
-        imagesWebP={imagesWebP}
+      <NextResponsiveImage
+        fill
+        loading="lazy"
+        placeholder="blur"
+        blurDataURL="/images/loading.svg"
+        src={
+          bannerImage?.replace(/\.(jpg|png)$/i, '.webP') ??
+          '/images/image-default.jpg'
+        }
+        sizes="(max-width: 768px) 50vw, 30vw"
+        srcSet={[480, 800]}
         alt={name}
-        rwd={{ mobile: '500px', tablet: '500px', desktop: '500px' }}
         priority={false}
-        imgClassName="show-card__img"
+        style={{ aspectRatio: '32 / 12' }}
+        fallback={bannerImage}
       />
     </Link>
   )

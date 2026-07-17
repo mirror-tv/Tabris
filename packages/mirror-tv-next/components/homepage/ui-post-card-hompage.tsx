@@ -46,7 +46,10 @@ export default function UiPostCardHomepage({
             loading="lazy"
             placeholder="blur"
             blurDataURL="/images/loading.svg"
-            src={images.original.replace(/\.jpg$/i, '.webP')}
+            src={
+              images.original?.replace(/\.jpg$/i, '.webP') ??
+              '/images/image-default.jpg'
+            }
             sizes="(max-width: 768px) 50vw, 30vw"
             srcSet={[480, 800]}
             alt={title}
