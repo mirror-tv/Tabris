@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 
 interface NextResponsiveImageProps extends Omit<ImageProps, 'src'> {
   src: string
-  fallback: string | StaticImport
+  fallback?: string | StaticImport | null
   srcSet?: number[]
 }
 
@@ -16,6 +16,8 @@ export const imageLoader: ImageLoader = ({ src, width }) => {
 
 export default function NextResponsiveImage(props: NextResponsiveImageProps) {
   const { src, fallback, style, alt, srcSet, className, ...restProps } = props
+
+  const isLocalSource = src.startsWith('/') && !src.startsWith('//')
 
   const [error, setError] =
     useState<React.SyntheticEvent<HTMLImageElement> | null>(null)
@@ -57,7 +59,7 @@ export default function NextResponsiveImage(props: NextResponsiveImageProps) {
       }}
       className={className}
     >
-      {!error && (
+      {!error && !isLocalSource && (
         <source
           type="image/webp"
           src={src}
@@ -70,14 +72,25 @@ export default function NextResponsiveImage(props: NextResponsiveImageProps) {
           }
         />
       )}
-      <Image
-        alt={alt}
-        src={fallback}
-        loader={imageLoader}
-        onError={setError}
-        style={{ objectFit: 'cover' }}
-        {...restProps}
-      />
+      {fallback ? (
+        <Image
+          alt={alt}
+          src={isLocalSource ? src : fallback}
+          loader={imageLoader}
+          onError={setError}
+          style={{ objectFit: 'cover' }}
+          {...restProps}
+        />
+      ) : (
+        <Image
+          alt={alt}
+          src={src}
+          loader={imageLoader}
+          onError={setError}
+          style={{ objectFit: 'cover' }}
+          {...restProps}
+        />
+      )}
     </picture>
   )
 }

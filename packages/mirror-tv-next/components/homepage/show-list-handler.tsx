@@ -52,24 +52,22 @@ export default function ShowListHandler({
                 target="_blank"
                 rel="noreferrer noopener"
               >
-                {item.bannerImg?.urlOriginal && (
-                  <NextResponsiveImage
-                    fill
-                    loading="lazy"
-                    placeholder="blur"
-                    blurDataURL="/images/loading.svg"
-                    src={item.bannerImg?.urlOriginal?.replace(
-                      /\.(jpg|png)$/i,
-                      '.webP'
-                    )}
-                    sizes="(max-width: 768px) 50vw, 30vw"
-                    srcSet={[480, 800]}
-                    alt={item.name}
-                    priority={false}
-                    style={{ aspectRatio: '32 / 12' }}
-                    fallback={item.bannerImg?.urlOriginal}
-                  />
-                )}
+                <NextResponsiveImage
+                  fill
+                  loading="lazy"
+                  placeholder="blur"
+                  blurDataURL="/images/loading.svg"
+                  src={
+                    item.bannerImage?.replace(/\.(jpg|png)$/i, '.webP') ??
+                    '/images/image-default.jpg'
+                  }
+                  sizes="(max-width: 768px) 50vw, 30vw"
+                  srcSet={[480, 800]}
+                  alt={item.name}
+                  priority={false}
+                  style={{ aspectRatio: '32 / 12' }}
+                  fallback={item.bannerImage}
+                />
               </Link>
             )
           })}

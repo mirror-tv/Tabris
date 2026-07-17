@@ -23,15 +23,7 @@ async function getData() {
         name: show.name,
         sortOrder: show.sortOrder,
         listShow: show.listShow,
-        bannerImg: show.bannerImg
-          ? {
-              urlMobileSized:
-                show.bannerImg.w800 || show.bannerImg.original || '',
-              urlTabletSized:
-                show.bannerImg.w800 || show.bannerImg.original || '',
-              urlOriginal: show.bannerImg.original || '',
-            }
-          : null,
+        bannerImg: show.bannerImage,
       })),
       allSponsors: (data.sponsors || []).map((sponsor: RawSponsor) => ({
         id: sponsor.id,

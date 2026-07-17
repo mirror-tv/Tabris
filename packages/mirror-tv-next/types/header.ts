@@ -6,18 +6,12 @@ type Category = {
   style?: 'normal' | 'highlight'
 }
 
-type BannerImage = {
-  urlMobileSized: string
-  urlTabletSized: string
-  urlOriginal: string
-}
-
 export type Show = {
   id: string
   slug: string
   name: string
   sortOrder: number | null
-  bannerImg: BannerImage | null
+  bannerImage: string | null
   listShow?: boolean | null
 }
 
@@ -53,7 +47,7 @@ export type RawShow = {
   slug: string
   name: string
   sortOrder: number | null
-  bannerImg: RawBannerImage | null
+  bannerImage: string | null
   listShow?: boolean | null
 }
 
