@@ -35,6 +35,8 @@ const nextConfig = {
         pathname: '/**',
       })
     ),
+    imageSizes: [480, 800],
+    deviceSizes: [480, 800],
   },
   output: 'standalone',
   async headers() {

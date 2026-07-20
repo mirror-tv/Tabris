@@ -28,14 +28,14 @@ type FormatArticleCardInput = {
   slug: string
   name: string
   publishTime: string | Date
-  heroImage?: FormattableHeroImage
+  heroImage?: FormattableHeroImage | string | null
   ogImage?: FormattableHeroImage
   thumbnail?: string | null
   images?: PostImage | null
   imagesWebP?: PostImage | null
   style?: string | null
   categories?: { name: string }[]
-  partner?: { name: string; slug: string }
+  partner?: { name: string; slug?: string }
   __typename?: string
   exclusive?: boolean | null
 }
@@ -61,7 +61,7 @@ const formatArticleCard = (
     exclusive: 'exclusive' in post ? post.exclusive ?? false : false,
   }
 
-  let heroImageForFormatting: FormattableHeroImage =
+  let heroImageForFormatting: FormattableHeroImage | string | null =
     postFormatArticleCardInput.heroImage ?? postFormatArticleCardInput.ogImage
 
   if (!heroImageForFormatting && postFormatArticleCardInput.thumbnail) {

@@ -2,10 +2,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import styles from './_styles/header-top.module.scss'
 import type { Sponsor } from '~/graphql/query/sponsors'
-import { formateHeroImage } from '~/utils'
-import ResponsiveImage from '~/components/shared/responsive-image'
 import { TV_AD_ADMIN_OEN_URL } from '~/constants/constant'
 import { withBasePath } from '~/constants/with-base-path'
+import { imageLoader } from '~/components/shared/next-responsive-image'
 
 type HeaderTopProps = {
   sponsors: Sponsor[]
@@ -45,7 +44,6 @@ export default function HeaderTop({ sponsors }: HeaderTopProps) {
       </div>
       <div className={styles.sponsorsWrapper}>
         {sponsors.slice(0, 3).map((sponsor) => {
-          const { images, imagesWebP } = formateHeroImage(sponsor.logo ?? {})
           return (
             <div key={sponsor.id}>
               <Link
@@ -54,12 +52,15 @@ export default function HeaderTop({ sponsors }: HeaderTopProps) {
                 }
                 className={styles.sponsorItem}
               >
-                <ResponsiveImage
+                <Image
+                  width={100}
+                  height={52}
+                  src={sponsor.logo ?? '/images/image-default.jpg'}
                   alt="Sponsor Logo"
-                  images={images}
-                  imagesWebP={imagesWebP}
-                  rwd={{ default: '100px' }}
-                  priority={true}
+                  placeholder="blur"
+                  blurDataURL="/images/loading.svg"
+                  loader={imageLoader}
+                  priority
                 />
               </Link>
             </div>

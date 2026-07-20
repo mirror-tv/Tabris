@@ -15,7 +15,6 @@ import {
 
 import { fetchStaticJson } from '~/utils/fetch-static-json'
 import { createDataFetchingChain } from '~/utils/fetch-function'
-import type { FormattableHeroImage } from '~/types/hero-image'
 
 const ImageApiDataSchema = z
   .object({
@@ -49,16 +48,10 @@ const HeroImageObjectSchema = z
   })
   .passthrough()
 
-const FlexibleHeroImageSchema = z.union([
-  z.string(),
-  HeroImageObjectSchema,
-  z.null(),
-])
-
 const StaticEditorChoiceSchema = z.object({
   name: z.string(),
   slug: z.string(),
-  heroImage: FlexibleHeroImageSchema.optional(),
+  heroImage: z.string().nullable(),
   heroVideo: z
     .object({
       coverPhoto: HeroImageObjectSchema.nullable(),
@@ -96,7 +89,7 @@ const StaticLatestPostSchema = z.object({
     if (val === null || val === undefined) return new Date().toISOString()
     return String(val)
   }),
-  heroImage: FlexibleHeroImageSchema.optional(),
+  heroImage: z.string().nullable(),
   categories: z
     .array(
       z.object({
@@ -134,7 +127,7 @@ const ListingPostSchema = z.object({
   slug: z.string(),
   style: z.string().optional(),
   name: z.string(),
-  heroImage: HeroImageObjectSchema.nullable(),
+  heroImage: z.string().nullable(),
   exclusive: z
     .any()
     .transform((val) => {
@@ -174,7 +167,7 @@ const GraphQLEditorChoicesResponseSchema = z.object({
       choice: z.object({
         name: z.string(),
         slug: z.string(),
-        heroImage: HeroImageObjectSchema.nullable(),
+        heroImage: z.string().nullable(),
         heroVideo: z
           .object({
             coverPhoto: HeroImageObjectSchema.nullable(),
@@ -210,21 +203,6 @@ type GetLatestPostsServerActionType = {
   withCount: boolean
   filteredSlug: string[]
   jsonPage: number
-}
-
-function normalizeFlexibleHeroImage(
-  heroImage: z.infer<typeof FlexibleHeroImageSchema> | undefined
-): FormattableHeroImage {
-  if (!heroImage) {
-    return null
-  }
-
-  if (typeof heroImage === 'string') {
-    const urlOriginal = heroImage.trim()
-    return urlOriginal ? { urlOriginal } : null
-  }
-
-  return heroImage
 }
 
 async function fetchLatestPostsAndEditorChoices({ page }: { page: number }) {
@@ -296,7 +274,7 @@ async function getLatestPostsAndEditorChoices({
             name: choice.name,
             slug: choice.slug,
             source: choice.source,
-            heroImage: normalizeFlexibleHeroImage(choice.heroImage),
+            heroImage: choice.heroImage,
             heroVideo: choice.heroVideo
               ? {
                   coverPhoto: choice.heroVideo.coverPhoto ?? null,
@@ -312,7 +290,7 @@ async function getLatestPostsAndEditorChoices({
           slug: post.slug,
           style: post.style,
           name: post.name,
-          heroImage: normalizeFlexibleHeroImage(post.heroImage),
+          heroImage: post.heroImage,
           publishTime: new Date(post.publishTime),
           categories: (post.categories || []).map((category) => ({
             slug: category.slug || category.name?.toLowerCase() || 'unknown',
@@ -387,7 +365,7 @@ async function getLatestPostsAndEditorChoices({
         validatedEditorChoices.allEditorChoices.map((choice) => ({
           choice: {
             ...choice.choice,
-            heroImage: choice.choice.heroImage ?? null,
+            heroImage: choice.choice.heroImage,
             heroVideo: choice.choice.heroVideo
               ? {
                   coverPhoto: choice.choice.heroVideo.coverPhoto ?? null,
@@ -408,11 +386,11 @@ async function getLatestPostsAndEditorChoices({
       )
 
       return {
-        latest: transformedGraphQLPosts as PostWithCategory[],
-        choices: transformedGraphQLChoices as EditorChoices[],
+        latest: transformedGraphQLPosts,
+        choices: transformedGraphQLChoices,
         _allPostsMeta: validatedLatestPosts._allPostsMeta,
         source: 'graphql' as const,
-      } as JsonChainResult
+      }
     }
 
     if (jsonPage > 1) {

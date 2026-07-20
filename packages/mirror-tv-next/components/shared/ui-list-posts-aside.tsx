@@ -45,13 +45,11 @@ export default function UiListPostsAside({
                 <UiPostCardAside
                   href={item.href}
                   images={item.images}
-                  imagesWebP={item.imagesWebP}
                   title={item.name}
                   page={page}
                   postStyle={item.style ?? ''}
                   date={item.publishTime}
                   exclusive={item.exclusive ?? false}
-                  slug={item.slug ?? ''}
                 />
               </li>
             </div>

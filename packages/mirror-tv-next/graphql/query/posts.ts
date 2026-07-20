@@ -6,19 +6,27 @@ import type { FormattableHeroImage } from '~/types/hero-image'
 export type PostCardItem = ListingPost & {
   publishTime: string
   ogImage?: FormattableHeroImage
-  __typename?: 'Post'
+  partner?: {
+    name: string
+    slug?: 'external'
+  }
+  __typename?: 'Post' | 'External'
 }
 
 export type PostWithCategory = ListingPost & {
   publishTime: string | Date
   categories: {
-    slug: string
+    slug?: string
     name: string
   }[]
   heroVideo?: {
     coverPhoto: FormattableHeroImage
   } | null
-  __typename?: 'Post'
+  partner?: {
+    name: string
+    slug?: 'external'
+  }
+  __typename?: 'Post' | 'External'
 }
 
 const getPostsByTagName = gql`

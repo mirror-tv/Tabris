@@ -7,7 +7,7 @@ export type EditorChoices = {
     name: string
     slug: string
     source?: string | null
-    heroImage: FormattableHeroImage
+    heroImage: string | null
     heroVideo?: { coverPhoto: FormattableHeroImage } | null
     exclusive: boolean | null
   }
