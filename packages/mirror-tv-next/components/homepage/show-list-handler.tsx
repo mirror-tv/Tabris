@@ -3,7 +3,7 @@ import styles from './_styles/show-list-handler.module.scss'
 import InfiniteScrollList from '@readr-media/react-infinite-scroll-list'
 import useWindowDimensions from '~/hooks/use-window-dimensions'
 import { useMemo } from 'react'
-import Link from 'next/link'
+import Link from '~/components/shared/link'
 import type { Show } from '~/types/header'
 import NextResponsiveImage from '../shared/next-responsive-image'
 

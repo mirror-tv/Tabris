@@ -1,5 +1,5 @@
 import Image from '@readr-media/react-image'
-import Link from 'next/link'
+import Link from '~/components/shared/link'
 import type { Post } from '~/graphql/query/topic'
 import styles from './_styles/ui-post-card.module.scss'
 import { formateHeroImage } from '~/utils'
