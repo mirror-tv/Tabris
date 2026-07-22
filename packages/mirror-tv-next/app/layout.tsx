@@ -44,6 +44,7 @@ const noto_sans = Noto_Sans({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-noto-sans',
+  preload: false,
 })
 
 export default async function RootLayout({
