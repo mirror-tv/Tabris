@@ -2,6 +2,7 @@
 import errors from '@twreporter/errors'
 import { z } from 'zod'
 import { CATEGORY_VIDEO_FILENAME } from '~/constants/json-filenames'
+import { ListingPost } from '~/graphql/fragments/listing-post'
 import type { PostCardItem } from '~/graphql/query/posts'
 import type { FormattableHeroImage } from '~/types/hero-image'
 import { fetchStaticJson } from '~/utils/fetch-static-json'
@@ -15,12 +16,7 @@ type FetchMoreItemsType = {
 
 const CategoryVideoPostSchema = z.object({
   id: z.string(),
-  heroImage: z
-    .object({
-      w480: z.string().optional(),
-      w800: z.string().optional(),
-    })
-    .nullable(),
+  heroImage: z.string().nullable(),
   name: z.string(),
   publishTime: z.string(),
   slug: z.string(),
@@ -46,20 +42,16 @@ export type CategoryVideoCategory = z.infer<typeof CategoryVideoCategorySchema>
 
 function postJsonToPostCardItem(
   post: z.infer<typeof CategoryVideoPostSchema>
-): PostCardItem {
-  const hero: FormattableHeroImage =
-    post.heroImage && (post.heroImage.w480 || post.heroImage.w800)
-      ? {
-          w480: post.heroImage.w480,
-          w800: post.heroImage.w800,
-        }
-      : {}
-
+): ListingPost<string | null> & {
+  publishTime: string
+  ogImage?: FormattableHeroImage
+  __typename?: 'Post'
+} {
   return {
     slug: post.slug,
     name: post.name,
     publishTime: post.publishTime,
-    heroImage: hero,
+    heroImage: post.heroImage,
     exclusive: null,
     style: 'videoNews',
     __typename: 'Post',
@@ -93,7 +85,7 @@ async function fetchVideoPostsItems({
 }: FetchMoreItemsType): Promise<{
   categorySlug: string
   data: {
-    allPosts: PostCardItem[]
+    allPosts: PostCardItem<string | null>[]
     _allPostsMeta?: { count: number }
   }
 }> {

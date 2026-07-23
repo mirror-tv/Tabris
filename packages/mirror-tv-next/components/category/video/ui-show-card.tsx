@@ -29,8 +29,9 @@ export default function UiShowCard({
         placeholder="blur"
         blurDataURL="/images/loading.svg"
         src={
-          bannerImage?.replace(/\.(jpg|png)$/i, '.webP') ??
-          '/images/image-default.jpg'
+          typeof bannerImage === 'string'
+            ? bannerImage?.replace(/\.(jpg|png)$/i, '.webP')
+            : '/images/image-default.jpg'
         }
         sizes="(max-width: 768px) 50vw, 30vw"
         srcSet={[480, 800]}

@@ -15,6 +15,7 @@ import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
 import { type External } from '~/graphql/query/externals'
 import { handleResponse } from '~/utils'
 import { combineAndSortedByPublishedTime } from '~/utils/post-handler'
+
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 
 export const revalidate = GLOBAL_CACHE_SETTING

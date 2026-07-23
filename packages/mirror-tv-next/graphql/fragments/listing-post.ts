@@ -1,14 +1,26 @@
 import gql from 'graphql-tag'
-import type { FormattableHeroImage } from '~/types/hero-image'
 import { heroImageFragment } from './hero-image'
 
-export type ListingPost = {
+import type { K6FlatHeroImage, K6NestedHeroImage } from '~/types/hero-image'
+
+export type HeroImage = Omit<K6NestedHeroImage, 'id'> & {
+  imageApiData: Record<
+    keyof K6FlatHeroImage,
+    {
+      url: string
+      width: number
+      height: number
+    }
+  >
+}
+
+export type ListingPost<T extends string | null | HeroImage = HeroImage> = {
   slug: string
   style?: string | null
   name: string
-  heroImage: FormattableHeroImage
+  heroImage: T
   exclusive: boolean | null
-  __typename?: 'Post'
+  __typename?: 'Post' | 'External'
 }
 
 const listingPost = gql`
