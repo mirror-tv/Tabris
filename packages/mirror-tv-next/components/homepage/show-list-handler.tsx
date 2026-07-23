@@ -58,8 +58,9 @@ export default function ShowListHandler({
                   placeholder="blur"
                   blurDataURL="/images/loading.svg"
                   src={
-                    item.bannerImage?.replace(/\.(jpg|png)$/i, '.webP') ??
-                    '/images/image-default.jpg'
+                    typeof item.bannerImage === 'string'
+                      ? item.bannerImage?.replace(/\.(jpg|png)$/i, '.webP')
+                      : '/images/image-default.jpg'
                   }
                   sizes="(max-width: 768px) 50vw, 30vw"
                   srcSet={[480, 800]}

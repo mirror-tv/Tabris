@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import { ListingPost, listingPost } from '../fragments/listing-post'
+import { type ListingPost, listingPost } from '../fragments/listing-post'
 
 export type Post = ListingPost & {
   publishTime: string

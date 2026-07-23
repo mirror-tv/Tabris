@@ -2,7 +2,6 @@ import styles from './_styles/latest-and-editor-choices-with-live.module.scss'
 import UiHeadingBordered from '~/components/shared/ui-heading-bordered'
 import { getLatestPostsAndEditorChoices } from '~/app/_actions/homepage/latest-posts-and-editor-choices'
 import { fetchSales } from '~/app/_actions/share/sales'
-import { formatArticleCard } from '~/utils'
 import { Sale } from '~/graphql/query/sales'
 import {
   FILTERED_SLUG,
@@ -16,6 +15,8 @@ const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 import PostListWithFirstPage from './post-list-with-first-page'
 import PopularPostsAndWeather from './popular-posts-and-weather'
 import MNewsLives from './mnews-lives'
+import { PostWithCategory } from '~/graphql/query/posts'
+import { HeroImage } from '~/graphql/fragments/listing-post'
 
 type LatestAndEditorChoicesWithLiveProps = {
   latestListTitle: string
@@ -27,12 +28,20 @@ type LatestAndEditorChoicesWithLiveProps = {
   }[]
 }
 
+function saleToPostWithCategory(sale: Sale): PostWithCategory<string | null> {
+  const post = sale.adPost
+  return {
+    ...post,
+    heroImage: post.heroImage?.resized?.original ?? null,
+  }
+}
+
 export default async function LatestAndEditorChoicesWithLive({
   latestListTitle,
   mnewsLives,
 }: LatestAndEditorChoicesWithLiveProps) {
   let salesPosts: Sale[] = []
-  let initRenderedPosts = []
+  let initRenderedPosts: PostWithCategory<string | null | HeroImage>[] = []
 
   const salesResponse = await fetchSales({ take: 4, pageName: 'homepage' })
   salesPosts = salesResponse?.data?.allSales || []
@@ -69,23 +78,22 @@ export default async function LatestAndEditorChoicesWithLive({
     editorChoices?.map((item) => item.choice.slug)
   )
 
-  let formattedLatestPosts = latestPosts?.map((post) => formatArticleCard(post))
-
   if (!salesPosts?.length) {
-    initRenderedPosts = formattedLatestPosts
+    initRenderedPosts = latestPosts
   } else {
     const salesPostsSlug = salesPosts.map((item) => item.adPost.slug)
-    formattedLatestPosts = formattedLatestPosts.filter(
+    initRenderedPosts = latestPosts.filter(
       (item) => !salesPostsSlug.includes(item.slug)
     )
     const salesPostsInsertIndex = [3, 5, 8, 10].slice(0, renderedSalesLength)
-    const formattedSales = salesPosts.map((post) =>
-      formatArticleCard(post.adPost)
-    )
+
     salesPostsInsertIndex.forEach((position, index) => {
-      formattedLatestPosts.splice(position, 0, formattedSales[index])
+      initRenderedPosts.splice(
+        position,
+        0,
+        saleToPostWithCategory(salesPosts[index])
+      )
     })
-    initRenderedPosts = formattedLatestPosts
   }
 
   return (

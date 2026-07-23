@@ -20,9 +20,10 @@ import { useRef } from 'react'
 import { PaginationOptions } from 'swiper/types'
 import UiExclusiveMark from '../shared/ui-exclusive-mark'
 import NextResponsiveImage from '../shared/next-responsive-image'
+import type { HeroImage } from '~/graphql/fragments/listing-post'
 
 type EditorChoicesSwiperProps = {
-  editorChoices: EditorChoices[]
+  editorChoices: EditorChoices<string | null | HeroImage>[]
 }
 
 export default function EditorChoicesSwiper({
@@ -93,12 +94,21 @@ export default function EditorChoicesSwiper({
                         loading="lazy"
                         placeholder="blur"
                         blurDataURL="/images/loading.svg"
-                        src={choice.heroImage.replace(/\.jpg$/i, '.webP')}
+                        src={
+                          typeof choice.heroImage === 'string'
+                            ? choice.heroImage?.replace(/\.jpg$/i, '.webP')
+                            : choice.heroImage.resized?.original ??
+                              '/images/image-default.jpg'
+                        }
                         sizes="(max-width: 768px) 50vw, 30vw"
                         srcSet={[480, 800]}
                         alt={choice.name}
                         priority={false}
-                        fallback={choice.heroImage}
+                        fallback={
+                          typeof choice.heroImage === 'string'
+                            ? choice.heroImage
+                            : choice.heroImage.resized?.original
+                        }
                         style={{ aspectRatio: '3 / 2' }}
                         fetchPriority={index === 0 ? 'high' : 'low'}
                       />

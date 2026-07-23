@@ -2,13 +2,14 @@
 import { useState } from 'react'
 import styles from './_styles/post-list-with-first-page.module.scss'
 import InfiniteScrollList from '@readr-media/react-infinite-scroll-list'
-import { FormattedPostCard, formatArticleCard } from '~/utils'
 import { HOMEPAGE_POSTS_PAGE_SIZE } from '~/constants/constant'
 import UiPostCardHomepage from './ui-post-card-hompage'
 import { getLatestPostsAndEditorChoices } from '~/app/_actions/homepage/latest-posts-and-editor-choices'
+import { PostWithCategory } from '~/graphql/query/posts'
+import type { HeroImage } from '~/graphql/fragments/listing-post'
 
 type PostListWithFirstPageProps = {
-  initPosts: FormattedPostCard[]
+  initPosts: PostWithCategory<string | null | HeroImage>[]
   postsCount: number
   renderedSalesLength: number
   filteredSlug: string[]
@@ -22,7 +23,7 @@ export default function PostListWithFirstPage({
   filteredSlug,
   source,
 }: PostListWithFirstPageProps) {
-  const [jsonPosts, setJsonPosts] = useState<FormattedPostCard[]>(initPosts)
+  const [jsonPosts, setJsonPosts] = useState(initPosts)
   const [hasShowSecondPage, setHasShowSecondPage] = useState(false)
   const fetchMorePosts = async (page: number) => {
     const withTimeout = <T,>(p: Promise<T>, label: string): Promise<T> => {
@@ -50,9 +51,7 @@ export default function PostListWithFirstPage({
           'json-branch'
         )
 
-        const additionalPosts =
-          postsResponse?.data?.latest?.map((post) => formatArticleCard(post)) ||
-          []
+        const additionalPosts = postsResponse?.data?.latest || []
 
         if (additionalPosts.length > 0) {
           const existingSlugs = new Set(jsonPosts.map((post) => post.slug))
@@ -79,10 +78,7 @@ export default function PostListWithFirstPage({
         'graphql-branch'
       )
 
-      return (
-        postsResponse?.data?.latest?.map((post) => formatArticleCard(post)) ||
-        []
-      )
+      return postsResponse?.data?.latest || []
     } catch (err) {
       return []
     }
@@ -93,15 +89,7 @@ export default function PostListWithFirstPage({
       <ol className={styles.firstList}>
         {initPosts.slice(0, HOMEPAGE_POSTS_PAGE_SIZE).map((postItem) => (
           <li key={postItem.slug} className={`${styles.item} list-latest`}>
-            <UiPostCardHomepage
-              href={postItem.href}
-              images={postItem.images}
-              title={postItem.name}
-              date={postItem.publishTime}
-              postStyle={postItem.style}
-              label={postItem.label}
-              exclusive={postItem.exclusive ?? false}
-            />
+            <UiPostCardHomepage {...postItem} />
           </li>
         ))}
       </ol>
@@ -116,7 +104,7 @@ export default function PostListWithFirstPage({
         </div>
       )}
       {hasShowSecondPage && (
-        <InfiniteScrollList<FormattedPostCard>
+        <InfiniteScrollList<PostWithCategory<string | null | HeroImage>>
           initialList={initPosts.slice(HOMEPAGE_POSTS_PAGE_SIZE)}
           pageSize={HOMEPAGE_POSTS_PAGE_SIZE}
           amountOfElements={postsCount}
@@ -137,15 +125,7 @@ export default function PostListWithFirstPage({
                   key={postItem.slug}
                   className={`${styles.item} list-latest`}
                 >
-                  <UiPostCardHomepage
-                    href={postItem.href}
-                    images={postItem.images}
-                    title={postItem.name}
-                    date={postItem.publishTime}
-                    postStyle={postItem.style}
-                    label={postItem.label}
-                    exclusive={postItem.exclusive ?? false}
-                  />
+                  <UiPostCardHomepage {...postItem} />
                 </li>
               ))}
             </ol>

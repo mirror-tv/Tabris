@@ -1,13 +1,14 @@
 import gql from 'graphql-tag'
 import type { FormattableHeroImage } from '~/types/hero-image'
 import { heroImageFragment } from '../fragments/hero-image'
+import type { HeroImage } from '~/types/common'
 
-export type EditorChoices = {
+export type EditorChoices<T extends null | string | HeroImage = HeroImage> = {
   choice: {
     name: string
     slug: string
     source?: string | null
-    heroImage: string | null
+    heroImage: T
     heroVideo?: { coverPhoto: FormattableHeroImage } | null
     exclusive: boolean | null
   }
