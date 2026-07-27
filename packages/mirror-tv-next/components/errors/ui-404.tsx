@@ -4,19 +4,14 @@ import { Varela_Round } from 'next/font/google'
 import Image from 'next/image'
 
 import Link from '~/components/shared/link'
-import ResponsiveImage from '~/components/shared/responsive-image'
 import styles from './_styles/ui-404.module.scss'
-import type { FormattedPostCard } from '~/utils'
-import { formatArticleCard } from '~/utils'
 import { useData } from '~/context/data-context'
+import NextResponsiveImage from '../shared/next-responsive-image'
 
 const font = Varela_Round({ subsets: ['latin'], weight: '400' })
 
 export default function Ui404() {
   const { popularPosts } = useData()
-  const formattedPosts: FormattedPostCard[] = popularPosts.map((post) =>
-    formatArticleCard(post)
-  )
 
   return (
     <div className={`${font.className} ${styles.error}`}>
@@ -31,29 +26,31 @@ export default function Ui404() {
         <div className={styles.article_container}>
           <h3>熱門新聞</h3>
           <div className={styles.article_list}>
-            {formattedPosts.slice(0, 3).map((article) => {
+            {popularPosts.slice(0, 3).map((article) => {
               return (
                 <Link
                   key={article.slug}
-                  href={article.href}
+                  href={`/story/${article.slug}`}
                   target="_blank"
                   rel="noreferrer noopener"
                 >
-                  <div className={styles.img}>
-                    <ResponsiveImage
-                      images={article.images}
-                      imagesWebP={article.imagesWebP}
-                      alt={article.name}
-                      priority={false}
-                      rwd={{
-                        mobile: '500px',
-                        tablet: '500px',
-                        laptop: '500px',
-                        desktop: '500px',
-                        default: '500px',
-                      }}
-                    />
-                  </div>
+                  <NextResponsiveImage
+                    fill
+                    className={styles.img}
+                    loading="lazy"
+                    placeholder="blur"
+                    blurDataURL="/images/loading.svg"
+                    src={
+                      article.heroImage?.replace(/\.(jpg|png)$/i, '.webP') ??
+                      '/images/image-default.jpg'
+                    }
+                    sizes="(max-width: 768px) 50vw, 30vw"
+                    srcSet={[480, 800]}
+                    alt={article.name}
+                    priority={false}
+                    fallback={article.heroImage}
+                    fetchPriority="high"
+                  />
 
                   <p>{article.name}</p>
                 </Link>

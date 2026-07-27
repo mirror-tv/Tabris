@@ -11,7 +11,7 @@ export type HeroImage = Omit<K6NestedHeroImage, 'id'> & {
       width: number
       height: number
     }
-  >
+  > & { url: string }
 }
 
 export type ListingPost<T extends string | null | HeroImage = HeroImage> = {
