@@ -23,21 +23,22 @@ export default function TopicItem({ topic, isFirst }: TopicListProps) {
           className={styles.imgWrapper}
         >
           <div className={`${styles.imgWrapper} topic__list__item feature`}>
-            {topic.heroImage && (
-              <NextResponsiveImage
-                fill
-                loading="lazy"
-                placeholder="blur"
-                blurDataURL="/images/loading.svg"
-                src={topic.heroImage.replace(/\.(jpg|png)$/i, '.webP')}
-                sizes="(max-width: 768px) 50vw, 30vw"
-                srcSet={[480, 800]}
-                alt={topic.name}
-                priority={false}
-                fallback={topic.heroImage}
-                style={{ aspectRatio: '581 / 324' }}
-              />
-            )}
+            <NextResponsiveImage
+              fill
+              loading="lazy"
+              placeholder="blur"
+              blurDataURL="/images/loading.svg"
+              src={
+                topic.heroImage?.replace(/\.(jpg|png)$/i, '.webP') ??
+                '/images/image-default.jpg'
+              }
+              sizes="(max-width: 768px) 50vw, 30vw"
+              srcSet={[480, 800]}
+              alt={topic.name}
+              priority={false}
+              fallback={topic.heroImage}
+              style={{ aspectRatio: '581 / 324' }}
+            />
           </div>
         </Link>
       )}
