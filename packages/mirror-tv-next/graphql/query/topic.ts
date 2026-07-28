@@ -1,6 +1,5 @@
 import gql from 'graphql-tag'
 import type { HeroImage } from '~/types/common'
-import type { FormattableHeroImage } from '~/types/hero-image'
 import { heroImageFragment } from '../fragments/hero-image'
 import { ListingPost } from '../fragments/listing-post'
 
@@ -61,7 +60,7 @@ export type SingleTopic = Topic & {
 }
 
 export type FeatureTopic = Omit<Topic, 'briefApiData' | 'heroImage'> & {
-  heroImage: FormattableHeroImage
+  heroImage: string | null
   postDESC: {
     slug: string
     name: string

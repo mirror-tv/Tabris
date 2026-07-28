@@ -15,6 +15,7 @@ import {
 
 import { fetchStaticJson } from '~/utils/fetch-static-json'
 import { createDataFetchingChain } from '~/utils/fetch-function'
+import type { HeroImage } from '~/graphql/fragments/listing-post'
 import type { FormattableHeroImage } from '~/types/hero-image'
 
 const ImageApiDataSchema = z
@@ -49,16 +50,10 @@ const HeroImageObjectSchema = z
   })
   .passthrough()
 
-const FlexibleHeroImageSchema = z.union([
-  z.string(),
-  HeroImageObjectSchema,
-  z.null(),
-])
-
 const StaticEditorChoiceSchema = z.object({
   name: z.string(),
   slug: z.string(),
-  heroImage: FlexibleHeroImageSchema.optional(),
+  heroImage: z.string().nullable(),
   heroVideo: z
     .object({
       coverPhoto: HeroImageObjectSchema.nullable(),
@@ -96,7 +91,7 @@ const StaticLatestPostSchema = z.object({
     if (val === null || val === undefined) return new Date().toISOString()
     return String(val)
   }),
-  heroImage: FlexibleHeroImageSchema.optional(),
+  heroImage: z.string().nullable(),
   categories: z
     .array(
       z.object({
@@ -174,7 +169,7 @@ const GraphQLEditorChoicesResponseSchema = z.object({
       choice: z.object({
         name: z.string(),
         slug: z.string(),
-        heroImage: HeroImageObjectSchema.nullable(),
+        heroImage: z.string().nullable(),
         heroVideo: z
           .object({
             coverPhoto: HeroImageObjectSchema.nullable(),
@@ -212,21 +207,6 @@ type GetLatestPostsServerActionType = {
   jsonPage: number
 }
 
-function normalizeFlexibleHeroImage(
-  heroImage: z.infer<typeof FlexibleHeroImageSchema> | undefined
-): FormattableHeroImage {
-  if (!heroImage) {
-    return null
-  }
-
-  if (typeof heroImage === 'string') {
-    const urlOriginal = heroImage.trim()
-    return urlOriginal ? { urlOriginal } : null
-  }
-
-  return heroImage
-}
-
 async function fetchLatestPostsAndEditorChoices({ page }: { page: number }) {
   const jsonData = await fetchStaticJson(`latest_posts0${page}.json`)
   const result = StaticHomepageResponseSchema.safeParse(jsonData)
@@ -248,8 +228,8 @@ async function getLatestPostsAndEditorChoices({
   jsonPage = 1,
 }: Partial<GetLatestPostsServerActionType> = {}): Promise<{
   data: {
-    latest: PostWithCategory[]
-    choices: EditorChoices[]
+    latest: PostWithCategory<string | HeroImage | null>[]
+    choices: EditorChoices<string | HeroImage | null>[]
     _allPostsMeta?: { count: number }
     source: 'json' | 'graphql'
   }
@@ -272,16 +252,16 @@ async function getLatestPostsAndEditorChoices({
   }
 
   let data: {
-    latest: PostWithCategory[]
-    choices: EditorChoices[]
+    latest: PostWithCategory<string | HeroImage | null>[]
+    choices: EditorChoices<string | HeroImage | null>[]
     _allPostsMeta?: { count: number }
     source: 'json' | 'graphql'
   }
 
   if (jsonPage) {
     type JsonChainResult = {
-      latest: PostWithCategory[]
-      choices: EditorChoices[]
+      latest: PostWithCategory<string | null | HeroImage>[]
+      choices: EditorChoices<string | HeroImage | null>[]
       _allPostsMeta?: { count: number }
       source: 'json' | 'graphql'
     }
@@ -296,7 +276,7 @@ async function getLatestPostsAndEditorChoices({
             name: choice.name,
             slug: choice.slug,
             source: choice.source,
-            heroImage: normalizeFlexibleHeroImage(choice.heroImage),
+            heroImage: choice.heroImage,
             heroVideo: choice.heroVideo
               ? {
                   coverPhoto: choice.heroVideo.coverPhoto ?? null,
@@ -305,14 +285,14 @@ async function getLatestPostsAndEditorChoices({
             exclusive: choice.exclusive ?? false,
           },
         }
-      }) as EditorChoices[]
+      }) as EditorChoices<string | HeroImage | null>[]
 
       const transformedPosts = validatedData.latest.map((post) => {
         return {
           slug: post.slug,
           style: post.style,
           name: post.name,
-          heroImage: normalizeFlexibleHeroImage(post.heroImage),
+          heroImage: post.heroImage,
           publishTime: new Date(post.publishTime),
           categories: (post.categories || []).map((category) => ({
             slug: category.slug || category.name?.toLowerCase() || 'unknown',
@@ -320,20 +300,21 @@ async function getLatestPostsAndEditorChoices({
           })),
           heroVideo: post.heroVideo
             ? {
-                coverPhoto: post.heroVideo.coverPhoto ?? null,
+                coverPhoto:
+                  (post.heroVideo.coverPhoto as FormattableHeroImage) ?? null,
               }
             : null,
           exclusive: post.exclusive,
           partner: post.partner,
-        } as PostWithCategory
-      }) as PostWithCategory[]
+        }
+      })
 
       return {
-        latest: transformedPosts as PostWithCategory[],
-        choices: transformedChoices as EditorChoices[],
+        latest: transformedPosts,
+        choices: transformedChoices,
         _allPostsMeta: withCount ? { count: 200 } : undefined,
         source: 'json',
-      } as JsonChainResult
+      }
     }
 
     const fetchFromGraphQL = async (): Promise<JsonChainResult> => {
@@ -387,10 +368,12 @@ async function getLatestPostsAndEditorChoices({
         validatedEditorChoices.allEditorChoices.map((choice) => ({
           choice: {
             ...choice.choice,
-            heroImage: choice.choice.heroImage ?? null,
+            heroImage: choice.choice.heroImage,
             heroVideo: choice.choice.heroVideo
               ? {
-                  coverPhoto: choice.choice.heroVideo.coverPhoto ?? null,
+                  coverPhoto:
+                    (choice.choice.heroVideo
+                      .coverPhoto as FormattableHeroImage) ?? null,
                 }
               : null,
           },
@@ -401,18 +384,23 @@ async function getLatestPostsAndEditorChoices({
           ...post,
           heroVideo: post.heroVideo
             ? {
-                coverPhoto: post.heroVideo.coverPhoto ?? null,
+                coverPhoto:
+                  (post.heroVideo.coverPhoto as FormattableHeroImage) ?? null,
               }
             : null,
         })
       )
 
       return {
-        latest: transformedGraphQLPosts as PostWithCategory[],
-        choices: transformedGraphQLChoices as EditorChoices[],
+        latest: transformedGraphQLPosts as PostWithCategory<
+          string | HeroImage | null
+        >[],
+        choices: transformedGraphQLChoices as EditorChoices<
+          string | HeroImage | null
+        >[],
         _allPostsMeta: validatedLatestPosts._allPostsMeta,
         source: 'graphql' as const,
-      } as JsonChainResult
+      }
     }
 
     if (jsonPage > 1) {
@@ -468,11 +456,11 @@ async function getLatestPostsAndEditorChoices({
             }
           : null,
       })
-    ) as PostWithCategory[]
+    ) as PostWithCategory<string | HeroImage | null>[]
 
     data = {
       latest: transformedGraphQLPosts,
-      choices: [] as EditorChoices[],
+      choices: [] as EditorChoices<string | HeroImage | null>[],
       _allPostsMeta: validatedLatestPosts._allPostsMeta,
       source: 'graphql' as const,
     }

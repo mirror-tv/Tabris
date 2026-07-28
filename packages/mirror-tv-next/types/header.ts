@@ -6,18 +6,12 @@ type Category = {
   style?: 'normal' | 'highlight'
 }
 
-type BannerImage = {
-  urlMobileSized: string
-  urlTabletSized: string
-  urlOriginal: string
-}
-
 export type Show = {
   id: string
   slug: string
   name: string
   sortOrder: number | null
-  bannerImg: BannerImage | null
+  bannerImage: string | null
   listShow?: boolean | null
 }
 
@@ -25,15 +19,9 @@ type Sponsor = {
   id: string
   title: string | null
   url: string | null
-  logo: {
-    urlMobileSized: string
-  } | null
-  mobile: {
-    urlMobileSized: string
-  } | null
-  tablet: {
-    urlMobileSized: string
-  } | null
+  logo: string | null
+  mobile: string | null
+  tablet: string | null
   topic: {
     id: string
     slug: string
@@ -59,7 +47,7 @@ export type RawShow = {
   slug: string
   name: string
   sortOrder: number | null
-  bannerImg: RawBannerImage | null
+  bannerImage: string | null
   listShow?: boolean | null
 }
 
@@ -71,9 +59,9 @@ export type RawSponsor = {
   id: string
   title: string | null
   url: string | null
-  logo: RawSponsorImage | null
-  mobile: RawSponsorImage | null
-  tablet: RawSponsorImage | null
+  logo: string | null
+  mobile: string | null
+  tablet: string | null
   topic: {
     id: string
     slug: string

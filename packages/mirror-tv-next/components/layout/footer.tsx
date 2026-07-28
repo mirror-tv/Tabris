@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import Link from 'next/link'
+import Link from '~/components/shared/link'
 import {
   CUSTOMER_SERVICE_EMAIL,
   HEADER_BOTTOM_LINKS,

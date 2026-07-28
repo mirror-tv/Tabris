@@ -1,7 +1,6 @@
 'use client'
 import Image from 'next/image'
-import CallbackImage from '@readr-media/react-image'
-import Link from 'next/link'
+import Link from '~/components/shared/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { HEADER_BOTTOM_LINKS } from '~/constants/constant'
@@ -10,8 +9,8 @@ import type { Category } from '~/graphql/query/category'
 import type { Show } from '~/types/header'
 import type { Sponsor } from '~/graphql/query/sponsors'
 import styles from './_styles/side-menu.module.scss'
-import { formateHeroImage } from '~/utils'
 import { useData } from '~/context/data-context'
+import { imageLoader } from '~/components/shared/next-responsive-image'
 
 type SideMenuProps = {
   categories: Category[]
@@ -101,9 +100,6 @@ export default function SideMenu({ categories, sponsors }: SideMenuProps) {
           <div className={styles.sponsorsBlock}>
             <div className={styles.sponsorsWrapper}>
               {sponsors.slice(0, 3).map((sponsor) => {
-                const { images, imagesWebP } = formateHeroImage(
-                  sponsor.mobile ?? {}
-                )
                 return (
                   <div key={sponsor.id}>
                     <Link
@@ -114,14 +110,15 @@ export default function SideMenu({ categories, sponsors }: SideMenuProps) {
                       }
                       className={styles.sponsorItem}
                     >
-                      <CallbackImage
+                      <Image
+                        width={100}
+                        height={52}
+                        src={sponsor.mobile ?? '/images/image-default.jpg'}
                         alt="Sponsor Logo"
-                        images={images}
-                        imagesWebP={imagesWebP}
-                        loadingImage={withBasePath('/images/loading.svg')}
-                        defaultImage={withBasePath('/images/image-default.jpg')}
-                        rwd={{ default: '100px' }}
-                        priority={true}
+                        placeholder="blur"
+                        blurDataURL="/images/loading.svg"
+                        loader={imageLoader}
+                        priority
                       />
                     </Link>
                   </div>

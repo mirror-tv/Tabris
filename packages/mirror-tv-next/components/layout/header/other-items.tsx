@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import Link from 'next/link'
+import Link from '~/components/shared/link'
 import { HEADER_BOTTOM_LINKS } from '~/constants/constant'
 import { withBasePath } from '~/constants/with-base-path'
 import styles from './_styles/other-items.module.scss'

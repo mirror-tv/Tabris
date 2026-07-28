@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import Link from '~/components/shared/link'
 import styles from './_styles/ui-more-topic-btn.module.scss'
 
 type UiLoadMoreButtonProps = {

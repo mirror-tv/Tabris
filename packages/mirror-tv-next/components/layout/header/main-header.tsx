@@ -23,35 +23,15 @@ async function getData() {
         name: show.name,
         sortOrder: show.sortOrder,
         listShow: show.listShow,
-        bannerImg: show.bannerImg
-          ? {
-              urlMobileSized:
-                show.bannerImg.w800 || show.bannerImg.original || '',
-              urlTabletSized:
-                show.bannerImg.w800 || show.bannerImg.original || '',
-              urlOriginal: show.bannerImg.original || '',
-            }
-          : null,
+        bannerImg: show.bannerImage,
       })),
       allSponsors: (data.sponsors || []).map((sponsor: RawSponsor) => ({
         id: sponsor.id,
         title: sponsor.title ?? '',
         url: sponsor.url ?? '',
-        logo: sponsor.logo
-          ? {
-              urlMobileSized: sponsor.logo.w480 || '',
-            }
-          : null,
-        mobile: sponsor.mobile
-          ? {
-              urlMobileSized: sponsor.mobile.w480 || '',
-            }
-          : null,
-        tablet: sponsor.tablet
-          ? {
-              urlMobileSized: sponsor.tablet.w480 || '',
-            }
-          : null,
+        logo: sponsor.logo,
+        mobile: sponsor.mobile,
+        tablet: sponsor.tablet,
         topic: sponsor.topic,
       })),
     }

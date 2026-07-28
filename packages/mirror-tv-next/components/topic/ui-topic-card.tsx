@@ -3,7 +3,7 @@ import styles from './_styles/ui-topic-card.module.scss'
 import { PostImage } from '~/utils'
 import ResponsiveImage from '~/components/shared/responsive-image'
 import { ApiData } from '~/types/api-data'
-import Link from 'next/link'
+import Link from '~/components/shared/link'
 import { useEffect, useState } from 'react'
 
 type UiPostCardProps = {

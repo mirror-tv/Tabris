@@ -1,25 +1,39 @@
 import gql from 'graphql-tag'
 import { heroImageFragment } from '../fragments/hero-image'
-import { ListingPost, listingPost } from '../fragments/listing-post'
+import {
+  type HeroImage,
+  ListingPost,
+  listingPost,
+} from '../fragments/listing-post'
 import type { FormattableHeroImage } from '~/types/hero-image'
 
-export type PostCardItem = ListingPost & {
-  publishTime: string
-  ogImage?: FormattableHeroImage
-  __typename?: 'Post'
-}
+export type PostCardItem<T extends string | null | HeroImage = HeroImage> =
+  ListingPost<T> & {
+    publishTime: string
+    ogImage?: FormattableHeroImage
+    partner?: {
+      name: string
+      slug?: 'external'
+    }
+    __typename?: 'Post' | 'External'
+  }
 
-export type PostWithCategory = ListingPost & {
-  publishTime: string | Date
-  categories: {
-    slug: string
-    name: string
-  }[]
-  heroVideo?: {
-    coverPhoto: FormattableHeroImage
-  } | null
-  __typename?: 'Post'
-}
+export type PostWithCategory<T extends string | null | HeroImage = HeroImage> =
+  ListingPost<T> & {
+    publishTime: string | Date
+    categories: {
+      slug?: string
+      name: string
+    }[]
+    heroVideo?: {
+      coverPhoto: FormattableHeroImage
+    } | null
+    partner?: {
+      name: string
+      slug: string
+    }
+    __typename?: 'Post' | 'External'
+  }
 
 const getPostsByTagName = gql`
   query fetchPostsByTagName(

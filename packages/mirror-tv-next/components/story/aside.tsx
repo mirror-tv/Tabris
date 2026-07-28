@@ -2,11 +2,9 @@
 
 import styles from './_styles/aside.module.scss'
 import { GLOBAL_CACHE_SETTING } from '~/constants/environment-variables'
-import { pipe } from '~/utils/fp'
+
 import UiListPostsAside from '../shared/ui-list-posts-aside'
 import { useData } from '~/context/data-context'
-import { formatArticleCard, type FormattedPostCard } from '~/utils'
-import { type PostCardItem } from '~/graphql/query/posts'
 import MicroAd from '../ads/micro-ad'
 import dynamic from 'next/dynamic'
 import UiHeadingBordered from '../shared/ui-heading-bordered'
@@ -24,16 +22,6 @@ const Aside: React.FC = () => {
 
   const isTablet = width && width < 1200 && width >= 768
 
-  const ensureArray = (data: unknown) => (Array.isArray(data) ? data : [])
-  const addStyle = (data: PostCardItem[]): FormattedPostCard[] =>
-    [...data].map((post) => formatArticleCard({ ...post, style: 'article' }))
-  const getLatest5Items = (data: FormattedPostCard[]) => data.slice(0, 5)
-
-  const formatForPostCard = pipe(ensureArray, addStyle, getLatest5Items)
-
-  const formattedPopularPosts = formatForPostCard(popularPosts)
-  const formattedLatestPosts = formatForPostCard(latestPosts)
-
   return (
     <aside className={styles.aside}>
       <div className={styles.asideWrapper}>
@@ -43,7 +31,7 @@ const Aside: React.FC = () => {
         <UiListPostsAside
           listTitle="即時新聞"
           page={asideCategory}
-          listData={formattedLatestPosts}
+          listData={latestPosts.slice(0, 5)}
           className={`aside__list-latest ${styles.asideItem} list-wrapper`}
         />
         {!isTablet && (
@@ -63,11 +51,11 @@ const Aside: React.FC = () => {
           </div>
         )}
         <GPTAd pageKey={asideCategory} adKey="PC_R2" />
-        {!!formattedPopularPosts.length && (
+        {!!popularPosts.length && (
           <UiListPostsAside
             listTitle="熱門新聞"
             page={asideCategory}
-            listData={formattedPopularPosts}
+            listData={popularPosts}
             className={`aside__list-popular ${styles.asideItem}`}
           />
         )}

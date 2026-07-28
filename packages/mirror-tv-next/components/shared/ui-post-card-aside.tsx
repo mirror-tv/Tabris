@@ -1,7 +1,7 @@
 import styles from './_styles/ui-post-card-aside.module.scss'
-import { formateDateAtTaipei, PostImage } from '~/utils'
-import ResponsiveImage from './responsive-image'
+import { formateDateAtTaipei } from '~/utils'
 import UiExclusiveMark from './ui-exclusive-mark'
+import NextResponsiveImage from './next-responsive-image'
 
 type UiPostCardAsideProps = {
   title: string
@@ -9,10 +9,8 @@ type UiPostCardAsideProps = {
   href: string
   postStyle: string
   page: 'category' | 'story'
-  images: PostImage
-  imagesWebP?: PostImage
+  images: string
   exclusive: boolean
-  slug: string
 }
 
 export default function UiPostCardAside({
@@ -20,11 +18,9 @@ export default function UiPostCardAside({
   date,
   href = '',
   images,
-  imagesWebP,
   postStyle = 'post',
   page = 'category',
   exclusive = false,
-  slug = '',
 }: UiPostCardAsideProps) {
   const isVideoNews = postStyle === 'videoNews'
   const isCategoryPage = (type: string) => type === 'category'
@@ -39,20 +35,24 @@ export default function UiPostCardAside({
       target="_blank"
       rel="noreferrer noopener"
     >
-      <figure
-        className={[styles.image, styles[figureClassNameByProps]].join(' ')}
-      >
-        <ResponsiveImage
-          images={images}
-          imagesWebP={imagesWebP}
+      <div className={[styles.image, styles[figureClassNameByProps]].join(' ')}>
+        <NextResponsiveImage
+          fill
+          className={[styles.image, styles[figureClassNameByProps]].join(' ')}
+          loading="lazy"
+          placeholder="blur"
+          blurDataURL="/images/loading.svg"
+          src={images}
+          sizes="(max-width: 768px) 50vw, 30vw"
+          srcSet={[480, 800]}
           alt={title}
-          rwd={{ mobile: '500px', tablet: '500px', desktop: '500px' }}
           priority={false}
-          slug={slug}
+          fallback={images}
+          style={{ aspectRatio: '3 / 2' }}
         />
         {isVideoNews && <span className={styles.videoIcon}></span>}
         {exclusive && <UiExclusiveMark />}
-      </figure>
+      </div>
       <div className={styles.info}>
         <span className={styles.title}>{title}</span>
         {page === 'story' && (
