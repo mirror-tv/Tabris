@@ -39,7 +39,7 @@ export default function UiPostCardHomepage(props: UiPostCardProps) {
             blurDataURL="/images/loading.svg"
             src={
               typeof props.heroImage === 'string'
-                ? props.heroImage.replace(/\.jpg$/i, '.webP')
+                ? props.heroImage.replace(/\.(jpg|png)$/i, '.webP')
                 : '/images/image-default.jpg'
             }
             sizes="(max-width: 768px) 50vw, 30vw"
