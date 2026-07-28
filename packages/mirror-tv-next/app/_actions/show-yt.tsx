@@ -33,8 +33,8 @@ async function fetchYoutubeList({
     const response = await fetchYoutubeData(
       `/playlistItems?part=snippet,status${pageToken}&playlistId=${list.id}&maxResults=50`
     )
-    const publicVideos = response.items
-      .filter((item) => item.status.privacyStatus === 'public')
+    const publicVideos = (response.items ?? [])
+      .filter((item) => item.status?.privacyStatus === 'public')
       .slice(0, take)
 
     return { ...response, items: publicVideos }

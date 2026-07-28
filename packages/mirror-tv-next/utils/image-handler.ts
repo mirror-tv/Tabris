@@ -177,8 +177,14 @@ function isK6FlatHeroImage(heroImage: unknown): heroImage is K6FlatHeroImage {
 }
 
 function formateHeroImage(
-  heroImage: FormattableHeroImage | Record<string, never>
+  heroImage: FormattableHeroImage | Record<string, never> | string
 ): FormattedResponsiveImage {
+  if (typeof heroImage === 'string') {
+    return heroImage
+      ? { images: { original: heroImage, w3200: heroImage } }
+      : { images: createDefaultPostImage() }
+  }
+
   if (
     !heroImage ||
     (typeof heroImage === 'object' && Object.keys(heroImage).length === 0)

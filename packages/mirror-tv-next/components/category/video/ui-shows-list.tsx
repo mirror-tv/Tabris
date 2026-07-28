@@ -23,7 +23,7 @@ export default function UiShowsList({ title }: UiShowsListProps) {
               id={showItem.id}
               slug={showItem.slug}
               name={showItem.name}
-              bannerImg={showItem.bannerImg ?? {}}
+              bannerImage={showItem.bannerImage}
             />
           )
         })}

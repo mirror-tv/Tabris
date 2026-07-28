@@ -16,14 +16,14 @@ import {
   Navigation,
   Pagination,
 } from 'swiper/modules'
-import Image from '@readr-media/react-image'
-import { formateHeroImage, getSotThumbnailObjectFit } from '~/utils'
 import { useRef } from 'react'
 import { PaginationOptions } from 'swiper/types'
 import UiExclusiveMark from '../shared/ui-exclusive-mark'
+import NextResponsiveImage from '../shared/next-responsive-image'
+import type { HeroImage } from '~/graphql/fragments/listing-post'
 
 type EditorChoicesSwiperProps = {
-  editorChoices: EditorChoices[]
+  editorChoices: EditorChoices<string | null | HeroImage>[]
 }
 
 export default function EditorChoicesSwiper({
@@ -69,11 +69,9 @@ export default function EditorChoicesSwiper({
             modules={[Autoplay, Pagination, Navigation, Mousewheel, Keyboard]}
             className={`${styles.swiper} editor-choices-swiper`}
           >
-            {editorChoices.map((item) => {
+            {editorChoices.map((item, index) => {
               const { choice } = item
-              const { images, imagesWebP } = formateHeroImage(
-                choice.heroImage ?? (choice.heroVideo?.coverPhoto || {})
-              )
+
               return (
                 <SwiperSlide
                   key={choice.slug}
@@ -90,31 +88,39 @@ export default function EditorChoicesSwiper({
                     rel="noreferrer noopener"
                   >
                     {choice.exclusive && <UiExclusiveMark />}
-                    <Image
-                      loadingImage="/images/loading.svg"
-                      defaultImage="/images/image-default.jpg"
-                      images={images}
-                      imagesWebP={imagesWebP}
-                      alt={choice.name}
-                      rwd={{
-                        tablet: '100px',
-                        desktop: '1000px',
-                      }}
-                      priority={false}
-                      objectFit={getSotThumbnailObjectFit(choice.slug)}
-                    />
-                    <a
+                    {choice.heroImage && (
+                      <NextResponsiveImage
+                        fill
+                        loading="lazy"
+                        placeholder="blur"
+                        blurDataURL="/images/loading.svg"
+                        src={
+                          typeof choice.heroImage === 'string'
+                            ? choice.heroImage?.replace(
+                                /\.(jpg|png)$/i,
+                                '.webP'
+                              )
+                            : choice.heroImage.resized?.original ??
+                              '/images/image-default.jpg'
+                        }
+                        sizes="(max-width: 768px) 50vw, 30vw"
+                        srcSet={[480, 800]}
+                        alt={choice.name}
+                        priority={false}
+                        fallback={
+                          typeof choice.heroImage === 'string'
+                            ? choice.heroImage
+                            : choice.heroImage.resized?.original
+                        }
+                        style={{ aspectRatio: '3 / 2' }}
+                        fetchPriority={index === 0 ? 'high' : 'low'}
+                      />
+                    )}
+                    <div
                       className={`${styles.nameWrapper} GTM-editor-choices-link`}
-                      href={
-                        choice.source === 'externalChoice'
-                          ? `/external/${choice.slug}`
-                          : `/story/${choice.slug}`
-                      }
-                      target="_blank"
-                      rel="noreferrer noopener"
                     >
                       <span className={styles.name}>{choice.name}</span>
-                    </a>
+                    </div>
                   </a>
                 </SwiperSlide>
               )

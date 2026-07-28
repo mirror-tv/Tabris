@@ -89,16 +89,23 @@
 
 .visibleItems {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap; /* real row must never wrap onto a second line */
   align-items: center;
-  overflow-x: hidden;
-
-  max-width: 560px;
+  overflow: hidden;
   height: 28px;
 
-  @include media-breakpoint-up(xl) {
-    max-width: 960px;
-  }
+  /* Take the space left after the search bar, and DON'T grow with content.
+     This makes clientWidth equal the real available width for measurement. */
+  flex: 1 1 auto;
+  min-width: 0;
+
+  /* hidden until first measurement completes to avoid a flash of all items */
+  visibility: hidden;
+  /* width is decided by flex + measurement now — no hard-coded max-width */
+}
+
+.ready {
+  visibility: visible;
 }
 
 .restOfCategories {
@@ -255,7 +262,9 @@
 .hidden {
   position: fixed;
   display: flex;
+  flex-wrap: nowrap; /* keep measurement on one line so widths are accurate */
   opacity: 0;
+  pointer-events: none;
   top: -100%;
   left: -100%;
 }
