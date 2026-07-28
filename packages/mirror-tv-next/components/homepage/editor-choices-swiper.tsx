@@ -96,7 +96,10 @@ export default function EditorChoicesSwiper({
                         blurDataURL="/images/loading.svg"
                         src={
                           typeof choice.heroImage === 'string'
-                            ? choice.heroImage?.replace(/\.jpg$/i, '.webP')
+                            ? choice.heroImage?.replace(
+                                /\.(jpg|png)$/i,
+                                '.webP'
+                              )
                             : choice.heroImage.resized?.original ??
                               '/images/image-default.jpg'
                         }
