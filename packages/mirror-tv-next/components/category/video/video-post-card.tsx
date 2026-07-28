@@ -10,6 +10,10 @@ type VideoPostCardProps = {
   exclusive: boolean
 }
 
+function isDefaultImage(image: PostImage) {
+  return !image.original || image.original?.includes('image-default')
+}
+
 export default function VideoPostCard({
   imageUrls,
   title,
@@ -29,7 +33,11 @@ export default function VideoPostCard({
           loading="lazy"
           placeholder="blur"
           blurDataURL="/images/loading.svg"
-          src={imageUrls.original.replace(/\.(jpg|png)$/i, '.webP')}
+          src={
+            isDefaultImage(imageUrls)
+              ? '/images/image-default.jpg'
+              : imageUrls.original.replace(/\.(jpg|png)$/i, '.webP')
+          }
           sizes="(max-width: 768px) 50vw, 30vw"
           srcSet={[480, 800]}
           alt={title}
