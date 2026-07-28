@@ -417,11 +417,7 @@ const StoryPage = async (props: StoryPageTypes) => {
         </section>
         <AdTvAdminMobileBanner />
         <section className={styles.socialAndRelatedWrapper}>
-          <ArticleRelatedPosts
-            relatedPosts={lists.relatedPosts}
-            shouldShowAds={shouldShowAds}
-            page="story"
-          />
+          <ArticleRelatedPosts relatedPosts={lists.relatedPosts} />
           <ArticleSocialList />
           {shouldShowAds && <AdAfterStory />}
         </section>

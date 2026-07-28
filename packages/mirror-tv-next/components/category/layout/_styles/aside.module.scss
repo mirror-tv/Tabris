@@ -20,12 +20,6 @@
   }
 }
 
-.microAd {
-  @include media-breakpoint-up(md) {
-    margin: 48px 0;
-  }
-}
-
 .latestList {
   @include media-breakpoint-up(md) {
     margin-top: 24px;
