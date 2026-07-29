@@ -1,34 +1,33 @@
 ARG NODE_VERSION=20-slim
 
-# Install dependencies only when needed
-FROM node:${NODE_VERSION} AS deps
-WORKDIR /next-app
+# Base image with pinned pnpm version
+FROM node:${NODE_VERSION} AS base
+RUN npm install -g pnpm@11.17
 
-# Install dependencies based on the preferred package manager
-COPY ["package.json", "yarn.lock", "./"]
-RUN yarn install --frozen-lockfile
+# Install dependencies only when needed
+FROM base AS deps
+WORKDIR /next-app
+COPY ["package.json", "pnpm-lock.yaml", "./"]
+RUN pnpm install --frozen-lockfile
 
 # Rebuild the source code only when needed
-FROM node:${NODE_VERSION} AS builder
+FROM base AS builder
 WORKDIR /next-app
 COPY --from=deps /next-app/node_modules ./node_modules
 COPY . .
+RUN pnpm build
 
-RUN yarn build
-
-# Production image, copy all the files and run next
+# Production image
+# standalone output already includes all required node_modules — no install needed
 FROM node:${NODE_VERSION} AS runner
 
 RUN set -e; \
     apt-get update -y && apt-get -y install tini; \
-    apt-get clean
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /next-app
 
 ENV NODE_ENV=production
-
-COPY package.json yarn.lock /next-app/
-RUN yarn install --frozen-lockfile --production
 
 COPY --from=builder /next-app/run.sh ./
 COPY --from=builder /next-app/amp-proxy-server.js ./
