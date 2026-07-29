@@ -37,8 +37,7 @@ export default function AdH1Remover() {
               if (
                 element.classList.toString().includes('dable') ||
                 element.id.includes('dable') ||
-                element.querySelector('h1') ||
-                element.querySelector('h2')
+                element.querySelector('h1')
               ) {
                 shouldCheck = true
               }
