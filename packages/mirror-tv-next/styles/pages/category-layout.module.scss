@@ -18,14 +18,3 @@
     max-width: 1200px;
   }
 }
-
-.microAd {
-  margin: 40px 0;
-  @include media-breakpoint-up(md) {
-    margin: 0;
-  }
-  @include media-breakpoint-up(xl) {
-    display: none;
-    margin: 48px 0;
-  }
-}

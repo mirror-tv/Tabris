@@ -15,7 +15,6 @@ import {
   SITE_URL,
 } from '~/constants/environment-variables'
 import '~/styles/global.css'
-import CompassFit from '~/components/ads/compass-fit'
 import TagManagerWrapper from '~/app/tag-manager'
 import { fetchPopularPosts } from '~/app/_actions/popular-data'
 import { type RawPopularPost } from '~/types/popular-post'
@@ -169,7 +168,6 @@ export default async function RootLayout({
         async
         src="https://cdn.jsdelivr.net/npm/@miso.ai/client-sdk@1.11.4/dist/umd/miso.min.js"
       />
-      <CompassFit />
       <body>
         <ReferrerProvider>
           <DataProvider

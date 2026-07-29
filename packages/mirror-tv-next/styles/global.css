@@ -46,22 +46,9 @@ p {
   word-wrap: break-word;
 }
 
-/* SEO 優化：隱藏第三方廣告中的 h1 標籤，確保頁面只有一個 h1 */
-/* Compass Fit 廣告 */
-.compass-fit-heading,
-[class*='compass-fit'] h1,
-.mic-ad h1,
-.compass-fit h1 {
-  display: none !important;
-}
-
-.popin_recommend h1 {
-  display: none !important;
-}
-
 /* SOT thumbnails: site-wide safety net for any thumbnail inside an anchor
  * that links to a SOT story/external post. Covers third-party widgets
- * (Compass-Fit) and any component that does not pass the slug prop down. */
+ * any component that does not pass the slug prop down. */
 a[href*='/story/'][href*='sot'] img,
 a[href*='/external/'][href*='sot'] img {
   object-fit: contain !important;
@@ -644,6 +631,3 @@ video {
 
 /* Import Miso Search Styles */
 @import './miso-search.css';
-
-/* Import PopIn Ad Styles */
-@import './popin-ad.css';
