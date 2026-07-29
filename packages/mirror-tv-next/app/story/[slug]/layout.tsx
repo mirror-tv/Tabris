@@ -1,7 +1,6 @@
 'use client'
 import Aside from '~/components/story/aside'
 import styles from './_styles/story.module.scss'
-import Script from 'next/script'
 import dynamic from 'next/dynamic'
 import AdH1Remover from '~/components/shared/ad-h1-remover'
 import {
@@ -17,22 +16,6 @@ export default function StoryPageLayout({
   return (
     <div className={styles.LayoutWrapper}>
       <AdH1Remover />
-
-      <Script
-        id="popinAd"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            (function() {
-              var script = document.createElement('script')
-              script.src = window.location.protocol + '//api.popin.cc/searchbox/mnews.js'
-              script.async = true
-              document.body.appendChild(script)
-            })()
-          `,
-        }}
-      />
-
       <section className={styles.ads}>
         <GPTPlaceholderMobile>
           <GPTAd pageKey="story" adKey="MB_M1" />

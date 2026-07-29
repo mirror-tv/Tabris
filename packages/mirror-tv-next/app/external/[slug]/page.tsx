@@ -399,11 +399,7 @@ const ExternalPage = async (props: ExternalPageTypes) => {
         </section>
         <AdTvAdminMobileBanner />
         <section className={styles.socialAndRelatedWrapper}>
-          <ArticleRelatedPosts
-            relatedPosts={[]}
-            shouldShowAds={shouldShowAds}
-            page="external"
-          />
+          <ArticleRelatedPosts relatedPosts={[]} />
           <ArticleSocialList />
           {shouldShowAds && <AdAfterStory />}
         </section>
