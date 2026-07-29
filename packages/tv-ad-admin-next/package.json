@@ -11,7 +11,7 @@
     "lint:fix": "next lint --fix"
   },
   "engines": {
-    "node": ">=18.18.0"
+    "node": ">=26.0.0"
   },
   "dependencies": {
     "@apollo/client": "^3.14.0",
