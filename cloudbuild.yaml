@@ -31,7 +31,7 @@ steps:
     args:
       - '-c'
       - >
-        cp yarn.lock packages/$_TARGET_PACKAGE
+        cp pnpm-lock.yaml packages/$_TARGET_PACKAGE
 
         cd packages/$_TARGET_PACKAGE
 

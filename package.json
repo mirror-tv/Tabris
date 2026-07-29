@@ -1,8 +1,6 @@
 {
   "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
+  "packageManager": "pnpm@11.17.0",
   "version": "0.0.0",
   "devDependencies": {
     "@svgr/webpack": "^8.1.0",
