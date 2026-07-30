@@ -1,4 +1,4 @@
-'use server'
+import 'server-only'
 
 import { Logging } from '@google-cloud/logging'
 import { GCP_LOG_NAME_PREFIX, GCP_PROJECT_ID } from '~/constants/constant'
@@ -13,17 +13,28 @@ import { parseUserAgentInfo } from '~/utils/user-agent'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
+let loggingClient: Logging | null = null
+
+function getLoggingClient() {
+  if (!loggingClient) {
+    loggingClient = new Logging({ projectId: GCP_PROJECT_ID })
+  }
+  return loggingClient
+}
+
+export type PageViewLogPayload = {
+  currentUrl: string
+  referrer: string
+  screenSize: { width: number; height: number }
+  extra?: Record<string, unknown>
+}
+
 export async function logPageView({
   currentUrl,
   referrer,
   screenSize,
   extra = {},
-}: {
-  currentUrl: string
-  referrer: string
-  screenSize: { width: number; height: number }
-  extra?: Record<string, unknown>
-}) {
+}: PageViewLogPayload) {
   if (
     process.env.NODE_ENV === 'development' &&
     !process.env.GOOGLE_APPLICATION_CREDENTIALS
@@ -32,10 +43,9 @@ export async function logPageView({
   }
 
   try {
-    const logging = new Logging({ projectId: GCP_PROJECT_ID })
     const eventType = 'page-view'
     const logName = `${GCP_LOG_NAME_PREFIX}-${ENV}-web-${eventType}`
-    const log = logging.log(logName)
+    const log = getLoggingClient().log(logName)
     const taipeiTime = dayjs().tz('Asia/Taipei')
     const eventTriggeredDate = taipeiTime.format('YYYY/MM/DD')
     const eventTriggeredTime = taipeiTime.format('HH:mm')
@@ -85,6 +95,7 @@ export async function logPageView({
     await log.write(entry)
   } catch (err) {
     console.error('[logPageView] failed', err)
+    throw err
   }
 }
 
