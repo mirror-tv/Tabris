@@ -1,13 +1,17 @@
 import { NextResponse } from 'next/server'
-import { logPageView, type PageViewLogPayload } from '~/utils/page-view-log'
+import { z } from 'zod'
+import { logPageView } from '~/utils/page-view-log'
 
-function isValidScreenSize(
-  value: unknown
-): value is PageViewLogPayload['screenSize'] {
-  if (!value || typeof value !== 'object') return false
-  const { width, height } = value as Record<string, unknown>
-  return typeof width === 'number' && typeof height === 'number'
-}
+const PageViewLogPayloadSchema = z.object({
+  currentUrl: z.string(),
+  referrer: z.string(),
+  screenSize: z.object({
+    width: z.number(),
+    height: z.number(),
+  }),
+  // A malformed extra should not drop the whole page view log.
+  extra: z.record(z.string(), z.unknown()).default({}).catch({}),
+})
 
 export async function POST(request: Request) {
   let body: unknown
@@ -18,41 +22,19 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
   }
 
-  if (!body || typeof body !== 'object') {
-    return NextResponse.json({ error: 'Invalid payload' }, { status: 400 })
-  }
+  const result = PageViewLogPayloadSchema.safeParse(body)
 
-  const { currentUrl, referrer, screenSize, extra } = body as Record<
-    string,
-    unknown
-  >
-
-  if (typeof currentUrl !== 'string' || typeof referrer !== 'string') {
+  if (!result.success) {
     return NextResponse.json(
-      { error: 'currentUrl and referrer are required strings' },
+      {
+        error: `Invalid payload: ${JSON.stringify(result.error.issues)}`,
+      },
       { status: 400 }
     )
-  }
-
-  if (!isValidScreenSize(screenSize)) {
-    return NextResponse.json(
-      { error: 'screenSize with numeric width and height is required' },
-      { status: 400 }
-    )
-  }
-
-  const payload: PageViewLogPayload = {
-    currentUrl,
-    referrer,
-    screenSize,
-    extra:
-      extra && typeof extra === 'object' && !Array.isArray(extra)
-        ? (extra as Record<string, unknown>)
-        : {},
   }
 
   try {
-    await logPageView(payload)
+    await logPageView(result.data)
     return new NextResponse(null, { status: 204 })
   } catch (err) {
     console.error('[api/logger] failed', err)
