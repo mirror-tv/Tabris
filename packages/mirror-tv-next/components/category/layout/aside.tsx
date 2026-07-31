@@ -6,7 +6,6 @@ import dynamic from 'next/dynamic'
 import { useData } from '~/context/data-context'
 
 const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
-const MicroAd = dynamic(() => import('~/components/ads/micro-ad'))
 
 export default function CategoryPageLayoutAside() {
   const { popularPosts, latestPosts } = useData()
@@ -22,14 +21,6 @@ export default function CategoryPageLayoutAside() {
           className={`aside__list-popular ${styles.asideItem}`}
         />
       )}
-      <div className={styles.microId}>
-        <MicroAd
-          unitIdMobile="4300420"
-          unitIdDesktop="4300419"
-          className={styles.microAd}
-          condition="!isTablet"
-        />
-      </div>
       <GPTAd pageKey="category" adKey="PC_R2" />
       <UiListPostsAside
         listTitle="即時新聞"
