@@ -22,6 +22,14 @@ function getLoggingClient() {
   return loggingClient
 }
 
+// Label values come from request headers, so they stay bounded even when
+// logPageView is called from a path that skips the API route validation.
+const MAX_LABEL_LENGTH = 512
+
+function truncateLabel(value: string) {
+  return value.slice(0, MAX_LABEL_LENGTH)
+}
+
 export type PageViewLogPayload = {
   currentUrl: string
   referrer: string
@@ -70,14 +78,14 @@ export async function logPageView({
         eventType,
         date: eventTriggeredDate,
         time: eventTriggeredTime,
-        browserName,
-        browserVersion,
-        deviceModel,
-        deviceVendor,
-        osName,
-        osVersion,
-        ipAddress,
-        referrer,
+        browserName: truncateLabel(browserName),
+        browserVersion: truncateLabel(browserVersion),
+        deviceModel: truncateLabel(deviceModel),
+        deviceVendor: truncateLabel(deviceVendor),
+        osName: truncateLabel(osName),
+        osVersion: truncateLabel(osVersion),
+        ipAddress: truncateLabel(ipAddress),
+        referrer: truncateLabel(referrer),
       },
     }
 
