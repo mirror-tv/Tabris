@@ -32,6 +32,7 @@ export type PostWithCategory<T extends string | null | HeroImage = HeroImage> =
       name: string
       slug: string
     }
+    exclusive?: boolean | null
     __typename?: 'Post' | 'External'
   }
 
