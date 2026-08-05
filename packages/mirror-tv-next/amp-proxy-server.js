@@ -23,7 +23,8 @@ app.use(
     target: API_SERVICE_URL,
     changeOrigin: true,
     selfHandleResponse: true,
-    onProxyRes: responseInterceptor(async (responseBuffer, req, res) => {
+    on: {
+      proxyRes: responseInterceptor(async (responseBuffer, req, res) => {
       let response = responseBuffer.toString('utf8') // convert buffer to string
       const originStoryUrl = res.url?.replace('/story/amp/', '/story/')
 
@@ -65,15 +66,13 @@ app.use(
           /<a class="link-to-story"/g,
           (match) => `${match} href=${originStoryUrl} target="_blank"`
         )
-    }),
+      }),
+    },
   })
 )
 
 // proxy all other routes in case any other request misleading to this proxy
-app.use(
-  '*',
-  createProxyMiddleware({ target: API_SERVICE_URL, changeOrigin: true })
-)
+app.use(createProxyMiddleware({ target: API_SERVICE_URL, changeOrigin: true }))
 
 // Start Proxy
 app.listen(PORXY_SERVER_PORT, () => {
