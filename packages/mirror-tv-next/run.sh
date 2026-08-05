@@ -5,7 +5,7 @@ if [ "$PROXY_AMP" = "true" ]
 then
   # run next.js together with proxy server
   PORT=$PROXIED_SERVER_PORT node server.js -p $PROXIED_SERVER_PORT &
-  yarn run start-amp-proxy-server &
+  node amp-proxy-server.js &
 else
   node server.js &
 fi

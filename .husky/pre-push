@@ -35,7 +35,7 @@ for pkg in $CHANGED_PACKAGES; do
   # Only check packages that have a tsconfig.json file.
   if [ -d "$PKG_PATH" ] && [ -f "$PKG_PATH/tsconfig.json" ]; then
     echo "Running TypeScript check for $PKG_PATH..."
-    (cd "$PKG_PATH" && yarn tsc --noEmit) || {
+    (cd "$PKG_PATH" && pnpm exec tsc --noEmit) || {
       echo "Type check failed in $PKG_PATH"
       exit 1
     }

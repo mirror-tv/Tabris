@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useMemo } from 'react'
-import { logPageView } from '~/app/_actions/logging'
 import { useReferrerTracker } from '~/hooks/use-referrer-tracker'
 
 export default function PageLogger({
@@ -30,12 +29,21 @@ export default function PageLogger({
     const log = async () => {
       if (!screenSize) return
 
-      await logPageView({
-        currentUrl: window.location.href,
-        referrer: clientReferrer || initialReferrer || '',
-        screenSize,
-        extra: stableExtra,
+      const response = await fetch('/api/logger', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          currentUrl: window.location.href,
+          referrer: clientReferrer || initialReferrer || '',
+          screenSize,
+          extra: stableExtra,
+        }),
+        keepalive: true,
       })
+
+      if (!response.ok) {
+        throw new Error(`log request failed with status ${response.status}`)
+      }
     }
 
     void log().catch((err) => {

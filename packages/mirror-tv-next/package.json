@@ -2,6 +2,7 @@
   "name": "mirror-tv-next",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@11.17.0",
   "gcp-build": "",
   "scripts": {
     "dev": "next dev",
@@ -34,10 +35,12 @@
     "stylelint-scss": "^6.0.0",
     "swiper": "^11.0.6",
     "ua-parser-js": "^2.0.7",
+    "express": "^4.21.2",
+    "http-proxy-middleware": "^3.0.5",
     "zod": "^4.1.5"
   },
   "engines": {
-    "node": ">=20.19.0"
+    "node": ">=26.0.0"
   },
   "devDependencies": {
     "@types/google-publisher-tag": "^1.20240219.0",
