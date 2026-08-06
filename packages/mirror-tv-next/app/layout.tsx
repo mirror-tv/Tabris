@@ -1,7 +1,6 @@
 import { DataProvider } from '~/context/data-context'
 import { GoogleTagManager } from '@next/third-parties/google'
 import type { Metadata } from 'next'
-import { Noto_Sans } from 'next/font/google'
 import Script from 'next/script'
 import Footer from '~/components/layout/footer'
 import MainHeader from '~/components/layout/header/main-header'
@@ -37,14 +36,6 @@ export const metadata: Metadata = {
     },
   },
 }
-
-const noto_sans = Noto_Sans({
-  weight: ['400', '500', '600'],
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-noto-sans',
-  preload: false,
-})
 
 export default async function RootLayout({
   children,
@@ -109,7 +100,7 @@ export default async function RootLayout({
   console.log('GTM_ID', GTM_ID)
 
   return (
-    <html lang="zh-Hant" className={`${noto_sans.variable}`}>
+    <html lang="zh-Hant">
       <GoogleTagManager gtmId={GTM_ID} />
       <Script
         async

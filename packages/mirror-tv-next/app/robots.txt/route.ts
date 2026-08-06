@@ -10,9 +10,13 @@ export async function GET() {
 User-agent: Googlebot
 Disallow: /login
 Disallow: /search
+Disallow: /api/logger
+Disallow: /*_rsc=
 
 User-agent: *
-Allow: /`
+Allow: /
+Disallow: /api/logger
+Disallow: /*_rsc=`
       break
 
     case 'staging':

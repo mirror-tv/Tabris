@@ -62,15 +62,13 @@ const StaticEditorChoiceSchema = z.object({
     .optional(),
   source: z.string(),
   exclusive: z
-    .any()
-    .transform((val) => {
-      if (val === null || val === undefined) return null
+    .preprocess((val) => {
       if (typeof val === 'boolean') return val
       if (val === 'true' || val === true) return true
       if (val === 'false' || val === false) return false
       return null
-    })
-    .nullable(),
+    }, z.boolean().nullable())
+    .default(null),
 })
 
 const StaticLatestPostSchema = z.object({
@@ -107,15 +105,13 @@ const StaticLatestPostSchema = z.object({
     .nullable()
     .optional(),
   exclusive: z
-    .any()
-    .transform((val) => {
-      if (val === null || val === undefined) return null
+    .preprocess((val) => {
       if (typeof val === 'boolean') return val
       if (val === 'true' || val === true) return true
       if (val === 'false' || val === false) return false
       return null
-    })
-    .nullable(),
+    }, z.boolean().nullable())
+    .default(null),
 })
 
 const StaticHomepageResponseSchema = z.object({
@@ -131,15 +127,13 @@ const ListingPostSchema = z.object({
   name: z.string(),
   heroImage: HeroImageObjectSchema.nullable(),
   exclusive: z
-    .any()
-    .transform((val) => {
-      if (val === null || val === undefined) return null
+    .preprocess((val) => {
       if (typeof val === 'boolean') return val
       if (val === 'true' || val === true) return true
       if (val === 'false' || val === false) return false
       return null
-    })
-    .nullable(),
+    }, z.boolean().nullable())
+    .default(null),
 })
 
 const PostWithCategorySchema = ListingPostSchema.extend({
@@ -176,15 +170,13 @@ const GraphQLEditorChoicesResponseSchema = z.object({
           })
           .nullable(),
         exclusive: z
-          .any()
-          .transform((val) => {
-            if (val === null || val === undefined) return null
+          .preprocess((val) => {
             if (typeof val === 'boolean') return val
             if (val === 'true' || val === true) return true
             if (val === 'false' || val === false) return false
             return null
-          })
-          .nullable(),
+          }, z.boolean().nullable())
+          .default(null),
       }),
     })
   ),
