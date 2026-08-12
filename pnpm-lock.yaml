@@ -57,7 +57,7 @@ importers:
   packages/mirror-tv-next:
     dependencies:
       '@apollo/client':
-        specifier: ^3.8.0-rc.2
+        specifier: ^3.14.1
         version: 3.14.1(@types/react@18.3.31)(graphql@16.14.2)(react-dom@18.2.0(react@18.3.1))(react@18.3.1)
       '@google-cloud/logging':
         specifier: ^11.2.1

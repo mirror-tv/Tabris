@@ -13,7 +13,7 @@
     "dev:with-proxy": "PROXY_AMP=true PROXY_SERVER_PORT=3000 PROXIED_SERVER_PORT=3001 concurrently \"next dev -p 3001\" \"node amp-proxy-server.js\""
   },
   "dependencies": {
-    "@apollo/client": "^3.8.0-rc.2",
+    "@apollo/client": "^3.14.1",
     "@google-cloud/logging": "^11.2.1",
     "@next/third-parties": "^15",
     "@readr-media/react-image": "2.2.10",
