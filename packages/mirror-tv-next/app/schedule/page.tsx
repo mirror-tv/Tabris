@@ -5,15 +5,12 @@ import GPTAd from '~/components/ads/gpt/gpt-ad'
 import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
 import ScheduleTable from '~/components/schedule/schedule-table'
 import { SCHEDULE_FILENAME } from '~/constants/json-filenames'
-import {
-  GLOBAL_CACHE_SETTING,
-  SITE_URL,
-} from '~/constants/environment-variables'
+import { SITE_URL } from '~/constants/environment-variables'
 import { fetchStaticJson } from '~/utils/fetch-static-json'
 import styles from '~/styles/pages/schedule-page.module.scss'
 import type { Schedule } from '~/types/common'
 
-export const revalidate = GLOBAL_CACHE_SETTING
+export const revalidate = 0
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

@@ -110,6 +110,7 @@ const nextConfig = {
   compiler: {
     styledComponents: true,
   },
+  transpilePackages: ['graphql-tag', 'graphql'],
 }
 
 module.exports = nextConfig

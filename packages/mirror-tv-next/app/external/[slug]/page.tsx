@@ -28,13 +28,12 @@ import {
   FILTERED_SLUG,
 } from '~/constants/constant'
 import type { SingleExternalPost } from '~/graphql/query/external'
-import { GLOBAL_CACHE_SETTING } from '~/constants/environment-variables'
 import ContainerFullScreenAds from '~/components/ads/gpt/gpt-popup'
 import MisoPageView from '~/components/tracking/miso-pageview'
 import GA4SourceTracking from '~/components/story/ga4-source-tracking'
 import AdTvAdminMobileBanner from '~/components/shared/ad-tv-admin-mobile-banner'
 
-export const revalidate = GLOBAL_CACHE_SETTING
+export const revalidate = 0
 
 type ExternalPageTypes = {
   params: Promise<{ slug: string }>

@@ -1,11 +1,8 @@
 import type { Metadata } from 'next'
 import { POPULAR_VIDEOS_FILENAME } from '~/constants/json-filenames'
-import {
-  GLOBAL_CACHE_SETTING,
-  SITE_URL,
-} from '~/constants/environment-variables'
+import { SITE_URL } from '~/constants/environment-variables'
 import { handleResponse, formatArticleCard, FormattedPostCard } from '~/utils'
-import { getClient } from '~/apollo-client'
+import { query } from '~/apollo-client'
 import {
   fetchCategoryVideoJson,
   sortCategoriesForVideoPage,
@@ -33,7 +30,7 @@ import { fetchPromotionVideosServerAction } from '~/app/_actions/share/promotion
 import type { FormattableHeroImage } from '~/types/hero-image'
 import { fetchStaticJson } from '~/utils/fetch-static-json'
 
-export const revalidate = GLOBAL_CACHE_SETTING
+export const revalidate = 0
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -78,8 +75,6 @@ export default async function VideoCategoryPage() {
   let liveVideo: Video[] = []
   let allVideoEditorChoices: VideoEditorChoice[] = []
 
-  const client = getClient()
-
   const fetchCategoryVideoData = () => fetchCategoryVideoJson()
 
   const fetchPopularPosts = () =>
@@ -96,7 +91,7 @@ export default async function VideoCategoryPage() {
   const fetchLiveVideo = () => getVideo({ name: 'mnews-live', take: 1 })
 
   const fetchVideoEditorChoice = () =>
-    client.query<{ allVideoEditorChoices: VideoEditorChoice[] }>({
+    query({
       query: getVideoEditorChoice,
     })
 

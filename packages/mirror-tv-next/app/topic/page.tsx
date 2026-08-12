@@ -2,17 +2,14 @@ import errors from '@twreporter/errors'
 import type { Metadata } from 'next'
 import { fetchTopics } from '~/app/_actions/topic'
 import TopicsListManager from '~/components/topic/topics-list-manager'
-import {
-  GLOBAL_CACHE_SETTING,
-  SITE_URL,
-} from '~/constants/environment-variables'
+import { SITE_URL } from '~/constants/environment-variables'
 import { Topic } from '~/graphql/query/topic'
 import styles from '~/styles/pages/topic-page.module.scss'
 import GPTAd from '~/components/ads/gpt/gpt-ad'
 import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
 import PageLogger from '~/components/tracking/page-logger'
 
-export const revalidate = GLOBAL_CACHE_SETTING
+export const revalidate = 0
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

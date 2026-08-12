@@ -1,9 +1,6 @@
 import { type PostCardItem } from '~/graphql/query/posts'
 import styles from '~/styles/pages/tag-page.module.scss'
-import {
-  GLOBAL_CACHE_SETTING,
-  SITE_URL,
-} from '~/constants/environment-variables'
+import { SITE_URL } from '~/constants/environment-variables'
 import TagPostsListManager from '~/components/tag/posts-list-manager'
 import {
   fetchPostsItems,
@@ -16,7 +13,7 @@ import { type External } from '~/graphql/query/externals'
 import { handleResponse } from '~/utils'
 import { combineAndSortedByPublishedTime } from '~/utils/post-handler'
 
-export const revalidate = GLOBAL_CACHE_SETTING
+export const revalidate = 0
 
 export async function generateMetadata(props: {
   params: Promise<{ name: string }>

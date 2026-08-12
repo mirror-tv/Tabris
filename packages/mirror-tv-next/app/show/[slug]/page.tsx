@@ -2,17 +2,14 @@ import errors from '@twreporter/errors'
 import styles from './_styles/show.module.scss'
 import Link from '~/components/shared/link'
 import Image from 'next/image'
-import {
-  GLOBAL_CACHE_SETTING,
-  SITE_URL,
-} from '~/constants/environment-variables'
+import { SITE_URL } from '~/constants/environment-variables'
 import type { Metadata } from 'next'
 import GPTAd from '~/components/ads/gpt/gpt-ad'
 import {
   GPTPlaceholderDesktop,
   GPTPlaceholderMobile,
 } from '~/components/ads/gpt/gpt-placeholder'
-import { getClient } from '~/apollo-client'
+import { query } from '~/apollo-client'
 import { fetchShowBySlug } from '~/graphql/query/shows'
 import type { ShowWithDetail } from '~/graphql/query/shows'
 import { notFound } from 'next/navigation'
@@ -25,13 +22,10 @@ import PodcastsListHandler from '~/components/show/_slug/podcast/podcasts-list-h
 import YoutubeListWrapper from '~/components/show/_slug/youtube-list-wrapper'
 import AsideAd from '~/components/show/_slug/aside-ad'
 
-export const revalidate = GLOBAL_CACHE_SETTING
+export const revalidate = 0
 
 const getShowBySlug = cache(async (slug: string) => {
-  const client = getClient()
-  const { data } = await client.query<{
-    allShows: ShowWithDetail[]
-  }>({
+  const { data } = await query({
     query: fetchShowBySlug,
     variables: {
       slug,

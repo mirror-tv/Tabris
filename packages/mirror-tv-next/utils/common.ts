@@ -1,3 +1,4 @@
+import { CombinedGraphQLErrors } from '@apollo/client/errors'
 import errors from '@twreporter/errors'
 import type { ApiData } from '~/types/api-data'
 
@@ -26,12 +27,24 @@ const handleResponse = <
   if (response.status === 'fulfilled') {
     return callback(response.value)
   } else if (response.status === 'rejected') {
-    const { graphQLErrors, clientErrors, networkError } = response.reason
+    const reason: unknown = response.reason
     const annotatingError = errors.helpers.wrap(
-      response.reason,
+      reason,
       'UnhandledError',
       errorMessage
     )
+
+    const debugPayload = CombinedGraphQLErrors.is(reason)
+      ? { graphQLErrors: reason.errors }
+      : reason instanceof Error
+      ? {
+          error: {
+            name: reason.name,
+            message: reason.message,
+            stack: reason.stack,
+          },
+        }
+      : { error: reason }
 
     console.error(
       JSON.stringify({
@@ -45,11 +58,7 @@ const handleResponse = <
           0,
           0
         ),
-        debugPayload: {
-          graphQLErrors,
-          clientErrors,
-          networkError,
-        },
+        debugPayload,
       })
     )
   }

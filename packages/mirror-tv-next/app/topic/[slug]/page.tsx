@@ -3,17 +3,14 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from '~/components/shared/link'
 import { notFound } from 'next/navigation'
-import { getClient } from '~/apollo-client'
+import { query } from '~/apollo-client'
 import HeroImage from '~/components/topic/single-topic/hero-image'
 import HeroMultiVideo from '~/components/topic/single-topic/hero-multivideo'
 import HeroSlideshow from '~/components/topic/single-topic/hero-slideshow'
 import HeroVideo from '~/components/topic/single-topic/hero-video'
 import TopicPostItems from '~/components/topic/single-topic/topic-post-items'
 import { META_DESCRIPTION, SITE_TITLE } from '~/constants/constant'
-import {
-  GLOBAL_CACHE_SETTING,
-  SITE_URL,
-} from '~/constants/environment-variables'
+import { SITE_URL } from '~/constants/environment-variables'
 import type { SingleTopic } from '~/graphql/query/topic'
 import { fetchSingleTopicByTopicSlug } from '~/graphql/query/topic'
 import styles from '~/styles/pages/single-topic-page.module.scss'
@@ -22,17 +19,16 @@ import GPTAd from '~/components/ads/gpt/gpt-ad'
 import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
 import PageLogger from '~/components/tracking/page-logger'
 
-export const revalidate = GLOBAL_CACHE_SETTING
+export const revalidate = 0
 
 export async function generateMetadata(props: {
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const params = await props.params
-  const client = getClient()
   let singleTopic: SingleTopic | null = null
 
   try {
-    const response = await client.query<{ topic: SingleTopic[] }>({
+    const response = await query({
       query: fetchSingleTopicByTopicSlug,
       variables: {
         topicSlug: params.slug,
@@ -92,11 +88,10 @@ export default async function SingleTopicPage(props: {
   params: Promise<{ slug: string }>
 }) {
   const params = await props.params
-  const client = getClient()
   let singleTopic: SingleTopic | undefined
 
   try {
-    const response = await client.query<{ topic: SingleTopic[] }>({
+    const response = await query({
       query: fetchSingleTopicByTopicSlug,
       variables: {
         topicSlug: params.slug,

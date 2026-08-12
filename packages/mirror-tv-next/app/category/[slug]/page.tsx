@@ -9,10 +9,7 @@ import CategoryPostsListManager from '~/components/category/posts-list-manager'
 import UiFeaturePost from '~/components/category/ui-feature-post'
 import UiHeadingBordered from '~/components/shared/ui-heading-bordered'
 import { FEATURE_POSTS_FILENAME } from '~/constants/json-filenames'
-import {
-  GLOBAL_CACHE_SETTING,
-  SITE_URL,
-} from '~/constants/environment-variables'
+import { SITE_URL } from '~/constants/environment-variables'
 import { type Category } from '~/graphql/query/category'
 import styles from '~/styles/pages/category.module.scss'
 import { FeaturePost } from '~/types/api-data'
@@ -33,7 +30,7 @@ import { fetchCategoryData } from '~/app/_actions/category/category-data'
 import PageLogger from '~/components/tracking/page-logger'
 import { notFound } from 'next/navigation'
 
-export const revalidate = GLOBAL_CACHE_SETTING
+export const revalidate = 0
 
 type FeaturePostsResponse = {
   allPosts: FeaturePost[]

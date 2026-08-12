@@ -1,6 +1,6 @@
 'use server'
 import errors from '@twreporter/errors'
-import { getClient } from '~/apollo-client'
+import { query } from '~/apollo-client'
 import type { Video } from '~/graphql/query/videos'
 import { getVideoByName } from '~/graphql/query/videos'
 
@@ -19,9 +19,8 @@ async function getVideo({
 }: GetVideoType): Promise<{
   data: { allVideos: Video[] }
 }> {
-  const client = getClient()
   try {
-    const { data } = await client.query<{ allVideos: Video[] }>({
+    const { data } = await query({
       query: getVideoByName,
       variables: {
         name,
@@ -29,7 +28,7 @@ async function getVideo({
         withDescription,
       },
     })
-    return { data: data ?? { allVideos: [] } }
+    return { data: { allVideos: data?.videos ?? [] } }
   } catch (err) {
     const annotatingError = errors.helpers.wrap(
       err,

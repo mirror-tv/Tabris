@@ -1,6 +1,6 @@
 'use server'
 import errors from '@twreporter/errors'
-import { getClient } from '~/apollo-client'
+import { query } from '~/apollo-client'
 import type { Post, PostOrderByInput } from '~/graphql/query/topic'
 import {
   fetchPostItemsByTopicSlug,
@@ -18,13 +18,6 @@ type FetchSortDirProps = {
   slug: string
 }
 
-type TopicResponse = {
-  topic: {
-    sortDir: string
-    items: Post[]
-  }[]
-}
-
 async function fetchTopicItems({
   page,
   pageSize,
@@ -33,9 +26,8 @@ async function fetchTopicItems({
 }: FetchTopicItemsProps): Promise<{
   items: Post[]
 }> {
-  const client = getClient()
   try {
-    const { data } = await client.query<TopicResponse>({
+    const { data } = await query({
       query: fetchPostItemsByTopicSlug,
       variables: {
         topicSlug: slug,
@@ -68,9 +60,8 @@ async function fetchTopicItems({
 async function fetchSortDir({ slug }: FetchSortDirProps): Promise<{
   sortDir: string
 }> {
-  const client = getClient()
   try {
-    const { data } = await client.query<{ topic: { sortDir: string }[] }>({
+    const { data } = await query({
       query: fetchPostSortDirBySlug,
       variables: {
         topicSlug: slug,

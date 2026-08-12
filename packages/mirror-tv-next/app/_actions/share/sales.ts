@@ -1,6 +1,6 @@
 'use server'
 import errors from '@twreporter/errors'
-import { getClient } from '~/apollo-client'
+import { query } from '~/apollo-client'
 import { Sale, getSales } from '~/graphql/query/sales'
 
 type FetchSalesType = {
@@ -11,11 +11,8 @@ type FetchSalesType = {
 async function fetchSales({ take, pageName }: FetchSalesType): Promise<{
   data: { allSales: Sale[] }
 }> {
-  const client = getClient()
   try {
-    const { data } = await client.query<{
-      allSales: Sale[]
-    }>({
+    const { data } = await query({
       query: getSales,
       variables: {
         first: take,

@@ -2,7 +2,7 @@
 import { FILTERED_SLUG } from '~/constants/constant'
 import errors from '@twreporter/errors'
 import { getPostsByTagName, type PostCardItem } from '~/graphql/query/posts'
-import { getClient } from '~/apollo-client'
+import { query } from '~/apollo-client'
 import { getExternalsByTagName, type External } from '~/graphql/query/externals'
 
 type FetchPostsItemsType = {
@@ -28,12 +28,8 @@ async function fetchPostsItems({
   allPosts: PostCardItem[]
   _allPostsMeta?: { count: number }
 }> {
-  const client = getClient()
   try {
-    const { data } = await client.query<{
-      allPosts: PostCardItem[]
-      postsCount?: number
-    }>({
+    const { data } = await query({
       query: getPostsByTagName,
       variables: {
         tagName,
@@ -76,12 +72,8 @@ async function fetchExternalsByTagName({
   allExternals: External[]
   _allExternalsMeta?: { count: number }
 }> {
-  const client = getClient()
   try {
-    const { data } = await client.query<{
-      allExternals: External[]
-      externalsCount?: number
-    }>({
+    const { data } = await query({
       query: getExternalsByTagName,
       variables: {
         tagName,

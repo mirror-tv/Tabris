@@ -1,5 +1,5 @@
 'use server'
-import { getClient } from '~/apollo-client'
+import { query } from '~/apollo-client'
 import { fetchOmbudsPostsByCategorySlug } from '~/graphql/query/ombuds'
 import type { Post } from '~/graphql/query/ombuds'
 import errors from '@twreporter/errors'
@@ -24,12 +24,8 @@ async function fetchOmbudsPosts({
   slug,
   isWithCount,
 }: FetchOmbudsPostsProps): Promise<OmbudsResponse> {
-  const client = getClient()
   try {
-    const { data } = await client.query<{
-      allPosts: Post[]
-      postsCount?: number
-    }>({
+    const { data } = await query({
       query: fetchOmbudsPostsByCategorySlug,
       variables: {
         first: pageSize,

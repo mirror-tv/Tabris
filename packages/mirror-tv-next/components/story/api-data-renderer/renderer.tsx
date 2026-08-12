@@ -132,15 +132,13 @@ import YoutubeBlock from './block-renderer/youtube-block'
 import styles from './_styles/api-data-renderer.module.scss'
 import ImageBlock from './block-renderer/image-block'
 import UnstyledBlock from './block-renderer/unstyled-block'
-import dynamic from 'next/dynamic'
 import { STATIC_BASE_URL } from '~/constants/endpoint-config'
-import { getClient } from '~/apollo-client'
+import { query } from '~/apollo-client'
 import {
   fetchPostVideoObjects,
   type PostVideoObjects,
 } from '~/graphql/query/video-object'
-
-const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
+import GPTAd from '~/components/ads/gpt/gpt-ad'
 
 type ApiDataRendererPropsType = {
   postId?: string
@@ -186,8 +184,7 @@ const ApiDataRenderer = async ({
     parsedContentData?.some((block) => block.type === ApiDataBlockType.Youtube)
   ) {
     try {
-      const client = getClient()
-      const { data } = await client.query<PostVideoObjects>({
+      const { data } = await query({
         query: fetchPostVideoObjects,
         variables: {
           id: postId,

@@ -1,14 +1,11 @@
 import errors from '@twreporter/errors'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getClient } from '~/apollo-client'
+import { query } from '~/apollo-client'
 import AnchorImg from '~/components/anchorperson/anchor-img'
 import SocialIcon from '~/components/anchorperson/social-icon'
 import { META_DESCRIPTION, SITE_TITLE } from '~/constants/constant'
-import {
-  GLOBAL_CACHE_SETTING,
-  SITE_URL,
-} from '~/constants/environment-variables'
+import { SITE_URL } from '~/constants/environment-variables'
 import type { SingleAnchor } from '~/graphql/query/contact'
 import { fetchContactBySlug } from '~/graphql/query/contact'
 import styles from '~/styles/pages/single-anchorperson-page.module.scss'
@@ -24,17 +21,16 @@ import AnchorShowList from '~/components/anchorperson/anchor-show-list'
 import { YoutubeListInfoFormatted, YoutubeResponse } from '~/types/youtube'
 import { fetchYoutubeList } from '~/app/_actions/show-yt'
 import { FormatPlayListItems } from '~/types/api-data'
-export const revalidate = GLOBAL_CACHE_SETTING
+export const revalidate = 0
 
 export async function generateMetadata(props: {
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const params = await props.params
-  const client = getClient()
   let singleAnchor: SingleAnchor | null = null
 
   try {
-    const response = await client.query<{ allContacts: SingleAnchor[] }>({
+    const response = await query({
       query: fetchContactBySlug,
       variables: {
         slug: params.slug,
@@ -150,11 +146,10 @@ export default async function singleAnchor(props: {
   params: Promise<{ slug: string }>
 }) {
   const params = await props.params
-  const client = getClient()
   let singleAnchor: SingleAnchor
 
   try {
-    const response = await client.query<{ allContacts: SingleAnchor[] }>({
+    const response = await query({
       query: fetchContactBySlug,
       variables: {
         slug: params.slug,

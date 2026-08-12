@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import type { TypedDocumentNode } from '@apollo/client'
 import { ListingPost, listingPost } from '../fragments/listing-post'
 
 type Sale = {
@@ -12,7 +13,10 @@ type Sale = {
   __typename: 'Sale'
 }
 
-const getSales = gql`
+const getSales: TypedDocumentNode<
+  { allSales: Sale[] },
+  { first?: number }
+> = gql`
   query fetchSales($first: Int = 4) {
     allSales: sales(
       where: {
