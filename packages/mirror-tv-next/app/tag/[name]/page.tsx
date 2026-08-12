@@ -10,21 +10,18 @@ import {
   fetchExternalsByTagName,
 } from '~/app/_actions/tag/posts-by-tag'
 import type { Metadata } from 'next'
-import dynamic from 'next/dynamic'
+import GPTAd from '~/components/ads/gpt/gpt-ad'
 import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
 import { type External } from '~/graphql/query/externals'
 import { handleResponse } from '~/utils'
 import { combineAndSortedByPublishedTime } from '~/utils/post-handler'
 
-const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
-
 export const revalidate = GLOBAL_CACHE_SETTING
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { name: string }
+export async function generateMetadata(props: {
+  params: Promise<{ name: string }>
 }): Promise<Metadata> {
+  const params = await props.params
   const { name } = params
   const tagName: string = decodeURIComponent(name)
 
@@ -97,11 +94,10 @@ export async function generateMetadata({
   }
 }
 
-export default async function TagPage({
-  params,
-}: {
-  params: { name: string }
+export default async function TagPage(props: {
+  params: Promise<{ name: string }>
 }) {
+  const params = await props.params
   const PAGE_SIZE = 12
   const tagName: string = decodeURIComponent(params.name)
   let initPostsList: PostCardItem[] = []

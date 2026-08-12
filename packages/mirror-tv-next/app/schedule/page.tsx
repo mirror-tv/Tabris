@@ -1,7 +1,7 @@
 import errors from '@twreporter/errors'
 import dayjs from 'dayjs'
 import type { Metadata } from 'next'
-import dynamic from 'next/dynamic'
+import GPTAd from '~/components/ads/gpt/gpt-ad'
 import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
 import ScheduleTable from '~/components/schedule/schedule-table'
 import { SCHEDULE_FILENAME } from '~/constants/json-filenames'
@@ -12,8 +12,6 @@ import {
 import { fetchStaticJson } from '~/utils/fetch-static-json'
 import styles from '~/styles/pages/schedule-page.module.scss'
 import type { Schedule } from '~/types/common'
-
-const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 
 export const revalidate = GLOBAL_CACHE_SETTING
 

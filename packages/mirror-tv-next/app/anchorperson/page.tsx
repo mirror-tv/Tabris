@@ -12,10 +12,9 @@ import {
   fetchContactsByInternational,
 } from '~/graphql/query/contact'
 import styles from '~/styles/pages/anchorperson-page.module.scss'
-import dynamic from 'next/dynamic'
+import GPTAd from '~/components/ads/gpt/gpt-ad'
 import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
 import { handleResponse } from '~/utils'
-const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 
 export const revalidate = GLOBAL_CACHE_SETTING
 

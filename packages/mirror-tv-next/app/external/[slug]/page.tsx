@@ -29,22 +29,15 @@ import {
 } from '~/constants/constant'
 import type { SingleExternalPost } from '~/graphql/query/external'
 import { GLOBAL_CACHE_SETTING } from '~/constants/environment-variables'
-import dynamic from 'next/dynamic'
+import ContainerFullScreenAds from '~/components/ads/gpt/gpt-popup'
 import MisoPageView from '~/components/tracking/miso-pageview'
 import GA4SourceTracking from '~/components/story/ga4-source-tracking'
 import AdTvAdminMobileBanner from '~/components/shared/ad-tv-admin-mobile-banner'
 
 export const revalidate = GLOBAL_CACHE_SETTING
 
-const ContainerFullScreenAds = dynamic(
-  () => import('~/components/ads/gpt/gpt-popup'),
-  {
-    ssr: false,
-  }
-)
-
 type ExternalPageTypes = {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 function stripHtmlTags(html: string): string {
@@ -209,9 +202,10 @@ const getExternalData = cache(async (slug: string) => {
   return response.allExternals[0]
 })
 
-export async function generateMetadata({
-  params,
-}: ExternalPageTypes): Promise<Metadata> {
+export async function generateMetadata(
+  props: ExternalPageTypes
+): Promise<Metadata> {
+  const params = await props.params
   const externalData = await getExternalData(params.slug)
 
   if (!externalData) {
@@ -280,7 +274,7 @@ export async function generateMetadata({
 }
 
 const ExternalPage = async (props: ExternalPageTypes) => {
-  const { params } = props
+  const params = await props.params
   const externalData = await getExternalData(params.slug)
 
   if (!externalData) {

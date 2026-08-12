@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import dynamic from 'next/dynamic'
+import GPTAd from '~/components/ads/gpt/gpt-ad'
 import GptPopup from '~/components/ads/gpt/gpt-popup'
 import {
   fetchExternalsByCategory,
@@ -28,7 +28,6 @@ import {
 } from '~/utils'
 import { fetchSales } from '~/app/_actions/share/sales'
 import { fetchStaticJson } from '~/utils/fetch-static-json'
-const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 import { SALES_LABEL_NAME } from '~/constants/constant'
 import { fetchCategoryData } from '~/app/_actions/category/category-data'
 import PageLogger from '~/components/tracking/page-logger'
@@ -69,11 +68,10 @@ function normalizeFeaturePostsResponse(
   return undefined
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string }
+export async function generateMetadata(props: {
+  params: Promise<{ slug: string }>
 }): Promise<Metadata> {
+  const params = await props.params
   const { slug } = params
   const categoryData = await fetchCategoryData(slug)
 
@@ -199,11 +197,10 @@ export async function generateMetadata({
   }
 }
 
-export default async function CategoryPage({
-  params,
-}: {
-  params: { slug: string }
+export default async function CategoryPage(props: {
+  params: Promise<{ slug: string }>
 }) {
+  const params = await props.params
   const PAGE_SIZE = 12
   let categoryData: Category = { name: '', slug: '' }
   let salePosts: FormattedPostCard[] = []

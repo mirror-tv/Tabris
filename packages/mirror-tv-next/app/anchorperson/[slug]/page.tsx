@@ -18,20 +18,18 @@ import {
   handleApiData,
   handleResponse,
 } from '~/utils'
-import dynamic from 'next/dynamic'
+import GPTAd from '~/components/ads/gpt/gpt-ad'
 import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
-const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 import AnchorShowList from '~/components/anchorperson/anchor-show-list'
 import { YoutubeListInfoFormatted, YoutubeResponse } from '~/types/youtube'
 import { fetchYoutubeList } from '~/app/_actions/show-yt'
 import { FormatPlayListItems } from '~/types/api-data'
 export const revalidate = GLOBAL_CACHE_SETTING
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string }
+export async function generateMetadata(props: {
+  params: Promise<{ slug: string }>
 }): Promise<Metadata> {
+  const params = await props.params
   const client = getClient()
   let singleAnchor: SingleAnchor | null = null
 
@@ -148,11 +146,10 @@ const getVideoListByListUrls = async (urls: string[]) => {
   return renderedList
 }
 
-export default async function singleAnchor({
-  params,
-}: {
-  params: { slug: string }
+export default async function singleAnchor(props: {
+  params: Promise<{ slug: string }>
 }) {
+  const params = await props.params
   const client = getClient()
   let singleAnchor: SingleAnchor
 

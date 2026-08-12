@@ -21,8 +21,7 @@ import AsideVideoListHandler from '~/components/category/video/aside-video-list-
 import type { VideoEditorChoice } from '~/graphql/query/video-editor-choice'
 import { getVideoEditorChoice } from '~/graphql/query/video-editor-choice'
 import EditorChoiceVideoList from '~/components/category/video/editor-choice-video-list'
-import dynamic from 'next/dynamic'
-const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
+import GPTAd from '~/components/ads/gpt/gpt-ad'
 import GptPopup from '~/components/ads/gpt/gpt-popup'
 import {
   GPTPlaceholderMobile,

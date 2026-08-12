@@ -27,7 +27,7 @@ import {
 import type { SinglePost } from '~/graphql/query/story'
 import { SITE_URL } from '~/constants/environment-variables'
 
-import dynamic from 'next/dynamic'
+import ContainerFullScreenAds from '~/components/ads/gpt/gpt-popup-dynamic'
 import MisoPageView from '~/components/tracking/miso-pageview'
 import GA4SourceTracking from '~/components/story/ga4-source-tracking'
 import UiDownload from '~/components/shared/ui-download'
@@ -35,15 +35,8 @@ import Article18Warning from '~/components/shared/article-18-warning'
 import AdTvAdminMobileBanner from '~/components/shared/ad-tv-admin-mobile-banner'
 import { handleApiData } from '~/utils'
 
-const ContainerFullScreenAds = dynamic(
-  () => import('~/components/ads/gpt/gpt-popup'),
-  {
-    ssr: false,
-  }
-)
-
 type StoryPageTypes = {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 type RenderedStoryLists = {
@@ -217,9 +210,10 @@ function generateBreadcrumbList(
   return items
 }
 
-export async function generateMetadata({
-  params,
-}: StoryPageTypes): Promise<Metadata> {
+export async function generateMetadata(
+  props: StoryPageTypes
+): Promise<Metadata> {
+  const params = await props.params
   const fetchStoryBySlugResponse = await fetchStoryBySlug(params.slug)
   const [storyData] = fetchStoryBySlugResponse.allPosts
 
@@ -293,7 +287,7 @@ export async function generateMetadata({
 }
 
 const StoryPage = async (props: StoryPageTypes) => {
-  const { params } = props
+  const params = await props.params
   const fetchStoryBySlugResponse = await fetchStoryBySlug(params.slug)
   const [storyData] = fetchStoryBySlugResponse.allPosts
 

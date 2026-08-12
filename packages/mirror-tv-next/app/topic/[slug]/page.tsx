@@ -18,18 +18,16 @@ import type { SingleTopic } from '~/graphql/query/topic'
 import { fetchSingleTopicByTopicSlug } from '~/graphql/query/topic'
 import styles from '~/styles/pages/single-topic-page.module.scss'
 import { formateHeroImage, handleMetaDesc } from '~/utils'
-import dynamic from 'next/dynamic'
+import GPTAd from '~/components/ads/gpt/gpt-ad'
 import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
-const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 import PageLogger from '~/components/tracking/page-logger'
 
 export const revalidate = GLOBAL_CACHE_SETTING
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string }
+export async function generateMetadata(props: {
+  params: Promise<{ slug: string }>
 }): Promise<Metadata> {
+  const params = await props.params
   const client = getClient()
   let singleTopic: SingleTopic | null = null
 
@@ -90,11 +88,10 @@ export async function generateMetadata({
   }
 }
 
-export default async function SingleTopicPage({
-  params,
-}: {
-  params: { slug: string }
+export default async function SingleTopicPage(props: {
+  params: Promise<{ slug: string }>
 }) {
+  const params = await props.params
   const client = getClient()
   let singleTopic: SingleTopic | undefined
 

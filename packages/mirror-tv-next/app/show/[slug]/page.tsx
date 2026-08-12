@@ -7,13 +7,12 @@ import {
   SITE_URL,
 } from '~/constants/environment-variables'
 import type { Metadata } from 'next'
-import dynamic from 'next/dynamic'
+import GPTAd from '~/components/ads/gpt/gpt-ad'
 import {
   GPTPlaceholderDesktop,
   GPTPlaceholderMobile,
 } from '~/components/ads/gpt/gpt-placeholder'
 import { getClient } from '~/apollo-client'
-const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 import { fetchShowBySlug } from '~/graphql/query/shows'
 import type { ShowWithDetail } from '~/graphql/query/shows'
 import { notFound } from 'next/navigation'
@@ -45,11 +44,10 @@ const getShowBySlug = cache(async (slug: string) => {
   return allShows?.[0]
 })
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string }
+export async function generateMetadata(props: {
+  params: Promise<{ slug: string }>
 }): Promise<Metadata> {
+  const params = await props.params
   const { slug } = params
   let showData
   try {
@@ -177,11 +175,10 @@ export async function generateMetadata({
   return filteredData
 }
 
-export default async function ShowPage({
-  params,
-}: {
-  params: { slug: string }
+export default async function ShowPage(props: {
+  params: Promise<{ slug: string }>
 }) {
+  const params = await props.params
   // const MAX_RESULT_NUM = 30
 
   let show: ShowWithDetail | undefined
