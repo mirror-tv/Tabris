@@ -29,9 +29,7 @@ export const revalidate = GLOBAL_CACHE_SETTING
 
 const getShowBySlug = cache(async (slug: string) => {
   const client = getClient()
-  const {
-    data: { allShows },
-  } = await client.query<{
+  const { data } = await client.query<{
     allShows: ShowWithDetail[]
   }>({
     query: fetchShowBySlug,
@@ -41,7 +39,7 @@ const getShowBySlug = cache(async (slug: string) => {
       squareHostImg: true,
     },
   })
-  return allShows?.[0]
+  return data?.allShows?.[0]
 })
 
 export async function generateMetadata(props: {

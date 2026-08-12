@@ -29,7 +29,7 @@ async function getVideo({
         withDescription,
       },
     })
-    return { data }
+    return { data: data ?? { allVideos: [] } }
   } catch (err) {
     const annotatingError = errors.helpers.wrap(
       err,

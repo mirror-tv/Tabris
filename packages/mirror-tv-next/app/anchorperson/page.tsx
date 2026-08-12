@@ -38,10 +38,15 @@ export default async function Anchorperson() {
   let hostData: Contact[] = []
   let internationalData: Contact[] = []
   const fetchAnchorPerson = () =>
-    client.query({ query: fetchContactsByAnchorPerson })
-  const fetchHost = () => client.query({ query: fetchContactsByHost })
+    client.query<{ allContacts: Contact[] }>({
+      query: fetchContactsByAnchorPerson,
+    })
+  const fetchHost = () =>
+    client.query<{ allContacts: Contact[] }>({ query: fetchContactsByHost })
   const fetchInternational = () =>
-    client.query({ query: fetchContactsByInternational })
+    client.query<{ allContacts: Contact[] }>({
+      query: fetchContactsByInternational,
+    })
   const responses = await Promise.allSettled([
     fetchAnchorPerson(),
     fetchHost(),

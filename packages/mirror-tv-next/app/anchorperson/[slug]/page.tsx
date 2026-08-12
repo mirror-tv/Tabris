@@ -34,14 +34,14 @@ export async function generateMetadata(props: {
   let singleAnchor: SingleAnchor | null = null
 
   try {
-    const response = await client.query({
+    const response = await client.query<{ allContacts: SingleAnchor[] }>({
       query: fetchContactBySlug,
       variables: {
         slug: params.slug,
       },
     })
     const data = response.data
-    singleAnchor = data.allContacts[0]
+    singleAnchor = data?.allContacts[0] ?? null
 
     if (!singleAnchor) {
       const annotatingError = errors.helpers.wrap(
@@ -154,7 +154,7 @@ export default async function singleAnchor(props: {
   let singleAnchor: SingleAnchor
 
   try {
-    const response = await client.query({
+    const response = await client.query<{ allContacts: SingleAnchor[] }>({
       query: fetchContactBySlug,
       variables: {
         slug: params.slug,
@@ -162,8 +162,8 @@ export default async function singleAnchor(props: {
       },
     })
     const data = response.data
-    singleAnchor = data.allContacts[0]
-    if (!singleAnchor) {
+    const foundAnchor = data?.allContacts[0]
+    if (!foundAnchor) {
       const annotatingError = errors.helpers.wrap(
         new Error('Anchor not found'),
         'UnhandledError',
@@ -181,6 +181,7 @@ export default async function singleAnchor(props: {
       )
       throw annotatingError
     }
+    singleAnchor = foundAnchor
   } catch (err) {
     console.error(err)
     notFound()

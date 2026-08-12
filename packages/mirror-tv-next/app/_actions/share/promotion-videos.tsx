@@ -27,7 +27,7 @@ async function fetchPromotionVideosServerAction({
         first: take,
       },
     })
-    return { data }
+    return { data: data ?? { allPromotionVideos: [] } }
   } catch (err) {
     const annotatingError = errors.helpers.wrap(
       err,

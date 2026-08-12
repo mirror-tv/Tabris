@@ -32,14 +32,14 @@ export async function generateMetadata(props: {
   let singleTopic: SingleTopic | null = null
 
   try {
-    const response = await client.query({
+    const response = await client.query<{ topic: SingleTopic[] }>({
       query: fetchSingleTopicByTopicSlug,
       variables: {
         topicSlug: params.slug,
       },
     })
-    const { topic }: { topic: SingleTopic[] } = response.data
-    singleTopic = topic[0] ?? undefined
+    const topic = response.data?.topic
+    singleTopic = topic?.[0] ?? null
 
     if (!singleTopic) {
       notFound()
@@ -96,14 +96,14 @@ export default async function SingleTopicPage(props: {
   let singleTopic: SingleTopic | undefined
 
   try {
-    const response = await client.query({
+    const response = await client.query<{ topic: SingleTopic[] }>({
       query: fetchSingleTopicByTopicSlug,
       variables: {
         topicSlug: params.slug,
       },
     })
-    const { topic }: { topic: SingleTopic[] } = response.data
-    singleTopic = topic[0] ?? undefined
+    const topic = response.data?.topic
+    singleTopic = topic?.[0] ?? undefined
 
     // Throw an error if singleTopic is undefined
     if (!singleTopic) {

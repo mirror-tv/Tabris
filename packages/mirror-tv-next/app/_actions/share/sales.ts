@@ -21,7 +21,7 @@ async function fetchSales({ take, pageName }: FetchSalesType): Promise<{
         first: take,
       },
     })
-    return { data }
+    return { data: data ?? { allSales: [] } }
   } catch (err) {
     const annotatingError = errors.helpers.wrap(
       err,

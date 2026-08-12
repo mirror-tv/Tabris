@@ -3,11 +3,26 @@ import { isServer } from '~/utils/common'
 
 import { API_ENDPOINT } from './constants/endpoint-config'
 
+declare module '@apollo/client/core/defaultOptions.js' {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace DeclareDefaultOptions {
+    interface Query {
+      errorPolicy: 'all'
+    }
+  }
+}
+
+declare module '@apollo/client/core/types.js' {
+  interface TypeOverrides {
+    signatureStyle: 'classic'
+  }
+}
+
 // reference: https://www.apollographql.com/blog/how-to-use-apollo-client-with-next-js-13
 // makes sure that we only instance the Apollo Client once per request,
-// since Apollo Client’s cache is designed with a single user in mind, we recommend that your Next.js server instantiates a new cache for each SSR request, rather than reusing the same long-lived instance for multiple users’ data.
+// since Apollo Client's cache is designed with a single user in mind, we recommend that your Next.js server instantiates a new cache for each SSR request, rather than reusing the same long-lived instance for multiple users' data.
 
-let client: ApolloClient<any> | null = null
+let client: ApolloClient | null = null
 
 export const getClient = () => {
   // creat a new client if there's no existing one

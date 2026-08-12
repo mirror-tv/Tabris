@@ -27,7 +27,7 @@ import {
 import type { SinglePost } from '~/graphql/query/story'
 import { SITE_URL } from '~/constants/environment-variables'
 
-import ContainerFullScreenAds from '~/components/ads/gpt/gpt-popup-dynamic'
+import ContainerFullScreenAds from '~/components/ads/gpt/gpt-popup'
 import MisoPageView from '~/components/tracking/miso-pageview'
 import GA4SourceTracking from '~/components/story/ga4-source-tracking'
 import UiDownload from '~/components/shared/ui-download'

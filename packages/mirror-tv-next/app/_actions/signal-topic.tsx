@@ -77,7 +77,7 @@ async function fetchSortDir({ slug }: FetchSortDirProps): Promise<{
       },
     })
 
-    const sortDir = data.topic[0]?.sortDir ?? ''
+    const sortDir = data?.topic[0]?.sortDir ?? ''
 
     return { sortDir }
   } catch (err) {

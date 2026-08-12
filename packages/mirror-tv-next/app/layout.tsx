@@ -64,7 +64,7 @@ export default async function RootLayout({
     const data = value as
       | Awaited<ReturnType<typeof getLatestPostsAside>>
       | undefined
-    return data?.data.allPosts || []
+    return data?.data?.allPosts || []
   }
 
   initialPopularPosts = handleResponse(

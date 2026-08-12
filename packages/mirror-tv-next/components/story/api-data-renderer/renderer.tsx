@@ -193,7 +193,7 @@ const ApiDataRenderer = async ({
           id: postId,
         },
       })
-      fetchVideoObjectBySlugResponse = data?.post
+      fetchVideoObjectBySlugResponse = data?.post ?? null
     } catch (error) {
       const annotatingError = errors.helpers.wrap(
         error,
