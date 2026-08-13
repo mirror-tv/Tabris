@@ -35,7 +35,7 @@
     "rxjs": "^7.3.0",
     "sass": "1.69.7",
     "server-only": "^0.0.1",
-    "styled-components": "^6.1.15",
+    "styled-components": "^6.5.2",
     "stylelint-scss": "^6.0.0",
     "swiper": "^11.0.6",
     "ua-parser-js": "^2.0.7",

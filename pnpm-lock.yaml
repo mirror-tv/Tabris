@@ -32,7 +32,7 @@ importers:
         version: 6.21.0(eslint@8.57.1(supports-color@8.1.1))(supports-color@8.1.1)(typescript@5.9.3)
       babel-plugin-styled-components:
         specifier: ^2.0.7
-        version: 2.3.0(@babel/core@7.29.7(supports-color@8.1.1))(styled-components@6.4.4(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(supports-color@8.1.1)
+        version: 2.3.0(@babel/core@7.29.7(supports-color@8.1.1))(styled-components@6.5.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(supports-color@8.1.1)
       eslint:
         specifier: ^8
         version: 8.57.1(supports-color@8.1.1)
@@ -127,8 +127,8 @@ importers:
         specifier: ^0.0.1
         version: 0.0.1
       styled-components:
-        specifier: ^6.1.15
-        version: 6.4.4(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: ^6.5.2
+        version: 6.5.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       stylelint-scss:
         specifier: ^6.0.0
         version: 6.14.0(stylelint@16.26.1(supports-color@8.1.1)(typescript@6.0.3))
@@ -6001,8 +6001,8 @@ packages:
   stubs@3.0.0:
     resolution: {integrity: sha512-PdHt7hHUJKxvTCgbKX9C1V/ftOcjJQgz8BZwNfV5c4B6dcGqlpelTbJ999jBGZ2jYiPAwcX5dP6oBwVlBlUbxw==}
 
-  styled-components@6.4.4:
-    resolution: {integrity: sha512-tJk5CmKUPMDoTsZQ8m0hHInBk9HFKUPSusqmbBuefDX+yUbMBWea2Ob/wdXFyHW8XZqXkprJscysAdKeGWNqlA==}
+  styled-components@6.5.2:
+    resolution: {integrity: sha512-49qBCjwsBmt08/UXIr3KYa1wdntVkhU5cxvQ4uqytl/fITQC85B0PI5EN1GWetRYOzyzcgxqukiitqFRemZ7pg==}
     engines: {node: '>= 16'}
     peerDependencies:
       css-to-react-native: '>= 3.2.0'
@@ -9640,14 +9640,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  babel-plugin-styled-components@2.3.0(@babel/core@7.29.7(supports-color@8.1.1))(styled-components@6.4.4(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(supports-color@8.1.1):
+  babel-plugin-styled-components@2.3.0(@babel/core@7.29.7(supports-color@8.1.1))(styled-components@6.5.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(supports-color@8.1.1):
     dependencies:
       '@babel/core': 7.29.7(supports-color@8.1.1)
       '@babel/helper-annotate-as-pure': 7.29.7
       '@babel/helper-module-imports': 7.29.7(supports-color@8.1.1)
       '@babel/plugin-syntax-jsx': 7.29.7(@babel/core@7.29.7(supports-color@8.1.1))
       picomatch: 4.0.5
-      styled-components: 6.4.4(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      styled-components: 6.5.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
     transitivePeerDependencies:
       - supports-color
 
@@ -13108,7 +13108,7 @@ snapshots:
 
   stubs@3.0.0: {}
 
-  styled-components@6.4.4(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
+  styled-components@6.5.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
     dependencies:
       '@emotion/is-prop-valid': 1.4.0
       csstype: 3.2.3
