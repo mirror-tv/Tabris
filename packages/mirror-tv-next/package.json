@@ -20,7 +20,7 @@
     "@readr-media/react-infinite-scroll-list": "^1.2.0",
     "@svgr/webpack": "^8.1.0",
     "@twreporter/errors": "^1.1.2",
-    "axios": "^1.6.2",
+    "axios": "^1.19.0",
     "dayjs": "^1.11.10",
     "graphql": "^16.8.1",
     "graphql-tag": "^2.12.6",
