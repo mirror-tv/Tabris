@@ -58,7 +58,7 @@
     "eslint-config-prettier": "^9",
     "prettier": "^3",
     "schema-dts": "^2.0.0",
-    "typescript": "^5",
+    "typescript": "^6.0.3",
     "typescript-eslint": "^8"
   }
 }
