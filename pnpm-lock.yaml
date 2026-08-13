@@ -133,8 +133,8 @@ importers:
         specifier: ^6.0.0
         version: 6.14.0(stylelint@16.26.1(supports-color@8.1.1)(typescript@6.0.3))
       swiper:
-        specifier: ^11.0.6
-        version: 11.2.10
+        specifier: ^14.1.0
+        version: 14.1.0
       ua-parser-js:
         specifier: ^2.0.7
         version: 2.0.10
@@ -6084,8 +6084,8 @@ packages:
     engines: {node: '>=14.0.0'}
     hasBin: true
 
-  swiper@11.2.10:
-    resolution: {integrity: sha512-RMeVUUjTQH+6N3ckimK93oxz6Sn5la4aDlgPzB+rBrG/smPdCTicXyhxa+woIpopz+jewEloiEE3lKo1h9w2YQ==}
+  swiper@14.1.0:
+    resolution: {integrity: sha512-ppit/AqmGvThKlXy4I1/9N/gEyb9s/BDHWciWNeIxbfteFKUhPQXrYuOMKszomXKd9WiLd+/0vKdPHW+0N0mhA==}
     engines: {node: '>= 4.7.0'}
 
   symbol-observable@4.0.0:
@@ -13219,7 +13219,7 @@ snapshots:
       picocolors: 1.1.1
       sax: 1.6.1
 
-  swiper@11.2.10: {}
+  swiper@14.1.0: {}
 
   symbol-observable@4.0.0: {}
 

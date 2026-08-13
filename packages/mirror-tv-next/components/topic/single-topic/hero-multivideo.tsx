@@ -43,7 +43,7 @@ export default function HeroMultiVideo({
             cssMode={true}
             slidesPerView={1}
             spaceBetween={30}
-            navigation={true}
+            navigation={{ addIcons: false }}
             loop={true}
             autoplay={{
               delay: 5000,
