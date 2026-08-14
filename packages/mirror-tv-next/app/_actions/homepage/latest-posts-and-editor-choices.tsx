@@ -1,7 +1,7 @@
 'use server'
 import errors from '@twreporter/errors'
 import { z } from 'zod'
-import { query } from '~/apollo-client'
+import { getClient } from '~/apollo-client'
 import {
   type PostWithCategory,
   getPostsWithCategory,
@@ -309,11 +309,12 @@ async function getLatestPostsAndEditorChoices({
     }
 
     const fetchFromGraphQL = async (): Promise<JsonChainResult> => {
+      const client = getClient()
       const [editorChoicesResult, latestPostsResult] = await Promise.all([
-        query({
+        client.query({
           query: fetchEditorChoices,
         }),
-        query({
+        client.query({
           query: getPostsWithCategory,
           variables: {
             first,
@@ -403,7 +404,7 @@ async function getLatestPostsAndEditorChoices({
       )
     }
   } else {
-    const latestPostsResult = await query({
+    const latestPostsResult = await getClient().query({
       query: getPostsWithCategory,
       variables: {
         first,
@@ -463,7 +464,7 @@ const queryArgs = {
  * Fetches the latest 5 posts to be displayed in the aside section in category page.
  */
 const getLatestPostsFunction = () => {
-  return query(queryArgs)
+  return getClient().query(queryArgs)
 }
 
 export { getLatestPostsAndEditorChoices, getLatestPostsFunction }

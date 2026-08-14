@@ -1,6 +1,6 @@
 'use server'
 import errors from '@twreporter/errors'
-import { query } from '~/apollo-client'
+import { getClient } from '~/apollo-client'
 import type { Video } from '~/graphql/query/videos'
 import { getVideoByName } from '~/graphql/query/videos'
 
@@ -20,7 +20,7 @@ async function getVideo({
   data: { allVideos: Video[] }
 }> {
   try {
-    const { data } = await query({
+    const { data } = await getClient().query({
       query: getVideoByName,
       variables: {
         name,
