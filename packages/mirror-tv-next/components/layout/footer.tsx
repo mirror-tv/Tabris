@@ -1,3 +1,4 @@
+import React from 'react'
 import Image from 'next/image'
 import Link from '~/components/shared/link'
 import {
@@ -50,7 +51,7 @@ const socialLinks = [
   },
 ]
 
-export default function Footer(): JSX.Element {
+export default function Footer(): React.JSX.Element {
   return (
     <footer className={[styles.footer, 'footer'].join(' ')}>
       <div className={[styles.topWrapper, 'top-wrapper'].join(' ')}>

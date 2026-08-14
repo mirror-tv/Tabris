@@ -1,10 +1,11 @@
+import React from 'react'
 import Image from 'next/image'
 import Link from '~/components/shared/link'
 import { HEADER_BOTTOM_LINKS } from '~/constants/constant'
 import { withBasePath } from '~/constants/with-base-path'
 import styles from './_styles/other-items.module.scss'
 
-export default function OtherItems(): JSX.Element {
+export default function OtherItems(): React.JSX.Element {
   return (
     <nav
       className={[styles.otherItemsWrapper, 'bottom-wrapper__bottom'].join(' ')}
