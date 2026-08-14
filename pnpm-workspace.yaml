@@ -1,5 +1,8 @@
 packages:
   - 'packages/*'
+overrides:
+  '@types/react': ^19
+  '@types/react-dom': ^19
 allowBuilds:
   '@firebase/util': true
   '@parcel/watcher': true

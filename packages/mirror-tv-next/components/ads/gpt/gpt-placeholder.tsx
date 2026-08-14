@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import React, { ReactNode } from 'react'
 import styles from './_styles/gpt-placeholder.module.scss'
 
 interface GPTPlaceholderProps {
@@ -7,12 +7,12 @@ interface GPTPlaceholderProps {
 
 const GPTPlaceholderMobile = ({
   children,
-}: GPTPlaceholderProps): JSX.Element => {
+}: GPTPlaceholderProps): React.JSX.Element => {
   return <div className={`${styles.gptAdContainerMb}`}>{children}</div>
 }
 const GPTPlaceholderDesktop = ({
   children,
-}: GPTPlaceholderProps): JSX.Element => {
+}: GPTPlaceholderProps): React.JSX.Element => {
   return <div className={`${styles.gptAdContainerPc}`}>{children}</div>
 }
 

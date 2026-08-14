@@ -20,7 +20,7 @@ interface UseViewportIntersectionOptions {
  * 只會觸發一次，即使元素多次進出視口
  */
 export default function useViewportIntersection(
-  elementRef: RefObject<HTMLElement>,
+  elementRef: RefObject<HTMLElement | null>,
   options: UseViewportIntersectionOptions
 ): void {
   const { threshold = 0.85, duration = 5000, onTrigger } = options

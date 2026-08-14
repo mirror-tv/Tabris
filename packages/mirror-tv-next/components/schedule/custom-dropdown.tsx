@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import styles from './_styles/custom-dropdown.module.scss'
 
 type WeekDate = {
@@ -19,7 +19,7 @@ export default function CustomDropDown({
   weekDates,
   selectedDate,
   onDateChange,
-}: CustomDropDownProps): JSX.Element {
+}: CustomDropDownProps): React.JSX.Element {
   const [isOpen, setIsOpen] = useState(false)
 
   const handleDateChange = (date: WeekDate) => {
