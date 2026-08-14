@@ -33,7 +33,7 @@
     "react-dom": "18.2.0",
     "react-youtube": "^10.1.0",
     "rxjs": "^7.3.0",
-    "sass": "^1.69.7",
+    "sass": "1.69.7",
     "server-only": "^0.0.1",
     "styled-components": "^6.1.15",
     "stylelint-scss": "^6.0.0",
