@@ -1,6 +1,6 @@
 'use server'
 import errors from '@twreporter/errors'
-import { query } from '~/apollo-client'
+import { getClient } from '~/apollo-client'
 import {
   PromotionVideo,
   getPromotionVideos,
@@ -18,7 +18,7 @@ async function fetchPromotionVideosServerAction({
   data: { allPromotionVideos: PromotionVideo[] }
 }> {
   try {
-    const { data } = await query({
+    const { data } = await getClient().query({
       query: getPromotionVideos,
       variables: {
         first: take,

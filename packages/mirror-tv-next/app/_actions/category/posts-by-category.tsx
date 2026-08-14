@@ -5,7 +5,7 @@ import {
   getPostsByCategorySlug,
   type PostCardItem,
 } from '~/graphql/query/posts'
-import { query } from '~/apollo-client'
+import { getClient } from '~/apollo-client'
 import {
   type External,
   getExternalsByCategory,
@@ -30,7 +30,7 @@ export async function fetchPostsByCategory({
   _allPostsMeta?: { count: number }
 }> {
   try {
-    const { data } = await query({
+    const { data } = await getClient().query({
       query: getPostsByCategorySlug,
       variables: {
         categorySlug,
@@ -75,7 +75,7 @@ export async function fetchExternalsByCategory({
   _allExternalsMeta?: { count: number }
 }> {
   try {
-    const { data } = await query({
+    const { data } = await getClient().query({
       query: getExternalsByCategory,
       variables: {
         categorySlug,

@@ -1,11 +1,11 @@
 'use server'
-import { query } from '~/apollo-client'
+import { getClient } from '~/apollo-client'
 import { type Category, fetchCategoryBySlug } from '~/graphql/query/category'
 import errors from '@twreporter/errors'
 
 export async function fetchCategoryData(slug: string): Promise<Category> {
   try {
-    const { data } = await query({
+    const { data } = await getClient().query({
       query: fetchCategoryBySlug,
       variables: {
         slug,
