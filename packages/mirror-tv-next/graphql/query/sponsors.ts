@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import type { TypedDocumentNode } from '@apollo/client'
 import { heroImageFragment } from '../fragments/hero-image'
 
 export type Sponsor = {
@@ -15,7 +16,10 @@ export type Sponsor = {
   } | null
 }
 
-const fetchSponsors = gql`
+const fetchSponsors: TypedDocumentNode<
+  { allSponsors: Sponsor[] },
+  Record<string, never>
+> = gql`
   query fetchSponsors {
     allSponsors: sponsors(
       where: { state: { equals: "published" } }

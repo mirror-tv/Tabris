@@ -1,7 +1,7 @@
 'use server'
 import errors from '@twreporter/errors'
 import { getTopics, Topic } from '~/graphql/query/topic'
-import { getClient } from '~/apollo-client'
+import { query } from '~/apollo-client'
 
 type FetchTopicType = {
   page: number
@@ -17,12 +17,8 @@ async function fetchTopics({
   allTopics: Topic[]
   _allTopicsMeta?: { count: number }
 }> {
-  const client = getClient()
   try {
-    const { data } = await client.query<{
-      allTopics: Topic[]
-      topicsCount?: number
-    }>({
+    const { data } = await query({
       query: getTopics,
       variables: {
         first: pageSize,

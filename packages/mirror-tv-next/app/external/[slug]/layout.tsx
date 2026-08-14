@@ -1,14 +1,13 @@
 'use client'
 import Aside from '~/components/story/aside'
 import styles from './_styles/external.module.scss'
-import dynamic from 'next/dynamic'
 import AdH1Remover from '~/components/shared/ad-h1-remover'
 import TagManagerWrapper from '~/app/tag-manager'
 import {
   GPTPlaceholderDesktop,
   GPTPlaceholderMobile,
 } from '~/components/ads/gpt/gpt-placeholder'
-const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
+import GPTAd from '~/components/ads/gpt/gpt-ad'
 export default function StoryPageLayout({
   children,
 }: {

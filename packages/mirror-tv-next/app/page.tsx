@@ -1,26 +1,19 @@
 import PageLogger from '~/components/tracking/page-logger'
-import dynamic from 'next/dynamic'
+import GPTAd from '~/components/ads/gpt/gpt-ad'
+import PromotionVideoList from '~/components/homepage/promotion-video-list-dynamic'
 import MainFlashNews from '~/components/flash-news/main-flash-news'
 import styles from '~/styles/pages/page.module.scss'
 import { GPTPlaceholderMobile } from '~/components/ads/gpt/gpt-placeholder'
 import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
 import GptPopup from '~/components/ads/gpt/gpt-popup'
-import {
-  GLOBAL_CACHE_SETTING,
-  SITE_URL,
-} from '~/constants/environment-variables'
+import { SITE_URL } from '~/constants/environment-variables'
 import TopicList from '~/components/homepage/topic-list'
 import ShowList from '~/components/homepage/show-list-init'
 import LatestAndEditorChoicesWithLive from '~/components/homepage/latest-and-editor-choices-with-live'
 import { getTopicVideo } from '~/app/_actions/homepage/topic-video'
 import type { Metadata } from 'next'
 
-const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
-const PromotionVideoList = dynamic(
-  () => import('~/components/homepage/promotion-video-list')
-)
-
-export const revalidate = GLOBAL_CACHE_SETTING
+export const revalidate = 0
 
 export const metadata: Metadata = {
   alternates: {

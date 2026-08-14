@@ -2,18 +2,14 @@ import errors from '@twreporter/errors'
 import styles from './_styles/show.module.scss'
 import Link from '~/components/shared/link'
 import Image from 'next/image'
-import {
-  GLOBAL_CACHE_SETTING,
-  SITE_URL,
-} from '~/constants/environment-variables'
+import { SITE_URL } from '~/constants/environment-variables'
 import type { Metadata } from 'next'
-import dynamic from 'next/dynamic'
+import GPTAd from '~/components/ads/gpt/gpt-ad'
 import {
   GPTPlaceholderDesktop,
   GPTPlaceholderMobile,
 } from '~/components/ads/gpt/gpt-placeholder'
-import { getClient } from '~/apollo-client'
-const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
+import { query } from '~/apollo-client'
 import { fetchShowBySlug } from '~/graphql/query/shows'
 import type { ShowWithDetail } from '~/graphql/query/shows'
 import { notFound } from 'next/navigation'
@@ -26,15 +22,10 @@ import PodcastsListHandler from '~/components/show/_slug/podcast/podcasts-list-h
 import YoutubeListWrapper from '~/components/show/_slug/youtube-list-wrapper'
 import AsideAd from '~/components/show/_slug/aside-ad'
 
-export const revalidate = GLOBAL_CACHE_SETTING
+export const revalidate = 0
 
 const getShowBySlug = cache(async (slug: string) => {
-  const client = getClient()
-  const {
-    data: { allShows },
-  } = await client.query<{
-    allShows: ShowWithDetail[]
-  }>({
+  const { data } = await query({
     query: fetchShowBySlug,
     variables: {
       slug,
@@ -42,14 +33,13 @@ const getShowBySlug = cache(async (slug: string) => {
       squareHostImg: true,
     },
   })
-  return allShows?.[0]
+  return data?.allShows?.[0]
 })
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string }
+export async function generateMetadata(props: {
+  params: Promise<{ slug: string }>
 }): Promise<Metadata> {
+  const params = await props.params
   const { slug } = params
   let showData
   try {
@@ -177,11 +167,10 @@ export async function generateMetadata({
   return filteredData
 }
 
-export default async function ShowPage({
-  params,
-}: {
-  params: { slug: string }
+export default async function ShowPage(props: {
+  params: Promise<{ slug: string }>
 }) {
+  const params = await props.params
   // const MAX_RESULT_NUM = 30
 
   let show: ShowWithDetail | undefined

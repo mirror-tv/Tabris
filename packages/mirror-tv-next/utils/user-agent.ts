@@ -1,5 +1,5 @@
 import 'server-only'
-import { headers } from 'next/headers'
+import { headers, type UnsafeUnwrappedHeaders } from 'next/headers'
 import { UAParser } from 'ua-parser-js'
 
 export function parseUserAgent(userAgent: string) {
@@ -45,7 +45,7 @@ export function parseUserAgent(userAgent: string) {
 }
 
 export function parseUserAgentInfo() {
-  const headersList = headers()
+  const headersList = headers() as unknown as UnsafeUnwrappedHeaders
   const userAgent = headersList.get('user-agent') || ''
   const ipAddress =
     headersList.get('x-forwarded-for') || headersList.get('remote-addr') || ''

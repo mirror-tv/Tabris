@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import type { TypedDocumentNode } from '@apollo/client'
 import type { HeroImage } from '~/types/common'
 import { heroImageFragment } from '../fragments/hero-image'
 
@@ -23,7 +24,10 @@ export type SingleAnchor = Contact & {
   __typename?: string
 }
 
-const fetchContactBySlug = gql`
+const fetchContactBySlug: TypedDocumentNode<
+  { allContacts: SingleAnchor[] },
+  { slug: string; shouldFetchRelatedShows?: boolean }
+> = gql`
   query fetchContactBySlug(
     $slug: String!
     $shouldFetchRelatedShows: Boolean = false
@@ -49,7 +53,10 @@ const fetchContactBySlug = gql`
   }
   ${heroImageFragment}
 `
-const fetchContactsByAnchorPerson = gql`
+const fetchContactsByAnchorPerson: TypedDocumentNode<
+  { allContacts: Contact[] },
+  Record<string, never>
+> = gql`
   query fetchContactsByAnchorPerson {
     allContacts: contacts(
       where: {
@@ -68,7 +75,10 @@ const fetchContactsByAnchorPerson = gql`
   ${heroImageFragment}
 `
 
-const fetchContactsByHost = gql`
+const fetchContactsByHost: TypedDocumentNode<
+  { allContacts: Contact[] },
+  Record<string, never>
+> = gql`
   query fetchContactsByHost {
     allContacts: contacts(
       where: { host: { equals: true }, isResigned: { not: { equals: true } } }
@@ -84,7 +94,10 @@ const fetchContactsByHost = gql`
   ${heroImageFragment}
 `
 
-const fetchContactsByInternational = gql`
+const fetchContactsByInternational: TypedDocumentNode<
+  { allContacts: Contact[] },
+  Record<string, never>
+> = gql`
   query fetchContactsByInternational {
     allContacts: contacts(
       where: {

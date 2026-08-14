@@ -2,7 +2,6 @@ import fs from 'fs/promises'
 import zlib from 'zlib'
 import { promisify } from 'util'
 import { STATIC_BASE_URL } from '~/constants/endpoint-config'
-import { GLOBAL_CACHE_SETTING } from '~/constants/environment-variables'
 import { isServer } from '~/utils/common'
 import { appendTimestampForCache } from '~/utils/url'
 
@@ -92,7 +91,7 @@ export async function fetchStaticJson<T = unknown>(
     ? appendTimestampForCache(`${STATIC_BASE_URL}${pathPrefix}/${filename}`)
     : `${STATIC_BASE_URL}${pathPrefix}/${filename}`
   const res = await fetch(url, {
-    next: { revalidate: GLOBAL_CACHE_SETTING },
+    next: { revalidate: 0 },
   })
 
   if (!res.ok) {
@@ -109,7 +108,7 @@ export async function fetchStaticJson<T = unknown>(
         url,
         status: res.status,
         statusText: res.statusText,
-        revalidate: GLOBAL_CACHE_SETTING,
+        revalidate: 0,
       })
     )
     throw new Error(

@@ -79,7 +79,7 @@ export default function PostListWithFirstPage({
       )
 
       return postsResponse?.data?.latest || []
-    } catch (err) {
+    } catch {
       return []
     }
   }

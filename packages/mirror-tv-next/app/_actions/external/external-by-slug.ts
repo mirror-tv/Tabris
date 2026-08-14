@@ -1,6 +1,6 @@
 'use server'
 
-import { getClient } from '~/apollo-client'
+import { query } from '~/apollo-client'
 import {
   fetchExternalBySlug as fetchExternalBySlugDocument,
   type SingleExternalPost,
@@ -10,11 +10,8 @@ import errors from '@twreporter/errors'
 export async function fetchExternalBySlug(
   slug: string
 ): Promise<{ allExternals: SingleExternalPost[] }> {
-  const client = getClient()
   try {
-    const { data } = await client.query<{
-      allExternals: SingleExternalPost[]
-    }>({
+    const { data } = await query({
       query: fetchExternalBySlugDocument,
       variables: {
         slug,

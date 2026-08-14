@@ -26,7 +26,6 @@ const externalImageHostnames = [
 const nextConfig = {
   basePath: SITE_BASE_PATH,
   reactStrictMode: false,
-  swcMinify: true,
   images: {
     remotePatterns: [...mnewsImageHostnames, ...externalImageHostnames].map(
       (hostname) => ({
@@ -111,6 +110,7 @@ const nextConfig = {
   compiler: {
     styledComponents: true,
   },
+  transpilePackages: ['graphql-tag', 'graphql'],
 }
 
 module.exports = nextConfig

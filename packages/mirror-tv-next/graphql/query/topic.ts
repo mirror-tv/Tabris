@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import type { TypedDocumentNode } from '@apollo/client'
 import type { HeroImage } from '~/types/common'
 import { heroImageFragment } from '../fragments/hero-image'
 import { ListingPost } from '../fragments/listing-post'
@@ -68,7 +69,10 @@ export type FeatureTopic = Omit<Topic, 'briefApiData' | 'heroImage'> & {
   postASC: { slug: string; name: string }[]
 }
 
-const getTopics = gql`
+const getTopics: TypedDocumentNode<
+  { allTopics: Topic[]; topicsCount?: number },
+  { first?: number; skip?: number; withCount?: boolean }
+> = gql`
   query fetchTopics($first: Int = 12, $skip: Int, $withCount: Boolean = true) {
     allTopics: topics(
       take: $first
@@ -90,7 +94,10 @@ const getTopics = gql`
   ${heroImageFragment}
 `
 
-const fetchSingleTopicByTopicSlug = gql`
+const fetchSingleTopicByTopicSlug: TypedDocumentNode<
+  { topic: SingleTopic[] },
+  { topicSlug: string }
+> = gql`
   query fetchSingleTopicByTopicSlug($topicSlug: String!) {
     topic: topics(
       where: { state: { equals: "published" }, slug: { equals: $topicSlug } }
@@ -143,7 +150,15 @@ const fetchSingleTopicByTopicSlug = gql`
   ${heroImageFragment}
 `
 
-const fetchPostItemsByTopicSlug = gql`
+const fetchPostItemsByTopicSlug: TypedDocumentNode<
+  { topic: { items: Post[] }[] },
+  {
+    topicSlug: string
+    first?: number
+    skip?: number
+    postDir?: PostOrderByInput[]
+  }
+> = gql`
   query fetchPostItemsByTopicSlug(
     $topicSlug: String!
     $first: Int = 12
@@ -175,7 +190,10 @@ const fetchPostItemsByTopicSlug = gql`
   ${heroImageFragment}
 `
 
-const fetchPostSortDirBySlug = gql`
+const fetchPostSortDirBySlug: TypedDocumentNode<
+  { topic: { sortDir: string }[] },
+  { topicSlug: string }
+> = gql`
   query fetchPostSortDirBySlug($topicSlug: String!) {
     topic: topics(
       where: { state: { equals: "published" }, slug: { equals: $topicSlug } }
@@ -185,7 +203,10 @@ const fetchPostSortDirBySlug = gql`
   }
 `
 
-const fetchFeatureTopics = gql`
+const fetchFeatureTopics: TypedDocumentNode<
+  { topics: FeatureTopic[] },
+  { topicFirst?: number; postFirst?: number }
+> = gql`
   query fetchFeaturedTopics($topicFirst: Int = 4, $postFirst: Int = 3) {
     topics(
       where: { state: { equals: "published" }, isFeatured: { equals: true } }

@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import type { TypedDocumentNode } from '@apollo/client'
 
 export type Video = {
   id: string
@@ -7,7 +8,10 @@ export type Video = {
   description?: string | null
 }
 
-const getVideoByName = gql`
+const getVideoByName: TypedDocumentNode<
+  { videos: Video[] },
+  { name: string; take?: number; withDescription?: boolean }
+> = gql`
   query fetchVideoByName(
     $name: String!
     $take: Int

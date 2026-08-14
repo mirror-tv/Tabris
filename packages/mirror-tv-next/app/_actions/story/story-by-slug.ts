@@ -1,7 +1,7 @@
 'use server'
 
 import { unstable_noStore as noStore } from 'next/cache'
-import { getClient } from '~/apollo-client'
+import { query } from '~/apollo-client'
 import { IS_PREVIEW_MODE } from '~/constants/environment-variables'
 import {
   fetchStoryBySlug as fetchStoryBySlugDocument,
@@ -21,11 +21,8 @@ export async function fetchStoryBySlug(
     noStore()
   }
 
-  const client = getClient()
   try {
-    const { data } = await client.query<{
-      allPosts: SinglePost[]
-    }>({
+    const { data } = await query({
       query: fetchStoryBySlugDocument,
       variables: {
         slug,
