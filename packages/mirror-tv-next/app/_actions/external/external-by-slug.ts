@@ -10,11 +10,8 @@ import errors from '@twreporter/errors'
 export async function fetchExternalBySlug(
   slug: string
 ): Promise<{ allExternals: SingleExternalPost[] }> {
-  const client = getClient()
   try {
-    const { data } = await client.query<{
-      allExternals: SingleExternalPost[]
-    }>({
+    const { data } = await getClient().query({
       query: fetchExternalBySlugDocument,
       variables: {
         slug,

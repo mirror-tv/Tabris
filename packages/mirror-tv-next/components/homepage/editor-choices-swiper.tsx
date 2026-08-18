@@ -63,6 +63,7 @@ export default function EditorChoicesSwiper({
             navigation={{
               nextEl: '.swiper-button-next',
               prevEl: '.swiper-button-prev',
+              addIcons: false,
             }}
             mousewheel={true}
             keyboard={true}

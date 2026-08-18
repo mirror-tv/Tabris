@@ -1,16 +1,13 @@
 'use client'
 
 import styles from './_styles/aside.module.scss'
-import { GLOBAL_CACHE_SETTING } from '~/constants/environment-variables'
 
 import UiListPostsAside from '../shared/ui-list-posts-aside'
 import { useData } from '~/context/data-context'
-import dynamic from 'next/dynamic'
-
-const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
+import GPTAd from '~/components/ads/gpt/gpt-ad'
 
 // NOTE: for revalidate the data in <Aside>
-export const revalidate = GLOBAL_CACHE_SETTING
+export const revalidate = 0
 
 const Aside: React.FC = () => {
   const asideCategory = 'story'

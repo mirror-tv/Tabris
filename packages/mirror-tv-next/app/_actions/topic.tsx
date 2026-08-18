@@ -17,12 +17,8 @@ async function fetchTopics({
   allTopics: Topic[]
   _allTopicsMeta?: { count: number }
 }> {
-  const client = getClient()
   try {
-    const { data } = await client.query<{
-      allTopics: Topic[]
-      topicsCount?: number
-    }>({
+    const { data } = await getClient().query({
       query: getTopics,
       variables: {
         first: pageSize,

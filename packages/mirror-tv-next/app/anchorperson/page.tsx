@@ -1,10 +1,7 @@
 import type { Metadata } from 'next'
-import { getClient } from '~/apollo-client'
+import { query } from '~/apollo-client'
 import UiContactCard from '~/components/anchorperson/ui-contact-card'
-import {
-  GLOBAL_CACHE_SETTING,
-  SITE_URL,
-} from '~/constants/environment-variables'
+import { SITE_URL } from '~/constants/environment-variables'
 import type { Contact } from '~/graphql/query/contact'
 import {
   fetchContactsByAnchorPerson,
@@ -12,12 +9,11 @@ import {
   fetchContactsByInternational,
 } from '~/graphql/query/contact'
 import styles from '~/styles/pages/anchorperson-page.module.scss'
-import dynamic from 'next/dynamic'
+import GPTAd from '~/components/ads/gpt/gpt-ad'
 import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
 import { handleResponse } from '~/utils'
-const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 
-export const revalidate = GLOBAL_CACHE_SETTING
+export const revalidate = 0
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -34,15 +30,18 @@ export const metadata: Metadata = {
 }
 
 export default async function Anchorperson() {
-  const client = getClient()
   let anchorData: Contact[] = []
   let hostData: Contact[] = []
   let internationalData: Contact[] = []
   const fetchAnchorPerson = () =>
-    client.query({ query: fetchContactsByAnchorPerson })
-  const fetchHost = () => client.query({ query: fetchContactsByHost })
+    query({
+      query: fetchContactsByAnchorPerson,
+    })
+  const fetchHost = () => query({ query: fetchContactsByHost })
   const fetchInternational = () =>
-    client.query({ query: fetchContactsByInternational })
+    query({
+      query: fetchContactsByInternational,
+    })
   const responses = await Promise.allSettled([
     fetchAnchorPerson(),
     fetchHost(),

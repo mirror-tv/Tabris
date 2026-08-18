@@ -46,7 +46,10 @@ WORKDIR /app/packages/mirror-tv-next
 # Install runtime dependencies for amp-proxy-server.js
 # Next.js standalone tracing does not cover non-Next.js entry points.
 COPY --from=builder /monorepo/packages/mirror-tv-next/package.json ./
-RUN npm install --omit=dev
+# --legacy-peer-deps: @readr-media/react-image@2.2.10 declares react@"18.2.0" as an exact
+# peer dependency. After upgrading to React 19, npm strict peer resolution rejects the install.
+# The package works at runtime regardless; this flag skips the peer dep check.
+RUN npm install --omit=dev --legacy-peer-deps
 
 RUN chmod +x run.sh
 

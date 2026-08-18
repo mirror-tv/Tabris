@@ -21,11 +21,8 @@ export async function fetchStoryBySlug(
     noStore()
   }
 
-  const client = getClient()
   try {
-    const { data } = await client.query<{
-      allPosts: SinglePost[]
-    }>({
+    const { data } = await getClient().query({
       query: fetchStoryBySlugDocument,
       variables: {
         slug,

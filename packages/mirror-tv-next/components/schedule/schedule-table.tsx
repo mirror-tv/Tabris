@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import Image from 'next/image'
 import { useState } from 'react'
 import CustomDropDown from '~/components/schedule/custom-dropdown'
@@ -21,7 +22,7 @@ type WeekDate = {
 export default function ScheduleTable({
   schedule,
   weekDates,
-}: ScheduleProps): JSX.Element {
+}: ScheduleProps): React.JSX.Element {
   const initialDay = weekDates[0]
 
   const [selectedDate, setSelectedDate] = useState<WeekDate>({

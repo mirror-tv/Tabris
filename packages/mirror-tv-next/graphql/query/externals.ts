@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import type { TypedDocumentNode } from '@apollo/client'
 import {
   listingExternal,
   type ListingExternal,
@@ -6,7 +7,16 @@ import {
 
 export type External = ListingExternal
 
-const getExternalsByTagName = gql`
+const getExternalsByTagName: TypedDocumentNode<
+  { allExternals: External[]; externalsCount?: number },
+  {
+    tagName: string
+    first?: number
+    skip?: number
+    withCount?: boolean
+    filteredSlug?: string[]
+  }
+> = gql`
   query fetchExternalsByTagName(
     $tagName: String!
     $first: Int = 12
@@ -37,7 +47,16 @@ const getExternalsByTagName = gql`
   ${listingExternal}
 `
 
-const getExternalsByCategory = gql`
+const getExternalsByCategory: TypedDocumentNode<
+  { allExternals: External[]; externalsCount?: number },
+  {
+    categorySlug: string
+    first?: number
+    skip?: number
+    withCount?: boolean
+    filteredSlug?: string[]
+  }
+> = gql`
   query fetchExternalsByCategory(
     $categorySlug: String!
     $first: Int = 12

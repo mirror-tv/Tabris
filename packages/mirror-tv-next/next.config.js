@@ -26,7 +26,6 @@ const externalImageHostnames = [
 const nextConfig = {
   basePath: SITE_BASE_PATH,
   reactStrictMode: false,
-  swcMinify: true,
   images: {
     remotePatterns: [...mnewsImageHostnames, ...externalImageHostnames].map(
       (hostname) => ({
@@ -39,6 +38,15 @@ const nextConfig = {
     deviceSizes: [480, 800],
   },
   output: 'standalone',
+  // graphql ships dual CJS/ESM entry points (index.js / index.mjs). @apollo/client
+  // is not transpiled, so its server bundle keeps a real runtime `import` of
+  // 'graphql' that Node resolves to index.mjs — but Next's output file tracing
+  // only picks up index.js, so standalone builds crash at request time with
+  // "Cannot find module '.../graphql/index.mjs'". Force the .mjs files to be
+  // traced into .next/standalone too.
+  outputFileTracingIncludes: {
+    '/**': ['../../node_modules/.pnpm/graphql@*/node_modules/graphql/**/*.mjs'],
+  },
   async headers() {
     return [
       {
@@ -111,6 +119,7 @@ const nextConfig = {
   compiler: {
     styledComponents: true,
   },
+  transpilePackages: ['graphql-tag', 'graphql'],
 }
 
 module.exports = nextConfig

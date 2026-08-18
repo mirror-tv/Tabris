@@ -2,10 +2,8 @@
 import styles from './_styles/aside.module.scss'
 import UiListPostsAside from '~/components/shared/ui-list-posts-aside'
 
-import dynamic from 'next/dynamic'
 import { useData } from '~/context/data-context'
-
-const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
+import GPTAd from '~/components/ads/gpt/gpt-ad'
 
 export default function CategoryPageLayoutAside() {
   const { popularPosts, latestPosts } = useData()

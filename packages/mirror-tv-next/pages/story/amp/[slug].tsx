@@ -2,7 +2,7 @@ import AMPLayout from '~/components/story/amp/layout'
 import { ENV } from '~/constants/environment'
 import { GTM_ID } from '~/constants/environment-variables'
 import { POPULAR_POSTS_FILENAME } from '~/constants/json-filenames'
-import { getClient } from '~/apollo-client'
+import { queryPages } from '~/apollo-client-pages'
 import {
   fetchStoryBySlug as fetchStoryBySlugDocument,
   SinglePost,
@@ -528,11 +528,8 @@ export const getServerSideProps: GetServerSideProps<{
   const { slug = '' } = params as { slug: string }
 
   const fetchStoryDataFunction = async () => {
-    const client = getClient()
     try {
-      const { data } = await client.query<{
-        allPosts: SinglePost[]
-      }>({
+      const { data } = await queryPages({
         query: fetchStoryBySlugDocument,
         variables: {
           slug,
@@ -548,12 +545,8 @@ export const getServerSideProps: GetServerSideProps<{
   const fetchPopularList = () =>
     fetchStaticJson<{ report: RawPopularPost[] }>(POPULAR_POSTS_FILENAME)
 
-  const client = getClient()
-
   const getLatestPostsFn = () => {
-    return client.query<{
-      allPosts: PostCardItem[]
-    }>({
+    return queryPages({
       query: getLatestPosts,
       variables: {
         first: 5,

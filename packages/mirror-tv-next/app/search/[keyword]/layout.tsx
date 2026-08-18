@@ -15,13 +15,14 @@ function hasBlockedSearchExtension(keyword: string): boolean {
   return BLOCKED_EXTENSION_PATTERN.test(keyword.trim())
 }
 
-export default function SearchPageLayout({
-  children,
-  params,
-}: {
+export default async function SearchPageLayout(props: {
   children: React.ReactNode
-  params: { keyword: string }
+  params: Promise<{ keyword: string }>
 }) {
+  const params = await props.params
+
+  const { children } = props
+
   const keyword = decodeURIComponent(params?.keyword ?? '')
   if (hasBlockedSearchExtension(keyword)) {
     notFound()

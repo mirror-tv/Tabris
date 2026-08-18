@@ -17,17 +17,14 @@ async function fetchPromotionVideosServerAction({
 }: FetchPromotionVideosServerActionType): Promise<{
   data: { allPromotionVideos: PromotionVideo[] }
 }> {
-  const client = getClient()
   try {
-    const { data } = await client.query<{
-      allPromotionVideos: PromotionVideo[]
-    }>({
+    const { data } = await getClient().query({
       query: getPromotionVideos,
       variables: {
         first: take,
       },
     })
-    return { data }
+    return { data: data ?? { allPromotionVideos: [] } }
   } catch (err) {
     const annotatingError = errors.helpers.wrap(
       err,

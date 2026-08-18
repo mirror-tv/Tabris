@@ -2,6 +2,7 @@
 import styles from './_styles/gpt-ad.module.scss'
 
 import { useEffect, useState } from 'react'
+import dynamic from 'next/dynamic'
 import useWindowDimensions from '~/hooks/use-window-dimensions'
 import type { SlotRenderEndedEvent, SlotRequestedEvent } from '~/types/event'
 
@@ -150,7 +151,7 @@ const GPTAdRoot = ({
   )
 }
 
-export default function GptAd({
+function GptAd({
   pageKey,
   adKey,
   adUnit,
@@ -221,3 +222,5 @@ export default function GptAd({
     </>
   )
 }
+
+export default dynamic(() => Promise.resolve(GptAd), { ssr: false })

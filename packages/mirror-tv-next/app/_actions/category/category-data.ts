@@ -4,11 +4,8 @@ import { type Category, fetchCategoryBySlug } from '~/graphql/query/category'
 import errors from '@twreporter/errors'
 
 export async function fetchCategoryData(slug: string): Promise<Category> {
-  const client = getClient()
   try {
-    const { data } = await client.query<{
-      allCategories: Category[]
-    }>({
+    const { data } = await getClient().query({
       query: fetchCategoryBySlug,
       variables: {
         slug,

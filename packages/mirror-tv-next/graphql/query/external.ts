@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import type { TypedDocumentNode } from '@apollo/client'
 
 export interface SingleRelatedPost {
   slug: string
@@ -48,7 +49,10 @@ export interface SingleExternalPost {
   __typename?: 'External'
 }
 
-const fetchExternalBySlug = gql`
+const fetchExternalBySlug: TypedDocumentNode<
+  { allExternals: SingleExternalPost[] },
+  { slug: string }
+> = gql`
   query fetchExternalBySlug($slug: String!) {
     allExternals: externals(
       where: { slug: { equals: $slug }, state: { equals: "published" } }

@@ -28,12 +28,8 @@ async function fetchPostsItems({
   allPosts: PostCardItem[]
   _allPostsMeta?: { count: number }
 }> {
-  const client = getClient()
   try {
-    const { data } = await client.query<{
-      allPosts: PostCardItem[]
-      postsCount?: number
-    }>({
+    const { data } = await getClient().query({
       query: getPostsByTagName,
       variables: {
         tagName,
@@ -76,12 +72,8 @@ async function fetchExternalsByTagName({
   allExternals: External[]
   _allExternalsMeta?: { count: number }
 }> {
-  const client = getClient()
   try {
-    const { data } = await client.query<{
-      allExternals: External[]
-      externalsCount?: number
-    }>({
+    const { data } = await getClient().query({
       query: getExternalsByTagName,
       variables: {
         tagName,

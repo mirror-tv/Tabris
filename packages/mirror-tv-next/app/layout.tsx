@@ -8,11 +8,7 @@ import PromoteTopic from '~/components/promote-topic'
 import { ReferrerProvider } from '~/context/referrer-context'
 import { META_DESCRIPTION, SITE_TITLE } from '~/constants/constant'
 import { HEADER_FILENAME } from '~/constants/json-filenames'
-import {
-  GLOBAL_CACHE_SETTING,
-  GTM_ID,
-  SITE_URL,
-} from '~/constants/environment-variables'
+import { GTM_ID, SITE_URL } from '~/constants/environment-variables'
 import '~/styles/global.css'
 import TagManagerWrapper from '~/app/tag-manager'
 import { fetchPopularPosts } from '~/app/_actions/popular-data'
@@ -24,7 +20,7 @@ import { handleResponse } from '~/utils'
 import { fetchStaticJson } from '~/utils/fetch-static-json'
 import styles from '../styles/pages/layout.module.scss'
 
-export const revalidate = GLOBAL_CACHE_SETTING
+export const revalidate = 0
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -64,7 +60,7 @@ export default async function RootLayout({
     const data = value as
       | Awaited<ReturnType<typeof getLatestPostsAside>>
       | undefined
-    return data?.data.allPosts || []
+    return data?.data?.allPosts || []
   }
 
   initialPopularPosts = handleResponse(

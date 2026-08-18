@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import type { TypedDocumentNode } from '@apollo/client'
 
 export type Category = {
   id?: string
@@ -7,7 +8,10 @@ export type Category = {
   style?: 'normal' | 'highlight'
 }
 
-const fetchCategoryBySlug = gql`
+const fetchCategoryBySlug: TypedDocumentNode<
+  { allCategories: Category[] },
+  { slug: string }
+> = gql`
   query fetchCategoryBySlug($slug: String!) {
     allCategories: categories(where: { slug: { equals: $slug } }) {
       id

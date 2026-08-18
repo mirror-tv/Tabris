@@ -6,9 +6,8 @@ import IconLinkList from '~/components/ombuds/iconLinkList'
 import styles from '~/styles/pages/ombuds-page.module.scss'
 import type { Metadata } from 'next'
 import { SITE_URL } from '~/constants/environment-variables'
-import dynamic from 'next/dynamic'
+import GPTAd from '~/components/ads/gpt/gpt-ad'
 import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
-const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

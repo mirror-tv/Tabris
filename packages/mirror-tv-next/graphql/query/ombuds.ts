@@ -1,11 +1,20 @@
 import gql from 'graphql-tag'
+import type { TypedDocumentNode } from '@apollo/client'
 import { type ListingPost, listingPost } from '../fragments/listing-post'
 
 export type Post = ListingPost & {
   publishTime: string
 }
 
-const fetchOmbudsPostsByCategorySlug = gql`
+const fetchOmbudsPostsByCategorySlug: TypedDocumentNode<
+  { allPosts: Post[]; postsCount?: number },
+  {
+    filteredSlug?: string[]
+    withCount?: boolean
+    skip?: number
+    first?: number
+  }
+> = gql`
   query fetchOmbudsPostsByCategorySlug(
     $filteredSlug: [String!] = [""]
     $withCount: Boolean = true

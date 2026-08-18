@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import type { TypedDocumentNode } from '@apollo/client'
 import type { HeroImage } from '~/types/common'
 import { heroImageFragment } from '../fragments/hero-image'
 
@@ -26,7 +27,16 @@ export type ShowWithDetail = {
   trailerPlaylist: string | null
 }
 
-const fetchShowBySlug = gql`
+const fetchShowBySlug: TypedDocumentNode<
+  { allShows: ShowWithDetail[] },
+  {
+    slug: string
+    shouldFetchHost?: boolean
+    shouldFetchStaff?: boolean
+    squareHostImg?: boolean
+    rectHostImg?: boolean
+  }
+> = gql`
   query fetchShowBySlug(
     $slug: String!
     $shouldFetchHost: Boolean = false

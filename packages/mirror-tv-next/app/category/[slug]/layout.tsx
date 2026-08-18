@@ -4,9 +4,7 @@ import {
   GPTPlaceholderMobile,
   GPTPlaceholderDesktop,
 } from '~/components/ads/gpt/gpt-placeholder'
-import dynamic from 'next/dynamic'
-
-const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
+import GPTAd from '~/components/ads/gpt/gpt-ad'
 
 export default async function CategoryPageLayout({
   children,
