@@ -3,16 +3,20 @@ import { registerApolloClient } from '@apollo/client-integration-nextjs'
 
 import { API_ENDPOINT } from './constants/endpoint-config'
 
-declare module '@apollo/client/core/defaultOptions.js' {
+// Module augmentation targets the exported path '@apollo/client/core' because
+// Apollo v4's package.json exports do not expose internal paths like
+// './core/defaultOptions.js' or './core/types.js'. With moduleResolution:
+// "Bundler", TypeScript strictly follows exports and rejects non-exported paths.
+declare module '@apollo/client/core' {
   // eslint-disable-next-line @typescript-eslint/no-namespace
-  namespace DeclareDefaultOptions {
-    interface Query {
-      errorPolicy: 'all'
+  namespace ApolloClient {
+    // eslint-disable-next-line @typescript-eslint/no-namespace
+    namespace DeclareDefaultOptions {
+      interface Query {
+        errorPolicy: 'all'
+      }
     }
   }
-}
-
-declare module '@apollo/client/core/types.js' {
   interface TypeOverrides {
     signatureStyle: 'classic'
   }
