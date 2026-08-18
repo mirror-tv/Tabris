@@ -20,6 +20,7 @@ import {
   handleResponse,
   extractYoutubeId,
   handleApiData,
+  mergeTagsByName,
 } from '~/utils'
 import { type RawPopularPost } from '~/types/popular-post'
 import { getLatestPosts, PostCardItem } from '~/graphql/query/posts'
@@ -188,7 +189,9 @@ export default function AmpPage({
   const brief = handleApiData(briefApiData)
     .map((item: { content?: string[] }) => item.content?.join('') || '')
     .join('')
-  const tags = storyData.tags?.map((tag) => tag.name).join(', ')
+  const tags = mergeTagsByName(storyData.tags, storyData.tags_algo)
+    .map((tag) => tag.name)
+    .join(', ')
   const image = getStoryOgImage(storyData.heroImage)
   const pageUrl = `${META_SITE_URL}/story/${slug}`
   const category = storyData.categories?.[0]

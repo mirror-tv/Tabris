@@ -33,7 +33,7 @@ import GA4SourceTracking from '~/components/story/ga4-source-tracking'
 import UiDownload from '~/components/shared/ui-download'
 import Article18Warning from '~/components/shared/article-18-warning'
 import AdTvAdminMobileBanner from '~/components/shared/ad-tv-admin-mobile-banner'
-import { handleApiData } from '~/utils'
+import { handleApiData, mergeTagsByName } from '~/utils'
 
 type StoryPageTypes = {
   params: Promise<{ slug: string }>
@@ -87,7 +87,10 @@ function resolveRenderedStoryLists(storyData: SinglePost): RenderedStoryLists {
       storyData.writersInInputOrder,
       storyData.writers
     ),
-    tags: preferNonEmptyList(storyData.tagsInInputOrder, storyData.tags),
+    tags: mergeTagsByName(
+      preferNonEmptyList(storyData.tagsInInputOrder, storyData.tags),
+      storyData.tags_algo
+    ),
     relatedPosts: preferNonEmptyList(
       storyData.relatedPostsInInputOrder,
       storyData.relatedPosts

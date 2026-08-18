@@ -99,6 +99,22 @@ function handleApiData(apiData: unknown): ApiData[] {
 
 const getFirstElement = <T>(data: T[]) => data[0]
 
+// Manual tags first (keeps editor order), then AI tags whose name is not
+// already present. Rendering treats both sources identically.
+const mergeTagsByName = <T extends { name: string }>(
+  tags: T[] = [],
+  algoTags: T[] = []
+): T[] => {
+  const seen = new Set<string>()
+  const merged: T[] = []
+  for (const tag of [...tags, ...algoTags]) {
+    if (!tag?.name || seen.has(tag.name)) continue
+    seen.add(tag.name)
+    merged.push(tag)
+  }
+  return merged
+}
+
 export {
   extractYoutubeId,
   isServer,
@@ -106,4 +122,5 @@ export {
   handleApiData,
   handleMetaDesc,
   getFirstElement,
+  mergeTagsByName,
 }
