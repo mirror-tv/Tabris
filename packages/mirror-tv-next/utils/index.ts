@@ -5,6 +5,7 @@ import {
   handleApiData,
   handleMetaDesc,
   handleResponse,
+  mergeTagsByName,
 } from './common'
 import { formateDateAtTaipei } from './date-handler'
 import {
@@ -26,6 +27,7 @@ export {
   formateDateAtTaipei,
   formateHeroImage,
   handleResponse,
+  mergeTagsByName,
   handleApiData,
   handleMetaDesc,
   formateYoutubeListRes,
