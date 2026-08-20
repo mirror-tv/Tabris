@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import type { TypedDocumentNode } from '@apollo/client'
 import type { FormattableHeroImage } from '~/types/hero-image'
 import { heroImageFragment } from '../fragments/hero-image'
 import type { HeroImage } from '~/types/common'
@@ -14,7 +15,10 @@ export type EditorChoices<T extends null | string | HeroImage = HeroImage> = {
   }
 }
 
-const fetchEditorChoices = gql`
+const fetchEditorChoices: TypedDocumentNode<
+  { allEditorChoices: EditorChoices[] },
+  Record<string, never>
+> = gql`
   query fetchEditorChoices {
     allEditorChoices: editorChoices(
       where: {

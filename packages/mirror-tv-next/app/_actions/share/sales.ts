@@ -11,17 +11,14 @@ type FetchSalesType = {
 async function fetchSales({ take, pageName }: FetchSalesType): Promise<{
   data: { allSales: Sale[] }
 }> {
-  const client = getClient()
   try {
-    const { data } = await client.query<{
-      allSales: Sale[]
-    }>({
+    const { data } = await getClient().query({
       query: getSales,
       variables: {
         first: take,
       },
     })
-    return { data }
+    return { data: data ?? { allSales: [] } }
   } catch (err) {
     const annotatingError = errors.helpers.wrap(
       err,

@@ -1,4 +1,4 @@
-import { ApolloError } from '@apollo/client'
+import { CombinedGraphQLErrors } from '@apollo/client/errors'
 import errors from '@twreporter/errors'
 
 export const createErrorLogger = (
@@ -12,8 +12,7 @@ export const createErrorLogger = (
       errorMessage
     )
 
-    if (error instanceof ApolloError) {
-      const { graphQLErrors, clientErrors, networkError } = error
+    if (CombinedGraphQLErrors.is(error)) {
       console.error(
         JSON.stringify({
           severity: 'ERROR',
@@ -27,9 +26,7 @@ export const createErrorLogger = (
             0
           ),
           debugPayload: {
-            graphQLErrors,
-            clientErrors,
-            networkError,
+            graphQLErrors: error.errors,
           },
           ...(traceObject ?? {}),
         })

@@ -1,13 +1,13 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 
-type Children<ItemType> = (renderList: ItemType[]) => JSX.Element
+type Children<ItemType> = (renderList: ItemType[]) => React.JSX.Element
 
 interface InfiniteScrollListProps<ItemType> {
   initialList?: ItemType[]
   pageSize: number
   fetchListInPage: (page: number) => Promise<ItemType[]>
   children: Children<ItemType>
-  loader: JSX.Element
+  loader: React.JSX.Element
   totalCount: number
 }
 
@@ -18,7 +18,7 @@ export default function InfiniteScrollList<ItemType>({
   children,
   totalCount,
   loader,
-}: InfiniteScrollListProps<ItemType>): JSX.Element {
+}: InfiniteScrollListProps<ItemType>): React.JSX.Element {
   const [dataList, setDataList] = useState([...initialList])
   const initialPage = initialList.length ? 1 : 0
   const [fetchedPage, setFetchPage] = useState(initialPage)

@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import type { TypedDocumentNode } from '@apollo/client'
 import { heroImageFragment } from '../fragments/hero-image'
 import {
   type HeroImage,
@@ -36,7 +37,16 @@ export type PostWithCategory<T extends string | null | HeroImage = HeroImage> =
     __typename?: 'Post' | 'External'
   }
 
-const getPostsByTagName = gql`
+const getPostsByTagName: TypedDocumentNode<
+  { allPosts: PostCardItem[]; postsCount?: number },
+  {
+    tagName: string
+    first?: number
+    skip?: number
+    withCount?: boolean
+    filteredSlug?: string[]
+  }
+> = gql`
   query fetchPostsByTagName(
     $tagName: String!
     $first: Int = 12
@@ -74,7 +84,10 @@ const getPostsByTagName = gql`
   ${heroImageFragment}
 `
 
-const getLatestPosts = gql`
+const getLatestPosts: TypedDocumentNode<
+  { allPosts: PostCardItem[] },
+  { first?: number; filteredSlug?: string[] }
+> = gql`
   query fetchLatestPosts($first: Int = 5, $filteredSlug: [String!] = [""]) {
     allPosts: posts(
       where: {
@@ -92,7 +105,16 @@ const getLatestPosts = gql`
   ${listingPost}
 `
 
-const getPostsByCategorySlug = gql`
+const getPostsByCategorySlug: TypedDocumentNode<
+  { allPosts: PostCardItem[]; postsCount?: number },
+  {
+    categorySlug: string
+    first?: number
+    skip?: number
+    withCount?: boolean
+    filteredSlug?: string[]
+  }
+> = gql`
   query fetchPostsByCategorySlug(
     $categorySlug: String!
     $first: Int = 13
@@ -125,7 +147,15 @@ const getPostsByCategorySlug = gql`
   ${listingPost}
 `
 
-const getPostsWithCategory = gql`
+const getPostsWithCategory: TypedDocumentNode<
+  { allPosts: PostWithCategory[]; postsCount?: number },
+  {
+    first?: number
+    skip?: number
+    withCount?: boolean
+    filteredSlug?: string[]
+  }
+> = gql`
   query getPostsWithCategory(
     $first: Int = 12
     $skip: Int = 0

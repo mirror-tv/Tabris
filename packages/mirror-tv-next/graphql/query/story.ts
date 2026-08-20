@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import type { TypedDocumentNode } from '@apollo/client'
 import { IS_PREVIEW_MODE } from '~/constants/environment-variables'
 import type { HeroImage } from '~/types/common'
 import { heroImageFragment } from '../fragments/hero-image'
@@ -67,7 +68,10 @@ export interface SinglePost {
   __typename?: string
 }
 
-const fetchStoryBySlug = gql`
+const fetchStoryBySlug: TypedDocumentNode<
+  { allPosts: SinglePost[] },
+  { slug: string }
+> = gql`
   query fetchStoryBySlug($slug: String!) {
     allPosts: posts(
       where: { slug: { equals: $slug }${postStateFilter} }

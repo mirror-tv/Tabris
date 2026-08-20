@@ -1,10 +1,11 @@
 'use client'
 import React, { useEffect, useCallback, useState } from 'react'
+import dynamic from 'next/dynamic'
 import styles from './_styles/gpt-popup.module.scss'
 import GptAd from './gpt-ad'
 import type { SlotRenderEndedEvent } from '~/types/event'
 
-export default function GptPopup({ adKey = '' }: { adKey: string }) {
+function GptPopup({ adKey = '' }: { adKey: string }) {
   const [isVisible, setIsVisible] = useState(false)
   const [isCloseBtnVisible, setIsCloseBtnVisible] = useState(false)
 
@@ -55,3 +56,5 @@ export default function GptPopup({ adKey = '' }: { adKey: string }) {
     </div>
   )
 }
+
+export default dynamic(() => Promise.resolve(GptPopup), { ssr: false })

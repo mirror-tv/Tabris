@@ -6,7 +6,6 @@ import {
   type PostWithCategory,
   getPostsWithCategory,
   getLatestPosts,
-  type PostCardItem,
 } from '~/graphql/query/posts'
 import {
   EditorChoices,
@@ -311,17 +310,11 @@ async function getLatestPostsAndEditorChoices({
 
     const fetchFromGraphQL = async (): Promise<JsonChainResult> => {
       const client = getClient()
-
       const [editorChoicesResult, latestPostsResult] = await Promise.all([
-        client.query<{
-          allEditorChoices: EditorChoices[]
-        }>({
+        client.query({
           query: fetchEditorChoices,
         }),
-        client.query<{
-          allPosts: PostWithCategory[]
-          _allPostsMeta?: { count: number }
-        }>({
+        client.query({
           query: getPostsWithCategory,
           variables: {
             first,
@@ -411,12 +404,7 @@ async function getLatestPostsAndEditorChoices({
       )
     }
   } else {
-    const client = getClient()
-
-    const latestPostsResult = await client.query<{
-      allPosts: PostWithCategory[]
-      _allPostsMeta?: { count: number }
-    }>({
+    const latestPostsResult = await getClient().query({
       query: getPostsWithCategory,
       variables: {
         first,
@@ -462,11 +450,6 @@ async function getLatestPostsAndEditorChoices({
 }
 
 // For aside section in category page
-type QueryType = {
-  allPosts: PostCardItem[]
-}
-
-const client = getClient()
 const firstNItems = 5
 const filteredSlugList: string[] = []
 const queryArgs = {
@@ -481,7 +464,7 @@ const queryArgs = {
  * Fetches the latest 5 posts to be displayed in the aside section in category page.
  */
 const getLatestPostsFunction = () => {
-  return client.query<QueryType>(queryArgs)
+  return getClient().query(queryArgs)
 }
 
 export { getLatestPostsAndEditorChoices, getLatestPostsFunction }

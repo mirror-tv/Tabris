@@ -9,9 +9,8 @@ import {
   SALES_LABEL_NAME,
 } from '~/constants/constant'
 import EditorChoicesSwiper from './editor-choices-swiper'
-import dynamic from 'next/dynamic'
 import AdTvAdminMobileBanner from '../shared/ad-tv-admin-mobile-banner'
-const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
+import GPTAd from '~/components/ads/gpt/gpt-ad'
 import PostListWithFirstPage from './post-list-with-first-page'
 import PopularPostsAndWeather from './popular-posts-and-weather'
 import MNewsLives from './mnews-lives'

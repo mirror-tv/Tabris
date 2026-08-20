@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import type { TypedDocumentNode } from '@apollo/client'
 import type { HeroImage } from '~/types/common'
 import { heroImageFragment } from '../fragments/hero-image'
 
@@ -15,7 +16,10 @@ export type VideoEditorChoice = {
   } | null
 }
 
-const getVideoEditorChoice = gql`
+const getVideoEditorChoice: TypedDocumentNode<
+  { allVideoEditorChoices: VideoEditorChoice[] },
+  Record<string, never>
+> = gql`
   query fetchVideoEditorChoices {
     allVideoEditorChoices: videoEditorChoices(
       where: {

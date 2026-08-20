@@ -3,45 +3,39 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from '~/components/shared/link'
 import { notFound } from 'next/navigation'
-import { getClient } from '~/apollo-client'
+import { query } from '~/apollo-client'
 import HeroImage from '~/components/topic/single-topic/hero-image'
 import HeroMultiVideo from '~/components/topic/single-topic/hero-multivideo'
 import HeroSlideshow from '~/components/topic/single-topic/hero-slideshow'
 import HeroVideo from '~/components/topic/single-topic/hero-video'
 import TopicPostItems from '~/components/topic/single-topic/topic-post-items'
 import { META_DESCRIPTION, SITE_TITLE } from '~/constants/constant'
-import {
-  GLOBAL_CACHE_SETTING,
-  SITE_URL,
-} from '~/constants/environment-variables'
+import { SITE_URL } from '~/constants/environment-variables'
 import type { SingleTopic } from '~/graphql/query/topic'
 import { fetchSingleTopicByTopicSlug } from '~/graphql/query/topic'
 import styles from '~/styles/pages/single-topic-page.module.scss'
 import { formateHeroImage, handleMetaDesc } from '~/utils'
-import dynamic from 'next/dynamic'
+import GPTAd from '~/components/ads/gpt/gpt-ad'
 import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
-const GPTAd = dynamic(() => import('~/components/ads/gpt/gpt-ad'))
 import PageLogger from '~/components/tracking/page-logger'
 
-export const revalidate = GLOBAL_CACHE_SETTING
+export const revalidate = 0
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string }
+export async function generateMetadata(props: {
+  params: Promise<{ slug: string }>
 }): Promise<Metadata> {
-  const client = getClient()
+  const params = await props.params
   let singleTopic: SingleTopic | null = null
 
   try {
-    const response = await client.query({
+    const response = await query({
       query: fetchSingleTopicByTopicSlug,
       variables: {
         topicSlug: params.slug,
       },
     })
-    const { topic }: { topic: SingleTopic[] } = response.data
-    singleTopic = topic[0] ?? undefined
+    const topic = response.data?.topic
+    singleTopic = topic?.[0] ?? null
 
     if (!singleTopic) {
       notFound()
@@ -90,23 +84,21 @@ export async function generateMetadata({
   }
 }
 
-export default async function SingleTopicPage({
-  params,
-}: {
-  params: { slug: string }
+export default async function SingleTopicPage(props: {
+  params: Promise<{ slug: string }>
 }) {
-  const client = getClient()
+  const params = await props.params
   let singleTopic: SingleTopic | undefined
 
   try {
-    const response = await client.query({
+    const response = await query({
       query: fetchSingleTopicByTopicSlug,
       variables: {
         topicSlug: params.slug,
       },
     })
-    const { topic }: { topic: SingleTopic[] } = response.data
-    singleTopic = topic[0] ?? undefined
+    const topic = response.data?.topic
+    singleTopic = topic?.[0] ?? undefined
 
     // Throw an error if singleTopic is undefined
     if (!singleTopic) {

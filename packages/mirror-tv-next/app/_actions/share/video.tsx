@@ -19,9 +19,8 @@ async function getVideo({
 }: GetVideoType): Promise<{
   data: { allVideos: Video[] }
 }> {
-  const client = getClient()
   try {
-    const { data } = await client.query<{ allVideos: Video[] }>({
+    const { data } = await getClient().query({
       query: getVideoByName,
       variables: {
         name,
@@ -29,7 +28,7 @@ async function getVideo({
         withDescription,
       },
     })
-    return { data }
+    return { data: { allVideos: data?.videos ?? [] } }
   } catch (err) {
     const annotatingError = errors.helpers.wrap(
       err,

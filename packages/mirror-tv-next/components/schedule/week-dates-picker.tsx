@@ -1,4 +1,5 @@
 'use client'
+import React from 'react'
 import styles from './_styles/week-dates-picker.module.scss'
 
 type WeekDate = {
@@ -18,7 +19,7 @@ export default function WeekDatesPicker({
   weekDates,
   selectedDate,
   onButtonClick,
-}: WeekDatesPickerProps): JSX.Element {
+}: WeekDatesPickerProps): React.JSX.Element {
   return (
     <div className={styles.datesPickerWrapper}>
       {weekDates.map((item) => (

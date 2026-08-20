@@ -24,12 +24,8 @@ async function fetchOmbudsPosts({
   slug,
   isWithCount,
 }: FetchOmbudsPostsProps): Promise<OmbudsResponse> {
-  const client = getClient()
   try {
-    const { data } = await client.query<{
-      allPosts: Post[]
-      postsCount?: number
-    }>({
+    const { data } = await getClient().query({
       query: fetchOmbudsPostsByCategorySlug,
       variables: {
         first: pageSize,
