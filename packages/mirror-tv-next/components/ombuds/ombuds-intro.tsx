@@ -6,7 +6,7 @@ import { CUSTOMER_SERVICE_EMAIL } from '~/constants/constant'
 export default function ombudsIntro() {
   return (
     <section className={styles.ombudsIntroContent}>
-      <h1>外部公評人翁秀琪</h1>
+      <h1>外部公評人莊豐嘉</h1>
       <div className={styles.mainIntroWrapper}>
         <section className={styles.ombudsIntroWrapper}>
           <div className={styles.videoWrapper}>
