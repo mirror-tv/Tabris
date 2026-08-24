@@ -30,7 +30,7 @@ export default function HeroImg() {
         <Image
           src={'/images/om-banner.jpg'}
           style={{ objectFit: 'contain' }}
-          alt="ombuds-banner"
+          alt="鏡新聞外部公評人莊豐嘉"
           fill
           onLoad={handleLoadComplete}
           onError={handleImageError}
