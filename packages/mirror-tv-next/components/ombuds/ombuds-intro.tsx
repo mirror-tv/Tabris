@@ -1,7 +1,7 @@
 import styles from './_styles/ombuds-intro.module.scss'
-import ArticleContentVideo from '~/components/shared/article-content-video'
 import Link from '~/components/shared/link'
 import { CUSTOMER_SERVICE_EMAIL } from '~/constants/constant'
+import Image from 'next/image'
 
 export default function ombudsIntro() {
   return (
@@ -9,14 +9,13 @@ export default function ombudsIntro() {
       <h1>外部公評人莊豐嘉</h1>
       <div className={styles.mainIntroWrapper}>
         <section className={styles.ombudsIntroWrapper}>
-          <div className={styles.videoWrapper}>
-            <ArticleContentVideo
-              videoSrc={
-                'https://statics.mnews.tw/assets/videos/ckrvhg947002n10o4b2wvcpph.mp4'
-              }
-              autoPlay={true}
-              loop={true}
-              muted={true}
+          <div className={styles.imageWrapper}>
+            <Image
+              src="/images/om-headshot.jpg"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 384px, 480px"
+              style={{ objectFit: 'cover' }}
+              fill
+              alt="鏡新聞外部公評人莊豐嘉"
             />
           </div>
 
