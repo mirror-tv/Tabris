@@ -8,11 +8,7 @@ import type { Metadata } from 'next'
 import { SITE_URL } from '~/constants/environment-variables'
 import GPTAd from '~/components/ads/gpt/gpt-ad'
 import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
-import {
-  META_SITE_URL,
-  HEADER_BOTTOM_LINKS,
-  SITE_TITLE,
-} from '~/constants/constant'
+import { SITE_TITLE } from '~/constants/constant'
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -22,7 +18,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: '公評人專區 - 鏡新聞',
-    url: `${META_SITE_URL}${HEADER_BOTTOM_LINKS.ombuds}`,
+    url: '/ombuds',
     images: {
       url: '/images/default-og-img.jpg',
     },
