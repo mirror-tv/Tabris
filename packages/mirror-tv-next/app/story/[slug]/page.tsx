@@ -91,9 +91,12 @@ function resolveRenderedStoryLists(storyData: SinglePost): RenderedStoryLists {
       preferNonEmptyList(storyData.tagsInInputOrder, storyData.tags),
       storyData.tags_algo
     ),
-    relatedPosts: preferNonEmptyList(
-      storyData.relatedPostsInInputOrder,
-      storyData.relatedPosts
+    relatedPosts: mergeTagsByName(
+      preferNonEmptyList(
+        storyData.relatedPostsInInputOrder,
+        storyData.relatedPosts
+      ),
+      storyData.relatedPosts_algo
     ),
   }
 }

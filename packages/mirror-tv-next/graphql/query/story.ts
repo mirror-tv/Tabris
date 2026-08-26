@@ -1,7 +1,10 @@
 import gql from 'graphql-tag'
 import type { TypedDocumentNode } from '@apollo/client'
 import { IS_PREVIEW_MODE } from '~/constants/environment-variables'
-import { SHOW_ALGO_TAGS } from '~/constants/runtime-config'
+import {
+  SHOW_ALGO_TAGS,
+  SHOW_ALGO_RELATED_POSTS,
+} from '~/constants/runtime-config'
 import type { HeroImage } from '~/types/common'
 import { heroImageFragment } from '../fragments/hero-image'
 
@@ -12,6 +15,9 @@ const postStateFilter = IS_PREVIEW_MODE
 // tags_algo only exists on CMS builds that ship auto tagging; querying it
 // elsewhere fails the whole request, so the field is gated by the toggle
 const algoTagsField = SHOW_ALGO_TAGS ? 'tags_algo { name }' : ''
+const algoRelatedPostsField = SHOW_ALGO_RELATED_POSTS
+  ? 'relatedPosts_algo(where: { state: { equals: "published" } }) { slug name }'
+  : ''
 
 export interface SingleRelatedPost {
   slug: string
@@ -36,6 +42,7 @@ export interface SinglePost {
   source?: string | null
   relatedPosts: SingleRelatedPost[]
   relatedPostsInInputOrder?: SingleRelatedPost[]
+  relatedPosts_algo?: SingleRelatedPost[]
   heroVideo?: {
     youtubeUrl: string | null
   } | null
@@ -151,6 +158,7 @@ const fetchStoryBySlug: TypedDocumentNode<
         slug
         name
       }
+      ${algoRelatedPostsField}
       tags {
         name
       }
