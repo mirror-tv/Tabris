@@ -11,7 +11,7 @@ export default function ombudsIntro() {
         <section className={styles.ombudsIntroWrapper}>
           <div className={styles.imageWrapper}>
             <Image
-              src="/images/om-headshot.jpg"
+              src="/images/om-portrait.jpg"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 384px, 480px"
               style={{ objectFit: 'cover' }}
               fill
