@@ -13,6 +13,7 @@ export default function ombudsIntro() {
             <Image
               src="/images/om-portrait.jpg"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 384px, 480px"
+              priority
               style={{ objectFit: 'cover' }}
               fill
               alt="鏡新聞外部公評人莊豐嘉"
