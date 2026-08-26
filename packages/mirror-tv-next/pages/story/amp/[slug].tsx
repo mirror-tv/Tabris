@@ -165,7 +165,6 @@ export default function AmpPage({
   const {
     heroImage = {},
     heroCaption = '',
-    relatedPosts = [],
     title = '',
     publishTime = '',
     categories = [],
@@ -181,6 +180,10 @@ export default function AmpPage({
     contentApiData,
     briefApiData,
   } = storyData
+  const relatedPostsRendered = mergeTagsByName(
+    storyData.relatedPosts ?? [],
+    storyData.relatedPosts_algo
+  )
   const heroImgSrc =
     getHeroImageOfAmp(formateHeroImage(heroImage ?? undefined).images) ||
     '/images/image-default.jpg'
@@ -478,10 +481,10 @@ export default function AmpPage({
               currentUrl={`/story/amp/${slug}`}
             />
           </main>
-          {!!relatedPosts?.length && (
+          {!!relatedPostsRendered?.length && (
             <RelatedPostList
               title="相關新聞"
-              list={relatedPosts}
+              list={relatedPostsRendered}
               className="list-wrapper post__related"
             />
           )}
