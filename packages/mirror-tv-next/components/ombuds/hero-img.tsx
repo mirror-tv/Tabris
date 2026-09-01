@@ -29,6 +29,7 @@ export default function HeroImg() {
       {!hasError ? (
         <Image
           src={'/images/om-banner.jpg'}
+          unoptimized
           priority
           style={{ objectFit: 'contain' }}
           alt="鏡新聞外部公評人莊豐嘉"
