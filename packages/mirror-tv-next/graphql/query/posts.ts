@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import { SHOW_ALGO_TAGS } from '~/constants/runtime-config'
 import type { TypedDocumentNode } from '@apollo/client'
 import { heroImageFragment } from '../fragments/hero-image'
 import {
@@ -37,6 +38,19 @@ export type PostWithCategory<T extends string | null | HeroImage = HeroImage> =
     __typename?: 'Post' | 'External'
   }
 
+// Tag-page filters.
+// - tags_algo only exists on CMS builds that ship auto tagging; querying it
+//   elsewhere fails the whole request, so the field is gated by the toggle.
+// - "none ombuds" (instead of "some notIn") so posts without any category,
+//   e.g. imported or test posts, are not silently excluded.
+const tagNameFilter = SHOW_ALGO_TAGS
+  ? `OR: [
+        { tags: { some: { name: { equals: $tagName } } } }
+        { tags_algo: { some: { name: { equals: $tagName } } } }
+      ]`
+  : `tags: { some: { name: { equals: $tagName } } }`
+const notOmbudsFilter = `categories: { none: { slug: { equals: "ombuds" } } }`
+
 const getPostsByTagName: TypedDocumentNode<
   { allPosts: PostCardItem[]; postsCount?: number },
   {
@@ -58,8 +72,8 @@ const getPostsByTagName: TypedDocumentNode<
       where: {
         state: { equals: "published" }
         slug: { notIn: $filteredSlug }
-        categories: { some: { slug: { notIn: ["ombuds"] } } }
-        tags: { some: { name: { equals: $tagName } } }
+        ${notOmbudsFilter}
+        ${tagNameFilter}
       }
       take: $first
       skip: $skip
@@ -75,8 +89,8 @@ const getPostsByTagName: TypedDocumentNode<
       where: {
         state: { equals: "published" }
         slug: { notIn: $filteredSlug }
-        categories: { some: { slug: { notIn: ["ombuds"] } } }
-        tags: { some: { name: { equals: $tagName } } }
+        ${notOmbudsFilter}
+        ${tagNameFilter}
       }
     ) @include(if: $withCount)
   }

@@ -43,8 +43,28 @@
   }
 }
 
+/* 下一屆公評人有可能會重新使用自我介紹影片，故保留此 Class 選擇器 */
 .videoWrapper {
   margin-bottom: 24px;
+  @include media-breakpoint-up(md) {
+    margin-right: 24px;
+    min-width: 384px;
+    max-width: 384px;
+    height: 216px;
+  }
+  @include media-breakpoint-up(xl) {
+    min-width: 480px;
+    max-width: 480px;
+    height: 270px;
+    margin-right: 32px;
+  }
+}
+
+.imageWrapper {
+  margin-bottom: 24px;
+  position: relative;
+  aspect-ratio: 16 / 9;
+
   @include media-breakpoint-up(md) {
     margin-right: 24px;
     min-width: 384px;
