@@ -88,7 +88,7 @@ export default async function SchedulePage() {
     <main className={styles.main}>
       <GPTPlaceholderDesktop>
         <p>廣告</p>
-        <GPTAd pageKey="all" adKey="PC_HD" />
+        <GPTAd adUnit="mnews_masthead_top_970x400" />
       </GPTPlaceholderDesktop>
       <ScheduleTable schedule={schedule} weekDates={weekDates} />
     </main>

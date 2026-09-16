@@ -1,3 +1,29 @@
+@import '/styles/theme/breakpoints';
+
+.reserver {
+  width: 100%;
+}
+
+.devicePc {
+  display: none;
+
+  @include media-breakpoint-up(xl) {
+    display: block;
+  }
+}
+
+.deviceMb {
+  display: block;
+
+  @include media-breakpoint-up(xl) {
+    display: none;
+  }
+}
+
+.deviceAll {
+  display: block;
+}
+
 .wrapper {
   /**
  * 廣告有時會替換掉原本 <Ad> 元件裡頭的根元素 <div>

@@ -77,18 +77,19 @@
 }
 
 .gptContainer {
-  height: 290px;
+  min-height: 285px;
   width: 100%;
-  position: relative;
+  max-width: 100%;
+  overflow: hidden;
   margin: 20px 0;
   display: none;
+  justify-content: center;
   @include media-breakpoint-up(xl) {
-    display: block;
+    display: flex;
   }
 }
 
 .gptWrapper {
-  position: absolute;
-  top: 0;
-  right: 0;
+  max-width: 100%;
+  overflow: hidden;
 }

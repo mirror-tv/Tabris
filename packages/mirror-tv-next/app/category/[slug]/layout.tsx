@@ -15,17 +15,17 @@ export default async function CategoryPageLayout({
     <main>
       <GPTPlaceholderDesktop>
         <p>廣告</p>
-        <GPTAd pageKey="all" adKey="PC_HD" />
+        <GPTAd adUnit="mnews_masthead_top_970x400" />
       </GPTPlaceholderDesktop>
       <GPTPlaceholderMobile>
         <p>廣告</p>
-        <GPTAd pageKey="category" adKey="MB_M1" />
+        <GPTAd adUnit="mnews_m_category_top_300x250" />
       </GPTPlaceholderMobile>
       <section className={styles.category}>
         {children}
-        <GPTAd pageKey="category" adKey="MB_M2" />
+        <GPTAd adUnit="mnews_m_category_middle_300x250" />
         <CategoryPageLayoutAside />
-        <GPTAd pageKey="category" adKey="MB_M3" />
+        <GPTAd adUnit="mnews_m_category_end_300x250_04" />
       </section>
     </main>
   )

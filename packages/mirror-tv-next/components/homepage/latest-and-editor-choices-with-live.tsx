@@ -101,7 +101,7 @@ export default async function LatestAndEditorChoicesWithLive({
         <MNewsLives mnewsLives={mnewsLives} />
         <EditorChoicesSwiper editorChoices={editorChoices} />
       </section>
-      <GPTAd pageKey="home" adKey="MB_M2" />
+      <GPTAd adUnit="mnews_m_home_300x250_02" />
       <AdTvAdminMobileBanner location="home" />
       <section className={styles.latest}>
         <UiHeadingBordered

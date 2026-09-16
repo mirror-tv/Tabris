@@ -5,13 +5,12 @@ import styles from './_styles/gpt-popup.module.scss'
 import GptAd from './gpt-ad'
 import type { SlotRenderEndedEvent } from '~/types/event'
 
-function GptPopup({ adKey = '' }: { adKey: string }) {
+function GptPopup({ adUnit }: { adUnit: string }) {
   const [isVisible, setIsVisible] = useState(false)
   const [isCloseBtnVisible, setIsCloseBtnVisible] = useState(false)
 
   const closeAction = useCallback(() => {
     setIsVisible(false)
-    console.log('[adGeek][Popup] close Popup')
   }, [])
 
   useEffect(() => {
@@ -36,13 +35,9 @@ function GptPopup({ adKey = '' }: { adKey: string }) {
           isVisible ? styles.shouldShow : ''
         }`}
         onClick={closeAction}
-      ></div>
+      />
       <div className={styles.adGeekPopupSlot}>
-        <GptAd
-          pageKey="fs"
-          adKey={adKey}
-          onSlotRenderEnded={handleSlotRenderEnded}
-        />
+        <GptAd adUnit={adUnit} onSlotRenderEnded={handleSlotRenderEnded} />
         {isCloseBtnVisible && (
           <div className={styles.adGeekPopupClose} onClick={closeAction}>
             <img

@@ -1,0 +1,21 @@
+@import '/styles/theme/z-index';
+
+.anchor {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: $Z_INDEX-header;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.shouldShow {
+  visibility: visible;
+}
+
+.anchor :global(.gpt-ad) {
+  pointer-events: auto;
+}

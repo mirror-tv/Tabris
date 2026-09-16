@@ -224,7 +224,7 @@ export default async function singleAnchor(props: {
     <>
       <GPTPlaceholderDesktop>
         <p>廣告</p>
-        <GPTAd pageKey="all" adKey="PC_HD" />
+        <GPTAd adUnit="mnews_masthead_top_970x400" />
       </GPTPlaceholderDesktop>
       <main className={styles.main}>
         <section className={styles.section}>

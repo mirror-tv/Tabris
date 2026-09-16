@@ -149,7 +149,7 @@ export default async function SingleTopicPage(props: {
       <PageLogger />
       <GPTPlaceholderDesktop>
         <p>廣告</p>
-        <GPTAd pageKey="all" adKey="PC_HD" />
+        <GPTAd adUnit="mnews_masthead_top_970x400" />
       </GPTPlaceholderDesktop>
       {(() => {
         switch (singleTopic.leading) {

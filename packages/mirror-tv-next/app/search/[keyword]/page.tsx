@@ -265,7 +265,7 @@ export default function MisoSearch() {
     <>
       <GPTPlaceholderDesktop>
         <p>廣告</p>
-        <GptAd pageKey="all" adKey="PC_HD" />
+        <GptAd adUnit="mnews_masthead_top_970x400" />
       </GPTPlaceholderDesktop>
       <div
         id="miso-hybrid-search-combo"

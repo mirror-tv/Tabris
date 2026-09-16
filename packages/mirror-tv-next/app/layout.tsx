@@ -19,6 +19,8 @@ import type { HeaderData, RawHeaderJson, RawSponsor } from '~/types/header'
 import { handleResponse } from '~/utils'
 import { fetchStaticJson } from '~/utils/fetch-static-json'
 import styles from '../styles/pages/layout.module.scss'
+import GptHiddenSlot from '~/components/ads/gpt/gpt-hidden-slot'
+import GptAnchor from '~/components/ads/gpt/gpt-anchor'
 
 export const revalidate = 0
 
@@ -129,7 +131,6 @@ export default async function RootLayout({
              */
             mobileScaling: 2.0,
           })
-          window.googletag.pubads().collapseEmptyDivs()
           window.googletag.enableServices()
 
           
@@ -167,6 +168,8 @@ export default async function RootLayout({
             <PromoteTopic />
             <div className={styles.main}>{children}</div>
             <Footer />
+            <GptHiddenSlot adUnit="mnews_refresh" />
+            <GptAnchor />
           </DataProvider>
         </ReferrerProvider>
       </body>
