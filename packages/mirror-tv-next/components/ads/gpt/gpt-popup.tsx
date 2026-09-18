@@ -5,17 +5,40 @@ import styles from './_styles/gpt-popup.module.scss'
 import GptAd from './gpt-ad'
 import type { SlotRenderEndedEvent } from '~/types/event'
 
+const OVERLAY_DELAY_MS = 3_000
+const CLOSE_BTN_DELAY_MS = 3_000
+
 function GptPopup({ adUnit }: { adUnit: string }) {
+  const [shouldRequest, setShouldRequest] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
   const [isCloseBtnVisible, setIsCloseBtnVisible] = useState(false)
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setShouldRequest(true)
+    }, OVERLAY_DELAY_MS)
+
+    return () => {
+      window.clearTimeout(timer)
+    }
+  }, [])
 
   const closeAction = useCallback(() => {
     setIsVisible(false)
   }, [])
 
   useEffect(() => {
-    if (isVisible) {
-      setTimeout(() => setIsCloseBtnVisible(true), 3000)
+    if (!isVisible) {
+      return
+    }
+
+    const timer = window.setTimeout(
+      () => setIsCloseBtnVisible(true),
+      CLOSE_BTN_DELAY_MS
+    )
+
+    return () => {
+      window.clearTimeout(timer)
     }
   }, [isVisible])
 
@@ -25,6 +48,10 @@ function GptPopup({ adUnit }: { adUnit: string }) {
       setIsVisible(true)
     }
   }, [])
+
+  if (!shouldRequest) {
+    return null
+  }
 
   return (
     <div

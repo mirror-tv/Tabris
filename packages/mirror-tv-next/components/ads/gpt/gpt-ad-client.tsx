@@ -1,11 +1,9 @@
 'use client'
-import styles from './_styles/gpt-ad.module.scss'
 
 import { useEffect, useRef, useState } from 'react'
 import useWindowDimensions from '~/hooks/use-window-dimensions'
 import type { SlotRenderEndedEvent, SlotRequestedEvent } from '~/types/event'
 import {
-  getAdWidth,
   resolveAdSlot,
   shouldDisplayAdSlot,
   type ResolvedAdSlot,
@@ -27,24 +25,53 @@ function getGptSlotByDivId(divId: string): googletag.Slot | undefined {
     .find((gptSlot) => gptSlot.getSlotElementId() === divId)
 }
 
-const GPTAdRoot = ({
-  slot,
+export default function GPTAdClient({
+  adUnit,
   onSlotRequested,
   onSlotRenderEnded,
-}: {
-  slot: ResolvedAdSlot
-  onSlotRequested?: (event: SlotRequestedEvent) => void
-  onSlotRenderEnded?: (event: SlotRenderEndedEvent) => void
-}) => {
-  const { adUnitPath, adSize, gptDivId, minHeight } = slot
-  const adWidth = getAdWidth(adSize)
+}: GPTAdProps) {
+  const [shouldShowAd, setShouldShowAd] = useState(false)
+  const [slot, setSlot] = useState<ResolvedAdSlot | undefined>()
+  const { width = 0 } = useWindowDimensions()
   const onSlotRequestedRef = useRef(onSlotRequested)
   const onSlotRenderEndedRef = useRef(onSlotRenderEnded)
   onSlotRequestedRef.current = onSlotRequested
   onSlotRenderEndedRef.current = onSlotRenderEnded
 
   useEffect(() => {
-    if (!gptDivId || !window.googletag) {
+    if (!width || !adUnit) {
+      return
+    }
+
+    const resolved = resolveAdSlot(adUnit)
+    setSlot((prev) => {
+      if (!resolved) {
+        return undefined
+      }
+      if (
+        prev?.gptDivId === resolved.gptDivId &&
+        prev?.adUnitPath === resolved.adUnitPath
+      ) {
+        return prev
+      }
+      return resolved
+    })
+    setShouldShowAd(resolved ? shouldDisplayAdSlot(resolved, width) : false)
+  }, [adUnit, width])
+
+  const adUnitPath = slot?.adUnitPath
+  const gptDivId = slot?.gptDivId
+  const adSize = slot?.adSize
+
+  useEffect(() => {
+    if (
+      !shouldShowAd ||
+      !adUnitPath ||
+      !gptDivId ||
+      !adSize ||
+      typeof window === 'undefined' ||
+      !window.googletag
+    ) {
       return
     }
 
@@ -69,6 +96,12 @@ const GPTAdRoot = ({
     mountedAdDivIds.add(gptDivId)
 
     window.googletag.cmd.push(() => {
+      if (!document.getElementById(gptDivId)) {
+        mountedAdDivIds.delete(gptDivId)
+        console.warn(`[GPTAd] defineSlot skipped, missing DIV ${gptDivId}`)
+        return
+      }
+
       const leftover = getGptSlotByDivId(gptDivId)
       if (leftover) {
         window.googletag.destroySlots([leftover])
@@ -108,66 +141,7 @@ const GPTAdRoot = ({
         }
       })
     }
-    // 只在版位身分改變時重定義；adSize 隨同一 gptDivId 固定，不列入 deps。
-  }, [adUnitPath, gptDivId])
+  }, [shouldShowAd, adUnitPath, gptDivId, adSize])
 
-  return (
-    <div
-      className={`${styles.wrapper} gpt-ad`}
-      style={minHeight ? { minHeight: `${minHeight}px` } : undefined}
-    >
-      <div
-        className={styles.ad}
-        style={{
-          maxWidth: '100%',
-          textAlign: 'center',
-          width: adWidth || 'unset',
-        }}
-        id={gptDivId}
-      />
-    </div>
-  )
-}
-
-export default function GPTAdClient({
-  adUnit,
-  onSlotRequested,
-  onSlotRenderEnded,
-}: GPTAdProps) {
-  const [shouldShowAd, setShouldShowAd] = useState(false)
-  const [slot, setSlot] = useState<ResolvedAdSlot | undefined>()
-  const { width = 0 } = useWindowDimensions()
-
-  useEffect(() => {
-    if (!width || !adUnit) {
-      return
-    }
-
-    const resolved = resolveAdSlot(adUnit)
-    setSlot((prev) => {
-      if (!resolved) {
-        return undefined
-      }
-      if (
-        prev?.gptDivId === resolved.gptDivId &&
-        prev?.adUnitPath === resolved.adUnitPath
-      ) {
-        return prev
-      }
-      return resolved
-    })
-    setShouldShowAd(resolved ? shouldDisplayAdSlot(resolved, width) : false)
-  }, [adUnit, width])
-
-  if (!shouldShowAd || !slot) {
-    return null
-  }
-
-  return (
-    <GPTAdRoot
-      slot={slot}
-      onSlotRenderEnded={onSlotRenderEnded}
-      onSlotRequested={onSlotRequested}
-    />
-  )
+  return null
 }

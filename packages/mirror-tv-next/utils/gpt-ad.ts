@@ -16,6 +16,7 @@ export type ResolvedAdSlot = {
   minHeight: number | null
   device: AdDevice
   kind: AdKind
+  cssWidth?: number
 }
 
 export function getAdWidth(adSize: SingleSizeArray[]): string {
@@ -36,6 +37,7 @@ function toResolved(slot: AdSlot): ResolvedAdSlot {
     minHeight: slot.minHeight,
     device: slot.device,
     kind: slot.kind,
+    cssWidth: slot.cssWidth,
   }
 }
 

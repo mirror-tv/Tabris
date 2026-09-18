@@ -19,6 +19,11 @@ type AdSlot = {
   /** null = overlay / sticky / 1x1，不佔文件流 */
   minHeight: number | null
   kind: AdKind
+  /**
+   * CSS 容器寬。不填則用 adSize 最大寬。
+   * Gila 等 expanding creative 用這個對齊實際尺寸，不改 GAM size。
+   */
+  cssWidth?: number
 }
 
 function slot(
@@ -68,7 +73,7 @@ const AD_SLOTS = {
     'anchor'
   ),
 
-  // --- 蓋版 MB ---
+  // --- 蓋版 MB（延遲 3 秒後呼叫） ---
   // /category/{slug}
   mnews_m_320x480_category: slot(
     'mnews_m_320x480_category',
@@ -215,16 +220,20 @@ const AD_SLOTS = {
     255
   ),
   // PC — Gila Studio（CLS 例外 350；依 <p> 數插入）
-  mnews_article_middle_1: slot(
-    'mnews_article_middle_1',
-    'div-gpt-ad-1787545592411-0',
-    [
-      [1, 1],
-      [300, 250],
-    ],
-    'PC',
-    350
-  ),
+  // cssWidth 560：實際 instream player 為 560×315，GAM size 仍是 1x1 / 300x250
+  mnews_article_middle_1: {
+    ...slot(
+      'mnews_article_middle_1',
+      'div-gpt-ad-1787545592411-0',
+      [
+        [1, 1],
+        [300, 250],
+      ],
+      'PC',
+      350
+    ),
+    cssWidth: 560,
+  },
   // PC — 文內 300x250（依 <p> 數插入）
   mnews_article_middle_300x250_01: slot(
     'mnews_article_middle_300x250_01',
