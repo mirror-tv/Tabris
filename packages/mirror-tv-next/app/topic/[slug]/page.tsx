@@ -145,7 +145,7 @@ export default async function SingleTopicPage(props: {
   ]
 
   return (
-    <main className={styles.mainWrapper}>
+    <main>
       <PageLogger />
       <GPTPlaceholderDesktop>
         <p>廣告</p>

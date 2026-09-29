@@ -17,7 +17,7 @@ export default function StoryPageLayout({
   return (
     <div className={styles.LayoutWrapper}>
       <AdH1Remover />
-      <section className={styles.ads}>
+      <section>
         <GPTPlaceholderMobile>
           <GPTAd adUnit="mnews_m_article_top_300x250" />
         </GPTPlaceholderMobile>

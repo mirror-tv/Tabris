@@ -7,10 +7,6 @@
   background-color: #003365;
   min-height: 100dvh;
   overflow: hidden;
-  padding-top: 50px;
-  @include media-breakpoint-up(md) {
-    padding-top: 0px;
-  }
 
   .container {
     position: relative;
