@@ -9,6 +9,11 @@
   z-index: $Z_INDEX-top;
   display: none;
   justify-content: space-around;
+  pointer-events: none;
+}
+
+.canInteract {
+  pointer-events: auto;
 }
 
 .adGeekPopupOverlay {
