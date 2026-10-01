@@ -8,7 +8,7 @@ import type { SlotRenderEndedEvent } from '~/types/event'
 const OVERLAY_DELAY_MS = 3_000
 const CLOSE_BTN_DELAY_MS = 3_000
 const AD_REMOVED_DELAY_MS = 500
-const EMPTY_SHELL_DELAY_MS = 500
+const EMPTY_SHELL_DELAY_MS = 3_000
 
 function isCreativeHidden(el: HTMLElement) {
   const { display, visibility, pointerEvents } = el.style
@@ -16,6 +16,8 @@ function isCreativeHidden(el: HTMLElement) {
     display === 'none' || visibility === 'hidden' || pointerEvents === 'none'
   )
 }
+
+type RenderedSize = [number, number]
 
 function readQueryId(root: HTMLElement) {
   return (
@@ -25,28 +27,39 @@ function readQueryId(root: HTMLElement) {
   )
 }
 
-function isEmptyShell(root: HTMLElement) {
-  if (root.style.display !== 'block') {
-    return false
+function readRenderedSize(
+  size: SlotRenderEndedEvent['size']
+): RenderedSize | null {
+  if (!Array.isArray(size) || size.length < 2) {
+    return null
   }
 
-  const iframe = root.querySelector('iframe')
-  if (!iframe || iframe.getAttribute('data-load-complete') !== 'true') {
-    return false
+  const width = Number(size[0])
+  const height = Number(size[1])
+  if (!Number.isFinite(width) || !Number.isFinite(height)) {
+    return null
   }
 
-  if (readQueryId(root) !== '') {
-    return false
-  }
+  return [width, height]
+}
 
-  const tead = root.querySelector('#teadunit')
-  return !!tead && tead.childElementCount === 0
+function isOneByOneSize(size: RenderedSize | null) {
+  return !!size && size[0] === 1 && size[1] === 1
+}
+
+function hasCreativeFrame(root: HTMLElement) {
+  return !!root.querySelector('iframe.CF_frame')
+}
+
+function isEmptyShell(root: HTMLElement, renderedSize: RenderedSize | null) {
+  return isOneByOneSize(renderedSize) && !hasCreativeFrame(root)
 }
 
 function GptPopup({ adUnit }: { adUnit: string }) {
   const rootRef = useRef<HTMLDivElement>(null)
   const sawAdRef = useRef(false)
   const sawShellRef = useRef(false)
+  const [renderedSize, setRenderedSize] = useState<RenderedSize | null>(null)
   const [shouldRequest, setShouldRequest] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
   const [isCloseBtnVisible, setIsCloseBtnVisible] = useState(false)
@@ -80,7 +93,7 @@ function GptPopup({ adUnit }: { adUnit: string }) {
     let removedTimer = 0
     let emptyShellTimer = 0
 
-    const observer = new MutationObserver(() => {
+    const syncPopup = () => {
       const iframe = root.querySelector('iframe')
       if (iframe) {
         sawAdRef.current = true
@@ -113,7 +126,7 @@ function GptPopup({ adUnit }: { adUnit: string }) {
         return
       }
 
-      if (!isEmptyShell(root)) {
+      if (!isEmptyShell(root, renderedSize)) {
         window.clearTimeout(emptyShellTimer)
         emptyShellTimer = 0
         return
@@ -125,27 +138,29 @@ function GptPopup({ adUnit }: { adUnit: string }) {
 
       emptyShellTimer = window.setTimeout(() => {
         emptyShellTimer = 0
-        if (!isEmptyShell(root)) {
+        if (!isEmptyShell(root, renderedSize)) {
           return
         }
         console.warn('[GptPopup] 遮罩已開但沒有廣告，自動關閉', { adUnit })
         setIsClosed(true)
       }, EMPTY_SHELL_DELAY_MS)
-    })
+    }
 
+    const observer = new MutationObserver(syncPopup)
     observer.observe(root, {
       subtree: true,
       childList: true,
       attributes: true,
-      attributeFilter: ['style', 'data-google-query-id', 'data-load-complete'],
+      attributeFilter: ['style', 'class', 'data-google-query-id'],
     })
+    syncPopup()
 
     return () => {
       observer.disconnect()
       window.clearTimeout(removedTimer)
       window.clearTimeout(emptyShellTimer)
     }
-  }, [shouldRequest, isClosed, adUnit])
+  }, [shouldRequest, isClosed, adUnit, renderedSize])
 
   useEffect(() => {
     if (!isVisible) {
@@ -164,7 +179,8 @@ function GptPopup({ adUnit }: { adUnit: string }) {
 
   const handleSlotRenderEnded = useCallback(
     (event: SlotRenderEndedEvent) => {
-      const size = event?.size
+      const size = readRenderedSize(event?.size)
+      setRenderedSize(size)
       console.info('[GptPopup] slotRenderEnded', {
         adUnit,
         isEmpty: event.isEmpty,
@@ -179,7 +195,7 @@ function GptPopup({ adUnit }: { adUnit: string }) {
         return
       }
 
-      if (size && size?.[0] !== 1 && size?.[1] !== 1) {
+      if (size && !isOneByOneSize(size)) {
         setIsVisible(true)
       }
     },
