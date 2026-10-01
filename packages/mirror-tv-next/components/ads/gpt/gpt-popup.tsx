@@ -8,13 +8,10 @@ import type { SlotRenderEndedEvent } from '~/types/event'
 const OVERLAY_DELAY_MS = 3_000
 const CLOSE_BTN_DELAY_MS = 3_000
 const AD_REMOVED_DELAY_MS = 500
-const EMPTY_SHELL_DELAY_MS = 3_000
 
 function isCreativeHidden(el: HTMLElement) {
-  const { display, visibility, pointerEvents } = el.style
-  return (
-    display === 'none' || visibility === 'hidden' || pointerEvents === 'none'
-  )
+  const { display, visibility } = el.style
+  return display === 'none' || visibility === 'hidden'
 }
 
 type RenderedSize = [number, number]
@@ -47,19 +44,10 @@ function isOneByOneSize(size: RenderedSize | null) {
   return !!size && size[0] === 1 && size[1] === 1
 }
 
-function hasCreativeFrame(root: HTMLElement) {
-  return !!root.querySelector('iframe.CF_frame')
-}
-
-function isEmptyShell(root: HTMLElement, renderedSize: RenderedSize | null) {
-  return isOneByOneSize(renderedSize) && !hasCreativeFrame(root)
-}
-
 function GptPopup({ adUnit }: { adUnit: string }) {
   const rootRef = useRef<HTMLDivElement>(null)
   const sawAdRef = useRef(false)
   const sawShellRef = useRef(false)
-  const [renderedSize, setRenderedSize] = useState<RenderedSize | null>(null)
   const [shouldRequest, setShouldRequest] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
   const [isCloseBtnVisible, setIsCloseBtnVisible] = useState(false)
@@ -91,7 +79,6 @@ function GptPopup({ adUnit }: { adUnit: string }) {
     }
 
     let removedTimer = 0
-    let emptyShellTimer = 0
 
     const syncPopup = () => {
       const iframe = root.querySelector('iframe')
@@ -123,27 +110,7 @@ function GptPopup({ adUnit }: { adUnit: string }) {
       ) {
         console.info('[GptPopup] 素材關閉，卸載 popup', { adUnit })
         setIsClosed(true)
-        return
       }
-
-      if (!isEmptyShell(root, renderedSize)) {
-        window.clearTimeout(emptyShellTimer)
-        emptyShellTimer = 0
-        return
-      }
-
-      if (emptyShellTimer) {
-        return
-      }
-
-      emptyShellTimer = window.setTimeout(() => {
-        emptyShellTimer = 0
-        if (!isEmptyShell(root, renderedSize)) {
-          return
-        }
-        console.warn('[GptPopup] 遮罩已開但沒有廣告，自動關閉', { adUnit })
-        setIsClosed(true)
-      }, EMPTY_SHELL_DELAY_MS)
     }
 
     const observer = new MutationObserver(syncPopup)
@@ -151,16 +118,15 @@ function GptPopup({ adUnit }: { adUnit: string }) {
       subtree: true,
       childList: true,
       attributes: true,
-      attributeFilter: ['style', 'class', 'data-google-query-id'],
+      attributeFilter: ['style', 'data-google-query-id'],
     })
     syncPopup()
 
     return () => {
       observer.disconnect()
       window.clearTimeout(removedTimer)
-      window.clearTimeout(emptyShellTimer)
     }
-  }, [shouldRequest, isClosed, adUnit, renderedSize])
+  }, [shouldRequest, isClosed, adUnit])
 
   useEffect(() => {
     if (!isVisible) {
@@ -180,24 +146,35 @@ function GptPopup({ adUnit }: { adUnit: string }) {
   const handleSlotRenderEnded = useCallback(
     (event: SlotRenderEndedEvent) => {
       const size = readRenderedSize(event?.size)
-      setRenderedSize(size)
       console.info('[GptPopup] slotRenderEnded', {
         adUnit,
         isEmpty: event.isEmpty,
-        size,
-        lineItemId: event.lineItemId,
+        size: event.size,
+        isBackfill: event.isBackfill,
+        slotContentChanged: event.slotContentChanged,
         creativeId: event.creativeId,
+        lineItemId: event.lineItemId,
+        sourceAgnosticCreativeId: event.sourceAgnosticCreativeId,
+        sourceAgnosticLineItemId: event.sourceAgnosticLineItemId,
+        yieldGroupIds: event.yieldGroupIds,
+        responseIdentifier: event.responseIdentifier,
       })
 
-      if (event.isEmpty) {
-        console.warn('[GptPopup] 沒有回填，不開啟遮罩', { adUnit })
+      if (event.isEmpty || event.size == null) {
+        console.warn('[GptPopup] 沒有回填，關閉容器', { adUnit })
         setIsClosed(true)
         return
       }
 
-      if (size && !isOneByOneSize(size)) {
-        setIsVisible(true)
+      if (isOneByOneSize(size)) {
+        console.info('[GptPopup] 1x1 有回填，保留容器', {
+          adUnit,
+          slotContentChanged: event.slotContentChanged,
+        })
+        return
       }
+
+      setIsVisible(true)
     },
     [adUnit]
   )
