@@ -138,7 +138,11 @@ import {
   fetchPostVideoObjects,
   type PostVideoObjects,
 } from '~/graphql/query/video-object'
-import GPTAd from '~/components/ads/gpt/gpt-ad'
+import {
+  ARTICLE_INLINE_AD,
+  insertAdsIntoApiData,
+} from '~/utils/insert-article-ads'
+import ArticleInlineAds from '~/components/story/article-inline-ads'
 
 type ApiDataRendererPropsType = {
   postId?: string
@@ -169,14 +173,8 @@ const ApiDataRenderer = async ({
     return null
   }
 
-  if (parsedContentData?.length >= 4 && !isStoryBrief) {
-    const newObject: ApiDataBlock = {
-      id: 'inserted-object-' + Date.now(),
-      type: ApiDataBlockType.GptAd,
-      content: '',
-      alignment: 'center',
-    }
-    parsedContentData?.splice(4, 0, newObject)
+  if (!isStoryBrief) {
+    parsedContentData = insertAdsIntoApiData(parsedContentData)
   }
 
   if (
@@ -320,7 +318,14 @@ const ApiDataRenderer = async ({
             return <YoutubeBlock key={apiDataBlock.id} data={apiDataBlock} />
           case ApiDataBlockType.GptAd:
             return (
-              <GPTAd pageKey="story" adKey="PC_AT1" key={apiDataBlock.id} />
+              <ArticleInlineAds
+                key={apiDataBlock.id}
+                pair={
+                  apiDataBlock.content === ARTICLE_INLINE_AD.gila
+                    ? ARTICLE_INLINE_AD.gila
+                    : ARTICLE_INLINE_AD.mid
+                }
+              />
             )
           default: {
             console.error('unhandled apiData type', apiDataBlock)

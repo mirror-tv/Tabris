@@ -1,14 +1,6 @@
 @import '/styles/theme/breakpoints';
 @import '/styles/theme/variable';
 
-.mainWrapper {
-  padding-top: 50px; /* the height of mobile nav*/
-
-  @include media-breakpoint-up(md) {
-    padding-top: 0;
-  }
-}
-
 .sectionWrapper {
   margin: auto;
   padding: 28px 16px;

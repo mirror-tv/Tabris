@@ -10,7 +10,7 @@ export default function CategoryPageLayoutAside() {
 
   return (
     <aside className={styles.aside}>
-      <GPTAd pageKey="category" adKey="PC_R1" />
+      <GPTAd adUnit="mnews_category_sidebar_300x250_01" />
       {!!popularPosts.length && (
         <UiListPostsAside
           listTitle="熱門新聞"
@@ -19,7 +19,7 @@ export default function CategoryPageLayoutAside() {
           className={`aside__list-popular ${styles.asideItem}`}
         />
       )}
-      <GPTAd pageKey="category" adKey="PC_R2" />
+      <GPTAd adUnit="mnews_category_sidebar_300x250_02" />
       <UiListPostsAside
         listTitle="即時新聞"
         page="category"

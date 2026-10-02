@@ -4,14 +4,12 @@
 .main {
   background: $color-blue-deep;
   min-height: 100dvh;
-  padding-top: 50px; /* the height of mobile nav*/
   display: flex;
   justify-content: center;
   align-items: center;
   padding-bottom: 24px;
 
   @include media-breakpoint-up(md) {
-    padding-top: 0;
     padding-bottom: 48px;
   }
 

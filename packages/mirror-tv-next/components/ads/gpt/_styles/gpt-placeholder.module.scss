@@ -3,7 +3,6 @@
 .gptAdContainerPc {
   display: none;
   @include media-breakpoint-up(xl) {
-    min-height: 255px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -22,7 +21,6 @@
 }
 
 .gptAdContainerMb {
-  min-height: 255px;
   display: flex;
   justify-content: center;
   align-items: center;

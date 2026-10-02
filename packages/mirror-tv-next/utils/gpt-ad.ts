@@ -1,140 +1,117 @@
-import { GPT_AD_NETWORK, GPT_UNITS, mediaSize } from '~/constants/ads'
+import {
+  GPT_AD_NETWORK,
+  getAdSlot,
+  mediaSize,
+  type AdDevice,
+  type AdKind,
+  type AdSlot,
+  type SingleSizeArray,
+} from '~/constants/ads'
 
-/**
- * Generate the width of the ad's wrapper div.
- * For GPT ads, there will be three types of adSize 'fixed', 'multi', 'fluid'.
- * Since we only use 'multi' type (ex: [[300, 250], [1, 1]]),
- * the adWidth caculation will use 'multi' type caclulatin directly.
- */
-
-type SingleSizeArray = [number, number]
+export type ResolvedAdSlot = {
+  adUnit: string
+  adUnitPath: string
+  adSize: SingleSizeArray[]
+  gptDivId: string
+  minHeight: number | null
+  device: AdDevice
+  kind: AdKind
+  cssWidth?: number
+}
 
 export function getAdWidth(adSize: SingleSizeArray[]): string {
   const widthMax = adSize?.reduce((acc, curr) => Math.max(curr[0], acc), 0)
   return widthMax ? `${widthMax}px` : '0px'
 }
 
-function getDevice(width: number) {
-  const isDesktopWidth = width >= mediaSize.xl
-  return isDesktopWidth ? 'PC' : 'MB'
+function getAdUnitPath(adUnit: string): string {
+  return `/${GPT_AD_NETWORK}/${adUnit}`
 }
 
-/**
- * Generate full key like 'PC_HD' if the component support dynamic device adKey like 'HD'
- */
-function getAdFullKey(device: 'PC' | 'MB', adKey: string): string {
-  return adKey.includes('_') ? adKey : `${device}_${adKey}`
-}
-
-interface GPTAdData {
-  adUnit: string
-  adSize: SingleSizeArray[]
-}
-
-/**
- * Get GPT_UNITS adData
- * @param pageKey - Key to access GPT_UNITS first layer
- * @param adKey - Key to access GPT_UNITS second layer, might need to complete with device
- * @param width - Browser width
- * @returns GPTAdData if found, otherwise undefined
- */
-function getAdData(
-  pageKey: string,
-  adKey: string,
-  width: number
-): GPTAdData | undefined {
-  const device = getDevice(width)
-  const adFullKey = getAdFullKey(device, adKey)
-  const adData = GPT_UNITS[pageKey][adFullKey]
-
-  if (!adData) {
-    console.error(
-      `Unable to find the AD data. Got the pageKey "${pageKey}" and adKey "${adFullKey}". Please provide a valid pageKey or adKey.`
-    )
+function toResolved(slot: AdSlot): ResolvedAdSlot {
+  return {
+    adUnit: slot.adUnit,
+    adUnitPath: getAdUnitPath(slot.adUnit),
+    adSize: slot.adSize,
+    gptDivId: slot.gptDivId,
+    minHeight: slot.minHeight,
+    device: slot.device,
+    kind: slot.kind,
+    cssWidth: slot.cssWidth,
   }
-
-  return adData
 }
 
-/**
- * Generate adSlot params for googletag.defineSlot.
- */
-export interface GPTAdSlotParam {
-  adUnitPath: string
+function fallbackSlot(
+  adUnit: string,
   adSize: SingleSizeArray[]
-}
+): ResolvedAdSlot {
+  const maxHeight = adSize.reduce((acc, [, height]) => Math.max(acc, height), 0)
 
-/**
- * Generate adSlot params for googletag.defineSlot.
- * @param pageKey - Key to access GPT_UNITS first layer
- * @param adKey - Key to access GPT_UNITS second layer, might need to complete with device
- * @param width - Browser width
- * @returns GPTAdSlotParam
- */
-export function getAdSlotParam(
-  pageKey: string,
-  adKey: string,
-  width: number
-): GPTAdSlotParam | undefined {
-  const adData = getAdData(pageKey, adKey, width)
-  if (!adData) {
-    return
+  return {
+    adUnit,
+    adUnitPath: getAdUnitPath(adUnit),
+    adSize,
+    gptDivId: `div-gpt-ad-${adUnit}`,
+    minHeight: maxHeight > 1 ? maxHeight + 5 : null,
+    device: 'ALL',
+    kind: 'display',
   }
-  const { adUnit, adSize } = adData
-  const adUnitPath = getAdUnitPath(adUnit)
-  return { adUnitPath, adSize }
-}
-
-/**
- * Create adSize array with size string like '970250'.
- * @param sizeString - Size string
- * @returns SingleSizeArray
- */
-function createAdSize(sizeString: string): SingleSizeArray {
-  return [
-    parseInt(sizeString.substring(0, 3)),
-    parseInt(sizeString.substring(3)),
-  ]
 }
 
 /**
  * Create adSize with special adUnit string like 'mirror_RWD_2022FIFA_970250-300250_FT'.
- * @param adUnit - Special adUnit string for topic page
- * @returns SingleSizeArray[] if valid adSize found, otherwise undefined
  */
-function getAdSize(adUnit: string): SingleSizeArray[] | undefined {
+function getAdSizeFromUnitName(adUnit: string): SingleSizeArray[] | undefined {
   const adUnitSlices = adUnit.split('_')
   let hasNan = false
   const adSize = adUnitSlices[adUnitSlices.length - 2]
     ?.split('-')
     .map((sizeString) => {
-      const singleAdSize = createAdSize(sizeString)
-      if (isNaN(singleAdSize[0]) || isNaN(singleAdSize[1])) {
+      const width = parseInt(sizeString.substring(0, 3), 10)
+      const height = parseInt(sizeString.substring(3), 10)
+      if (isNaN(width) || isNaN(height)) {
         hasNan = true
       }
-      return singleAdSize
+      return [width, height] as SingleSizeArray
     })
 
-  return hasNan ? undefined : adSize
+  return hasNan || !adSize?.length ? undefined : adSize
 }
 
-/**
- * Generate adUnitPath for given adUnit.
- * @param adUnit - AdUnit string
- * @returns AdUnit path
- */
-function getAdUnitPath(adUnit: string): string {
-  return `/${GPT_AD_NETWORK}/${adUnit}`
+export function resolveAdSlot(adUnit: string): ResolvedAdSlot | undefined {
+  const fromCatalog = getAdSlot(adUnit)
+  if (fromCatalog) {
+    return toResolved(fromCatalog)
+  }
+
+  const parsedSize = getAdSizeFromUnitName(adUnit)
+  if (parsedSize) {
+    return fallbackSlot(adUnit, parsedSize)
+  }
+
+  console.error(`Unknown adUnit "${adUnit}"`)
 }
 
-/**
- * Generate adSlot params for googletag.defineSlot.
- * Especially for custom adUnit in CMS like topic DFP field.
- * @param adUnit - AdUnit string
- * @returns GPTAdSlotParam
- */
-export function getAdSlotParamByAdUnit(adUnit: string): GPTAdSlotParam {
-  const adUnitPath = getAdUnitPath(adUnit)
-  const adSize = getAdSize(adUnit) || []
-  return { adUnitPath, adSize }
+export function shouldDisplayAdSlot(
+  slot: Pick<ResolvedAdSlot, 'device' | 'kind'>,
+  width: number
+): boolean {
+  if (!width) {
+    return false
+  }
+
+  if (slot.kind === 'overlay') {
+    return width < mediaSize.md
+  }
+
+  switch (slot.device) {
+    case 'ALL':
+      return true
+    case 'MB':
+      return width < mediaSize.xl
+    case 'PC':
+      return width >= mediaSize.xl
+    default:
+      return true
+  }
 }

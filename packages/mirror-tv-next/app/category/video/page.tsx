@@ -29,6 +29,7 @@ import { getVideo } from '~/app/_actions/share/video'
 import { fetchPromotionVideosServerAction } from '~/app/_actions/share/promotion-videos'
 import type { FormattableHeroImage } from '~/types/hero-image'
 import { fetchStaticJson } from '~/utils/fetch-static-json'
+import { Fragment } from 'react'
 
 export const revalidate = 0
 
@@ -179,14 +180,14 @@ export default async function VideoCategoryPage() {
 
   return (
     <>
-      <GptPopup adKey="MB_VIDEO" />
+      <GptPopup adUnit="mnews_m_320x480_video" />
       <GPTPlaceholderDesktop>
         <p>廣告</p>
-        <GPTAd pageKey="all" adKey="PC_HD" />
+        <GPTAd adUnit="mnews_masthead_top_970x400" />
       </GPTPlaceholderDesktop>
       <GPTPlaceholderMobile>
         <p>廣告</p>
-        <GPTAd pageKey="video" adKey="MB_M1" />
+        <GPTAd adUnit="mnews_m_video_300x250_01" />
       </GPTPlaceholderMobile>
       <main className={styles.main}>
         {!!allVideoEditorChoices.length && (
@@ -201,8 +202,7 @@ export default async function VideoCategoryPage() {
               otherStreamings={otherStreamings}
               liveVideo={liveVideo}
             />
-            <GPTAd pageKey="video" adKey="MB_M2" />
-            <GPTAd pageKey="video" adKey="PC_R1" />
+            <GPTAd adUnit="mnews_video_sidebar_300x250_01" />
             <section className={styles.desktopOnly}>
               {!!allPromotionVideos.length && (
                 <UiAsideVideosList
@@ -214,8 +214,8 @@ export default async function VideoCategoryPage() {
                   firstPlayTriggerClassName="promotion aside__item"
                 />
               )}
-              <GPTAd pageKey="video" adKey="PC_R2" />
-              <GPTAd pageKey="video" adKey="PC_R3" />
+              <GPTAd adUnit="mnews_video_sidebar_300x250_02" />
+              <GPTAd adUnit="mnews_video_sidebar_300x600_03" />
               <UiShowsList title="節目" />
               <UiLinksList fbHref="https://www.facebook.com/mnewstw/" />
             </section>
@@ -233,19 +233,24 @@ export default async function VideoCategoryPage() {
             )}
             <div className={styles.gptContainer}>
               <div className={styles.gptWrapper}>
-                <GPTAd pageKey="video" adKey="PC_BT" />
+                <GPTAd adUnit="mnews_video_900x280" />
               </div>
             </div>
-            {categoryPosts.map((list) => {
+            <GPTAd adUnit="mnews_m_video_300x250_03" />
+            {categoryPosts.map((list, index) => {
               return (
-                <VideoPostsList
-                  initPostsList={list.posts}
-                  categorySlug={list.categorySlug}
-                  categoryName={list.categoryName}
-                  pageSize={PAGE_SIZE}
-                  postsCount={list.count}
-                  key={list.categorySlug}
-                />
+                <Fragment key={list.categorySlug}>
+                  <VideoPostsList
+                    initPostsList={list.posts}
+                    categorySlug={list.categorySlug}
+                    categoryName={list.categoryName}
+                    pageSize={PAGE_SIZE}
+                    postsCount={list.count}
+                  />
+                  {index === 2 ? (
+                    <GPTAd adUnit="mnews_m_video_300x250_04" />
+                  ) : null}
+                </Fragment>
               )
             })}
           </div>
@@ -263,11 +268,7 @@ export default async function VideoCategoryPage() {
               />
             </div>
           )}
-          <GPTAd pageKey="video" adKey="PC_R2" />
-          <GPTAd pageKey="video" adKey="PC_R3" />
-          <GPTAd pageKey="video" adKey="MB_M3" />
           <UiShowsList title="節目" />
-          <GPTAd pageKey="video" adKey="MB_M4" />
           <UiLinksList fbHref="https://www.facebook.com/mnewstw/" />
         </section>
       </main>

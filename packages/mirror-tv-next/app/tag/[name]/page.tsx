@@ -143,7 +143,7 @@ export default async function TagPage(props: {
     <section className={styles.tag}>
       <GPTPlaceholderDesktop>
         <p>廣告</p>
-        <GPTAd pageKey="all" adKey="PC_HD" />
+        <GPTAd adUnit="mnews_masthead_top_970x400" />
       </GPTPlaceholderDesktop>
       <div className={styles.tagWrapper}>
         <h1 className={styles.tagName}>{tagName}</h1>

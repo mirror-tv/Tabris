@@ -32,6 +32,7 @@ import ContainerFullScreenAds from '~/components/ads/gpt/gpt-popup'
 import MisoPageView from '~/components/tracking/miso-pageview'
 import GA4SourceTracking from '~/components/story/ga4-source-tracking'
 import AdTvAdminMobileBanner from '~/components/shared/ad-tv-admin-mobile-banner'
+import ExternalContentWithAds from '~/components/story/external-content-with-ads'
 
 export const revalidate = 0
 
@@ -343,7 +344,7 @@ const ExternalPage = async (props: ExternalPageTypes) => {
       <MisoPageView productIds={`external_${params.slug}`} />
       <GA4SourceTracking source={source} />
       <section className={styles.article}>
-        <ContainerFullScreenAds adKey="MB_NEWS" />
+        <ContainerFullScreenAds adUnit="mnews_m_320x480_News" />
         {thumbnail && (
           <ArticleHeroImageAndVideo
             heroImage={{
@@ -380,9 +381,9 @@ const ExternalPage = async (props: ExternalPageTypes) => {
         />
         {briefText ? <ArticleBrief brief={briefText} /> : null}
         <section className={styles.contentWrapper}>
-          <div
+          <ExternalContentWithAds
             className={styles.externalContent}
-            dangerouslySetInnerHTML={{ __html: processedContent ?? '' }}
+            html={processedContent ?? ''}
           />
           <ArticleUpdateTime
             updateTime={updatedTime}

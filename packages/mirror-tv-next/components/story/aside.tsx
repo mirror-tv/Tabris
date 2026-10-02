@@ -16,16 +16,14 @@ const Aside: React.FC = () => {
   return (
     <aside className={styles.aside}>
       <div className={styles.asideWrapper}>
-        <div className={styles.gptAdContainer}>
-          <GPTAd pageKey={asideCategory} adKey="PC_R1" />
-        </div>
+        <GPTAd adUnit="mnews_article_sidebar_300x250_01" />
         <UiListPostsAside
           listTitle="即時新聞"
           page={asideCategory}
           listData={latestPosts.slice(0, 5)}
           className={`aside__list-latest ${styles.asideItem} list-wrapper`}
         />
-        <GPTAd pageKey={asideCategory} adKey="PC_R2" />
+        <GPTAd adUnit="mnews_article_sidebar_300x250_02" />
         {!!popularPosts.length && (
           <UiListPostsAside
             listTitle="熱門新聞"
@@ -34,7 +32,7 @@ const Aside: React.FC = () => {
             className={`aside__list-popular ${styles.asideItem}`}
           />
         )}
-        <GPTAd pageKey={asideCategory} adKey="PC_R3" />
+        <GPTAd adUnit="mnews_article_sidebar_300x250_03" />
       </div>
     </aside>
   )

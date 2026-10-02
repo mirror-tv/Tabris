@@ -225,12 +225,12 @@ export default async function ShowPage(props: {
     <>
       <GPTPlaceholderDesktop>
         <p>廣告</p>
-        <GPTAd pageKey="all" adKey="PC_HD" />
+        <GPTAd adUnit="mnews_masthead_top_970x400" />
       </GPTPlaceholderDesktop>
-      <GptPopup adKey="MB_PROGRAM" />
+      <GptPopup adUnit="mnews_m_320x480_program" />
       <GPTPlaceholderMobile>
         <p>廣告</p>
-        <GPTAd pageKey="show" adKey="MB_M1" />
+        <GPTAd adUnit="mnews_m_program_top_300x250" />
       </GPTPlaceholderMobile>
       <main className={styles.container}>
         <h1 className={styles.title}>{show.name || '節目'}</h1>
@@ -276,21 +276,21 @@ export default async function ShowPage(props: {
                 ></div>
               )}
               {!!show.hostName && <UiHostList hostList={show.hostName} />}
-              <AsideAd shownOnMobile={true} />
+              <GPTAd adUnit="mnews_m_program_middle_300x250" />
               <YoutubeListWrapper
                 urls={[show.playList01, show.playList02]}
                 isDesktop={true}
               />
             </section>
-            <AsideAd shownOnMobile={false} />
+            <AsideAd />
           </section>
           <YoutubeListWrapper
             urls={[show.playList01, show.playList02]}
             isDesktop={false}
           />
           {slug === 'election24' && <PodcastsListHandler />}
-          <GPTAd pageKey="show" adKey="PC_BT" />
-          <GPTAd pageKey="show" adKey="MB_M3" />
+          <GPTAd adUnit="mnews_program_900x280" />
+          <GPTAd adUnit="mnews_m_program_end_300x250_04" />
         </section>
       </main>
     </>

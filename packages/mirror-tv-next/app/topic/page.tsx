@@ -64,7 +64,7 @@ export default async function TagPage() {
       <PageLogger />
       <GPTPlaceholderDesktop>
         <p>廣告</p>
-        <GPTAd pageKey="all" adKey="PC_HD" />
+        <GPTAd adUnit="mnews_masthead_top_970x400" />
       </GPTPlaceholderDesktop>
       <div
         className={[styles.topicWrapper, 'topic-listing__content'].join(' ')}
