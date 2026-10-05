@@ -3,7 +3,6 @@ import HeadersBlock from '../api-data-renderer/block-renderer/headers-block'
 import OrderListBlock from '../api-data-renderer/block-renderer/order-list-block'
 import {
   type ApiData,
-  type ApiDataBlock,
   ApiDataBlockType,
 } from '../api-data-renderer/block-renderer/type'
 import UnorderListBlock from '../api-data-renderer/block-renderer/unorder-list-block'
@@ -14,6 +13,7 @@ import AmpImageBlock from './blocks/amp-image-block'
 import UnstyledBlock from '../api-data-renderer/block-renderer/unstyled-block'
 import AmpEmbedded from './blocks/amp-embedded'
 import AmpUnsupportedBlock from './blocks/amp-unsupported-block'
+import { insertAdsIntoApiData } from '~/utils/insert-article-ads'
 
 type AmpApiDataRendererPropsType = {
   contentData: string | ApiData
@@ -42,14 +42,8 @@ const AmpApiDataRenderer = ({
     return null
   }
 
-  if (parsedContentData?.length >= 4 && !isStoryBrief) {
-    const newObject: ApiDataBlock = {
-      id: 'inserted-gpt-ad',
-      type: ApiDataBlockType.GptAd,
-      content: '',
-      alignment: 'center',
-    }
-    parsedContentData.splice(4, 0, newObject)
+  if (!isStoryBrief) {
+    parsedContentData = insertAdsIntoApiData(parsedContentData)
   }
 
   if (!parsedContentData?.length) {

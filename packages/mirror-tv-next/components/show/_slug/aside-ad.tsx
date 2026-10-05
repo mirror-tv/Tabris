@@ -3,20 +3,18 @@ import styles from './_styles/aside-ad.module.scss'
 import useWindowDimensions from '~/hooks/use-window-dimensions'
 import GPTAd from '~/components/ads/gpt/gpt-ad'
 
-export default function AsideAd({ shownOnMobile }: { shownOnMobile: boolean }) {
+export default function AsideAd() {
   const { width: viewportWidth = 0 } = useWindowDimensions()
 
-  // 檢查 viewportWidth 並進行邏輯判斷
-  if (viewportWidth === 0 || shownOnMobile !== viewportWidth < 768) {
+  if (viewportWidth === 0 || viewportWidth < 768) {
     return null
   }
 
   return (
     <aside className={styles.aside}>
-      <GPTAd pageKey="show" adKey="PC_R1" />
-      <GPTAd pageKey="show" adKey="PC_R2" />
-      <GPTAd pageKey="show" adKey="PC_R3" />
-      <GPTAd pageKey="show" adKey="MB_M2" />
+      <GPTAd adUnit="mnews_program_sidebar_300x250_01" />
+      <GPTAd adUnit="mnews_program_sidebar_300x250_02" />
+      <GPTAd adUnit="mnews_program_sidebar_300x600_03" />
     </aside>
   )
 }

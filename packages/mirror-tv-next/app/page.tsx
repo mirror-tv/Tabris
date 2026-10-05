@@ -26,15 +26,15 @@ export default async function Home() {
   return (
     <main className={styles.main}>
       <PageLogger />
-      <GptPopup adKey="MB_HOME" />
+      <GptPopup adUnit="mnews_m_320x480_Home" />
       {/* GPT ADs */}
       <GPTPlaceholderDesktop>
         <p>廣告</p>
-        <GPTAd pageKey="all" adKey="PC_HD" />
+        <GPTAd adUnit="mnews_masthead_top_970x400" />
       </GPTPlaceholderDesktop>
       <GPTPlaceholderMobile>
         <p>廣告</p>
-        <GPTAd pageKey="home" adKey="MB_M1" />
+        <GPTAd adUnit="mnews_m_home_300x250_01" />
       </GPTPlaceholderMobile>
       <div className={styles.mobFlashNewsWrapper}>
         <MainFlashNews />
@@ -43,17 +43,19 @@ export default async function Home() {
         latestListTitle="即時新聞"
         mnewsLives={homepageData.allVideos.slice(0, 2)}
       />
-      <GPTAd pageKey="home" adKey="PC_BT" />
+      <GPTAd adUnit="mnews_home_900x280" />
       <div className={styles.gptAdM3Wrapper}>
-        <GPTAd pageKey="home" adKey="MB_M3" className={styles.gptAdM3} />
+        <GPTAd
+          adUnit="mnews_m_home_300x250_03"
+          className={styles.gptAdM3}
+        />
       </div>
       <PromotionVideoList
         title="發燒單元"
         allPromotionVideos={homepageData.allPromotionVideos.slice(0, 4)}
       />
       <ShowList title="節目" />
-      <GPTAd pageKey="home" adKey="PC_BT2" />
-      <GPTAd pageKey="home" adKey="MB_M4" />
+      <GPTAd adUnit="mnews_m_home_300x250_04" />
       <TopicList title="推薦專題" allTopics={homepageData.allTopics} />
     </main>
   )

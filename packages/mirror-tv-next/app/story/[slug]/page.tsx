@@ -380,7 +380,7 @@ const StoryPage = async (props: StoryPageTypes) => {
       <Article18Warning isAdult={!!isAdult} />
       <link rel="amphtml" href={`${SITE_URL}/story/amp/${params.slug}`} />
       <section className={styles.article}>
-        <ContainerFullScreenAds adKey="MB_NEWS" />
+        <ContainerFullScreenAds adUnit="mnews_m_320x480_News" />
         <ArticleHeroImageAndVideo
           heroImage={heroImage}
           title={heroCaption || ''}

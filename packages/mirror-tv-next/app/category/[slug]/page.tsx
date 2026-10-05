@@ -353,7 +353,7 @@ export default async function CategoryPage(props: {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <GptPopup adKey="MB_CATEGORY" />
+      <GptPopup adUnit="mnews_m_320x480_category" />
       <UiHeadingBordered title={categoryData.name} />
       {featurePost && (
         <div className={`${styles.listWrapper} list-latest-wrapper`}>
@@ -373,7 +373,7 @@ export default async function CategoryPage(props: {
       )}
       <div className={styles.gptContainer}>
         <div className={styles.gptWrapper}>
-          <GPTAd pageKey="category" adKey="PC_BT" />
+          <GPTAd adUnit="mnews_category_900x280" />
         </div>
       </div>
     </section>

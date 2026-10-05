@@ -19,6 +19,8 @@ import type { HeaderData, RawHeaderJson, RawSponsor } from '~/types/header'
 import { handleResponse } from '~/utils'
 import { fetchStaticJson } from '~/utils/fetch-static-json'
 import styles from '../styles/pages/layout.module.scss'
+import GptHiddenSlot from '~/components/ads/gpt/gpt-hidden-slot'
+import GptAnchor from '~/components/ads/gpt/gpt-anchor'
 
 export const revalidate = 0
 
@@ -114,22 +116,23 @@ export default async function RootLayout({
            * which cause the call for the first ad and all other ad slots is made.
            * https://developers.google.com/doubleclick-gpt/reference#googletag.PubAdsService_enableSingleRequest
            */
-          // window.googletag.pubads().enableSingleRequest()
+          // window.googletag.setConfig({ singleRequest: true })
 
-          window.googletag.pubads().enableLazyLoad({
-            // Fetch slots within 1.5 viewports.
-            fetchMarginPercent: 150,
+          window.googletag.setConfig({
+            lazyLoad: {
+              // Fetch slots within 1.5 viewports.
+              fetchMarginPercent: 150,
 
-            // Render slots within 1 viewports.
-            renderMarginPercent: 100,
+              // Render slots within 1 viewports.
+              renderMarginPercent: 100,
 
-            /**
-             * Double the above values on mobile, where viewports are smaller
-             * and users tend to scroll faster.
-             */
-            mobileScaling: 2.0,
+              /**
+               * Double the above values on mobile, where viewports are smaller
+               * and users tend to scroll faster.
+               */
+              mobileScaling: 2.0,
+            },
           })
-          window.googletag.pubads().collapseEmptyDivs()
           window.googletag.enableServices()
 
           
@@ -167,6 +170,8 @@ export default async function RootLayout({
             <PromoteTopic />
             <div className={styles.main}>{children}</div>
             <Footer />
+            <GptHiddenSlot adUnit="mnews_refresh" />
+            <GptAnchor />
           </DataProvider>
         </ReferrerProvider>
       </body>

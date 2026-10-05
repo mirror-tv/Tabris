@@ -2,27 +2,15 @@
 
 .main {
   background: #303030;
-  padding-top: 50px; /* the height of mobile nav*/
   display: flex;
   flex-direction: column;
   align-items: center;
-  //   padding-bottom: 24px;
-
-  @include media-breakpoint-up(md) {
-    padding-top: 0;
-    // padding-bottom: 48px;
-  }
-
-  @include media-breakpoint-up(xl) {
-    // padding-bottom: 80px;
-  }
 }
 
 .section {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  // align-items: center;
   margin: 36px 0;
 
   @include media-breakpoint-up(md) {
