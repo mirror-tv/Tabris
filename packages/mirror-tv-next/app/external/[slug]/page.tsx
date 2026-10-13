@@ -1,5 +1,6 @@
 import PageLogger from '~/components/tracking/page-logger'
 import ArticleRelatedPosts from '~/components/story/article-related-posts'
+import { SHOW_EXTERNAL_RELATED_POSTS } from '~/constants/runtime-config'
 import ArticleSocialList from '~/components/story/article-social-list'
 import { Metadata } from 'next'
 import dayjs from 'dayjs'
@@ -326,16 +327,18 @@ const ExternalPage = async (props: ExternalPageTypes) => {
   // 2. 再為有 style 屬性的 figure 添加 max-width: 100%
   const processedContent = addMaxWidthToFigureWithStyle(contentWithoutDuplicate)
 
-  const relatedArticles = [
-    ...(externalData.relatedPosts ?? []).map((item) => ({
-      ...item,
-      type: 'post' as const,
-    })),
-    ...(externalData.relatedExternals ?? []).map((item) => ({
-      ...item,
-      type: 'external' as const,
-    })),
-  ].sort((a, b) => (b.publishTime ?? '').localeCompare(a.publishTime ?? ''))
+  const relatedArticles = SHOW_EXTERNAL_RELATED_POSTS
+    ? [
+        ...(externalData.relatedPosts ?? []).map((item) => ({
+          ...item,
+          type: 'post' as const,
+        })),
+        ...(externalData.relatedExternals ?? []).map((item) => ({
+          ...item,
+          type: 'external' as const,
+        })),
+      ].sort((a, b) => (b.publishTime ?? '').localeCompare(a.publishTime ?? ''))
+    : []
 
   const pageUrl = `${META_SITE_URL}/external/${params.slug}`
   const jsonLdData = generateExternalJsonLds(externalData, pageUrl)
