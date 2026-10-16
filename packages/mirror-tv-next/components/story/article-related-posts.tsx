@@ -1,14 +1,19 @@
 'use client'
 import UiHeadingBordered from '../shared/ui-heading-bordered'
-import { SinglePost } from '~/graphql/query/story'
 
 import styles from './_styles/article-related-posts.module.scss'
 import { useMemo } from 'react'
 
+type RelatedArticleItem = {
+  slug: string
+  name: string
+  type?: 'post' | 'external'
+}
+
 const ArticleRelatedPosts = ({
   relatedPosts,
 }: {
-  relatedPosts: SinglePost['relatedPosts']
+  relatedPosts: RelatedArticleItem[]
 }) => {
   const hasRelatedPosts = useMemo(() => {
     return !!relatedPosts?.length
@@ -24,7 +29,11 @@ const ArticleRelatedPosts = ({
           <a
             key={item.slug + idx}
             className={`ga-article-related ${styles.item}`}
-            href={`/story/${item.slug}`}
+            href={
+              item.type === 'external'
+                ? `/external/${item.slug}`
+                : `/story/${item.slug}`
+            }
             target="_blank"
             rel="noreferrer noopener"
           >
