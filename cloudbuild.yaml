@@ -18,7 +18,6 @@ steps:
       - 'NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=$_NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN'
       - 'NEXT_PUBLIC_FIREBASE_PROJECT_ID=$_NEXT_PUBLIC_FIREBASE_PROJECT_ID'
       - 'NEXT_PUBLIC_IS_PREVIEW_MODE=$_IS_PREVIEW_MODE'
-      - 'NEXT_PUBLIC_ELECTION_IFRAME_URL=$_ELECTION_IFRAME_URL'
     args:
       - '-c'
       - >
@@ -74,7 +73,6 @@ substitutions:
   _IMAGE_NAME: ''
   _CLOUD_RUN_SERVICE_NAMES: ''
   _IS_PREVIEW_MODE: 'false'
-  _ELECTION_IFRAME_URL: ''
   _AR_LOCATION: 'us' # Artifact Registry region
   _AR_REPOSITORY: 'gcr.io' # Artifact Registry Docker repository name
   _NEXT_PUBLIC_FIREBASE_API_KEY: ''
