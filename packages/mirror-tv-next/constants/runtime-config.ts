@@ -14,6 +14,9 @@ const SHOW_ALGO_TAGS = process.env.SHOW_ALGO_TAGS === 'true'
 // Story page: also query Post.relatedPosts_algo (AI related posts) and append
 // them after the editor-picked ones. Off until the CMS exposes the field.
 const SHOW_ALGO_RELATED_POSTS = process.env.SHOW_ALGO_RELATED_POSTS === 'true'
+// External page: show the algorithm-written related articles block.
+const SHOW_EXTERNAL_RELATED_POSTS =
+  process.env.SHOW_EXTERNAL_RELATED_POSTS === 'true'
 
 export {
   API_ENDPOINT_OVERRIDE_FROM_ENV,
@@ -21,4 +24,5 @@ export {
   PROGRAMMABLE_SEARCH_ENGINE_ID,
   SHOW_ALGO_TAGS,
   SHOW_ALGO_RELATED_POSTS,
+  SHOW_EXTERNAL_RELATED_POSTS,
 }

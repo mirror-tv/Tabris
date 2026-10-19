@@ -6,6 +6,12 @@ export interface SingleRelatedPost {
   name: string
 }
 
+export interface ExternalRelatedItem {
+  slug: string
+  name: string
+  publishTime: string | null
+}
+
 export interface SinglePersonInfo {
   slug: string
   name: string
@@ -46,6 +52,8 @@ export interface SingleExternalPost {
   // content: string
   source?: string | null
   updatedAt: string | null
+  relatedPosts?: ExternalRelatedItem[]
+  relatedExternals?: ExternalRelatedItem[]
   __typename?: 'External'
 }
 
@@ -91,6 +99,16 @@ const fetchExternalBySlug: TypedDocumentNode<
       # content
       source
       updatedAt
+      relatedPosts {
+        slug
+        name
+        publishTime
+      }
+      relatedExternals {
+        slug
+        name
+        publishTime
+      }
     }
   }
 `
