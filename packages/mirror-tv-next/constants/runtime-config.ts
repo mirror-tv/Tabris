@@ -17,6 +17,9 @@ const SHOW_ALGO_RELATED_POSTS = process.env.SHOW_ALGO_RELATED_POSTS === 'true'
 // External page: show the algorithm-written related articles block.
 const SHOW_EXTERNAL_RELATED_POSTS =
   process.env.SHOW_EXTERNAL_RELATED_POSTS === 'true'
+// Homepage: show the election iframe only between these ISO 8601 timestamps.
+const TV_START_TS = process.env.TV_START_TS
+const TV_END_TS = process.env.TV_END_TS
 
 export {
   API_ENDPOINT_OVERRIDE_FROM_ENV,
@@ -25,4 +28,6 @@ export {
   SHOW_ALGO_TAGS,
   SHOW_ALGO_RELATED_POSTS,
   SHOW_EXTERNAL_RELATED_POSTS,
+  TV_START_TS,
+  TV_END_TS,
 }

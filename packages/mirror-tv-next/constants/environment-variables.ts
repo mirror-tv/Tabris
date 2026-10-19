@@ -34,9 +34,10 @@ const ENV_CONFIG_MAP: Record<typeof ENV, EnvMap> = {
 }
 
 const IS_PREVIEW_MODE = process.env.NEXT_PUBLIC_IS_PREVIEW_MODE === 'true'
+const ELECTION_IFRAME_URL = process.env.NEXT_PUBLIC_ELECTION_IFRAME_URL ?? ''
 
 const currentEnv = ENV_CONFIG_MAP[ENV]
 
 const { SITE_URL, GTM_ID, GA4_ID } = currentEnv
 
-export { GTM_ID, SITE_URL, GA4_ID, ENV, IS_PREVIEW_MODE }
+export { GTM_ID, SITE_URL, GA4_ID, ELECTION_IFRAME_URL, ENV, IS_PREVIEW_MODE }
