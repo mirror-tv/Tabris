@@ -8,6 +8,7 @@ import { GPTPlaceholderDesktop } from '~/components/ads/gpt/gpt-placeholder'
 import GptPopup from '~/components/ads/gpt/gpt-popup'
 import { SITE_URL } from '~/constants/environment-variables'
 import TopicList from '~/components/homepage/topic-list'
+import ElectionIframe from '~/components/homepage/election-iframe'
 import ShowList from '~/components/homepage/show-list-init'
 import LatestAndEditorChoicesWithLive from '~/components/homepage/latest-and-editor-choices-with-live'
 import { getTopicVideo } from '~/app/_actions/homepage/topic-video'
@@ -27,6 +28,7 @@ export default async function Home() {
     <main className={styles.main}>
       <PageLogger />
       <GptPopup adUnit="mnews_m_320x480_Home" />
+      <ElectionIframe />
       {/* GPT ADs */}
       <GPTPlaceholderDesktop>
         <p>廣告</p>
@@ -45,10 +47,7 @@ export default async function Home() {
       />
       <GPTAd adUnit="mnews_home_900x280" />
       <div className={styles.gptAdM3Wrapper}>
-        <GPTAd
-          adUnit="mnews_m_home_300x250_03"
-          className={styles.gptAdM3}
-        />
+        <GPTAd adUnit="mnews_m_home_300x250_03" className={styles.gptAdM3} />
       </div>
       <PromotionVideoList
         title="發燒單元"
