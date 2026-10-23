@@ -1,0 +1,37 @@
+@import '/styles/theme/breakpoints';
+
+.wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 12px 0;
+  width: 100%;
+
+  @include media-breakpoint-up(md) {
+    margin: 20px 0;
+  }
+
+  @include media-breakpoint-up(xl) {
+    margin: 20px 0 -8px;
+  }
+}
+
+.iframe {
+  display: block;
+  border: none;
+  // mobile < 768
+  width: 320px;
+  max-width: 100%;
+  height: 330px;
+
+  // tablet 768–1199
+  @include media-breakpoint-up(md) {
+    width: 720px;
+    height: 200px;
+  }
+
+  // desktop ≥ 1200
+  @include media-breakpoint-up(xl) {
+    width: 970px;
+    height: 294px;
+  }
+}
