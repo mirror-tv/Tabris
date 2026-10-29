@@ -29,8 +29,8 @@ import { SITE_BASE_PATH } from './site-base-path.cjs'
  *   - `<Link href>` / `useRouter().push()` — Next.js auto-applies basePath
  *
  * Why this exists: Next.js basePath is build-time and is NOT auto-applied to
- * `<Image src>`, third-party image components (e.g. @readr-media/react-image),
- * native `<img src>`, or CSS `url()` paths. Bug surface is preview-only —
+ * `<Image src>`, third-party image components, native `<img src>`, or CSS
+ * `url()` paths. Bug surface is preview-only —
  * production has basePath = '' so missing helper calls are invisible there.
  */
 function withBasePath(path: string): string {

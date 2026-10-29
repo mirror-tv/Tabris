@@ -1,5 +1,5 @@
 'use client'
-import Image from '@readr-media/react-image'
+import ResponsiveImage from '~/components/shared/responsive-image'
 import styles from './_styles/anchor-img.module.scss'
 import type { HeroImage } from '~/types/common'
 import { formateHeroImage } from '~/utils'
@@ -12,19 +12,11 @@ export default function AnchorImg({ heroImage }: Props) {
   const { images, imagesWebP } = formateHeroImage(heroImage)
   return (
     <figure className={styles.imageWrapper}>
-      <Image
+      <ResponsiveImage
         images={images}
         imagesWebP={imagesWebP}
         alt="主持人圖片"
-        loadingImage="/images/loading.svg"
-        defaultImage="/images/image-default.jpg"
-        rwd={{
-          mobile: '500px',
-          tablet: '500px',
-          laptop: '500px',
-          desktop: '500px',
-          default: '500px',
-        }}
+        sizes="(max-width: 1199px) 288px, 480px"
       />
     </figure>
   )

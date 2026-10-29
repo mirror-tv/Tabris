@@ -1,4 +1,4 @@
-import Image from '@readr-media/react-image'
+import ResponsiveImage from '~/components/shared/responsive-image'
 import Link from '~/components/shared/link'
 import type { Post } from '~/graphql/query/topic'
 import styles from './_styles/ui-post-card.module.scss'
@@ -21,19 +21,11 @@ export default function UiPostCard({ item }: Props) {
           {item.categories?.[0]?.name && (
             <div className={styles.categoryTag}>{item.categories[0].name}</div>
           )}
-          <Image
+          <ResponsiveImage
             images={images}
             imagesWebP={imagesWebP}
             alt={item.title}
-            loadingImage="/images/loading.svg"
-            defaultImage="/images/image-default.jpg"
-            rwd={{
-              mobile: '100vw',
-              tablet: '500px',
-              laptop: '500px',
-              desktop: '500px',
-              default: '500px',
-            }}
+            sizes="(max-width: 767px) calc(100vw - 54px), (max-width: 1199px) 211px, 317px"
           />
         </div>
         <div className={styles.postTitle}>{item.title}</div>
