@@ -1,7 +1,7 @@
 import styles from './_styles/ui-feature-post.module.scss'
 import { formateDateAtTaipei } from '~/utils/date-handler'
 import ResponsiveImage from '~/components/shared/responsive-image'
-import { FormattedPostCard } from '~/utils'
+import { FormattedPostCard, getSotThumbnailObjectFit } from '~/utils'
 import UiExclusiveMark from '../shared/ui-exclusive-mark'
 
 type UiFeaturePostProps = {
@@ -35,10 +35,9 @@ export default function UiFeaturePost({ post }: UiFeaturePostProps) {
           images={images}
           imagesWebP={imagesWebP}
           alt={name}
-          rwd={{ mobile: '500px', tablet: '500px', desktop: '500px' }}
-          priority={false}
-          imgClassName="article-img"
-          slug={slug}
+          sizes="(max-width: 767px) 100vw, 464px"
+          className="article-img"
+          style={{ objectFit: getSotThumbnailObjectFit(slug) }}
         />
         {exclusive && <UiExclusiveMark />}
         {style === 'videoNews' && <span className={styles.videoIcon}></span>}

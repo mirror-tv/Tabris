@@ -97,9 +97,9 @@ const ImageBlock = ({ data }: { data: ApiImageBlock }) => {
           images={normalizedData.images}
           imagesWebP={normalizedData.imagesWebP}
           alt={normalizedData.alt}
-          rwd={{ mobile: '800px', tablet: '1200px', desktop: '1200px' }}
-          priority={false}
-          imgClassName={styles.image}
+          // Article column: 24px side paddings on mobile, 600px above.
+          sizes="(max-width: 767px) calc(100vw - 48px), 600px"
+          className={styles.image}
         />
       </div>
       {normalizedData.description && (

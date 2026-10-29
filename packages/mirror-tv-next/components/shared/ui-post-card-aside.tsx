@@ -1,7 +1,7 @@
 import styles from './_styles/ui-post-card-aside.module.scss'
 import { formateDateAtTaipei } from '~/utils'
 import UiExclusiveMark from './ui-exclusive-mark'
-import NextResponsiveImage from './next-responsive-image'
+import ResponsiveImage from '~/components/shared/responsive-image'
 
 type UiPostCardAsideProps = {
   title: string
@@ -36,18 +36,12 @@ export default function UiPostCardAside({
       rel="noreferrer noopener"
     >
       <div className={[styles.image, styles[figureClassNameByProps]].join(' ')}>
-        <NextResponsiveImage
+        <ResponsiveImage
+          images={images}
           fill
           className={[styles.image, styles[figureClassNameByProps]].join(' ')}
-          loading="lazy"
-          placeholder="blur"
-          blurDataURL="/images/loading.svg"
-          src={images}
-          sizes="(max-width: 768px) 50vw, 30vw"
-          srcSet={[480, 800]}
+          sizes="(max-width: 767px) 130px, (max-width: 1199px) 120px, 150px"
           alt={title}
-          priority={false}
-          fallback={images}
           style={{ aspectRatio: '3 / 2' }}
         />
         {isVideoNews && <span className={styles.videoIcon}></span>}

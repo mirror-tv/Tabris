@@ -3,40 +3,10 @@ const path = require('path')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { SITE_BASE_PATH } = require('./constants/site-base-path.cjs')
 
-const mnewsImageHostnames = [
-  'v3.mnews.tw',
-  'www.mnews.tw',
-  'staging.mnews.tw',
-  'dev.mnews.tw',
-  'storage.googleapis.com',
-  'statics.mnews.tw',
-  'statics-staging.mnews.tw',
-  'statics-dev.mnews.tw',
-]
-
-const externalImageHostnames = [
-  'www.mirrormedia.mg',
-  'www.mirrormedia.com.tw',
-  'v3-statics.mirrormedia.mg',
-  'v3-statics-staging.mirrormedia.mg',
-  'v3-statics-dev.mirrormedia.mg',
-]
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   basePath: SITE_BASE_PATH,
   reactStrictMode: false,
-  images: {
-    remotePatterns: [...mnewsImageHostnames, ...externalImageHostnames].map(
-      (hostname) => ({
-        protocol: 'https',
-        hostname,
-        pathname: '/**',
-      })
-    ),
-    imageSizes: [480, 800],
-    deviceSizes: [480, 800],
-  },
   output: 'standalone',
   // graphql ships dual CJS/ESM entry points (index.js / index.mjs). @apollo/client
   // is not transpiled, so its server bundle keeps a real runtime `import` of

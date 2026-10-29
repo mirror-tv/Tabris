@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import Image from '~/components/shared/image'
 import styles from './_styles/blockquote-block.module.scss'
 import { type ApiDataBlockBase, ApiDataBlockType } from './type'
 import { getFirstElement } from '~/utils/common'
