@@ -8,7 +8,7 @@ import 'swiper/css/pagination'
 import styles from './_styles/slide-show-block.module.scss'
 import useWindowDimensions from '~/hooks/use-window-dimensions'
 import { type ApiDataBlockType, type ApiDataBlockBase } from './type'
-import Image from 'next/image'
+import Image from '~/components/shared/image'
 import { useRef } from 'react'
 import { Navigation, Pagination } from 'swiper/modules'
 import { type PaginationOptions } from 'swiper/types'
@@ -110,6 +110,7 @@ export default function SlideShowBlock({
                 src={resolveSlideImageSrc(item.image.url, staticBaseUrl)}
                 alt="swiper slides"
                 fill
+                sizes="(max-width: 767px) 100vw, 480px"
                 priority
               />
             </div>
