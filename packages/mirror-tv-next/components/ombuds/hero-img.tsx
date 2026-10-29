@@ -1,5 +1,5 @@
 'use client'
-import Image from 'next/image'
+import Image from '~/components/shared/image'
 import { useState } from 'react'
 import styles from './_styles/hero-img.module.scss'
 
@@ -29,7 +29,7 @@ export default function HeroImg() {
       {!hasError ? (
         <Image
           src={'/images/om-banner.jpg'}
-          unoptimized
+          loader="none"
           priority
           style={{ objectFit: 'contain' }}
           alt="鏡新聞外部公評人莊豐嘉"

@@ -1,7 +1,7 @@
 import styles from './_styles/ombuds-intro.module.scss'
 import Link from '~/components/shared/link'
 import { CUSTOMER_SERVICE_EMAIL } from '~/constants/constant'
-import Image from 'next/image'
+import Image from '~/components/shared/image'
 
 export default function ombudsIntro() {
   return (
@@ -12,7 +12,7 @@ export default function ombudsIntro() {
           <div className={styles.imageWrapper}>
             <Image
               src="/images/om-portrait.jpg"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 384px, 480px"
+              sizes="(max-width: 767px) 100vw, (max-width: 1199px) 384px, 480px"
               priority
               style={{ objectFit: 'cover' }}
               fill

@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import Image from 'next/image'
+import Image from '~/components/shared/image'
 import { useState } from 'react'
 import CustomDropDown from '~/components/schedule/custom-dropdown'
 import WeekDatesPicker from '~/components/schedule/week-dates-picker'

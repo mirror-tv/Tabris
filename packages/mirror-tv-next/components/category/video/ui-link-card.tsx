@@ -1,6 +1,6 @@
 import styles from './_styles/ui-link-card.module.scss'
 
-import Image from 'next/image'
+import Image from '~/components/shared/image'
 
 type UiLinkCardProps = {
   link: LinkInfo
