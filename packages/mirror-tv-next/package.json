@@ -21,6 +21,7 @@
     "@readr-media/react-infinite-scroll-list": "^1.2.0",
     "@svgr/webpack": "^8.1.0",
     "@twreporter/errors": "^1.1.2",
+    "@unpic/react": "^1.0.2",
     "axios": "^1.19.0",
     "dayjs": "^1.11.21",
     "express": "^5.2.1",

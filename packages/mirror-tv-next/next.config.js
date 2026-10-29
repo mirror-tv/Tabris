@@ -2,6 +2,8 @@
 const path = require('path')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { SITE_BASE_PATH } = require('./constants/site-base-path.cjs')
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { OPTIMIZER_WIDTHS } = require('./constants/image-widths.cjs')
 
 const mnewsImageHostnames = [
   'v3.mnews.tw',
@@ -34,8 +36,8 @@ const nextConfig = {
         pathname: '/**',
       })
     ),
-    imageSizes: [480, 800],
-    deviceSizes: [480, 800],
+    imageSizes: OPTIMIZER_WIDTHS,
+    deviceSizes: OPTIMIZER_WIDTHS,
   },
   output: 'standalone',
   // graphql ships dual CJS/ESM entry points (index.js / index.mjs). @apollo/client
