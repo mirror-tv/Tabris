@@ -1,19 +1,14 @@
 'use client'
 import Image from '~/components/shared/image'
+import ResponsiveImage from '~/components/shared/responsive-image'
 import { useState } from 'react'
 import styles from './_styles/hero-img.module.scss'
 
 export default function HeroImg() {
   const [isLoading, setIsLoading] = useState(true)
-  const [hasError, setHasError] = useState(false)
 
   const handleLoadComplete = () => {
     setIsLoading(false)
-  }
-
-  const handleImageError = () => {
-    setIsLoading(false)
-    setHasError(true)
   }
 
   return (
@@ -26,25 +21,15 @@ export default function HeroImg() {
           fill
         />
       )}
-      {!hasError ? (
-        <Image
-          src={'/images/om-banner.jpg'}
-          loader="none"
-          priority
-          style={{ objectFit: 'contain' }}
-          alt="鏡新聞外部公評人莊豐嘉"
-          fill
-          onLoad={handleLoadComplete}
-          onError={handleImageError}
-        />
-      ) : (
-        <Image
-          src={'/images/image-default.jpg'}
-          style={{ objectFit: 'cover' }}
-          alt="default-image"
-          fill
-        />
-      )}
+      {/* Falls back to the default image by itself when the banner fails. */}
+      <ResponsiveImage
+        images="/images/om-banner.jpg"
+        priority
+        style={{ objectFit: 'contain' }}
+        alt="鏡新聞外部公評人莊豐嘉"
+        onLoad={handleLoadComplete}
+        onError={handleLoadComplete}
+      />
     </section>
   )
 }

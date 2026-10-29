@@ -1,6 +1,7 @@
 import styles from './_styles/ui-link-card.module.scss'
 
 import Image from '~/components/shared/image'
+import ResponsiveImage from '~/components/shared/responsive-image'
 
 type UiLinkCardProps = {
   link: LinkInfo
@@ -31,11 +32,11 @@ export default function UiLinkCard({ link }: UiLinkCardProps) {
           link.idForGaTarget === 'line-follow' ? 'line' : ''
         }`}
       >
-        <Image
-          src={link.leftIcon.src}
+        <ResponsiveImage
+          images={link.leftIcon.src}
           alt={link.leftText}
-          width={link.leftIcon.width}
-          height={link.leftIcon.height}
+          placeholder={null}
+          style={{ width: link.leftIcon.width, height: link.leftIcon.height }}
         />
         <span>{link.leftText}</span>
       </div>

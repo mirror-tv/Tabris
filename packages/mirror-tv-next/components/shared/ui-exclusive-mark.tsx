@@ -1,5 +1,5 @@
 import styles from './_styles/ui-exclusive-mark.module.scss'
-import Image from '~/components/shared/image'
+import ResponsiveImage from '~/components/shared/responsive-image'
 
 export type UiExclusiveMarkProps = {
   className?: string
@@ -16,13 +16,12 @@ export default function UiExclusiveMark({
 }: UiExclusiveMarkProps) {
   return (
     <div className={`${styles.exclusiveMark} ${className}`}>
-      <Image
-        src="/icons/exclusive-logo.png"
+      <ResponsiveImage
+        images="/icons/exclusive-logo.png"
         alt="獨家 SCOOP"
-        fill
         sizes={sizes}
-        className={styles.image}
-        priority={false}
+        placeholder={null}
+        style={{ objectFit: 'contain' }}
       />
     </div>
   )

@@ -1,17 +1,13 @@
 import styles from './_styles/video-post-card.module.scss'
 import { PostImage } from '~/utils'
 import UiExclusiveMark from '~/components/shared/ui-exclusive-mark'
-import NextResponsiveImage from '~/components/shared/next-responsive-image'
+import ResponsiveImage from '~/components/shared/responsive-image'
 
 type VideoPostCardProps = {
   imageUrls: PostImage
   title: string
   href: string
   exclusive: boolean
-}
-
-function isDefaultImage(image: PostImage) {
-  return !image.original || image.original?.includes('image-default')
 }
 
 export default function VideoPostCard({
@@ -28,21 +24,11 @@ export default function VideoPostCard({
       rel="noopener noreferrer"
     >
       <figure className={styles.image}>
-        <NextResponsiveImage
+        <ResponsiveImage
+          images={imageUrls.original}
           fill
-          loading="lazy"
-          placeholder="blur"
-          blurDataURL="/images/loading.svg"
-          src={
-            isDefaultImage(imageUrls)
-              ? '/images/image-default.jpg'
-              : imageUrls.original.replace(/\.(jpg|png)$/i, '.webP')
-          }
-          sizes="(max-width: 768px) 50vw, 30vw"
-          srcSet={[480, 800]}
+          sizes="(max-width: 767px) 50vw, (max-width: 1199px) 216px, 234px"
           alt={title}
-          priority={false}
-          fallback={imageUrls.original}
           style={{ aspectRatio: '9 / 5' }}
         />
         {exclusive && <UiExclusiveMark />}

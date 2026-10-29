@@ -1,6 +1,6 @@
 import styles from './_styles/ui-show-card.module.scss'
 import Link from '~/components/shared/link'
-import NextResponsiveImage from '~/components/shared/next-responsive-image'
+import ResponsiveImage from '~/components/shared/responsive-image'
 
 type UiShowCardProps = {
   slug: string
@@ -23,22 +23,12 @@ export default function UiShowCard({
       rel="noopener noreferrer"
       id={id}
     >
-      <NextResponsiveImage
+      <ResponsiveImage
+        images={bannerImage}
         fill
-        loading="lazy"
-        placeholder="blur"
-        blurDataURL="/images/loading.svg"
-        src={
-          typeof bannerImage === 'string'
-            ? bannerImage?.replace(/\.(jpg|png)$/i, '.webP')
-            : '/images/image-default.jpg'
-        }
-        sizes="(max-width: 768px) 50vw, 30vw"
-        srcSet={[480, 800]}
+        sizes="(max-width: 767px) calc(100vw - 32px), (max-width: 1199px) 336px, 360px"
         alt={name}
-        priority={false}
         style={{ aspectRatio: '32 / 12' }}
-        fallback={bannerImage}
       />
     </Link>
   )

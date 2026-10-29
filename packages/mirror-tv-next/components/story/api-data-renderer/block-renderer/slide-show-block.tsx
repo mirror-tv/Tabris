@@ -8,7 +8,7 @@ import 'swiper/css/pagination'
 import styles from './_styles/slide-show-block.module.scss'
 import useWindowDimensions from '~/hooks/use-window-dimensions'
 import { type ApiDataBlockType, type ApiDataBlockBase } from './type'
-import Image from '~/components/shared/image'
+import ResponsiveImage from '~/components/shared/responsive-image'
 import { useRef } from 'react'
 import { Navigation, Pagination } from 'swiper/modules'
 import { type PaginationOptions } from 'swiper/types'
@@ -105,13 +105,12 @@ export default function SlideShowBlock({
         {slideData.map((item) => (
           <SwiperSlide key={item.image.url} className={styles.swiperSlide}>
             <div className={styles.slideShowImageContainer}>
-              <Image
-                className={styles.slideShowImage}
-                src={resolveSlideImageSrc(item.image.url, staticBaseUrl)}
+              <ResponsiveImage
+                images={resolveSlideImageSrc(item.image.url, staticBaseUrl)}
                 alt="swiper slides"
-                fill
                 sizes="(max-width: 767px) 100vw, 480px"
                 priority
+                style={{ objectFit: 'contain' }}
               />
             </div>
             <figcaption className={styles.imageDescription}>

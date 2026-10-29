@@ -9,15 +9,13 @@ import {
   useRef,
   useState,
 } from 'react'
-import { OPTIMIZER_WIDTHS, SUFFIX_WIDTHS } from '~/constants/image-widths.cjs'
-import { SITE_BASE_PATH } from '~/constants/with-base-path'
+import { SUFFIX_WIDTHS } from '~/constants/image-widths'
 
 /**
- * - `nextjs`: resize through the Next.js optimizer (`/_next/image`)
  * - `width-suffix`: swap the CMS `-w{width}` filename suffix
  * - `none`: serve `src` as-is (SVG, GIF, already-sized assets)
  */
-export type ImageLoader = 'nextjs' | 'width-suffix' | 'none'
+export type ImageLoader = 'width-suffix' | 'none'
 
 type Transformer = (src: string | URL, operations: { width?: number }) => string
 
@@ -41,7 +39,7 @@ export type ImageProps = Omit<
   SizeProps & {
     src: string
     alt: string
-    /** Defaults to `nextjs`, or `none` for SVG / GIF / data URLs. */
+    /** Defaults to `none`. */
     loader?: ImageLoader
     /** Pick from these files instead of resizing `src` (overrides `loader`). */
     variants?: ImageVariants
@@ -70,24 +68,12 @@ export const toVariantsTransformer = (
 }
 
 const transformers: Record<Exclude<ImageLoader, 'none'>, TransformerConfig> = {
-  nextjs: {
-    widths: OPTIMIZER_WIDTHS,
-    transform: (src, { width }) =>
-      `${SITE_BASE_PATH}/_next/image?url=${encodeURIComponent(
-        src.toString()
-      )}&w=${snapTo(OPTIMIZER_WIDTHS, width)}&q=75`,
-  },
   'width-suffix': {
     widths: SUFFIX_WIDTHS,
     transform: (src, { width }) =>
       src.toString().replace(/(-w\d+)/, `-w${snapTo(SUFFIX_WIDTHS, width)}`),
   },
 }
-
-const getDefaultLoader = (src: string): ImageLoader =>
-  /\.(svg|gif)(\?|#|$)/i.test(src) || src.startsWith('data:')
-    ? 'none'
-    : 'nextjs'
 
 /** Same box as next/image: `fill` covers the positioned parent. */
 const fillStyle: CSSProperties = {
@@ -104,7 +90,7 @@ const flowFillStyle: CSSProperties = {
 
 export default function Image({
   src,
-  loader = getDefaultLoader(src),
+  loader = 'none',
   variants,
   fill,
   width,

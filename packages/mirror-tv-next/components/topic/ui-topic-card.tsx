@@ -37,8 +37,7 @@ export default function UiTopicCard({
               images={images}
               imagesWebP={imagesWebP}
               alt={title}
-              rwd={{ mobile: '500px', tablet: '500px', desktop: '500px' }}
-              priority={false}
+              sizes="(max-width: 767px) 75vw, (max-width: 1199px) 202px, 290px"
             />
           </figure>
           <span className={styles.cardTitle}>{title}</span>

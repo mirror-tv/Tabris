@@ -19,7 +19,7 @@ import {
 import { useRef } from 'react'
 import { PaginationOptions } from 'swiper/types'
 import UiExclusiveMark from '../shared/ui-exclusive-mark'
-import NextResponsiveImage from '../shared/next-responsive-image'
+import ResponsiveImage from '~/components/shared/responsive-image'
 import type { HeroImage } from '~/graphql/fragments/listing-post'
 
 type EditorChoicesSwiperProps = {
@@ -88,31 +88,19 @@ export default function EditorChoicesSwiper({
                     target="_blank"
                     rel="noreferrer noopener"
                   >
-                    {choice.exclusive && <UiExclusiveMark />}
+                    {choice.exclusive && (
+                      <UiExclusiveMark sizes="(max-width: 767px) 30vw, 216px" />
+                    )}
                     {choice.heroImage && (
-                      <NextResponsiveImage
-                        fill
-                        loading="lazy"
-                        placeholder="blur"
-                        blurDataURL="/images/loading.svg"
-                        src={
-                          typeof choice.heroImage === 'string'
-                            ? choice.heroImage?.replace(
-                                /\.(jpg|png)$/i,
-                                '.webP'
-                              )
-                            : choice.heroImage.resized?.original ??
-                              '/images/image-default.jpg'
-                        }
-                        sizes="(max-width: 768px) 50vw, 30vw"
-                        srcSet={[480, 800]}
-                        alt={choice.name}
-                        priority={false}
-                        fallback={
+                      <ResponsiveImage
+                        images={
                           typeof choice.heroImage === 'string'
                             ? choice.heroImage
                             : choice.heroImage.resized?.original
                         }
+                        fill
+                        sizes="(max-width: 767px) 100vw, 722px"
+                        alt={choice.name}
                         style={{ aspectRatio: '3 / 2' }}
                         fetchPriority={index === 0 ? 'high' : 'low'}
                       />

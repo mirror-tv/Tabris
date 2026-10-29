@@ -1,7 +1,21 @@
 import styles from './_styles/ombuds-intro.module.scss'
 import Link from '~/components/shared/link'
 import { CUSTOMER_SERVICE_EMAIL } from '~/constants/constant'
-import Image from '~/components/shared/image'
+import ResponsiveImage from '~/components/shared/responsive-image'
+
+const PORTRAIT = {
+  original: '/images/om-portrait.jpg',
+  w400: '/images/om-portrait-w480.jpg',
+  w800: '/images/om-portrait-w800.jpg',
+  w1600: '/images/om-portrait-w1600.jpg',
+}
+
+const PORTRAIT_WEBP = {
+  original: '/images/om-portrait.jpg',
+  w400: '/images/om-portrait-w480.webP',
+  w800: '/images/om-portrait-w800.webP',
+  w1600: '/images/om-portrait-w1600.webP',
+}
 
 export default function ombudsIntro() {
   return (
@@ -10,12 +24,11 @@ export default function ombudsIntro() {
       <div className={styles.mainIntroWrapper}>
         <section className={styles.ombudsIntroWrapper}>
           <div className={styles.imageWrapper}>
-            <Image
-              src="/images/om-portrait.jpg"
+            <ResponsiveImage
+              images={PORTRAIT}
+              imagesWebP={PORTRAIT_WEBP}
               sizes="(max-width: 767px) 100vw, (max-width: 1199px) 384px, 480px"
               priority
-              style={{ objectFit: 'cover' }}
-              fill
               alt="鏡新聞外部公評人莊豐嘉"
             />
           </div>
