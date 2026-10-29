@@ -1,12 +1,12 @@
 'use client'
 
 import { Varela_Round } from 'next/font/google'
-import Image from 'next/image'
+import Image from '~/components/shared/image'
 
 import Link from '~/components/shared/link'
 import styles from './_styles/ui-404.module.scss'
 import { useData } from '~/context/data-context'
-import NextResponsiveImage from '../shared/next-responsive-image'
+import ResponsiveImage from '~/components/shared/responsive-image'
 
 const font = Varela_Round({ subsets: ['latin'], weight: '400' })
 
@@ -34,21 +34,12 @@ export default function Ui404() {
                   target="_blank"
                   rel="noreferrer noopener"
                 >
-                  <NextResponsiveImage
+                  <ResponsiveImage
+                    images={article.heroImage}
                     fill
                     className={styles.img}
-                    loading="lazy"
-                    placeholder="blur"
-                    blurDataURL="/images/loading.svg"
-                    src={
-                      article.heroImage?.replace(/\.(jpg|png)$/i, '.webP') ??
-                      '/images/image-default.jpg'
-                    }
-                    sizes="(max-width: 768px) 50vw, 30vw"
-                    srcSet={[480, 800]}
+                    sizes="(max-width: 767px) 80px, 180px"
                     alt={article.name}
-                    priority={false}
-                    fallback={article.heroImage}
                     fetchPriority="high"
                   />
 

@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import Image from '~/components/shared/image'
 import styles from './_styles/article-social-list.module.scss'
 import { socialMediaConfig, socialMediaOrder } from '~/constants/social-medial'
 import { withBasePath } from '~/constants/with-base-path'

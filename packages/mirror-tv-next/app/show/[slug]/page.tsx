@@ -1,7 +1,7 @@
 import errors from '@twreporter/errors'
 import styles from './_styles/show.module.scss'
 import Link from '~/components/shared/link'
-import Image from 'next/image'
+import Image from '~/components/shared/image'
 import { SITE_URL } from '~/constants/environment-variables'
 import type { Metadata } from 'next'
 import GPTAd from '~/components/ads/gpt/gpt-ad'
@@ -239,8 +239,8 @@ export default async function ShowPage(props: {
             images={images}
             imagesWebP={imagesWebP}
             alt={show.name || 'show-banner'}
-            rwd={{ desktop: '1200px' }}
             priority={true}
+            sizes="(max-width: 767px) 100vw, (max-width: 1199px) 688px, (max-width: 1399px) 1120px, 1200px"
           />
         </figure>
         <section className={styles.show}>
@@ -259,8 +259,8 @@ export default async function ShowPage(props: {
                         <Image
                           src={item.src}
                           alt={item.name}
-                          width="20"
-                          height="20"
+                          width={20}
+                          height={20}
                         />
                       </Link>
                     )

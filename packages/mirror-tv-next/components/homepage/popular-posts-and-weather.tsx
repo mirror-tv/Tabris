@@ -4,7 +4,7 @@ import styles from './_styles/popular-posts-and-weather.module.scss'
 import Link from '~/components/shared/link'
 import UiHeadingBordered from '../shared/ui-heading-bordered'
 import WeatherMain from './weather-main'
-import NextResponsiveImage from '../shared/next-responsive-image'
+import ResponsiveImage from '~/components/shared/responsive-image'
 
 type PopularPostsListType = {
   title: string
@@ -34,21 +34,12 @@ export default function PopularPostsList({ title }: PopularPostsListType) {
               >
                 <p className={styles.index}>{index + 1}.</p>
                 <div className={styles.imageWrapper}>
-                  <NextResponsiveImage
+                  <ResponsiveImage
+                    images={post.heroImage}
                     fill
-                    loading="lazy"
-                    placeholder="blur"
-                    blurDataURL="/images/loading.svg"
-                    src={
-                      post.heroImage?.replace(/\.(jpg|png)$/i, '.webP') ??
-                      '/images/image-default.jpg'
-                    }
-                    sizes="(max-width: 768px) 50vw, 30vw"
-                    srcSet={[480, 800]}
+                    sizes="96px"
                     alt={post.name}
-                    priority={false}
                     style={{ aspectRatio: '96 / 64' }}
-                    fallback={post.heroImage}
                   />
                 </div>
                 <p className={styles.name}>{post.name}</p>

@@ -1,7 +1,7 @@
 'use client'
 import styles from './_styles/editor-choice-video-list.module.scss'
 import type { VideoEditorChoice } from '~/graphql/query/video-editor-choice'
-import { extractYoutubeId } from '~/utils'
+import { extractYoutubeId, getSotThumbnailObjectFit } from '~/utils'
 import YoutubeEmbed from '~/components/shared/youtube-embed'
 import UiHeadingBordered from '~/components/shared/ui-heading-bordered'
 import { useCallback, useEffect, useState } from 'react'
@@ -76,21 +76,20 @@ export default function EditorChoiceVideoList({
                   }`}
                   onClick={() => selectItemToHighlight(index)}
                 >
-                  <picture>
+                  <div className={styles.thumbnail}>
                     <ResponsiveImage
                       images={images}
                       imagesWebP={imagesWebP}
                       alt={videoEditor?.name ?? 'hero image'}
-                      rwd={{
-                        mobile: '500px',
-                        tablet: '500px',
-                        desktop: '500px',
+                      sizes="120px"
+                      style={{
+                        objectFit: getSotThumbnailObjectFit(
+                          videoEditor?.slug ?? ''
+                        ),
                       }}
-                      priority={false}
-                      slug={videoEditor?.slug ?? ''}
                     />
                     <span className={styles.videoIcon}></span>
-                  </picture>
+                  </div>
                   <span>{videoEditor?.name}</span>
                 </div>
               )

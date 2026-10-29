@@ -1,4 +1,4 @@
-import Image from '@readr-media/react-image'
+import ResponsiveImage from '~/components/shared/responsive-image'
 import Link from '~/components/shared/link'
 import { formateHeroImage } from '~/utils'
 import type { Post } from '~/graphql/query/ombuds'
@@ -25,19 +25,11 @@ export default function UiPostCard({ item }: Props) {
       className={styles.cardWrapper}
     >
       <div className={styles.imageWrapper}>
-        <Image
+        <ResponsiveImage
           images={images}
           imagesWebP={imagesWebP}
           alt={item.name}
-          loadingImage="/images/loading.svg"
-          defaultImage="/images/image-default.jpg"
-          rwd={{
-            mobile: '500px',
-            tablet: '500px',
-            laptop: '500px',
-            desktop: '500px',
-            default: '500px',
-          }}
+          sizes="(max-width: 767px) 132px, (max-width: 1199px) 192px, 228px"
         />
         {item.exclusive && <UiExclusiveMark />}
       </div>

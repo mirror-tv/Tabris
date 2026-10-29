@@ -1,6 +1,6 @@
 'use client'
 import styles from './_styles/header-search-bar.module.scss'
-import Image from 'next/image'
+import Image from '~/components/shared/image'
 import { FormEvent, useState } from 'react'
 import { withBasePath } from '~/constants/with-base-path'
 

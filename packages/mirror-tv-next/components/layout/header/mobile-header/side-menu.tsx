@@ -1,5 +1,5 @@
 'use client'
-import Image from 'next/image'
+import Image from '~/components/shared/image'
 import Link from '~/components/shared/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -10,7 +10,6 @@ import type { Show } from '~/types/header'
 import type { Sponsor } from '~/graphql/query/sponsors'
 import styles from './_styles/side-menu.module.scss'
 import { useData } from '~/context/data-context'
-import { imageLoader } from '~/components/shared/next-responsive-image'
 
 type SideMenuProps = {
   categories: Category[]
@@ -115,9 +114,8 @@ export default function SideMenu({ categories, sponsors }: SideMenuProps) {
                         height={52}
                         src={sponsor.mobile ?? '/images/image-default.jpg'}
                         alt="Sponsor Logo"
-                        placeholder="blur"
-                        blurDataURL="/images/loading.svg"
-                        loader={imageLoader}
+                        placeholder="/images/loading.svg"
+                        loader="width-suffix"
                         priority
                       />
                     </Link>

@@ -1,5 +1,5 @@
 'use client'
-import Image from '@readr-media/react-image'
+import ResponsiveImage from '~/components/shared/responsive-image'
 import Link from '~/components/shared/link'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import type { Slideshow } from '~/graphql/query/topic'
@@ -69,20 +69,12 @@ export default function HeroSlideshow({
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <Image
+                      <ResponsiveImage
                         images={slideImages}
                         imagesWebP={slideImagesWebP}
                         alt={slide.name}
-                        loadingImage="/images/loading.svg"
-                        defaultImage="/images/image-default.jpg"
-                        rwd={{
-                          mobile: '100vw',
-                          tablet: '100vw',
-                          laptop: '100vw',
-                          desktop: '100vw',
-                          default: '100vw',
-                        }}
                         priority
+                        sizes="100vw"
                       />
                       <div className={styles.articleTitle}>{slide.name}</div>
                     </Link>
@@ -92,19 +84,12 @@ export default function HeroSlideshow({
             })}
           </Swiper>
         </div>
-        <Image
+        <ResponsiveImage
           images={images}
           imagesWebP={imagesWebP}
           alt={title}
-          defaultImage="/images/image-default.jpg"
-          rwd={{
-            mobile: '100vw',
-            tablet: '100vw',
-            laptop: '100vw',
-            desktop: '100vw',
-            default: '100vw',
-          }}
           priority
+          sizes="100vw"
         />
       </div>
     </section>

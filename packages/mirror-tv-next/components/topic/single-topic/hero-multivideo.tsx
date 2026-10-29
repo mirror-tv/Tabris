@@ -1,5 +1,5 @@
 'use client'
-import Image from '@readr-media/react-image'
+import ResponsiveImage from '~/components/shared/responsive-image'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import type { Multivideo } from '~/graphql/query/topic'
 import styles from './_styles/hero-multivideo.module.scss'
@@ -70,19 +70,12 @@ export default function HeroMultiVideo({
             })}
           </Swiper>
         </div>
-        <Image
+        <ResponsiveImage
           images={images}
           imagesWebP={imagesWebP}
           alt={title}
-          defaultImage="/images/image-default.jpg"
-          rwd={{
-            mobile: '100vw',
-            tablet: '100vw',
-            laptop: '100vw',
-            desktop: '100vw',
-            default: '100vw',
-          }}
           priority
+          sizes="100vw"
         />
       </div>
     </section>
