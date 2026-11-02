@@ -1,10 +1,9 @@
 'use client'
 import { type SinglePost } from '~/graphql/query/story'
 import styles from './_styles/article-hero-image-and-video.module.scss'
-import Image from '@readr-media/react-image'
+import ResponsiveImage from '~/components/shared/responsive-image'
 import { formateHeroImage } from '~/utils/image-handler'
 import { extractYoutubeId } from '~/utils'
-import { withBasePath } from '~/constants/with-base-path'
 
 type ArticleHeroImageAndVideoProps = {
   heroImage: SinglePost['heroImage']
@@ -35,19 +34,12 @@ const ArticleHeroImageAndVideo: React.FC<ArticleHeroImageAndVideoProps> = (
         )
       ) : (
         <div className={styles.heroImageWrapper}>
-          <Image
+          <ResponsiveImage
             images={images}
             imagesWebP={imagesWebP}
             alt={title}
-            defaultImage={withBasePath('/images/image-default.jpg')}
-            rwd={{
-              mobile: '100vw',
-              tablet: '100vw',
-              laptop: '1200px',
-              desktop: '1200px',
-              default: '100vw',
-            }}
             priority
+            sizes="(max-width: 767px) 100vw, 600px"
           />
         </div>
       )}

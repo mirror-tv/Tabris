@@ -1,10 +1,9 @@
-import Image from 'next/image'
+import Image from '~/components/shared/image'
 import Link from '~/components/shared/link'
 import styles from './_styles/header-top.module.scss'
 import type { Sponsor } from '~/graphql/query/sponsors'
 import { TV_AD_ADMIN_OEN_URL } from '~/constants/constant'
 import { withBasePath } from '~/constants/with-base-path'
-import { imageLoader } from '~/components/shared/next-responsive-image'
 
 type HeaderTopProps = {
   sponsors: Sponsor[]
@@ -57,9 +56,8 @@ export default function HeaderTop({ sponsors }: HeaderTopProps) {
                   height={52}
                   src={sponsor.logo ?? '/images/image-default.jpg'}
                   alt="Sponsor Logo"
-                  placeholder="blur"
-                  blurDataURL="/images/loading.svg"
-                  loader={imageLoader}
+                  placeholder="/images/loading.svg"
+                  loader="width-suffix"
                   priority
                 />
               </Link>

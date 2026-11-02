@@ -1,6 +1,6 @@
 'use client'
 
-import Image from 'next/image'
+import Image from '~/components/shared/image'
 import { useState, useEffect } from 'react'
 import styles from './_styles/weather-main.module.scss'
 import { fetchWeather } from '~/app/_actions/homepage/weather'

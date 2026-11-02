@@ -3,7 +3,7 @@ import { type FeatureTopic } from '~/graphql/query/topic'
 import Link from '~/components/shared/link'
 import styles from './_styles/topic-item.module.scss'
 import UiMoreTopicBtn from './ui-more-topic-btn'
-import NextResponsiveImage from '../shared/next-responsive-image'
+import ResponsiveImage from '~/components/shared/responsive-image'
 
 type TopicListProps = {
   isFirst: boolean
@@ -23,20 +23,11 @@ export default function TopicItem({ topic, isFirst }: TopicListProps) {
           className={styles.imgWrapper}
         >
           <div className={`${styles.imgWrapper} topic__list__item feature`}>
-            <NextResponsiveImage
+            <ResponsiveImage
+              images={topic.heroImage}
               fill
-              loading="lazy"
-              placeholder="blur"
-              blurDataURL="/images/loading.svg"
-              src={
-                topic.heroImage?.replace(/\.(jpg|png)$/i, '.webP') ??
-                '/images/image-default.jpg'
-              }
-              sizes="(max-width: 768px) 50vw, 30vw"
-              srcSet={[480, 800]}
+              sizes="(max-width: 767px) 100vw, (max-width: 1199px) 680px, 581px"
               alt={topic.name}
-              priority={false}
-              fallback={topic.heroImage}
               style={{ aspectRatio: '581 / 324' }}
             />
           </div>

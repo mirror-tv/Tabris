@@ -1,5 +1,5 @@
 'use client'
-import Image from 'next/image'
+import Image from '~/components/shared/image'
 import InfiniteScrollList from '@readr-media/react-infinite-scroll-list'
 import { fetchTopics } from '~/app/_actions/topic'
 import UiTopicCard from '~/components/topic/ui-topic-card'
@@ -81,8 +81,8 @@ export default function TopicsListManager({
               <Image
                 src="/images/loading.svg"
                 alt="loading page"
-                width="200"
-                height="200"
+                width={200}
+                height={200}
                 priority
               />
             </div>

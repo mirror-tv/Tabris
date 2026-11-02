@@ -1,5 +1,9 @@
 import styles from './_styles/ui-post-card.module.scss'
-import { formateDateAtTaipei, PostImage } from '~/utils'
+import {
+  formateDateAtTaipei,
+  getSotThumbnailObjectFit,
+  PostImage,
+} from '~/utils'
 import ResponsiveImage from './responsive-image'
 import UiExclusiveMark from './ui-exclusive-mark'
 import { SALES_LABEL_NAME } from '~/constants/constant'
@@ -72,9 +76,9 @@ export default function UiPostCard({
             images={images}
             imagesWebP={imagesWebP}
             alt={title}
-            rwd={{ mobile: '500px', tablet: '500px', desktop: '500px' }}
             priority={priority}
-            slug={slug}
+            sizes="(max-width: 767px) 132px, 216px"
+            style={{ objectFit: getSotThumbnailObjectFit(slug) }}
           />
           {isVideoNews && <span className={styles.videoIcon}></span>}
           {exclusive && label !== SALES_LABEL_NAME && <UiExclusiveMark />}

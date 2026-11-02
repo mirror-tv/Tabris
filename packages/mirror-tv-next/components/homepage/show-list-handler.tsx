@@ -5,7 +5,7 @@ import useWindowDimensions from '~/hooks/use-window-dimensions'
 import { useMemo } from 'react'
 import Link from '~/components/shared/link'
 import type { Show } from '~/types/header'
-import NextResponsiveImage from '../shared/next-responsive-image'
+import ResponsiveImage from '~/components/shared/responsive-image'
 
 type ShowListHandlerProps = {
   initShows: Show[]
@@ -52,22 +52,12 @@ export default function ShowListHandler({
                 target="_blank"
                 rel="noreferrer noopener"
               >
-                <NextResponsiveImage
+                <ResponsiveImage
+                  images={item.bannerImage}
                   fill
-                  loading="lazy"
-                  placeholder="blur"
-                  blurDataURL="/images/loading.svg"
-                  src={
-                    typeof item.bannerImage === 'string'
-                      ? item.bannerImage?.replace(/\.(jpg|png)$/i, '.webP')
-                      : '/images/image-default.jpg'
-                  }
-                  sizes="(max-width: 768px) 50vw, 30vw"
-                  srcSet={[480, 800]}
+                  sizes="320px"
                   alt={item.name}
-                  priority={false}
                   style={{ aspectRatio: '32 / 12' }}
-                  fallback={item.bannerImage}
                 />
               </Link>
             )

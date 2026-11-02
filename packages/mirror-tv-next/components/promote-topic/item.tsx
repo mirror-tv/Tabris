@@ -1,7 +1,8 @@
 'use client'
 
-import CustomImage from '@readr-media/react-image'
+import ResponsiveImage from '~/components/shared/responsive-image'
 import type { PromoteTopicData } from '~/types/promote-topic'
+import { formateHeroImage } from '~/utils'
 import styles from './_styles/item.module.scss'
 
 type PromoteTopicItemProps = {
@@ -9,8 +10,7 @@ type PromoteTopicItemProps = {
 }
 
 export default function PromoteTopicItem({ topic }: PromoteTopicItemProps) {
-  const images = topic.heroImage.resized ?? {}
-  const imagesWebP = topic.heroImage.resizedWebp ?? null
+  const { images, imagesWebP } = formateHeroImage(topic.heroImage)
 
   return (
     <a
@@ -20,19 +20,11 @@ export default function PromoteTopicItem({ topic }: PromoteTopicItemProps) {
       rel="noreferrer"
     >
       <div className={styles.imageFrame}>
-        <CustomImage
+        <ResponsiveImage
           images={images}
           imagesWebP={imagesWebP}
-          loadingImage="/images/loading.svg"
-          defaultImage="/images/image-default.jpg"
-          rwd={{
-            mobile: '124px',
-            tablet: '124px',
-            laptop: '124px',
-            desktop: '124px',
-            default: '124px',
-          }}
           alt={`推廣專題-${topic.name}`}
+          sizes="124px"
         />
       </div>
       <div className={styles.titleFrame}>

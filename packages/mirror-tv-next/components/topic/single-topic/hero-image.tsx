@@ -1,5 +1,5 @@
 'use client'
-import Image from '@readr-media/react-image'
+import ResponsiveImage from '~/components/shared/responsive-image'
 import type { HeroImage } from '~/types/common'
 import styles from './_styles/hero-image.module.scss'
 import { formateHeroImage } from '~/utils'
@@ -14,19 +14,12 @@ export default function HeroImage({ heroImage, title }: HeroImageProps) {
 
   return (
     <section className={styles.sectionWrapper}>
-      <Image
+      <ResponsiveImage
         images={images}
         imagesWebP={imagesWebP}
         alt={title}
-        defaultImage="/images/image-default.jpg"
-        rwd={{
-          mobile: '100vw',
-          tablet: '100vw',
-          laptop: '100vw',
-          desktop: '100vw',
-          default: '100vw',
-        }}
         priority
+        sizes="100vw"
       />
     </section>
   )

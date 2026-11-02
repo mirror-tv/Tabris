@@ -1,5 +1,5 @@
 'use client'
-import Image from '@readr-media/react-image'
+import ResponsiveImage from '~/components/shared/responsive-image'
 import Link from '~/components/shared/link'
 import type { Contact } from '~/graphql/query/contact'
 import styles from './_styles/ui-contact-card.module.scss'
@@ -19,19 +19,11 @@ export default function UiContactCard({ item }: Props) {
       <li className={styles.card}>
         <figure>
           <div className={styles.imageWrapper}>
-            <Image
+            <ResponsiveImage
               images={images}
               imagesWebP={imagesWebP}
               alt={item.name}
-              loadingImage="/images/loading.svg"
-              defaultImage="/images/image-default.jpg"
-              rwd={{
-                mobile: '500px',
-                tablet: '500px',
-                laptop: '500px',
-                desktop: '500px',
-                default: '500px',
-              }}
+              sizes="(max-width: 767px) 37vw, (max-width: 1199px) 208px, (max-width: 1399px) 256px, 270px"
             />
           </div>
           <figcaption>{item.name}</figcaption>

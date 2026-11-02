@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import Image from 'next/image'
+import ResponsiveImage from '~/components/shared/responsive-image'
 import { useState } from 'react'
 import CustomDropDown from '~/components/schedule/custom-dropdown'
 import WeekDatesPicker from '~/components/schedule/week-dates-picker'
@@ -140,11 +140,11 @@ export default function ScheduleTable({
         </div>
       ) : (
         <div className={styles.noSchedule}>
-          <Image
-            src="/images/magnifier-with-question-mark.png"
+          <ResponsiveImage
+            images="/images/magnifier-with-question-mark.png"
             alt="找不到當日節目表"
-            width={128}
-            height={128}
+            placeholder={null}
+            style={{ width: 128, height: 128 }}
           />
           <span>找不到當日節目表</span>
           <span>請選擇其他日查看</span>

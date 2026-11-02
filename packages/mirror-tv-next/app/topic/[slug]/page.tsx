@@ -1,6 +1,6 @@
 import errors from '@twreporter/errors'
 import type { Metadata } from 'next'
-import Image from 'next/image'
+import Image from '~/components/shared/image'
 import Link from '~/components/shared/link'
 import { notFound } from 'next/navigation'
 import { query } from '~/apollo-client'

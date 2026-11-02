@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 
-import Image from 'next/image'
-
+import Image from '@/components/shared/image'
 import { OrderRecordForOrderNumber } from '@/graphql/queries/orders'
 
 type ProductionPreviewProps = {
@@ -40,8 +39,8 @@ export function ProductionPreview({
                   src={image.url || ''}
                   alt="video-preview"
                   fill
+                  sizes="(max-width: 980px) calc(100vw - 82px), 900px"
                   className="object-cover"
-                  loading="lazy"
                 />
               </div>
             ))

@@ -1,7 +1,7 @@
 'use client'
 import { type CSSProperties, useState } from 'react'
 import styles from './_styles/search-bar.module.scss'
-import Image from 'next/image'
+import Image from '~/components/shared/image'
 import { withBasePath } from '~/constants/with-base-path'
 
 const MobileSearchBar = () => {

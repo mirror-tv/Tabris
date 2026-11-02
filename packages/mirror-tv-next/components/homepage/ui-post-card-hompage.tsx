@@ -2,7 +2,7 @@ import styles from './_styles/ui-post-card-homepage.module.scss'
 import { formateDateAtTaipei } from '~/utils'
 import UiExclusiveMark from '../shared/ui-exclusive-mark'
 import { SALES_LABEL_NAME } from '~/constants/constant'
-import NextResponsiveImage from '../shared/next-responsive-image'
+import ResponsiveImage from '~/components/shared/responsive-image'
 import { PostWithCategory } from '~/graphql/query/posts'
 import type { HeroImage } from '~/graphql/fragments/listing-post'
 
@@ -32,25 +32,15 @@ export default function UiPostCardHomepage(props: UiPostCardProps) {
             </span>
           )}
           {exclusive && label !== SALES_LABEL_NAME && <UiExclusiveMark />}
-          <NextResponsiveImage
-            fill
-            loading="lazy"
-            placeholder="blur"
-            blurDataURL="/images/loading.svg"
-            src={
-              typeof props.heroImage === 'string'
-                ? props.heroImage.replace(/\.(jpg|png)$/i, '.webP')
-                : '/images/image-default.jpg'
-            }
-            sizes="(max-width: 768px) 50vw, 30vw"
-            srcSet={[480, 800]}
-            alt={props.name}
-            priority={false}
-            fallback={
+          <ResponsiveImage
+            images={
               typeof props.heroImage === 'string'
                 ? props.heroImage
                 : props.heroImage?.resized?.original
             }
+            fill
+            sizes="(max-width: 767px) calc(100vw - 32px), (max-width: 1199px) 334px, 267px"
+            alt={props.name}
             style={{ aspectRatio: '3 / 2' }}
           />
           {isVideoNews && <span className={styles.videoIcon}></span>}

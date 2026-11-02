@@ -35,14 +35,7 @@ export default function UiHostList({ hostList }: { hostList: HostOrStaff[] }) {
                   images={images}
                   imagesWebP={imagesWebP}
                   alt="主持人圖片"
-                  rwd={{
-                    mobile: '80px',
-                    tablet: '80px',
-                    laptop: '80px',
-                    desktop: '80px',
-                    default: '80px',
-                  }}
-                  priority={false}
+                  sizes="(max-width: 767px) 70px, 80px"
                 />
               </figure>
               <div className={styles.content}>
