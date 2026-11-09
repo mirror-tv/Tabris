@@ -34,6 +34,10 @@
 
   p {
     color: $color-blue-deep;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 28px;
+    letter-spacing: 0.5px;
   }
   @include media-breakpoint-up(xl) {
     margin-left: 0;

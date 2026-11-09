@@ -82,9 +82,10 @@
   }
 
   &Title {
-    font-weight: 700;
+    font-weight: 500;
     font-size: 16px;
-    line-height: 25.6px;
+    line-height: normal;
+    letter-spacing: 0;
     color: #000;
     text-align: left;
     word-wrap: break-word;
@@ -93,16 +94,13 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     margin-top: 8px;
-    @include media-breakpoint-up(xl) {
-      margin-top: 9px;
-    }
   }
 
   &Date {
-    font-weight: 300;
+    font-weight: 400;
     font-size: 14px;
-    line-height: 16px;
-    letter-spacing: 0.5px;
+    line-height: 1.5;
+    letter-spacing: 0;
     color: #000;
   }
 }
