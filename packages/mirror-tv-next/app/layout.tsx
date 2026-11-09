@@ -22,6 +22,9 @@ import styles from '../styles/pages/layout.module.scss'
 import GptHiddenSlot from '~/components/ads/gpt/gpt-hidden-slot'
 import GptAnchor from '~/components/ads/gpt/gpt-anchor'
 
+const NOTO_SANS_TC_STYLESHEET =
+  'https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300..900&display=swap'
+
 export const revalidate = 0
 
 export const metadata: Metadata = {
@@ -95,10 +98,18 @@ export default async function RootLayout({
   } catch (error) {
     console.error('Failed to fetch header data:', error)
   }
-  console.log('GTM_ID', GTM_ID)
 
   return (
     <html lang="zh-Hant">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link href={NOTO_SANS_TC_STYLESHEET} rel="stylesheet" />
+      </head>
       <GoogleTagManager gtmId={GTM_ID} />
       <Script
         async
