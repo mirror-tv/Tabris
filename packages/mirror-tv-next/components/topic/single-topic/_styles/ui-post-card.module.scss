@@ -32,8 +32,8 @@
     font-size: 16px;
     font-style: normal;
     font-weight: 400;
-    line-height: normal;
-    height: 64px;
+    line-height: 1.5;
+    height: 72px;
     text-align: left;
     word-wrap: break-word;
     -webkit-line-clamp: 3;
@@ -43,13 +43,16 @@
 
     @include media-breakpoint-up(md) {
       margin-top: 8px;
-      height: 37px;
+      height: 36px;
+      line-height: 18px;
       -webkit-line-clamp: 2;
       font-size: 13px;
     }
     @include media-breakpoint-up(xl) {
       margin-top: 12px;
-      height: 41px;
+      height: 48px;
+      line-height: 1.5;
+      -webkit-line-clamp: 2;
       font-size: 16px;
     }
   }
