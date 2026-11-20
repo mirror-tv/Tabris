@@ -9,8 +9,10 @@
 
 import { ENV } from './environment'
 
-const DEV_AND_STAGING_ELECTION_IFRAME_URL =
+const DEV_ELECTION_IFRAME_URL =
   'https://dev.mirrormedia.mg/projects/election2026-homepage/index.html'
+const PROD_ELECTION_IFRAME_URL =
+  'https://www.mnews.tw/projects/election2026-homepage/index.html'
 
 type EnvMap = {
   SITE_URL: string
@@ -24,20 +26,19 @@ const ENV_CONFIG_MAP: Record<typeof ENV, EnvMap> = {
     SITE_URL: 'https://dev.mnews.tw',
     GTM_ID: 'GTM-TVZ26W8',
     GA4_ID: 'G-YZ07T9YJ6T',
-    ELECTION_IFRAME_URL: DEV_AND_STAGING_ELECTION_IFRAME_URL,
+    ELECTION_IFRAME_URL: DEV_ELECTION_IFRAME_URL,
   },
   prod: {
     SITE_URL: 'https://www.mnews.tw',
     GTM_ID: 'GTM-PK7VRFX',
     GA4_ID: 'G-SZR4JRJ0G2',
-    ELECTION_IFRAME_URL:
-      'https://www.mnews.tw/projects/election2026-homepage/index.html',
+    ELECTION_IFRAME_URL: PROD_ELECTION_IFRAME_URL,
   },
   staging: {
     SITE_URL: 'https://staging.mnews.tw',
     GTM_ID: 'GTM-NFH6FDH',
     GA4_ID: 'G-8Q9RVB3K0E',
-    ELECTION_IFRAME_URL: DEV_AND_STAGING_ELECTION_IFRAME_URL,
+    ELECTION_IFRAME_URL: PROD_ELECTION_IFRAME_URL,
   },
 }
 

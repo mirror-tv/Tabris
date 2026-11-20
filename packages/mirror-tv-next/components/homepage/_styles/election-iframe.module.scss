@@ -15,6 +15,26 @@
   }
 }
 
+.frame {
+  position: relative;
+  max-width: 100%;
+}
+
+// "測試畫面" label pinned to the iframe's bottom-right corner
+.testLabel {
+  position: absolute;
+  right: 16px;
+  bottom: 12px;
+  font-size: 13px;
+  line-height: 18px;
+  color: #ef4444;
+  pointer-events: none;
+
+  @include media-breakpoint-up(md) {
+    right: 24px;
+  }
+}
+
 .iframe {
   display: block;
   border: none;
