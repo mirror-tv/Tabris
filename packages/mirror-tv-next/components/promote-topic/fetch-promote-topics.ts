@@ -1,9 +1,7 @@
-'use server'
-
 import { z } from 'zod'
+import { STATIC_BASE_URL } from '~/constants/endpoint-config'
 import { PROMOTE_TOPICS_FILENAME } from '~/constants/json-filenames'
 import type { PromoteTopicData } from '~/types/promote-topic'
-import { fetchStaticJson } from '~/utils/fetch-static-json'
 import { createErrorLogger } from '~/utils/log'
 
 const imageSetSchema = z
@@ -83,8 +81,14 @@ async function fetchPromoteTopics(): Promise<PromoteTopicData[]> {
   )
 
   try {
-    const rawData = await fetchStaticJson(PROMOTE_TOPICS_FILENAME)
-    const data = promoteTopicsSchema.parse(rawData)
+    const url = `${STATIC_BASE_URL}/json/${PROMOTE_TOPICS_FILENAME}`
+    const res = await fetch(url)
+
+    if (!res.ok) {
+      throw new Error(`Failed to fetch ${url}: ${res.status} ${res.statusText}`)
+    }
+
+    const data = promoteTopicsSchema.parse(await res.json())
     return normalizePromoteTopics(data.promoteTopics).sort(
       (a, b) => (a.order ?? Infinity) - (b.order ?? Infinity)
     )
