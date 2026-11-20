@@ -18,8 +18,10 @@ const SHOW_ALGO_RELATED_POSTS = process.env.SHOW_ALGO_RELATED_POSTS === 'true'
 const SHOW_EXTERNAL_RELATED_POSTS =
   process.env.SHOW_EXTERNAL_RELATED_POSTS === 'true'
 // Homepage: show the election iframe only between these ISO 8601 timestamps.
-const TV_START_TS = process.env.TV_START_TS
-const TV_END_TS = process.env.TV_END_TS
+const TV_START_TS = process.env.TV_START_TS || ''
+const TV_END_TS = process.env.TV_END_TS || ''
+// Homepage: show the "測試畫面" label on the election iframe before this timestamp (`YYYY-MM-DDTHH:mm:ss+08:00`)
+const TV_TEST_END_TS = process.env.TV_TEST_END_TS || '2026-11-28T00:00:00+08:00'
 
 export {
   API_ENDPOINT_OVERRIDE_FROM_ENV,
@@ -30,4 +32,5 @@ export {
   SHOW_EXTERNAL_RELATED_POSTS,
   TV_START_TS,
   TV_END_TS,
+  TV_TEST_END_TS,
 }
