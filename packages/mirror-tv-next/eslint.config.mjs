@@ -1,3 +1,4 @@
+import { createRequire } from 'module'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { defineConfig } from 'eslint/config'
@@ -8,9 +9,13 @@ import eslintConfigPrettier from 'eslint-config-prettier'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
+const require = createRequire(import.meta.url)
 
 const compat = new FlatCompat({
   baseDirectory: __dirname,
+  // Resolve plugins from eslint-config-next's own deps instead of pnpm's hoisted
+  // copies, which may belong to another package's eslint-config-next version
+  resolvePluginsRelativeTo: dirname(require.resolve('eslint-config-next')),
   recommendedConfig: js.configs.recommended,
 })
 
